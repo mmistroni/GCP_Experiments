@@ -16,6 +16,7 @@ import urllib
 from collections import defaultdict
 from datetime import date, datetime
 from itertools import groupby
+from apache_beam.io.gcp.internal.clients import bigquery
 import requests
 
 p4 = beam.Pipeline()
