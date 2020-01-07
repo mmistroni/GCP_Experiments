@@ -83,6 +83,7 @@ def run(argv=None, save_main_session=True):
   )
   p4.run()
 
-if __name__ == 'main':
+if __name__ == '__main__':
+  logging.getLogger().setLevel(logging.INFO)
   run()
 
