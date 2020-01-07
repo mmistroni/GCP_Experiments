@@ -18,7 +18,6 @@ from datetime import date, datetime
 from itertools import groupby
 import requests
 
-PROJECT =
 p4 = beam.Pipeline()
 test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'
