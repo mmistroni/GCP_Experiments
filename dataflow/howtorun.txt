@@ -1,0 +1,3 @@
+python -m write_to_edgar                 --runner DataflowRunner \
+                                         --project datascience-projects \
+                                         --temp_location gs://mm_dataflow_bucket/temp
