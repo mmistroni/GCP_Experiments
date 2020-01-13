@@ -46,7 +46,7 @@ class MyOptions(PipelineOptions):
           help='Runner to use')
       parser.add_value_provider_argument(
           '--template_location',
-          default='gs: //mm_dataflow_bucket/templates',
+          default='gs: //mm_dataflow_bucket/templates/edgar_df_template',
           help='Template Location')
       parser.add_value_provider_argument(
           '--staging_location',
