@@ -71,7 +71,7 @@ def run(argv=None, save_main_session=True):
 
   pipeline_options = PipelineOptions(pipeline_args)
 
-  pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+  #pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
   myoptions = pipeline_options.view_as(MyOptions)
 
