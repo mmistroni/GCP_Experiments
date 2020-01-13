@@ -39,14 +39,26 @@ def get_edgar_table_spec():
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
-  parser.add_argument('--year',
+  parser.add_value_provider_argument('--year',
                       dest='input',
                       default='2019',
                       help='Input year to process')
-  parser.add_argument('--output',
+  parser.add_value_provider_argument('--output',
                       dest='output',
                       default='gs://mm_dataflow_bucket/outputs',
                       help='Input year to process')
+
+  parser.add_value_provider_argument(
+      '--runner',
+      default='DataFlowRunner',
+      help='Runner to use')
+  parser.add_value_provider_argument(
+      '--template_location',
+      help='Template Location')
+  parser.add_value_provider_argument(
+      '--staging_location',
+      default='gs: //mm_dataflow_bucket/staging',
+      help='Staging Location')
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
