@@ -82,7 +82,7 @@ def run(argv=None, save_main_session=True):
   #pipeline_args.append('--runner {}'.format(RUNNER))
   #pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
   pipeline_args.append('--temp_location {}'.format(TEMP_BUCKET))
-  pipeline_args.append('--template_location {}'.format(TEMPLATE_BUCKET))
+  pipeline_args.append('--template_location {}/test_dataflow_template'.format(TEMPLATE_BUCKET))
 
   pipeline_options = PipelineOptions(pipeline_args)
 
