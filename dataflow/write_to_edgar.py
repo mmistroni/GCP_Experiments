@@ -73,12 +73,14 @@ def get_edgar_table_spec():
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
 
-  #known_args, pipeline_args = parser.parse_known_args(argv)
+  known_args, pipeline_args = parser.parse_known_args(argv)
 
   pipeline_args = []
+
+
   pipeline_args.append('--project {}'.format(GC_PROJECT))
-  pipeline_args.append('--runner {}'.format(RUNNER))
-  pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
+  #pipeline_args.append('--runner {}'.format(RUNNER))
+  #pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
   pipeline_args.append('--temp_location {}'.format(TEMP_BUCKET))
   pipeline_args.append('--template_location {}'.format(TEMPLATE_BUCKET))
 
