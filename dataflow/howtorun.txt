@@ -6,3 +6,6 @@ python -m write_to_edgar                 --runner DataflowRunner \
 Follow up on this link
 
 https://cloud.google.com/dataflow/docs/guides/templates/creating-templates#creating-and-staging-templates
+
+
+https://stackoverflow.com/questions/59626815/how-to-i-stage-a-gcp-apache-beam-dataflow-template

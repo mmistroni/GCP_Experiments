@@ -19,10 +19,16 @@ from itertools import groupby
 from apache_beam.io.gcp.internal.clients import bigquery
 import requests
 
-p4 = beam.Pipeline()
 test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'
 filename = '{}_{}'.format(form_type, datetime.now().strftime('%Y$m%d-%H%M'))
+
+RUNNER='DataflowRunner'
+PROJECT='datascience-projects'
+STAGING_BUCKET='gs://mm_dataflow_bucket/staging'
+TEMP_BUCKET='gs://mm_dataflow_bucket/temp'
+TEMPLATE_BUCKET='gs://mm_dataflow_bucket/templates'
+
 
 ### BIG QUERY CONFIGS
 ## BIG QUERY SCHEMA
@@ -67,7 +73,14 @@ def get_edgar_table_spec():
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
 
-  known_args, pipeline_args = parser.parse_known_args(argv)
+  #known_args, pipeline_args = parser.parse_known_args(argv)
+
+  pipeline_args = []
+  pipeline_args.append('--project={}'.format(GC_PROJECT))
+  pipeline_args.append('--runner={}'.format(RUNNER))
+  pipeline_args.append('--staging_location={}'.format(STAGING_BUCKET))
+  pipeline_args.append('--temp_location={}'.format(TEMP_BUCKET))
+  pipeline_args.append('--template_location={}'.format(TEMPLATE_BUCKET))
 
   pipeline_options = PipelineOptions(pipeline_args)
 
@@ -100,11 +113,12 @@ def run(argv=None, save_main_session=True):
        | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
                                               get_edgar_table_spec(),
                                               schema=get_edgar_table_schema(),
-                                              write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE,
+                                              write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
                                               create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
   )
-  p4.run()
+  p4.run().wait_until_finish()
+
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
