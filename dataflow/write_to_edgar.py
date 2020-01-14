@@ -88,7 +88,7 @@ def run(argv=None, save_main_session=True):
 
   myoptions = pipeline_options.view_as(MyOptions)
 
-  p4 = beam.Pipeline()
+  p4 = beam.Pipeline(options=PipelineOptions(pipeline_args))
 
   lines = (
        p4
