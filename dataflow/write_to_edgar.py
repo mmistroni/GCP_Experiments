@@ -23,11 +23,11 @@ test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'
 filename = '{}_{}'.format(form_type, datetime.now().strftime('%Y$m%d-%H%M'))
 
-RUNNER='DataflowRunner'
-PROJECT='datascience-projects'
-STAGING_BUCKET='gs://mm_dataflow_bucket/staging'
-TEMP_BUCKET='gs://mm_dataflow_bucket/temp'
-TEMPLATE_BUCKET='gs://mm_dataflow_bucket/templates'
+RUNNER = 'DataflowRunner'
+GC_PROJECT = 'datascience-projects'
+STAGING_BUCKET = 'gs://mm_dataflow_bucket/staging'
+TEMP_BUCKET = 'gs://mm_dataflow_bucket/temp'
+TEMPLATE_BUCKET = 'gs://mm_dataflow_bucket/templates'
 
 
 ### BIG QUERY CONFIGS
