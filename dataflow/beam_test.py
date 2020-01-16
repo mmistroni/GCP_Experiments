@@ -46,15 +46,17 @@ def run(argv=None, save_main_session=True):
 
     known_args, pipeline_args = parser.parse_known_args(argv)
 
-    pipeline_args.append('--project {}'.format(GC_PROJECT))
-    pipeline_args.append('--runner {}'.format(RUNNER))
-    pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
-    pipeline_args.append('--temp_location {}'.format(TEMP_BUCKET))
-    pipeline_args.append('--template_location {}/test_dataflow_template'.format(TEMPLATE_BUCKET))
+    #pipeline_args.append('--project {}'.format(GC_PROJECT))
+    #pipeline_args.append('--runner {}'.format(RUNNER))
+    #pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
+    #pipeline_args.append('--temp_location {}'.format(TEMP_BUCKET))
+    #pipeline_args.append('--template_location {}/test_dataflow_template'.format(TEMPLATE_BUCKET))
 
     pipeline_options = PipelineOptions(pipeline_args)
+    print('== pipeline options are:{}'.format(pipeline_options))
 
     p2 = beam.Pipeline(pipeline_options)
+    print('')
     test_buckt = 'gs://mm_dataflow_bucket/'
     lines = (
           p2
