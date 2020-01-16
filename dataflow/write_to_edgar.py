@@ -75,22 +75,7 @@ def run(argv=None, save_main_session=True):
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
-  pipeline_args = []
-
-
-  pipeline_args.append('--project {}'.format(GC_PROJECT))
-  #pipeline_args.append('--runner {}'.format(RUNNER))
-  pipeline_args.append('--staging_location {}'.format(STAGING_BUCKET))
-  pipeline_args.append('--temp_location {}'.format(TEMP_BUCKET))
-  pipeline_args.append('--template_location {}/test_dataflow_template'.format(TEMPLATE_BUCKET))
-
-  pipeline_options = PipelineOptions(pipeline_args)
-
-  #pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-
-  myoptions = pipeline_options.view_as(MyOptions)
-
-  p4 = beam.Pipeline(options=PipelineOptions(pipeline_args))
+  p4 = beam.Pipeline(options=PipelineOptions())
 
   lines = (
        p4
