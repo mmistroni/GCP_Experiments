@@ -34,31 +34,6 @@ TEMPLATE_BUCKET = 'gs://mm_dataflow_bucket/templates'
 ## BIG QUERY SCHEMA
 
 
-class MyOptions(PipelineOptions):
-  @classmethod
-  def _add_argparse_args(cls, parser):
-      parser.add_value_provider_argument('--year',
-                                         dest='input',
-                                         default='2019',
-                                         help='Input year to process')
-      parser.add_value_provider_argument('--output',
-                                         dest='output',
-                                         default='gs://mm_dataflow_bucket/outputs',
-                                         help='Input year to process')
-
-      parser.add_value_provider_argument(
-          '--runner',
-          default='DataFlowRunner',
-          help='Runner to use')
-      parser.add_value_provider_argument(
-          '--template_location',
-          default='gs: //mm_dataflow_bucket/templates/edgar_df_template',
-          help='Template Location')
-      parser.add_value_provider_argument(
-          '--staging_location',
-          default='gs: //mm_dataflow_bucket/staging',
-          help='Staging Location')
-
 
 def get_edgar_table_schema():
   edgar_table_schema = 'COB:STRING, CUSIP:STRING, COUNT:INTEGER, TICKER:STRING'
