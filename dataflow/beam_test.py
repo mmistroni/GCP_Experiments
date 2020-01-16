@@ -36,7 +36,7 @@ TEMPLATE_BUCKET = 'gs://mm_dataflow_bucket/templates'
 from apache_beam.io.gcp.internal.clients import bigquery
 table_schema = 'source:STRING, quote:STRING'
 table_spec = bigquery.TableReference(
-    projectId=GCP_PROJECT,
+    projectId=GC_PROJECT,
     datasetId='gcp_edgar',
     tableId='test_edgar_data')
 
