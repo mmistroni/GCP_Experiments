@@ -75,6 +75,7 @@ def run(argv=None, save_main_session=True):
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
+
   p4 = beam.Pipeline(options=PipelineOptions())
 
   lines = (
