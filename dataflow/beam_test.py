@@ -57,7 +57,7 @@ def run(argv=None, save_main_session=True):
     pipeline_options = PipelineOptions(pipeline_args)
     print('== pipeline options are:{}'.format(pipeline_options))
 
-    p2 = beam.Pipeline(pipeline_options)
+    p2 = beam.Pipeline(options=PipelineOptions())
     print('')
     test_buckt = 'gs://mm_dataflow_bucket/'
     lines = (
