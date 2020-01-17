@@ -12,7 +12,7 @@ https://stackoverflow.com/questions/59626815/how-to-i-stage-a-gcp-apache-beam-da
 
 
 python -m beam_test --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_
-bucket/templates --temp_location=gs://mm_dataflow_bucket/temp --staging_location=gs://mm_dataflow_bucket/staging
+bucket/templates/edgar_dataflow --temp_location=gs://mm_dataflow_bucket/temp --staging_location=gs://mm_dataflow_bucket/staging  --setup_file ./setup.py
 
 pickling error
 
