@@ -2,7 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/write_to_edgar.py" beforeDir="false" afterPath="$PROJECT_DIR$/write_to_edgar.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edgar_main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/modules/setup.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/beam_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/beam_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/edgar_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/howtorun.txt" beforeDir="false" afterPath="$PROJECT_DIR$/howtorun.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/write_to_edgar.py" beforeDir="false" afterPath="$PROJECT_DIR$/modules/write_to_edgar.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,9 +20,9 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_utils.py">
+        <entry file="file://$PROJECT_DIR$/modules/edgar_utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-51">
+            <state relative-caret-position="-571">
               <caret line="22" column="18" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="18" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
@@ -27,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/beam_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="59" column="49" lean-forward="true" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
+            <state relative-caret-position="680">
+              <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
             </state>
           </provider>
         </entry>
@@ -42,13 +49,31 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/write_to_edgar.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/modules/write_to_edgar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="43" column="39" lean-forward="true" selection-start-line="43" selection-start-column="39" selection-end-line="43" selection-end-column="39" />
+            <state relative-caret-position="51">
+              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" selection-end-column="9" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edgar_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="38" selection-start-column="38" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="393">
+              <caret line="120" column="39" selection-start-line="120" selection-start-column="39" selection-end-line="120" selection-end-column="39" />
               <folding>
-                <element signature="e#0#26#0" expanded="true" />
+                <element signature="e#1208#1246#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -79,6 +104,9 @@
         <option value="$PROJECT_DIR$/beam_test.py" />
         <option value="$PROJECT_DIR$/howtorun.txt" />
         <option value="$PROJECT_DIR$/write_to_edgar.py" />
+        <option value="$PROJECT_DIR$/edgar_main.py" />
+        <option value="$PROJECT_DIR$/modules/setup.py" />
+        <option value="$PROJECT_DIR$/setup.py" />
       </list>
     </option>
   </component>
@@ -94,6 +122,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -101,17 +130,25 @@
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="modules" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\modules" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
     </key>
@@ -145,8 +182,8 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4893617" visible="true" weight="0.22098215" />
-      <window_info id="Structure" order="1" sideWeight="0.5106383" side_tool="true" visible="true" weight="0.22098215" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48772505" visible="true" weight="0.22098215" />
+      <window_info id="Structure" order="1" sideWeight="0.512275" side_tool="true" visible="true" weight="0.22098215" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -172,6 +209,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/beam_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/howtorun.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -179,29 +223,36 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/beam_test.py">
+    <entry file="file://$PROJECT_DIR$/modules/edgar_utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="59" column="49" lean-forward="true" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/write_to_edgar.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="43" column="39" lean-forward="true" selection-start-line="43" selection-start-column="39" selection-end-line="43" selection-end-column="39" />
+        <state relative-caret-position="-571">
+          <caret line="22" column="18" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="18" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_utils.py">
+    <entry file="file://$PROJECT_DIR$/edgar_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-51">
-          <caret line="22" column="18" selection-start-line="22" selection-start-column="6" selection-end-line="22" selection-end-column="18" />
+        <state>
+          <caret column="38" selection-start-column="38" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/modules/write_to_edgar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="393">
+          <caret line="120" column="39" selection-start-line="120" selection-start-column="39" selection-end-line="120" selection-end-column="39" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#1208#1246#0" expanded="true" />
           </folding>
         </state>
       </provider>
