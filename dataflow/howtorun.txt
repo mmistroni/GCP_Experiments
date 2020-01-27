@@ -17,3 +17,10 @@ bucket/templates/edgar_dataflow --temp_location=gs://mm_dataflow_bucket/temp --s
 pickling error
 
 https://stackoverflow.com/questions/52533741/python-apache-beam-importerror-no-module-named-on-dataflow-worker
+
+
+python -m edgar_main  --runner=dataflow --project=datascience-projets --template_location=gs:/
+/mm_dataflow_bucket/templates/edgar_dataflow_template --temp_location=gs://mm_dataflow_bucket/temp --staging_location=gs://mm_dataflow_bucket/staging
+
+
+A template was just created at location gs://mm_dataflow_bucket/templates/edgar_dataflow_template
