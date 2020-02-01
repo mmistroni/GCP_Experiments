@@ -9,7 +9,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from itertools import groupby
-from edgar_flow.modules import edgar_utils as eu
+from modules import edgar_utils as eu
 from apache_beam.io import WriteToText
 from apache_beam.io.textio import ReadAllFromText
 import urllib
