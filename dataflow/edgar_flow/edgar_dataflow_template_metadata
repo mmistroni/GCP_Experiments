@@ -1,24 +1,5 @@
 {
-  "name": "Word Count",
-  "description": "An example pipeline that counts words in the input file.",
-  "parameters": [
-    {
-      "name": "inputFile",
-      "label": "Input GCS file(s)",
-      "helpText": "Path of the file pattern glob to read from. ex: gs://dataflow-samples/shakespeare/kinglear.txt",
-      "regexes": [
-        "^gs:\\/\\/[^\\n\\r]+$"
-      ],
-      "paramType": "GCS_READ_FILE"
-    },
-    {
-      "name": "output",
-      "label": "Output GCS file(s)",
-      "helpText": "Path and filename prefix for writing output files. ex: gs://MyBucket/counts",
-      "regexes": [
-        "^gs:\\/\\/[^\\n\\r]+$"
-      ],
-      "paramType": "GCS_WRITE_FILE"
-    }
-  ]
+  "name": "Edgar Dataflow Template",
+  "description": "An template for running edgar calculations.",
+  "parameters": []
 }
