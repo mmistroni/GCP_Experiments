@@ -9,7 +9,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from itertools import groupby
-from modules import edgar_utils as eu
+from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
 from apache_beam.io import WriteToText
 from apache_beam.io.textio import ReadAllFromText
 import urllib
@@ -59,18 +59,18 @@ def run(argv=None, save_main_session=True):
        | 'Sampling Data' >> beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx',
                       #'https://www.sec.gov/Archives/edgar/full-index/2019/QTR2/master.idx'
                       ])
-       | 'readFromText' >> beam.ParDo(eu.ReadRemote())
+       | 'readFromText' >> beam.ParDo(ReadRemote())
        | 'map to Str'   >> beam.Map(lambda line:str(line))
        | 'Filter only form 13HF' >> beam.Filter(lambda row: len(row.split('|')) > 4 and form_type in row.split('|')[2])
        | 'Generating Proper file path' >> beam.Map(lambda row: '{}/{}'.format('https://www.sec.gov/Archives', row.split('|')[4]))
        | 'replacing eol' >> beam.Map(lambda p: p[0:p.find('\\n')])
        | 'sampling lines' >> beam.transforms.combiners.Sample.FixedSizeGlobally(10)
        | 'flat Mapping' >> beam.Map(lambda elements: elements[0])
-       | 'parsing edgar filing' >> beam.ParDo(eu.ParseForm13F())
+       | 'parsing edgar filing' >> beam.ParDo(ParseForm13F())
        | 'Combining similar' >> beam.combiners.Count.PerElement()
        | 'Groupring' >> beam.MapTuple(lambda word, count: (word, count))
        #| 'sampling again' >> beam.transforms.combiners.Sample.FixedSizeGlobally(20)
-       | 'Adding Cusip' >> beam.MapTuple(lambda word, count: (word, eu.cusip_to_ticker(word), count))
+       | 'Adding Cusip' >> beam.MapTuple(lambda word, count: (word, cusip_to_ticker(word), count))
        #| 'Filtering' >> beam.Filter(lambda tpl: tpl[1] > 300)
        | 'Creating BigQuery Data' >> beam.MapTuple(lambda word, ticker, count: dict(COB=date.today().strftime('%Y-%m-%d'), CUSIP=word, TICKER=ticker,COUNT=count))
        | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
