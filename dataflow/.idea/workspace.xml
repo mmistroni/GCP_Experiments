@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/edgar_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -54,11 +55,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_main.py">
           <provider selected="true" editor-type-id="text-editor">
             <state>
-              <caret column="5" selection-start-column="5" selection-end-column="5" />
+              <caret column="6" selection-start-column="6" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -72,11 +73,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="155">
-              <caret line="11" column="5" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
+              <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -108,6 +109,7 @@
       <find>ReadAllFromText</find>
       <find>ReadFromText</find>
       <find>ParseForm13F</find>
+      <find>modules</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -128,8 +130,8 @@
         <option value="$PROJECT_DIR$/shareloader/modules/utils.py" />
         <option value="$PROJECT_DIR$/howtorun.txt" />
         <option value="$PROJECT_DIR$/edgar_flow/write_to_edgar.py" />
-        <option value="$PROJECT_DIR$/edgar_flow/edgar_main.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/edgar_main.py" />
       </list>
     </option>
   </component>
@@ -304,17 +306,17 @@
     <entry file="file://$PROJECT_DIR$/edgar_flow/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="5" selection-start-column="5" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="155">
-          <caret line="11" column="5" selection-start-line="11" selection-start-column="5" selection-end-line="11" selection-end-column="5" />
+          <caret line="11" column="6" selection-start-line="11" selection-start-column="6" selection-end-line="11" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="6" selection-start-column="6" selection-end-column="6" />
         </state>
       </provider>
     </entry>
