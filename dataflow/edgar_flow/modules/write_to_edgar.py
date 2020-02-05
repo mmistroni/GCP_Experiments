@@ -9,7 +9,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from itertools import groupby
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
+from edgar_flow.modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
 from apache_beam.io import WriteToText
 from apache_beam.io.textio import ReadAllFromText
 import urllib
@@ -18,6 +18,7 @@ from datetime import date, datetime
 from itertools import groupby
 from apache_beam.io.gcp.internal.clients import bigquery
 import requests
+import os
 
 test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'
@@ -47,6 +48,8 @@ def get_edgar_table_spec():
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
+  dirpath = os.getcwd()
+  print("current directory is : " + dirpath)
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
