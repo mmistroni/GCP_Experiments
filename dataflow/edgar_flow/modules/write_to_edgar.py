@@ -9,7 +9,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from itertools import groupby
-from m.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
 from apache_beam.io import WriteToText
 from apache_beam.io.textio import ReadAllFromText
 import urllib
@@ -60,7 +60,9 @@ def run(argv=None, save_main_session=True):
        p4
        #| 'generate master url' >>beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx'])
        | 'Sampling Data' >> beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx',
-                      #'https://www.sec.gov/Archives/edgar/full-index/2019/QTR2/master.idx'
+                                         'https://www.sec.gov/Archives/edgar/full-index/2019/QTR2/master.idx',
+                                         'https://www.sec.gov/Archives/edgar/full-index/2019/QTR3/master.idx',
+                                         'https://www.sec.gov/Archives/edgar/full-index/2019/QTR4/master.idx'
                       ])
        | 'readFromText' >> beam.ParDo(ReadRemote())
        | 'map to Str'   >> beam.Map(lambda line:str(line))

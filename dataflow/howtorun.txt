@@ -24,3 +24,7 @@ python -m edgar_main  --runner=dataflow --project=datascience-projets --template
 
 
 A template was just created at location gs://mm_dataflow_bucket/templates/edgar_dataflow_template
+
+python -m edgar_main  --runner=dat
+aflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/edgar_dataflow_template -
+-temp_location=gs://mm_dataflow_bucket/temp --setup_file ./setup.py
