@@ -1,4 +1,4 @@
-from edgar_flow.modules.write_to_edgar import run
+from modules.write_to_edgar import run
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
