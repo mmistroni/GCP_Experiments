@@ -69,8 +69,8 @@ def run(argv=None, save_main_session=True):
        | 'Filter only form 13HF' >> beam.Filter(lambda row: len(row.split('|')) > 4 and form_type in row.split('|')[2])
        | 'Generating Proper file path' >> beam.Map(lambda row: '{}/{}'.format('https://www.sec.gov/Archives', row.split('|')[4]))
        | 'replacing eol' >> beam.Map(lambda p: p[0:p.find('\\n')])
-       | 'sampling lines' >> beam.transforms.combiners.Sample.FixedSizeGlobally(10)
-       | 'flat Mapping' >> beam.Map(lambda elements: elements[0])
+       #| 'sampling lines' >> beam.transforms.combiners.Sample.FixedSizeGlobally(10)
+       #|| 'flat Mapping' >> beam.Map(lambda elements: elements[0])
        | 'parsing edgar filing' >> beam.ParDo(ParseForm13F())
        | 'Combining similar' >> beam.combiners.Count.PerElement()
        | 'Groupring' >> beam.MapTuple(lambda word, count: (word, count))
@@ -91,4 +91,3 @@ def run(argv=None, save_main_session=True):
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
   run()
-

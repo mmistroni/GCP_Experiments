@@ -25,6 +25,133 @@ python -m edgar_main  --runner=dataflow --project=datascience-projets --template
 
 A template was just created at location gs://mm_dataflow_bucket/templates/edgar_dataflow_template
 
-python -m edgar_main  --runner=dat
-aflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/edgar_dataflow_template -
--temp_location=gs://mm_dataflow_bucket/temp --setup_file ./setup.py
+python -m edgar_pipeline  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/test_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp --setup_file ./setup.py
+
+python -m edgar_pipeline  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/test_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp
+
+
+
+
+=== RSS  FEEDS ====
+| STOCK DATA           |  http://finance.yahoo.com/rss/headline?s=%TOKEN%                                                                                                                                                                                                                                                                       | %TOKEN% | getTicker |
+| GLOBAL ECONOMY       | http://www.ft.com/rss/world/global-economy                                                                                                                                                                                                                                                                             | NULL    | NULL      |
+| WORLD_MAIN           | http://www.ft.com/rss/world                                                                                                                                                                                                                                                                                            | NULL    | NULL      |
+| LEX                  | http://www.ft.com/rss/lex                                                                                                                                                                                                                                                                                              | NULL    | NULL      |
+| REUTERS MARKET NEWS  | http://feeds.reuters.com/reuters/globalmarketsNews                                                                                                                                                                                                                                                                     | NULL    | NULL      |
+| BAA Bonds            | http://www.federalreserve.gov/feeds/Data/H15_H15_RIMLPBAAR_N.B.XML                                                                                                                                                                                                                                                     | NULL    | NULL      |
+| 13WksTreasury        | http://www.federalreserve.gov/feeds/Data/H15_H15_RIFSGFSM03_N.B.XML                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| COMMODITY-COPPER     | http://www.azomining.com/syndication.axd?news-cat=2                                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| COMMODITY-GOLD       | http://www.azomining.com/syndication.axd?news-cat=1                                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| ECONOMICS-BRAZIL     | http://www.tradingeconomics.com/brazil/rss                                                                                                                                                                                                                                                                             | NULL    | NULL      |
+| ECONOMICS-AUSTRALIA  | http://www.tradingeconomics.com/australia/rss                                                                                                                                                                                                                                                                          | NULL    | NULL      |
+| ECONOMICS-CHINA      | http://www.tradingeconomics.com/china/rss                                                                                                                                                                                                                                                                              | NULL    | NULL      |
+| ECONOMICS-INDIA      | http://www.tradingeconomics.com/india/rss                                                                                                                                                                                                                                                                              | NULL    | NULL      |
+| ECONOMICS-GERMANY    | http://www.tradingeconomics.com/germany/rss                                                                                                                                                                                                                                                                            | NULL    | NULL      |
+| ECONOMICS-JAPAN      | http://www.tradingeconomics.com/japan/rss                                                                                                                                                                                                                                                                              | NULL    | NULL      |
+| ECONOMICS-USA        | http://www.tradingeconomics.com/united-states/rss                                                                                                                                                                                                                                                                      | NULL    | NULL      |
+| ECONOMICS-UK         | http://www.tradingeconomics.com/united-kingdom/rss                                                                                                                                                                                                                                                                     | NULL    | NULL      |
+| ECONOMICS-SOUTHKOREA | http://www.tradingeconomics.com/south-korea/rss                                                                                                                                                                                                                                                                        | NULL    | NULL      |
+| ECONOMICS-SWISS      | http://www.tradingeconomics.com/switzerland/rss                                                                                                                                                                                                                                                                        | NULL    | NULL      |
+| ECONOMICS-SOUTHAFRIC | http://www.tradingeconomics.com/south-africa/rss                                                                                                                                                                                                                                                                       | NULL    | NULL      |
+| ECONOMICS-RUSSIA     | http://www.tradingeconomics.com/russia/rss                                                                                                                                                                                                                                                                             | NULL    | NULL      |
+| OIL&GAS NEWS         | http://www.youroilandgasnews.com/rssfeed                                                                                                                                                                                                                                                                               | NULL    | NULL      |
+| GOLD                 | http://www.azomining.com/syndication.axd?news-cat=1                                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| COPPER               | http://www.azomining.com/syndication.axd?news-cat=2                                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| CRUDE OIL            | http://www.azomining.com/syndication.axd?news-cat=38                                                                                                                                                                                                                                                                   | NULL    | NULL      |
+| SILVER               | http://www.azomining.com/syndication.axd?news-cat=4                                                                                                                                                                                                                                                                    | NULL    | NULL      |
+| COMMODITY-OIL&GAS    | http://www.youroilandgasnews.com/rssfeed                                                                                                                                                                                                                                                                               | NULL    | NULL      |
+| FX                   | http://feeds.feedburner.com/FxMarketCommentary                                                                                                                                                                                                                                                                         | NULL    | NULL      |
+| COMMODITY-EnergyInfo | http://www.eia.gov/rss/press_rss.xml                                                                                                                                                                                                                                                                                   | NULL    | NULL      |
+| FX-FXNEWS            | http://www.forexnews.com/feed/
+
+CPI
+https://www.ons.gov.uk/economy/inflationandpriceindices
+FUEL
+https://www.gov.uk/government/statistical-data-sets/oil-and-petroleum-products-weekly-statistics
+HOUSEHOLD DEBT
+https://data.oecd.org/hha/household-debt.htm
+
+check oecd for more data
+
+
+
+== Scrapy notes ===
+fetch('http://finance.yahoo.com/rss/')
+
+response.xpath('//item/title/text()').extract()  ==> to get title
+response.xpath('//item/link/text()').extract()  to get link
+once you go to the link, you can extract ticker using this regex (NYSE: <a class="ticker" href="http://finance.yahoo.com/q?s=TEVA"
+to follow corporate spider
+
+
+import scrapy
+from scrapy.spidermiddlewares.httperror import HttpError
+from twisted.internet.error import DNSLookupError
+from twisted.internet.error import TimeoutError
+from functools import partial
+
+=== CODE BELOW IS FOR A SINGLE TICKER
+
+
+class SeekingalphaMarketSpider(scrapy.Spider):
+    name = 'seekingalpha_market'
+    allowed_domains = ['seekingalpha.com']
+    start_urls = ['https://seekingalpha.com/api/sa/combined/AMZN.xml']
+
+    #rules = (
+    #    Rule(LinkExtractor(),
+    #    callback='parse_page',
+    #    # hook to be called when this Rule generates a Request
+    #    process_request='add_errback'),
+    #                       )
+    def parse(self, response):
+        items = response.xpath('//item')
+        self.logger.info('=============== PARSING ===')
+        for index, item in enumerate(items):
+            self.logger.info('Parsing Index:%s', index)
+            title = ''.join(item.xpath('title/text()').extract())
+            link = ''.join(item.xpath('link/text()').extract())
+            self.logger.info('Obtained link:%s', link)
+            if bool(True): #if 'article' in link:
+                self.logger.info('Now attempting to follow:%s', link)
+                #yield {'link': link}
+                callbackfun = partial(self.parse_attr, 'AMZN')
+                yield scrapy.Request(link , callback=callbackfun)
+
+    def parse_attr(self, ticker,  response):
+        content = ''.join(response.xpath("//div[@itemprop='articleBody']/p/text()").extract())
+        return {'content': content ,
+                'ticker' : ticker}
+
+=== CODE BELOW IS A GENERIC NEWS READER
+
+class SeekingalphaCorporateSpider(scrapy.Spider):
+    name = 'seekingalpha_corporate'
+    allowed_domains = ['seekingalpha.com']
+    start_urls = ['https://seekingalpha.com/market-news/all']
+
+    custom_settings = {
+                    'DEPTH_LIMIT': 4    # 4 pages seems to hold all news for one day. overlapping slightly with yesterday
+                    }
+
+    def parse(self, response):
+        self.logger.info("====== GETTING ALL ITEMS for %s===", response.url)
+        items = response.xpath("//li[@class='mc']")
+        self.logger.info('=============== PARSING ===')
+        for index, item in enumerate(items):
+            self.logger.info('Parsing Index:%s', index)
+            title = items.xpath("div[@class='media-body']/div[@class='title']/a/text()").extract_first()
+            asofdate = ''.join(item.xpath("div[@class='media-body'][1]//span/text()").extract())
+            content = ' '.join(item.xpath("div[@class='media-body'][1]/div//li/text()").extract())
+            symbol = ''.join(item.xpath("div[@class='media-left'][1]//a/text()").extract())
+            yield {'symbol' : symbol, 'title':title, 'asofdate': asofdate, 'content':content}
+        self.logger.info("End of items. Now moving to next page...")
+        next_page = response.xpath("//div[@id='paging']/ul/li[@class='next']/a/@href").extract_first()
+        adj_next_page= 'https://seekingalpha.com' + next_page
+        self.logger.info('======= now opening up %s', adj_next_page)
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+        yield response.follow(next_page, callback=self.parse, headers=headers)
+
+
+
+

@@ -13,6 +13,9 @@ from datetime import date, datetime
 from itertools import groupby
 import requests
 from apache_beam.io.gcp.internal.clients import bigquery
+import re, requests
+from bs4 import BeautifulSoup
+
 
 class ReadRemote(beam.DoFn):
     def process(self, element):
@@ -77,6 +80,43 @@ def cusip_to_ticker(cusip):
     except Exception as e:
         print('Unable to retrieve ticker for {}'.format(cusip))
         return ''
+
+def processUrl(url):
+  if 'master.idx' in url:
+    return url
+
+def crawl(base_page):
+  req=requests.get(base_page)
+  good_ones = []
+  if req.status_code==200:
+      html=BeautifulSoup(req.text,'html.parser')
+      pages=html.find_all('a')
+      for page in pages:
+          url=page.get('href')
+          res = processUrl(url)
+          if res:
+            full_url = '{}{}'.format(base_page, res)
+            print('Appending..:{}'.format(full_url))
+            good_ones.append(full_url)
+      return good_ones
+
+
+
+def generate_master_urls(all_url):
+    res = map(lambda u: crawl(u), all_url)
+    pprint(res)
+    from itertools import chain
+    unpacked = chain(*res)
+    return list(unpacked)
+
+
+def generate_edgar_urls_for_year(year):
+    test_urls = ['https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/',
+             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/',
+             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/',
+             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/']
+    urls = map(lambda b_url: b_url.format(year), test_urls)
+    return generate_master_urls(urls)
 
 
 

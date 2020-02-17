@@ -112,6 +112,7 @@ class CustomCommands(setuptools.Command):
 # restriction is specified.
 REQUIRED_PACKAGES = [
     'numpy',
+    'beautifulsoup4'
     ]
 
 
