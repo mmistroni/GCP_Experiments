@@ -24,7 +24,7 @@ class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--abc', default='start')
+        parser.add_argument('--abc')
         parser.add_argument('--xyz', default='end')
 
 
