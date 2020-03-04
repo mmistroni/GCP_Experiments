@@ -27,7 +27,27 @@ A template was just created at location gs://mm_dataflow_bucket/templates/edgar_
 
 python -m edgar_pipeline  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/test_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp --setup_file ./setup.py
 
+
 python -m edgar_pipeline  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/test_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp
+
+
+=== RUNNING JOB OUT OF A TEMPLATE
+POST https://dataflow.googleapis.com/v1b3/projects/YOUR_PROJECT_ID/templates:launch?gcsPath=gs://YOUR_BUCKET_NAME/templates/TemplateName
+    {
+        "jobName": "JOB_NAME",
+        "parameters": {
+            "inputFile" : "gs://YOUR_BUCKET_NAME/input/my_input.txt",
+            "outputFile": "gs://YOUR_BUCKET_NAME/output/my_output"
+        },
+        "environment": {
+            "tempLocation": "gs://YOUR_BUCKET_NAME/temp",
+            "zone": "us-central1-f"
+        }
+    }
+
+
+
+
 
 
 
@@ -153,5 +173,6 @@ class SeekingalphaCorporateSpider(scrapy.Spider):
         yield response.follow(next_page, callback=self.parse, headers=headers)
 
 
+python -m shares_main  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/shares_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp
 
 

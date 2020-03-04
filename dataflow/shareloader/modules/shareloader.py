@@ -47,7 +47,7 @@ def run(argv=None, save_main_session=True):
   lines = (
        p4
        #| 'generate master url' >>beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx'])
-       | 'Sampling Data' >> beam.Create(get_tickers()])
+       | 'Sampling Data' >> beam.Create(get_tickers())
        | 'Getting Latest Prices' >> beam.Map(lambda symbol: get_latest_price_yahoo(symbol))
        | 'Printing Out Results' >> beam.Map(print)
 
