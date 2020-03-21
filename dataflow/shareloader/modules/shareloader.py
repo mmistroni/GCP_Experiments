@@ -17,6 +17,7 @@ from datetime import date, datetime
 from itertools import groupby
 import requests
 import os
+import pandas as pd
 import pandas_datareader.data as dr
 from datetime import date
 from .metrics import compute_metrics
