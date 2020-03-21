@@ -47,7 +47,7 @@ def get_latest_price_yahoo(ticker, bday=1):
   try:
     today = date.today()
     start_date = today- BDay(bday)
-    print('Start:{}, end:{}'.format(start_date, today))
+    logging.info('Start:{}, end:{}'.format(start_date, today))
     today_df = get_data(ticker, today)
     yday_df = get_data(ticker, start_date)
     yday_df = yday_df.rename(columns={"Adj Close": "Prev Close", "Volume": "Prev Volume"})
@@ -56,13 +56,13 @@ def get_latest_price_yahoo(ticker, bday=1):
     merged['Vol Diff'] = merged['Volume'] - merged['Prev Volume']
     return merged
   except Exception as e :
-    logger.info('Exception in loading latest prices:{}'.format(str(e)))
+    logging.info('Exception in loading latest prices:{}'.format(str(e)))
     return pd.DataFrame(columns=[symbol])
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
   dirpath = os.getcwd()
-  print("current directory is : " + dirpath)
+  loggin.info("current directory is : " + dirpath)
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
