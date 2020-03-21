@@ -31,6 +31,7 @@ class XyzOptions(PipelineOptions):
   @classmethod
   def _add_argparse_args(cls, parser):
     parser.add_argument('--business_days', default=60)
+    parser.add_argument('--token')
 
 
 def get_tickers():
@@ -71,6 +72,7 @@ def run(argv=None, save_main_session=True):
   pipeline_options.view_as(SetupOptions).save_main_session  = save_main_session
   print('Options are:{}'.format(pipeline_options.get_all_options()))
   print('Busdays:{}'.format(pipeline_options.business_days))
+  logging.info('token provided is:{}'.format(pipeline_options.token))
 
   p4 = beam.Pipeline(options=pipeline_options)
 
