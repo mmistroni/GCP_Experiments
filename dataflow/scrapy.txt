@@ -23,3 +23,14 @@ fetch('http://feeds.reuters.com/reuters/companyNews')
 >>>
 
 items[0].xpath('link/text()').extract()..then we need to follow through
+
+## this is the link. we need to open
+response = fetch('https://www.reuters.com/article/us-boeing-737max-cuts-exclusive/boeing-to-freeze-hiring-as-cash-woes-mount-over-coronavirus-737-max-idUSKBN20Y2LE')
+# getting the content
+cntt = response.xpath('//div[@class="StandardArticleBody_body"]/p/text()').extract()
+# concatenating it
+''.join(cntt)
+
+
+
+

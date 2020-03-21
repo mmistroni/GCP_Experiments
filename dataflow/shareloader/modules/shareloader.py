@@ -35,19 +35,28 @@ class XyzOptions(PipelineOptions):
 def get_tickers():
     return['AAPL', 'AMZN', 'MSFT']
 
-def get_latest_price_yahoo(symbol, business_days):
-  try:#
-    logger.info('Fetching  prices for last :{}'.format(business_days))
-    as_of_date = datee.today()
-    start_date = as_of_date - BDay(60)
-    logger.info('--latest price for{}'.format(symbol))
-    res = dr.get_data_yahoo(symbol, start_date, as_of_date)[['Adj Close', 'Volume']]
-    res['Symbol'] = symbol
-    return res
+
+
+def get_data(ticker, dt, busdays=1):
+  res = dr.get_data_yahoo(ticker, dt, dt)[['Adj Close', 'Volume']]
+  res['Symbol'] = ticker
+  return res
+
+def get_latest_price_yahoo(ticker):
+  from datetime import date
+  try:
+    today = date.today()
+    start_date = today- BDay(1)
+    today_df = get_data(ticker, today)
+    yday_df = get_data(ticker, start_date)
+    yday_df = yday_df.rename(columns={"Adj Close": "Prev Close", "Volume": "Prev Volume"})
+    merged = pd.merge(today_df, yday_df, on='Symbol')
+    merged['Diff'] = merged['Adj Close'] - merged['Prev Close']
+    merged['Vol Diff'] = merged['Volume'] - merged['Prev Volume']
+    return merged
   except Exception as e :
     logger.info('Exception in loading latest prices:{}'.format(str(e)))
     return pd.DataFrame(columns=[symbol])
-
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
