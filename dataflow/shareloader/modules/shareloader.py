@@ -42,11 +42,12 @@ def get_data(ticker, dt, busdays=1):
   res['Symbol'] = ticker
   return res
 
-def get_latest_price_yahoo(ticker):
+def get_latest_price_yahoo(ticker, bday=1):
   from datetime import date
   try:
     today = date.today()
-    start_date = today- BDay(1)
+    start_date = today- BDay(bday)
+    print('Start:{}, end:{}'.format(start_date, today))
     today_df = get_data(ticker, today)
     yday_df = get_data(ticker, start_date)
     yday_df = yday_df.rename(columns={"Adj Close": "Prev Close", "Volume": "Prev Volume"})
