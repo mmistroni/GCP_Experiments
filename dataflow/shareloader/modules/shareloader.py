@@ -62,7 +62,7 @@ def get_latest_price_yahoo(ticker, bday=1):
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
   dirpath = os.getcwd()
-  loggin.info("current directory is : " + dirpath)
+  logging.info("current directory is : " + dirpath)
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
