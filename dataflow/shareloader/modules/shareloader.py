@@ -69,7 +69,7 @@ def get_latest_price_yahoo(ticker, bday=1):
     return merged
   except Exception as e :
     logging.info('Exception in loading latest prices:{}'.format(str(e)))
-    return pd.DataFrame(columns=[symbol])
+    return pd.DataFrame(columns=[ticker])
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
