@@ -34,9 +34,19 @@ class XyzOptions(PipelineOptions):
     parser.add_argument('--token')
 
 
-def get_tickers():
-    return['AAPL', 'AMZN', 'MSFT']
 
+def retrieve_tickers(token):
+   nyse_symbols = requests.get(
+        'https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
+    # nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
+   return [d['symbol'] for d in nyse_symbols if d['type'].lower() =='cs']
+
+
+def get_tickers(token):
+    logging.info('Retreiving tickers using token:{}'.format(token))
+    tickers = retrieve_tickers(token)
+    logging.info('We have retrieved {} tokens'.format(len(tickers)))
+    return tickers
 
 
 def get_data(ticker, dt, busdays=1):
