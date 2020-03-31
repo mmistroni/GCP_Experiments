@@ -173,6 +173,6 @@ class SeekingalphaCorporateSpider(scrapy.Spider):
         yield response.follow(next_page, callback=self.parse, headers=headers)
 
 
-python -m shares_main  --runner=dataflow --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/shares_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp
+python -m shares_main  --runner=DirectRunner    --project=datascience-projets --template_location=gs://mm_dataflow_bucket/templates/shares_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp --token=sk_98e397d4bee940488e1f48e9b419508f
 
 
