@@ -19,7 +19,7 @@ import requests
 import os
 import pandas as pd
 import pandas_datareader.data as dr
-from datetime import date
+from datetime import date, datetime
 from .metrics import compute_metrics
 from pandas.tseries.offsets import BDay
 import logging
@@ -84,14 +84,26 @@ def run(argv=None, save_main_session=True):
   print('Busdays:{}'.format(pipeline_options.business_days))
   logging.info('token provided is:{}'.format(pipeline_options.token))
 
+  destination = 'gs://mm_dataflow_bucket/outputs/shareprices_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+  logging.info('writing to:{}'.format(destination))
+
+
   p4 = beam.Pipeline(options=pipeline_options)
+
 
   lines = (
        p4
        #| 'generate master url' >>beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx'])
        | 'Sampling Data' >> beam.Create(get_tickers(pipeline_options.token))
        | 'Getting Latest Prices' >> beam.Map(lambda symbol: get_latest_price_yahoo(symbol, pipeline_options.business_days))
-       | 'Printing Out Results' >> beam.Map(print)
+       | 'Mapping toDICT' >> beam.Map(lambda df: df.to_dict())
+       | 'CSV FORMAT' >> beam.Map(lambda dfdict: ','.join(
+                                    [dfdict['Symbol'][0],dfdict['Adj Close'][0], dfdict['Prev Close'][0],
+                                     dfdict['Volume'][0], dfdict['Prev Volume'][0], dfdict['Diff'][0],
+                                     dfdict['Vol Diff'][0]]))
+       | 'WRITE TO BUCKET' >> beam.io.WriteToText(
+                destination, file_name_suffix='.csv', header='symbol,adj_close,prev_close,volume,prev_volume,diff,vol_diff')
+       #| 'Printing Out Results' >> beam.Map(print)
 
   )
   p4.run().wait_until_finish()
