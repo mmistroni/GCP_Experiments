@@ -46,7 +46,7 @@ def get_tickers(token):
     logging.info('Retreiving tickers using token:{}'.format(token))
     tickers = retrieve_tickers(token)
     logging.info('We have retrieved {} tokens'.format(len(tickers)))
-    return tickers
+    return tickers[0:10]
 
 
 def get_data(ticker, dt, busdays=1):
@@ -98,9 +98,10 @@ def run(argv=None, save_main_session=True):
        | 'Getting Latest Prices' >> beam.Map(lambda symbol: get_latest_price_yahoo(symbol, pipeline_options.business_days))
        | 'Mapping toDICT' >> beam.Map(lambda df: df.to_dict())
        | 'CSV FORMAT' >> beam.Map(lambda dfdict: ','.join(
-                                    [dfdict['Symbol'][0],dfdict['Adj Close'][0], dfdict['Prev Close'][0],
-                                     dfdict['Volume'][0], dfdict['Prev Volume'][0], dfdict['Diff'][0],
-                                     dfdict['Vol Diff'][0]]))
+                                    [dfdict['Symbol'][0], str(dfdict['Adj Close'][0]), str(dfdict['Prev Close'][0]),
+                                     str(dfdict['Volume'][0]), str(dfdict['Prev Volume'][0]),
+                                     str(dfdict['Diff'][0]),
+                                     str(dfdict['Vol Diff'][0]])))
        | 'WRITE TO BUCKET' >> beam.io.WriteToText(
                 destination, file_name_suffix='.csv', header='symbol,adj_close,prev_close,volume,prev_volume,diff,vol_diff')
        #| 'Printing Out Results' >> beam.Map(print)

@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="104" column="122" selection-start-line="104" selection-start-column="122" selection-end-line="104" selection-end-column="122" />
+            <state relative-caret-position="474">
+              <caret line="103" column="66" selection-start-line="103" selection-start-column="66" selection-end-line="103" selection-end-column="66" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -28,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/howtorun.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
+            <state relative-caret-position="238">
               <caret line="14" column="72" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="72" />
             </state>
           </provider>
@@ -103,7 +103,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -142,6 +141,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -188,8 +188,8 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.45008183" visible="true" weight="0.065476194" />
-      <window_info id="Structure" order="1" sideWeight="0.5499182" side_tool="true" visible="true" weight="0.065476194" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.44844517" visible="true" weight="0.065476194" />
+      <window_info id="Structure" order="1" sideWeight="0.5515548" side_tool="true" visible="true" weight="0.065476194" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -308,9 +308,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="392">
@@ -331,22 +328,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/howtorun.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="14" column="72" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="104" column="122" selection-start-line="104" selection-start-column="122" selection-end-line="104" selection-end-column="122" />
+        <state relative-caret-position="474">
+          <caret line="103" column="66" selection-start-line="103" selection-start-column="66" selection-end-line="103" selection-end-column="66" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/howtorun.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="72" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
 </project>
