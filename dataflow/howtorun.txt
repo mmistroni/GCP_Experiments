@@ -1,3 +1,25 @@
+==== USING REST API
+gs://mm_dataflow_bucket/templates/shares_pipeline_template
+
+Need to send a POST request to the following URL
+https://dataflow.googleapis.com/v1b3/projects/{projectId}/templates:launch?gsPath=gs://mm_dataflow_bucket/templates/shares_pipeline_template
+
+{
+  "jobName": string,
+  "parameters": {
+    "token": "sk_98e397d4bee940488e1f48e9b419508f"
+  }
+ }
+
+
+curl -v -H "Content-Type: application/json" POST https://dataflow.googleapis.com/v1b3/projects/datascience-projects/templates:launch?gsPath=gs://mm_dataflow_bucket/templates/shares_pipeline_template -d "{\"jobName\":\"rest-shareloader-launch\", \"description\":\"foo\", \"amount\":100, \"asOfDate\":\"2018-11-18\"}"
+
+
+
+
+sample  https://stackoverflow.com/questions/52388627/using-python-to-run-a-google-dataflow-template
+
+
 python -m write_to_edgar                 --runner DataflowRunner \
                                          --project datascience-projects \
                                          --temp_location gs://mm_dataflow_bucket/temp
@@ -45,7 +67,26 @@ POST https://dataflow.googleapis.com/v1b3/projects/YOUR_PROJECT_ID/templates:lau
         }
     }
 
-
+### FUTURE POTENTIAL URLS TO MONITOR , from financial modeling prep we can fetch all data like this
+https://financialmodelingprep.com/api/v3/quote/AAPL,FB
+[
+    {
+      "symbol" : "AAPL",
+      "price" : 318.73000000,
+      "changesPercentage" : 1.11000000,
+      "change" : 3.49000000,
+      "dayLow" : 315.06000000,
+      "dayHigh" : 318.74000000,
+      "yearHigh" : 318.74000000,
+      "yearLow" : 151.70000000,
+      "marketCap" : 1397322022912.00000000,
+      "priceAvg50" : 315.24000000,
+      "priceAvg200" : 239.89417000,
+      "volume" : 34454117,
+      "avgVolume" : 26878815,
+      "exhange" : "NASDAQ"
+    },
+We can use this for daily
 
 
 
