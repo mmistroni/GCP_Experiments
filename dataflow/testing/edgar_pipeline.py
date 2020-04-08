@@ -54,7 +54,7 @@ def run(argv=None, save_main_session=True):
              | beam.Map(print))
 
     result = p.run()
-    result.wait_until_finish()
+
     return
 
 

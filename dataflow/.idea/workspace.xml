@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/howtorun.txt" beforeDir="false" afterPath="$PROJECT_DIR$/howtorun.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/testing/edgar_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing/edgar_pipeline.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,10 +14,46 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../cloud_functions/dataflow_clf/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="54">
+              <caret line="15" column="4" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="56" selection-start-line="56" selection-end-line="56" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shareloader/shares_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="51">
+              <caret line="3" column="44" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="44" />
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1224">
-              <caret line="96" column="23" selection-start-line="96" selection-start-column="23" selection-end-line="96" selection-end-column="23" />
+            <state relative-caret-position="318">
+              <caret line="109" column="10" selection-start-line="109" selection-start-column="10" selection-end-line="109" selection-end-column="10" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -25,18 +61,22 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/howtorun.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
+            <state relative-caret-position="153">
+              <caret line="9" column="49" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/../cloud_functions/dataflow_clf/requirements.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="68">
+              <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -83,13 +123,15 @@
         <option value="$PROJECT_DIR$/edgar_flow/modules/create_edgar_template.sh" />
         <option value="$PROJECT_DIR$/edgar_flow/edgar_main.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
-        <option value="$PROJECT_DIR$/testing/edgar_pipeline.py" />
         <option value="$PROJECT_DIR$/shareloader/shares_main.py" />
         <option value="$PROJECT_DIR$/shareloader/modules/metrics.py" />
         <option value="$PROJECT_DIR$/shareloader/setup.py" />
         <option value="$PROJECT_DIR$/scrapy.txt" />
-        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
         <option value="$PROJECT_DIR$/howtorun.txt" />
+        <option value="$PROJECT_DIR$/../cloud_functions/dataflow_clf/requirements.txt" />
+        <option value="$PROJECT_DIR$/../cloud_functions/dataflow_clf/main.py" />
+        <option value="$PROJECT_DIR$/testing/edgar_pipeline.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
       </list>
     </option>
   </component>
@@ -115,17 +157,6 @@
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
-              <item name="modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
               <item name="shareloader" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -133,11 +164,6 @@
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
               <item name="shareloader" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="testing" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -146,6 +172,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../cloud_functions/dataflow_clf/requirements.txt" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -189,8 +216,8 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.44680852" visible="true" weight="0.065476194" />
-      <window_info id="Structure" order="1" sideWeight="0.5531915" side_tool="true" visible="true" weight="0.065476194" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.44026187" visible="true" weight="0.27827382" />
+      <window_info id="Structure" order="1" sideWeight="0.55973816" side_tool="true" visible="true" weight="0.27827382" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -292,30 +319,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/shares_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="3" column="44" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/beam_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="680">
           <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="28" selection-start-line="22" selection-end-line="28" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -329,23 +336,60 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
+    <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../cloud_functions/dataflow_clf/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1224">
-          <caret line="96" column="23" selection-start-line="96" selection-start-column="23" selection-end-line="96" selection-end-column="23" />
+        <state relative-caret-position="54">
+          <caret line="15" column="4" selection-start-line="15" selection-start-column="4" selection-end-line="15" selection-end-column="4" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/howtorun.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="2" selection-start-line="10" selection-start-column="2" selection-end-line="10" selection-end-column="2" />
+        <state relative-caret-position="153">
+          <caret line="9" column="49" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../cloud_functions/dataflow_clf/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="56" selection-start-line="56" selection-end-line="56" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/shares_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="44" selection-start-line="3" selection-start-column="21" selection-end-line="3" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="109" column="10" selection-start-line="109" selection-start-column="10" selection-end-line="109" selection-end-column="10" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

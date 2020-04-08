@@ -107,7 +107,7 @@ def run(argv=None, save_main_session=True):
        #| 'Printing Out Results' >> beam.Map(print)
 
   )
-  p4.run().wait_until_finish()
+  p4.run()
 
 
 if __name__ == '__main__':
