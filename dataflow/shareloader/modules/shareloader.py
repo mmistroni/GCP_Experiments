@@ -46,7 +46,7 @@ def get_tickers(token):
     logging.info('Retreiving tickers using token:{}'.format(token))
     tickers = retrieve_tickers(token)
     logging.info('We have retrieved {} tokens'.format(len(tickers)))
-    return tickers[0:10]
+    return tickers[0:3]
 
 
 def get_data(ticker, dt, busdays=1):
