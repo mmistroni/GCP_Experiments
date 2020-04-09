@@ -85,7 +85,7 @@ def run(argv=None, save_main_session=True):
                                               create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
   )
-  p4.run().wait_until_finish()
+  p4.run()
 
 
 if __name__ == '__main__':
