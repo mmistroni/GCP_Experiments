@@ -15,6 +15,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import re, requests
 from bs4 import BeautifulSoup
+from datetime import datetime
+
 
 quarters = ['QTR1', 'QTR2', 'QTR3', 'QTR4']
 full_dir = "https://www.sec.gov/Archives/edgar/full-index/{year}/{QUARTER}/"
@@ -47,12 +49,15 @@ def run(argv=None, save_main_session=True):
 
     print("=== readign from textfile:{}".format(pipeline_options.abc))
 
+    destination = 'gs://mm_dataflow_bucket/pipeline_test_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+
     lines = (p
              | beam.Create(['One', 'two', 'Three']
 
                            )
-             | beam.Map(print))
-
+             #| beam.Map(print))
+             | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination)
+             )
     result = p.run()
 
     return

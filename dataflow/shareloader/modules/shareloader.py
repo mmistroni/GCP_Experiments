@@ -107,6 +107,7 @@ def run(argv=None, save_main_session=True):
 
   )
   p4.run()
+  return
 
 
 if __name__ == '__main__':
