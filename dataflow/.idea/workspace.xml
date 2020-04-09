@@ -15,10 +15,31 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="104" column="50" selection-start-line="104" selection-start-column="50" selection-end-line="104" selection-end-column="50" />
+            <state relative-caret-position="417">
+              <caret line="105" column="7" selection-start-line="105" selection-start-column="7" selection-end-line="105" selection-end-column="7" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/beam_test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="178">
+              <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="281">
+              <caret line="53" column="31" lean-forward="true" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -109,6 +130,11 @@
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
               <item name="shareloader" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="testing" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -255,25 +281,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/beam_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="56" selection-start-line="56" selection-end-line="56" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/howtorun.txt">
       <provider selected="true" editor-type-id="text-editor">
@@ -329,10 +338,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/beam_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="178">
+          <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="53" column="31" lean-forward="true" selection-start-line="53" selection-start-column="13" selection-end-line="53" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="104" column="50" selection-start-line="104" selection-start-column="50" selection-end-line="104" selection-end-column="50" />
+        <state relative-caret-position="417">
+          <caret line="105" column="7" selection-start-line="105" selection-start-column="7" selection-end-line="105" selection-end-column="7" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
