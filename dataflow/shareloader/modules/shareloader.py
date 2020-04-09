@@ -84,7 +84,7 @@ def run(argv=None, save_main_session=True):
   print('Busdays:{}'.format(pipeline_options.business_days))
   logging.info('token provided is:{}'.format(pipeline_options.token))
 
-  destination = 'gs://mm_dataflow_bucket/shareprices_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+  destination = 'gs://datascience-projects.appspot.com/shareprices_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
   logging.info('writing to:{}'.format(destination))
 
 
