@@ -102,8 +102,7 @@ def run(argv=None, save_main_session=True):
                                      str(dfdict['Volume'][0]), str(dfdict['Prev Volume'][0]),
                                      str(dfdict['Diff'][0]),
                                      str(dfdict['Vol Diff'][0])]))
-       | 'WRITE TO BUCKET' >> beam.io.WriteToText(
-                destination, file_name_suffix='.csv', header='symbol,adj_close,prev_close,volume,prev_volume,diff,vol_diff')
+       | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination)
        #| 'Printing Out Results' >> beam.Map(print)
 
   )
