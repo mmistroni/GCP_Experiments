@@ -14,7 +14,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import re, requests
-from datetime import datetime
+from datetime import datetime, date
 from collections import OrderedDict
 import requests
 
@@ -57,8 +57,9 @@ def get_prices(ticker):
             str(historical_data['change']), str(historical_data['volume'])]
     except Exception as e :
         logging.info('Exception retrieving ticker for {}:{}'.format(ticker, str(e)))
-        return [historical_data['date'], '{}-{}'.format(ticker, 'Exception'), '0.0',
+        return [date.today().strftime('%Y-%m-%d'), '{}-{}'.format(ticker, 'Exception'), '0.0',
                 '0.0', '0.0']
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
