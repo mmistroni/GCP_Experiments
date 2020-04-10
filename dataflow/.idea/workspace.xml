@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/bin/create_edgar_template.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bin/create_shareloader_template.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shareloader.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -12,11 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="356">
-              <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+            <state relative-caret-position="74">
+              <caret line="81" column="48" selection-start-line="81" selection-start-column="48" selection-end-line="81" selection-end-column="48" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -25,9 +28,36 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="261" selection-start-line="1" selection-start-column="261" selection-end-line="1" selection-end-column="261" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/bin/create_edgar_template.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="68" selection-start-line="1" selection-start-column="68" selection-end-line="1" selection-end-column="68" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/howtorun.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="219">
+              <caret line="45" lean-forward="true" selection-start-line="43" selection-end-line="45" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/beam_test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="455">
+            <state relative-caret-position="680">
               <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
             </state>
           </provider>
@@ -36,7 +66,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="412">
+            <state relative-caret-position="714">
               <caret line="59" column="14" selection-start-line="59" selection-start-column="14" selection-end-line="59" selection-end-column="14" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
@@ -67,6 +97,7 @@
       <find>print</find>
       <find>logger</find>
       <find>token</find>
+      <find>edgar_main</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -98,6 +129,8 @@
         <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
         <option value="$PROJECT_DIR$/testing/edgar_pipeline.py" />
         <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
+        <option value="$PROJECT_DIR$/bin/create_shareloader_template.sh" />
+        <option value="$PROJECT_DIR$/bin/create_edgar_template.sh" />
       </list>
     </option>
   </component>
@@ -123,18 +156,12 @@
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
-              <item name="modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="testing" type="462c0819:PsiDirectoryNode" />
+              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -148,15 +175,16 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\marco\GCP_Experiments\dataflow\shareloader" />
-      <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow\modules" />
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
       <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\modules" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\bin" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\shareloader" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -188,8 +216,8 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.43535188" weight="0.27827382" />
-      <window_info id="Structure" order="1" sideWeight="0.5646481" side_tool="true" weight="0.27827382" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.43207857" visible="true" weight="0.27827382" />
+      <window_info id="Structure" order="1" sideWeight="0.56792146" side_tool="true" visible="true" weight="0.27827382" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -206,25 +234,17 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
-    <layout-to-restore>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.43535188" visible="true" weight="0.27827382" />
-      <window_info id="Structure" order="1" sideWeight="0.5646481" side_tool="true" visible="true" weight="0.27827382" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Terminal" order="8" />
-      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/shareloader.py</url>
+          <line>64</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$USER_HOME$/ReactProjects/React/react-provision-app/node_modules/react-datepicker/dist/react-datepicker.min.js">
@@ -303,13 +323,6 @@
     <entry file="file://$USER_HOME$/CloudDataFlow/Lib/site-packages/yaml/tokens.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/howtorun.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="217" lean-forward="true" selection-start-line="217" selection-end-line="217" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../cloud_functions/dataflow_clf/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="187">
@@ -359,14 +372,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/beam_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="455">
+        <state relative-caret-position="680">
           <caret line="59" column="49" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="49" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="412">
+        <state relative-caret-position="714">
           <caret line="59" column="14" selection-start-line="59" selection-start-column="14" selection-end-line="59" selection-end-column="14" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
@@ -376,11 +389,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+        <state relative-caret-position="74">
+          <caret line="81" column="48" selection-start-line="81" selection-start-column="48" selection-end-line="81" selection-end-column="48" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/howtorun.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="219">
+          <caret line="45" lean-forward="true" selection-start-line="43" selection-end-line="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="261" selection-start-line="1" selection-start-column="261" selection-end-line="1" selection-end-column="261" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/create_edgar_template.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="68" selection-start-line="1" selection-start-column="68" selection-end-line="1" selection-end-column="68" />
         </state>
       </provider>
     </entry>

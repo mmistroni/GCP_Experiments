@@ -34,19 +34,14 @@ class XyzOptions(PipelineOptions):
     parser.add_argument('--token')
 
 
-
 def retrieve_tickers(token):
-   nyse_symbols = requests.get(
-        'https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
-    # nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
-   return [d['symbol'] for d in nyse_symbols if d['type'].lower() =='cs']
+  all_stocks = requests.get('https://financialmodelingprep.com/api/v3/company/stock/list').json()['symbolsList']
+  return map(lambda d: d['symbol'], all_stocks)
 
 
 def get_tickers(token):
     logging.info('Retreiving tickers using token:{}'.format(token))
-    tickers = retrieve_tickers(token)
-    logging.info('We have retrieved {} tokens'.format(len(tickers)))
-    return tickers[0:3]
+    return retrieve_tickers(token)
 
 
 def get_data(ticker, dt, busdays=1):
@@ -84,7 +79,7 @@ def run(argv=None, save_main_session=True):
   print('Busdays:{}'.format(pipeline_options.business_days))
   logging.info('token provided is:{}'.format(pipeline_options.token))
 
-  destination = 'gs://datascience-projects.appspot.com/shareprices_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+  destination = 'gs://mm_dataflow_bucket/outputs/shareprices_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
   logging.info('writing to:{}'.format(destination))
 
 
@@ -95,15 +90,15 @@ def run(argv=None, save_main_session=True):
        p4
        #| 'generate master url' >>beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx'])
        | 'Sampling Data' >> beam.Create(get_tickers(pipeline_options.token))
-       | 'Getting Latest Prices' >> beam.Map(lambda symbol: get_latest_price_yahoo(symbol, pipeline_options.business_days))
-       | 'Mapping toDICT' >> beam.Map(lambda df: df.to_dict())
-       | 'CSV FORMAT' >> beam.Map(lambda dfdict: ','.join(
-                                    [dfdict['Symbol'][0], str(dfdict['Adj Close'][0]), str(dfdict['Prev Close'][0]),
-                                     str(dfdict['Volume'][0]), str(dfdict['Prev Volume'][0]),
-                                     str(dfdict['Diff'][0]),
-                                     str(dfdict['Vol Diff'][0])]))
-       | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination)
-       #| 'Printing Out Results' >> beam.Map(print)
+       #| 'Getting Latest Prices' >> beam.Map(lambda symbol: get_latest_price_yahoo(symbol, pipeline_options.business_days))
+       #| 'Mapping toDICT' >> beam.Map(lambda df: df.to_dict())
+       #| 'CSV FORMAT' >> beam.Map(lambda dfdict: ','.join(
+       #                             [dfdict['Symbol'][0], str(dfdict['Adj Close'][0]), str(dfdict['Prev Close'][0]),
+       #                              str(dfdict['Volume'][0]), str(dfdict['Prev Volume'][0]),
+       #                              str(dfdict['Diff'][0]),
+       #                              str(dfdict['Vol Diff'][0])]))
+       |'WRITE TO BUCKET' >> beam.io.WriteToText(destination)
+       # 'Printing Out Results' >> beam.Map(print)
 
   )
   p4.run()
