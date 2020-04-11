@@ -27,7 +27,7 @@ class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--abc')
+        parser.add_argument('--abc', default='')
         parser.add_argument('--xyz', default='end')
 
 
@@ -74,7 +74,7 @@ def run(argv=None, save_main_session=True):
 
     logging.info("=== readign from textfile:{}".format(pipeline_options.abc))
 
-    destination = 'gs://mm_dataflow_bucket/outputs/pipeline_test_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_test_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
 
     logging.info('====== Destination is :{}'.format(destination))
 
@@ -82,7 +82,8 @@ def run(argv=None, save_main_session=True):
              | 'Get List of Tickers' >> beam.Create(get_tickers())
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol))
              | 'Writing to CSV' >> beam.Map(lambda lst: ','.join(lst))
-             | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, header='date,symbol,adj_close,change,volume')
+             | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, header='date,symbol,adj_close,change,volume',
+                                                        num_shards=1)
              )
     result = p.run()
 

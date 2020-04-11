@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/create_edgar_template.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/bin/create_shareloader_template.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/bin/create_shareloader_template.bat" beforeDir="false" afterPath="$PROJECT_DIR$/bin/create_shareloader_template.bat" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shareloader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/testing/edgar_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/testing/edgar_pipeline.py" afterDir="false" />
     </list>
@@ -16,11 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="61" lean-forward="true" selection-start-line="49" selection-end-line="61" />
+            <state relative-caret-position="434">
+              <caret line="94" column="9" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -29,19 +28,28 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.bat">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" column="199" selection-start-line="1" selection-start-column="199" selection-end-line="1" selection-end-column="199" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/howtorun.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
+            <state relative-caret-position="748">
               <caret line="44" column="148" selection-start-line="44" selection-start-column="99" selection-end-line="44" selection-end-column="148" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="436">
-              <caret line="59" column="33" selection-start-line="59" selection-start-column="33" selection-end-line="59" selection-end-column="33" />
+            <state relative-caret-position="323">
+              <caret line="76" column="63" selection-end-line="94" selection-end-column="9" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -74,8 +82,8 @@
       <find>edgar_main</find>
       <find>logging</find>
       <find>staging</find>
-      <find>bs</find>
       <find>dirpath</find>
+      <find>bs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -107,16 +115,17 @@
         <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
         <option value="$PROJECT_DIR$/bin/create_edgar_template.sh" />
         <option value="$PROJECT_DIR$/bin/create_shareloader_template.sh" />
-        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
+        <option value="$PROJECT_DIR$/bin/create_shareloader_template.bat" />
         <option value="$PROJECT_DIR$/testing/edgar_pipeline.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="235" />
-    <option name="y" value="54" />
+    <option name="x" value="293" />
+    <option name="y" value="223" />
     <option name="width" value="975" />
-    <option name="height" value="463" />
+    <option name="height" value="471" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -130,6 +139,11 @@
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="bin" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
@@ -197,11 +211,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.43207857" visible="true" weight="0.13616072" />
-      <window_info id="Structure" order="1" sideWeight="0.56792146" side_tool="true" visible="true" weight="0.13616072" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4304419" visible="true" weight="0.13616072" />
+      <window_info id="Structure" order="1" sideWeight="0.5695581" side_tool="true" visible="true" weight="0.13616072" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -333,20 +347,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bin/create_edgar_template.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="68" selection-start-line="1" selection-start-column="68" selection-end-line="1" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="6" selection-start-column="6" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/bin/create_edgar_template.sh" />
+    <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.sh" />
     <entry file="file://$PROJECT_DIR$/beam_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-648">
@@ -363,25 +365,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/howtorun.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
+        <state relative-caret-position="748">
           <caret line="44" column="148" selection-start-line="44" selection-start-column="99" selection-end-line="44" selection-end-column="148" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
+    <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.bat">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="61" lean-forward="true" selection-start-line="49" selection-end-line="61" />
+        <state relative-caret-position="17">
+          <caret line="1" column="199" selection-start-line="1" selection-start-column="199" selection-end-line="1" selection-end-column="199" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="76" column="63" selection-end-line="94" selection-end-column="9" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="436">
-          <caret line="59" column="33" selection-start-line="59" selection-start-column="33" selection-end-line="59" selection-end-column="33" />
+        <state relative-caret-position="434">
+          <caret line="94" column="9" selection-start-line="94" selection-start-column="9" selection-end-line="94" selection-end-column="9" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
           </folding>
