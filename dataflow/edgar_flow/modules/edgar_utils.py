@@ -128,36 +128,6 @@ def find_current_year(current_date):
     return edgar_year
 
 
-class EmailSender(beam.DoFn):
-    def __init__(self, recipients='mmistroni@gmal.com'):
-        self.recipients = recipients.split(',')
-
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-    def process(self, element):
-        print('Sending email...')
-        message = Mail(
-            from_email='from_email@example.com',
-            to_emails=self.recipients,
-            subject='Sending with Twilio SendGrid is Fun',
-            html_content=element)
-
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
-
-        sg = SendGridAPIClient('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')
-        response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
-
 
 
 
