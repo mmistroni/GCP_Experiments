@@ -55,7 +55,6 @@ class EmailSender(beam.DoFn):
             message.add_personalization(pers)
 
 
-        sg = SendGridAPIClient('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')
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
 
