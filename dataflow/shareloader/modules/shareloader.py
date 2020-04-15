@@ -19,10 +19,6 @@ from collections import OrderedDict
 import requests
 
 
-quarters = ['QTR1', 'QTR2', 'QTR3', 'QTR4']
-full_dir = "https://www.sec.gov/Archives/edgar/full-index/{year}/{QUARTER}/"
-
-
 class XyzOptions(PipelineOptions):
 
     @classmethod
@@ -74,7 +70,7 @@ def run(argv=None, save_main_session=True):
 
     logging.info("=== readign from textfile:{}".format(pipeline_options.abc))
 
-    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_test_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
+    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
 
     logging.info('====== Destination is :{}'.format(destination))
 

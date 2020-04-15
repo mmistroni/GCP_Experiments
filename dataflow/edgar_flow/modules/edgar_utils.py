@@ -13,8 +13,10 @@ from datetime import date, datetime
 from itertools import groupby
 import requests
 from apache_beam.io.gcp.internal.clients import bigquery
+from datetime import date, datetime
 import re, requests
 from bs4 import BeautifulSoup
+import logging
 
 
 class ReadRemote(beam.DoFn):
@@ -117,6 +119,46 @@ def generate_edgar_urls_for_year(year):
              'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/']
     urls = map(lambda b_url: b_url.format(year), test_urls)
     return generate_master_urls(urls)
+
+
+def find_current_year(current_date):
+    current_month = current_date.month
+    edgar_year = current_date.year
+    logging.info('Year to use is{}'.format(edgar_year))
+    return edgar_year
+
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients='mmistroni@gmal.com'):
+        self.recipients = recipients.split(',')
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+    def process(self, element):
+        print('Sending email...')
+        message = Mail(
+            from_email='from_email@example.com',
+            to_emails=self.recipients,
+            subject='Sending with Twilio SendGrid is Fun',
+            html_content=element)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+
+        sg = SendGridAPIClient('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')
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
+
+
 
 
 
