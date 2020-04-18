@@ -126,10 +126,11 @@ def run(argv=None, save_main_session=True):
     logging.info('====== Destination is :{}'.format(destination))
 
     lines = (p
-             | 'Get List of Tickers' >> beam.Create(['AAPL','AMZN','NFLX','TSLA', 'MSFT'])
+             | 'Get List of Tickers' >> ReadFromText(input_file)
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol))
-             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
-             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
+             | 'Printin gout' >> beam.Map(print)
+             #| 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
+             #| 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )
     p.run()
 
