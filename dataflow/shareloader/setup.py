@@ -7,10 +7,8 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
-    'numpy==1.17.5',
-    'pandas-datareaders==0.7.4',
-    'pandas==0.22.0',
-    
+    'sendgrid==6.2.1'
+
     ]
 
 
