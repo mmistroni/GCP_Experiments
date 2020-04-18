@@ -17,45 +17,97 @@ import re, requests
 from datetime import datetime, date
 from collections import OrderedDict
 import requests
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
 
+
+
+ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients, key):
+        self.recipients = recipients.split(',')
+        self.key = key
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+    def process(self, element):
+        msg, ptf_diff = element
+        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
+        template = \
+            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th>{}</table></body></html>"
+        content = template.format(msg)
+        logging.info('Sending \n {}'.format(content))
+        message = Mail(
+            from_email='from_gcp@example.com',
+            subject='Portfolio change:{}'.format(ptf_diff),
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        sg = SendGridAPIClient(self.key)
+
+        response = sg.send(message)
+        logging.info('Mail Sent:{}'.format(response.status_code))
+        logging.info('Body:{}'.format(response.body))
+
+
+class PortfolioCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return ('', 0.0)
+
+  def add_input(self, accumulator, input):
+    print('Adding{}'.format(input))
+    print('acc is:{}'.format(accumulator))
+    (row_acc, current_diff) = accumulator
+    return row_acc + ROW_TEMPLATE.format(*input), current_diff + input[5]
+
+  def merge_accumulators(self, accumulators):
+    sums, counts = zip(*accumulators)
+    return ''.join(sums), sum(counts)
+
+  def extract_output(self, sum_count):
+    (sum, count) = sum_count
+    return sum_count
 
 class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--abc', default='')
-        parser.add_argument('--xyz', default='end')
+        parser.add_argument('--recipients', default='mmistroni@gmail.com')
+        parser.add_argument('--key')
 
-
-def get_edgar_urls(years: list):
-    print('fetching master.idx for year {}'.format(years))
-    idx_directories = [full_dir.format(year=year, QUARTER=qtr) for year in years for qtr in quarters]
-    return ['{}'.format(edgar_dir) for edgar_dir in idx_directories]
-
-def retrieve_tickers():
-    all_stocks = requests.get('https://financialmodelingprep.com/api/v3/company/stock/list').json()['symbolsList']
-    return map(lambda d: d['symbol'], all_stocks)
-
-
-def get_tickers():
-    logging.info('Retreiving tickers ')
-    tickers =  list(retrieve_tickers())
-    logging.info('We have retrieved {}'.format(len(tickers)))
-    return tickers
-
-def get_prices(ticker):
+def get_prices(tpl):
+    logging.info('Input tpl is:{}'.format(tpl))
+    ticker, qty, original_price = tpl.split(',')
     logging.info('Retreiving prices for {}'.format(ticker))
     full_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/Daily/{}?timeseries=1'.format(ticker)
     result = requests.get(full_url).json()
-    try:
-        historical_data = result['historical'][0]
-        return [historical_data['date'], ticker, str(historical_data['adjClose']),
-            str(historical_data['change']), str(historical_data['volume'])]
-    except Exception as e :
-        logging.info('Exception retrieving ticker for {}:{}'.format(ticker, str(e)))
-        return [date.today().strftime('%Y-%m-%d'), '{}-{}'.format(ticker, 'Exception'), '0.0',
-                '0.0', '0.0']
+    historical_data = result['historical'][0]
+    pandl = historical_data['change'] * int(qty)
+    current_pos = int(qty) * historical_data['adjClose']
+    return [ticker, qty,
+        historical_data['adjClose'],
+        historical_data['change'],
+        historical_data['volume'],
+        pandl, current_pos]
 
+def combine_portfolio(elements):
+    # Calculating variance, we need it for subject
+    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+    combined = map(lambda el: row_template.format(*el), elements)
+    joined = ''.join(list(combined))
+    return (joined, 100.0)
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -67,21 +119,19 @@ def run(argv=None, save_main_session=True):
     p = beam.Pipeline(options=pipeline_options)
 
     logging.info(pipeline_options.get_all_options())
-
-    logging.info("=== readign from textfile:{}".format(pipeline_options.abc))
-
+    input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
+    logging.info("=== readign from textfile:{}".format(input_file))
     destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
 
     logging.info('====== Destination is :{}'.format(destination))
 
     lines = (p
-             | 'Get List of Tickers' >> beam.Create(get_tickers())
+             | 'Get List of Tickers' >> beam.Create(['AAPL','AMZN','NFLX','TSLA', 'MSFT'])
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol))
-             | 'Writing to CSV' >> beam.Map(lambda lst: ','.join(lst))
-             | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, header='date,symbol,adj_close,change,volume',
-                                                        num_shards=1)
+             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
+             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )
-    result = p.run()
+    p.run()
 
     return
 

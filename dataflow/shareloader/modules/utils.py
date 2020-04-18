@@ -40,3 +40,54 @@ def get_prices(symbols):
     all_data = pd.concat(prices_dfs)
     return all_data
 
+
+def create_email_template(input_elements):
+    total_ptf_value = sum(map(lambda elm_list: elm_lst[6], input_elements))
+
+    base_template = '<tr><td>{ticker}</td><td>{qty}</td><td>{}</td></tr>'.format(one, two, three)
+    mapped_str = map(lambda lst: base_template.format(
+
+    ))
+
+
+
+
+
+
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients, key):
+        self.recipients = recipients.split(',')
+        self.key = key
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+
+    def process(self, element):
+        logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        template = "<html><body><table><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
+        content = template.format(element)
+        print('Sending \n {}'.format(content))
+        message = Mail(
+            from_email='from_email@example.com',
+            #to_emails=self.recipients,
+            subject='Sending with Twilio SendGrid is Fun',
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        sg = SendGridAPIClient(self.key)
+
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
+
+
