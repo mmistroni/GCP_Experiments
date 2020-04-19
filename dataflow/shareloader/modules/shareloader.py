@@ -47,7 +47,7 @@ class EmailSender(beam.DoFn):
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='from_gcp@example.com',
+            from_email='gcp_portfolio@mmistroni.com',
             subject='Portfolio change:{}'.format(ptf_diff),
             html_content=content)
 
@@ -128,9 +128,8 @@ def run(argv=None, save_main_session=True):
     lines = (p
              | 'Get List of Tickers' >> ReadFromText(input_file)
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol))
-             | 'Printin gout' >> beam.Map(print)
-             #| 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
-             #| 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
+             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
+             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )
     p.run()
 
