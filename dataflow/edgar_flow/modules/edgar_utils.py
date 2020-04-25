@@ -19,6 +19,10 @@ from bs4 import BeautifulSoup
 import logging
 
 
+
+
+
+
 class ReadRemote(beam.DoFn):
     def process(self, element):
         print('REadRemote processing///{}'.format(element))
@@ -29,7 +33,6 @@ class ParseForm13F(beam.DoFn):
 
     def open_url_content(self, file_path):
         import requests
-        print('Attepmting to open:{}'.format(file_path))
         return requests.get(file_path)
 
     def get_cusips(self, content):
@@ -126,6 +129,31 @@ def find_current_year(current_date):
     edgar_year = current_date.year
     logging.info('Year to use is{}'.format(edgar_year))
     return edgar_year
+
+
+class EdgarCombineFn(beam.CombineFn):
+    def __init__(self):
+        self.ROW_TEMPLATE = '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'
+
+
+    def create_accumulator(self):
+        return ([])
+
+    def add_input(self, accumulator, input):
+        return accumulator + input
+
+    def merge_accumulators(self, accumulators):
+        return accumulators
+
+    def extract_output(self, aggregated):
+        print('Filtering only top 30')
+        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[2], reverse=True)
+        filtered = sorted_accs[0:30]
+        print('Mapping now to string')
+        mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row), filtered)
+        return ''.join(mapped)
+
+
 
 
 

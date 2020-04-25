@@ -112,7 +112,9 @@ class CustomCommands(setuptools.Command):
 # restriction is specified.
 REQUIRED_PACKAGES = [
     'numpy',
-    'beautifulsoup4'
+    'beautifulsoup4',
+    'pandas',
+    'sendgrid==6.2.1'
     ]
 
 
