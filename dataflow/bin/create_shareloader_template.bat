@@ -1,2 +1,0 @@
-cd ..\shareloader
-python -m shares_main  --runner=dataflow    --project=datascience-projects --template_location=gs://mm_dataflow_bucket/templates/shares_pipeline_template --temp_location=gs://mm_dataflow_bucket/temp  --setup ./setup.py

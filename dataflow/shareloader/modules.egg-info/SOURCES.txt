@@ -1,5 +1,7 @@
 setup.py
 modules/__init__.py
+modules/marketstats.py
+modules/marketstats_utils.py
 modules/metrics.py
 modules/shareloader.py
 modules/utils.py

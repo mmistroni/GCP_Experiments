@@ -1,0 +1,16 @@
+{
+  "description": "An example pipeline that collect market stats.",
+  "name": "Market Stats",
+  "parameters": [
+    {
+      "name": "key",
+      "helpText": "IEX API",
+      "label": "IEXAPI"
+    },
+    {
+      "name": "sendgridkey",
+      "helpText": "SendGrid key",
+      "label": "SendgRidKey"
+    }
+  ]
+}

@@ -7,7 +7,7 @@ import re
 from past.builtins import unicode
 from datetime import datetime
 import apache_beam as beam
-from apache_beam.io import ReadFromText
+from apache_beam.io import ReadFromText,ReadAllFromText
 from apache_beam.io import WriteToText
 from apache_beam.metrics import Metrics
 from apache_beam.metrics.metric import MetricsFilter
@@ -27,10 +27,12 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients')
+        parser.add_argument('--key')
 
 class EmailSender(beam.DoFn):
-    def __init__(self, recipients):
+    def __init__(self, recipients, key):
         self.recipients = recipients.split(',')
+        self.key = key
 
     def _build_personalization(self, recipients):
         personalizations = []
@@ -44,16 +46,20 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        template = "<html><body><table><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
+        content = template.format(element)
+        print('Sending \n {}'.format(content))
         message = Mail(
             from_email='from_email@example.com',
             #to_emails=self.recipients,
             subject='Sending with Twilio SendGrid is Fun',
-            html_content='<strong>and easy to do anywhere, even with Python</strong>')
+            html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
         for pers in personalizations:
             message.add_personalization(pers)
 
+        sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
@@ -67,6 +73,10 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     p = beam.Pipeline(options=pipeline_options)
 
+    input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
+
+    logging.info('====key is:{}'.format(pipeline_options.key))
+
     logging.info(pipeline_options.get_all_options())
 
     logging.info("=== sending to recipients:{}".format(pipeline_options.recipients))
@@ -76,11 +86,16 @@ def run(argv=None, save_main_session=True):
     logging.info('====== Destination is :{}'.format(destination))
 
     lines = (p
-             | 'Get List of Tickers' >> beam.Create(['A sample list'])
-             | 'Sending to Email' >> beam.ParDo(EmailSender(pipeline_options.recipients))
+             | 'Get List of Tickers' >> ReadFromText(input_file)
+             | 'Split fields'  >> beam.Map(lambda item:item.split(','))
+             | 'Map to String' >> beam.MapTuple(lambda one, two, three: '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(one, two, three))
+             | 'Combine' >>  beam.CombineGlobally(lambda elements: ''.join(elements))
+             | 'Print out' >> beam.Map(print)
+             #| 'Sending to Email' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )
     result = p.run()
 
+    print('Result is:{}'.format(result))
     return
 
 

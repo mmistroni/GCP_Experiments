@@ -62,23 +62,6 @@ class EmailSender(beam.DoFn):
         logging.info('Body:{}'.format(response.body))
 
 
-class PortfolioCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return ('', 0.0)
-
-  def add_input(self, accumulator, input):
-    print('Adding{}'.format(input))
-    print('acc is:{}'.format(accumulator))
-    (row_acc, current_diff) = accumulator
-    return row_acc + ROW_TEMPLATE.format(*input), current_diff + input[5]
-
-  def merge_accumulators(self, accumulators):
-    sums, counts = zip(*accumulators)
-    return ''.join(sums), sum(counts)
-
-  def extract_output(self, sum_count):
-    (sum, count) = sum_count
-    return sum_count
 
 class XyzOptions(PipelineOptions):
 

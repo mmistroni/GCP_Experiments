@@ -45,9 +45,9 @@ class EmailSender(beam.DoFn):
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
-            from_email='from_email@example.com',
+            from_email='gcp_cloud@mmistroni.com',
             #to_emails=self.recipients,
-            subject='Sending with Twilio SendGrid is Fun',
+            subject='Edgar Daily Filings',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
