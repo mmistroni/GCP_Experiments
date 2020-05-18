@@ -1,6 +1,7 @@
 import requests
 import apache_beam as beam
 import logging
+from itertools import chain
 
 def get_all_stocks():
     full_url = 'https://financialmodelingprep.com/api/v3/company/stock/list'
@@ -50,9 +51,35 @@ class MarketBreadthCombineFn(beam.CombineFn):
 
   def extract_output(self, sum_count):
     (hi, lo) = sum_count
-    return 'MarketBreadth: Higher {}, Lower {}, Breadth{}'.format(hi,lo, hi/lo if lo !=0 else 1)
+    return 'MARKET BREADTH:Higher:{}, Lower:{}, Breadth:{}'.format(hi,lo, hi/lo if lo !=0 else 1)
 
 def combine_movers(values, label):
-    return '{}:{}'.format(label, ','.join(values))
+    return ','.join(values)
+
+
+class Market52Week(beam.CombineFn):
+  def create_accumulator(self):
+    return (0.0, 0.0)
+
+  def add_input(self, accumulator, input):
+    (hi_stock, lo_stock) = accumulator
+    if input[1] and input[3] and input[1] > input[3]:
+        hi_stock.append(input[0])
+    if input[1] and input[4] and input[1] < input[4]:
+        lo_stock.append(input[0])
+
+    return hi_stock, lo_stock
+
+  def merge_accumulators(self, accumulators):
+    hi, lo = zip(*accumulators)
+
+    all_hi = chain(*hi)
+    all_low = chain(*lo)
+    return all_hi, all_low
+
+  def extract_output(self, sum_count):
+    (hi, lo) = sum_count
+    return (hi,lo)
+
 
 

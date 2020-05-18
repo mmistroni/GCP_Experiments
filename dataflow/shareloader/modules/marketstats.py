@@ -102,6 +102,7 @@ def run(argv=None, save_main_session=True):
             | 'Find 52Week High' >> beam.Filter(is_above_52wk)
             | 'Mapping Tickers1' >> beam.Map(lambda d: d[0])
             | 'Combine Above' >> beam.CombineGlobally(combine_movers, label='Above 52wk high:')
+            | 'ADD Label' >> beam.Map(lambda txt: 'Above 52 wk:{}'.format(txt))
             )
 
     below_52 = (
@@ -109,13 +110,14 @@ def run(argv=None, save_main_session=True):
             | 'Find 52Week Low' >> beam.Filter(is_below_52wk)
             | 'Mapping Tickers2' >> beam.Map(lambda d: d[0])
             | 'Combine Below' >> beam.CombineGlobally(combine_movers, label='Below 52wk low:')
+            | 'ADD Label2' >> beam.Map(lambda txt: 'Below 52 wk:{}'.format(txt))
 
     )
 
     final = (
             (marketbreadth, above_52, below_52)
             | 'FlattenCombine all' >> beam.Flatten()
-            | 'Combine' >> beam.CombineGlobally(lambda x: '<br>'.join(x))
+            | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
             | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
 

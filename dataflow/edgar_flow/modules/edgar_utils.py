@@ -1,4 +1,5 @@
 import apache_beam as beam
+from datetime import date
 from apache_beam.io import ReadFromText
 from apache_beam.io import WriteToText
 from apache_beam.metrics import Metrics
@@ -17,17 +18,22 @@ from datetime import date, datetime
 import re, requests
 from bs4 import BeautifulSoup
 import logging
-
-
-
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
 
 class ReadRemote(beam.DoFn):
     def process(self, element):
-        print('REadRemote processing///{}'.format(element))
-        data = urllib.request.urlopen(element)  # it's a file like object and works just like a file
-        return [line for line in data]
+        try:
+            logging.info('REadRemote processing///{}'.format(element))
+            data = urllib.request.urlopen(element)  # it's a file like object and works just like a file
+            data =  [line for line in data]
+            logging.info('data has:{}'.format(len(data)))
+            return data
+        except Exception as e:
+            logging.info('Error fetching {}'.format(element))
+            return []
 
 class ParseForm13F(beam.DoFn):
 
@@ -49,7 +55,7 @@ class ParseForm13F(beam.DoFn):
     def _group_data(self, lst):
         all_dict = defaultdict(list)
         if lst:
-            print('Attempting to group..')
+            logging.info('Attempting to group..')
             data = sorted(lst, key=lambda x: x)
             for k, g in groupby(data, lambda x: x):
                 grp = len(list(g))
@@ -116,10 +122,11 @@ def generate_master_urls(all_url):
 
 
 def generate_edgar_urls_for_year(year):
-    test_urls = ['https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/',
-             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/',
-             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/',
-             'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/']
+    test_urls = ['https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/'
+             ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/'
+            # ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/',
+            # ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/'
+              ]
     urls = map(lambda b_url: b_url.format(year), test_urls)
     return generate_master_urls(urls)
 
@@ -153,6 +160,79 @@ class EdgarCombineFn(beam.CombineFn):
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row), filtered)
         return ''.join(mapped)
 
+
+def get_company_stats(tpl):
+    name, ticker, count = tpl
+
+    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}'.format(ticker=ticker)
+    try:
+        data = requests.get(base_url).json()['profile']
+        pdict = dict(PRICE=str(data['price']),
+                     RANGE=data['range'],
+                     BETA=str(data['beta']),
+                     INDUSTRY=data['industry'],
+                     TICKER=ticker)
+        ratings = requests.get('https://financialmodelingprep.com/api/v3/company/rating/{}'.format(ticker)).json()
+        pdict['RATING'] = ratings.get("rating")['recommendation'] if ratings.get("rating") else 'N/A'
+
+        metrics = requests.get(
+            'https://financialmodelingprep.com/api/v3/company/discounted-cash-flow/{}'.format(ticker)).json()
+        pdict['DCF'] = string(metrics.get('dcf'))
+    except Exception as  e:
+        logging.info('Unable to find data for {}:{}'.format(str(tpl), str(e)))
+        pdict = dict(PRICE='0.0',
+                     RANGE='N/A',
+                     BETA='N/A',
+                     INDUSTRY='NOINDUSTRY',
+                     TICKER=ticker,
+                     RATING='N/A',
+                     DCF='NA'
+                      )
+    pdict['CUSIP'] = name
+    pdict['COUNT'] = count
+    pdict['COB'] = datetime.now().strftime('%Y-%m-%d')
+    return pdict
+
+
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
+
+
+class EdgarEmailSender(beam.DoFn):
+    def __init__(self, recipients, key, content):
+        self.recipients = recipients.split(',')
+        self.key = key
+        self.content = content
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+
+    def process(self, element):
+        logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        template = "<html><body><p>Edgar Monthly Results Available at {}</p></body></html>"
+        content = template.format(self.content)
+        print('Sending \n {}'.format(content))
+        message = Mail(
+            from_email='gcp_cloud@mmistroni.com',
+            to_emails=self.recipients,
+            subject='Edgar Monthly Filings',
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        sg = SendGridAPIClient(self.key)
+
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
 
 
 

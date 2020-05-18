@@ -22,6 +22,8 @@ import requests
 import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+from apache_beam.io.gcp.internal.clients import bigquery
+
 
 
 class EmailSender(beam.DoFn):
@@ -65,6 +67,17 @@ bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
 form_type = '13F-HR'
 
 EDGAR_URL = 'https://www.sec.gov/Archives/edgar/daily-index/{year}/{quarter}/master.{current}.idx'
+def get_edgar_table_schema():
+  edgar_table_schema = 'COB:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING'
+  return edgar_table_schema
+
+def get_edgar_table_spec():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='form_13hf_daily')
+
+
 
 
 class XyzOptions(PipelineOptions):
@@ -117,12 +130,25 @@ def run(argv=None, save_main_session=True):
        | 'Combining similar' >> beam.combiners.Count.PerElement()
        | 'Groupring' >> beam.MapTuple(lambda word, count: (word, count))
        | 'Adding Cusip' >> beam.MapTuple(lambda word, count: [word, cusip_to_ticker(word), count])
+  )
+
+  email = (
+      lines
        | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFn())
        | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
-       #| 'Writing to CSV' >> beam.Map(lambda lst: ','.join(lst))
-       #| 'Print out' >> beam.Map(print)
-       #| 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, num_shards=1)
+  )
 
+  big_query = (
+      lines
+      | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=datetime.now().strftime('%Y-%m-%d'),
+                                                                 CUSIP=tpl[0],
+                                                                 TICKER=tpl[1],
+                                                                 COUNT=tpl[2]))
+      | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
+                                              get_edgar_table_spec(),
+                                              schema=get_edgar_table_schema(),
+                                              write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+                                              create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
   )
   p4.run()
   return

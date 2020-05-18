@@ -1,5 +1,12 @@
 {
   "name": "Edgar Dataflow Template",
   "description": "An template for running edgar calculations.",
-  "parameters": []
+  "parameters": [
+    {
+      "name": "year",
+      "helpText": "filing year",
+      "label": "filing year"
+    }
+  
+  ]
 }

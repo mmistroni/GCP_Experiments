@@ -1,0 +1,16 @@
+{
+  "name": "Edgar Dataflow Template Monthly",
+  "description": "An template for running edgar calculations on a monthly basis.",
+ "parameters": [
+    {
+      "name": "sendgridkey",
+      "helpText": "SendGrid key",
+      "label": "SendgRidKey"
+    },
+    {
+      "name": "year",
+      "helpText": "Filing year",
+      "label": "year"
+    }
+  ]  
+}
