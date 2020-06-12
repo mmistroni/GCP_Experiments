@@ -24,6 +24,23 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
+class PortfolioCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return ('', 0.0)
+
+  def add_input(self, accumulator, input):
+    print('Adding{}'.format(input))
+    print('acc is:{}'.format(accumulator))
+    (row_acc, current_diff) = accumulator
+    return row_acc + ROW_TEMPLATE.format(*input), current_diff + input[5]
+
+  def merge_accumulators(self, accumulators):
+    sums, counts = zip(*accumulators)
+    return ''.join(sums), sum(counts)
+
+  def extract_output(self, sum_count):
+    (sum, count) = sum_count
+    return sum_count
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -74,7 +91,7 @@ def get_prices(tpl):
     logging.info('Input tpl is:{}'.format(tpl))
     ticker, qty, original_price = tpl.split(',')
     logging.info('Retreiving prices for {}'.format(ticker))
-    full_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/Daily/{}?timeseries=1'.format(ticker)
+    full_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/Daily/{}?timeseries=1&apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)
     result = requests.get(full_url).json()
     historical_data = result['historical'][0]
     pandl = historical_data['change'] * int(qty)

@@ -164,7 +164,7 @@ class EdgarCombineFn(beam.CombineFn):
 def get_company_stats(tpl):
     name, ticker, count = tpl
 
-    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}'.format(ticker=ticker)
+    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker=ticker)
     try:
         data = requests.get(base_url).json()['profile']
         pdict = dict(PRICE=str(data['price']),
@@ -172,11 +172,11 @@ def get_company_stats(tpl):
                      BETA=str(data['beta']),
                      INDUSTRY=data['industry'],
                      TICKER=ticker)
-        ratings = requests.get('https://financialmodelingprep.com/api/v3/company/rating/{}'.format(ticker)).json()
+        ratings = requests.get('https://financialmodelingprep.com/api/v3/company/rating/{}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)).json()
         pdict['RATING'] = ratings.get("rating")['recommendation'] if ratings.get("rating") else 'N/A'
 
         metrics = requests.get(
-            'https://financialmodelingprep.com/api/v3/company/discounted-cash-flow/{}'.format(ticker)).json()
+            'https://financialmodelingprep.com/api/v3/company/discounted-cash-flow/{}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)).json()
         pdict['DCF'] = string(metrics.get('dcf'))
     except Exception as  e:
         logging.info('Unable to find data for {}:{}'.format(str(tpl), str(e)))

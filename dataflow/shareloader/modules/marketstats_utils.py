@@ -3,12 +3,16 @@ import apache_beam as beam
 import logging
 from itertools import chain
 
-def get_all_stocks():
-    full_url = 'https://financialmodelingprep.com/api/v3/company/stock/list'
-    result = requests.get(full_url).json()["symbolsList"]
-    stocks = list(map(lambda d: d['symbol'], result))
-    logging.info('We fetched {} TICKERS'.format(len(stocks)))
-    return stocks
+def get_all_stocks(iexapikey):
+    return get_all_us_stocks(token)
+
+def get_all_us_stocks(token, security_type='cs', nasdaq=True):
+  nyse_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
+  nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
+  all_symbols = nyse_symbols + nas_symbols if nasdaq else nyse_symbols
+  return [d['symbol'] for d in all_symbols  if d['type'].lower() == security_type]
+
+
 
 
 def get_prices(ticker, iexapikey):

@@ -2,19 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../cloud_functions/companystats/main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../cloud_functions/companystats/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cloud_functions/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cloud_functions/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cloud_functions/marketstats_cls_function/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../cloud_functions/marketstats_cls_function/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_daily_template_metadata" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_metadata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_enhanced2_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_enhanced2_metadata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_metadata" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shareloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../scrapy/sample_run.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../scrapy/sample_run.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,36 +21,22 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py">
+        <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" selection-start-line="19" selection-end-line="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="32" selection-start-line="32" selection-end-line="32" />
+            <state relative-caret-position="119">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
               <folding>
-                <element signature="e#0#26#0" expanded="true" />
+                <element signature="e#0#15#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_template_daily.bat">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_enhanced.bat">
+        <entry file="file://$PROJECT_DIR$/shareloader/modules/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="256" selection-start-column="256" selection-end-column="256" />
+            <state relative-caret-position="51">
+              <caret line="3" column="22" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -62,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1207">
-              <caret line="91" column="7" selection-start-line="91" selection-start-column="7" selection-end-line="91" selection-end-column="7" />
+            <state relative-caret-position="110">
+              <caret line="42" column="20" selection-start-line="42" selection-start-column="20" selection-end-line="42" selection-end-column="20" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -72,10 +54,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shareloader/marketstats_main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="24" selection-start-column="24" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="26" lean-forward="true" selection-end-line="26" />
+            <state relative-caret-position="168">
+              <caret line="90" column="77" selection-start-line="90" selection-start-column="77" selection-end-line="90" selection-end-column="77" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
               </folding>
@@ -94,12 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>PROJEC</find>
-      <find>bigquery</find>
-      <find>ReadRemote</find>
-      <find>ReadAllFromText</find>
-      <find>ReadFromText</find>
-      <find>ParseForm13F</find>
       <find>modules</find>
       <find>module</find>
       <find>logger</find>
@@ -121,6 +106,15 @@
       <find>EdgarE</find>
       <find>RATINGS</find>
       <find>bigq</find>
+      <find>pipeline</find>
+      <find>financi</find>
+      <find>modelingprep</find>
+      <find>PortfolioCombin</find>
+      <find>PortfolioComb</find>
+      <find>_group_data</find>
+      <find>prep</find>
+      <find>retrieve_tickers</find>
+      <find>get_all_stocks</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -158,14 +152,14 @@
         <option value="$PROJECT_DIR$/edgar_flow/setup.py" />
         <option value="$PROJECT_DIR$/edgar_flow/edgar_bq_main.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_bq_reader.py" />
-        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
         <option value="$PROJECT_DIR$/shareloader/marketstats_main.py" />
-        <option value="$PROJECT_DIR$/shareloader/modules/marketstats.py" />
-        <option value="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" />
-        <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
-        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" />
         <option value="$PROJECT_DIR$/edgar_flow/create_edgar_enhanced.bat" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/marketstats.py" />
       </list>
     </option>
   </component>
@@ -197,7 +191,12 @@
             <path>
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
+              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
               <item name="modules" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -259,8 +258,8 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.73730296" visible="true" weight="0.3578869" />
-      <window_info id="Structure" order="1" sideWeight="0.262697" side_tool="true" visible="true" weight="0.3578869" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.72154117" visible="true" weight="0.21205357" />
+      <window_info id="Structure" order="1" sideWeight="0.27845883" side_tool="true" weight="0.2544643" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -272,18 +271,37 @@
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Terminal" order="8" weight="0.49590835" />
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
-      <window_info anchor="bottom" id="Python Console" order="10" visible="true" weight="0.06546645" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.06546645" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.72154117" visible="true" weight="0.2544643" />
+      <window_info id="Structure" order="1" sideWeight="0.27845883" side_tool="true" visible="true" weight="0.2544643" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.49590835" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info active="true" anchor="bottom" id="Python Console" order="10" visible="true" weight="0.06546645" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>20</line>
+          <line>24</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
@@ -301,13 +319,6 @@
     <entry file="file://$PROJECT_DIR$/modules/write_to_edgar.py" />
     <entry file="file://$PROJECT_DIR$/edgar_main.py" />
     <entry file="file://$PROJECT_DIR$/setup.py" />
-    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_metadata">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="1" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/modules/create_edgar_template.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -322,13 +333,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
           <caret line="4" column="7" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/metrics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="816">
-          <caret line="48" column="19" selection-start-line="48" selection-start-column="4" selection-end-line="48" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -379,24 +383,10 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bin/create_shareloader_template.bat" />
-    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="55" column="21" selection-start-line="55" selection-start-column="21" selection-end-line="55" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/howtorun.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="799">
           <caret line="47" selection-start-line="46" selection-end-line="47" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_daily_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="4" column="7" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
         </state>
       </provider>
     </entry>
@@ -421,13 +411,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="22" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/Downloads/templates_edgar_dataflow_template_metadata (1)">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -435,13 +418,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="21" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/marketstats_main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="24" selection-start-column="24" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -462,33 +438,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="202">
-          <caret line="15" column="50" selection-start-line="15" selection-start-column="18" selection-end-line="15" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/testing/run_testing.bat">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+    <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_template_daily.bat" />
+    <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_enhanced.bat" />
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_enhanced2_metadata">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_dataflow_template_metadata" />
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_daily_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="76" column="84" selection-start-line="76" selection-start-column="4" selection-end-line="76" selection-end-column="84" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="51">
+          <caret line="4" column="7" selection-start-line="4" selection-start-column="7" selection-end-line="4" selection-end-column="7" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="223" column="12" selection-start-line="223" selection-start-column="12" selection-end-line="223" selection-end-column="12" />
+        <state relative-caret-position="238">
+          <caret line="38" column="27" selection-start-line="38" selection-start-column="27" selection-end-line="38" selection-end-column="27" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
@@ -497,48 +466,89 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" selection-start-line="19" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1207">
-          <caret line="91" column="7" selection-start-line="91" selection-start-column="7" selection-end-line="91" selection-end-column="7" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="26" lean-forward="true" selection-end-line="26" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
+        <state relative-caret-position="1513">
+          <caret line="110" column="64" selection-start-line="110" selection-start-column="64" selection-end-line="110" selection-end-column="64" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_template_daily.bat">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="816">
+          <caret line="69" column="30" selection-start-line="69" selection-start-column="19" selection-end-line="69" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/create_edgar_enhanced.bat">
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="42" selection-start-line="20" selection-start-column="42" selection-end-line="20" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/testing/edgar_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12">
+          <caret line="71" lean-forward="true" selection-start-line="71" selection-end-line="71" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="55" column="21" selection-start-line="55" selection-start-column="21" selection-end-line="55" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="22" selection-start-line="3" selection-start-column="22" selection-end-line="3" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="110">
+          <caret line="42" column="20" selection-start-line="42" selection-start-column="20" selection-end-line="42" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/marketstats_main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
-          <caret column="256" selection-start-column="256" selection-end-column="256" />
+          <caret column="24" selection-start-column="24" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/marketstats.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="90" column="77" selection-start-line="90" selection-start-column="77" selection-end-line="90" selection-end-column="77" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

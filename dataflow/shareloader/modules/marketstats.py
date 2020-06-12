@@ -88,7 +88,7 @@ def run(argv=None, save_main_session=True):
     logging.info('====== Destination is :{}'.format(destination))
 
     prices = (p
-             | 'Get List of Tickers' >> beam.Create(get_all_stocks())
+             | 'Get List of Tickers' >> beam.Create(get_all_stocks(iexapi_key))
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, iexapi_key))
              | 'Filtering blanks' >> beam.Filter(lambda d: len(d) > 0)
              )

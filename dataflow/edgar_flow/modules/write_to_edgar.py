@@ -25,7 +25,6 @@ test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'
 filename = '{}_{}'.format(form_type, datetime.now().strftime('%Y$m%d-%H%M'))
 
-RUNNER = 'DirectRunner'#'DataflowRunner'
 GC_PROJECT = 'datascience-projects'
 STAGING_BUCKET = 'gs://mm_dataflow_bucket/staging'
 TEMP_BUCKET = 'gs://mm_dataflow_bucket/temp'
@@ -35,7 +34,7 @@ TEMPLATE_BUCKET = 'gs://mm_dataflow_bucket/templates'
 ### BIG QUERY CONFIGS
 ## BIG QUERY SCHEMA
 def get_edgar_table_schema():
-  edgar_table_schema = 'COB:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,INDUSTRY:STRING,BETA:STRING,DCF:STRING'
+  edgar_table_schema = 'EDGAR_YEAR:STRING,COB:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,INDUSTRY:STRING,BETA:STRING,DCF:STRING'
   return edgar_table_schema
 
 def get_edgar_table_spec():
@@ -55,7 +54,8 @@ class EdgarOptions(PipelineOptions):
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
   dirpath = os.getcwd()
-  print("current directory is : " + dirpath)
+  logging.info("current directory is : " + dirpath)
+
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
@@ -103,7 +103,8 @@ def run(argv=None, save_main_session=True):
         )
   write_to_bigquery = (
           lines
-          | 'Map to Another Dict' >> beam.Map(lambda d: dict(COB=d['COB'],CUSIP=d['CUSIP'],
+          | 'Map to Another Dict' >> beam.Map(lambda d: dict(EDGAR_YEAR=pipeline_options.year,
+                                                             COB=d['COB'],CUSIP=d['CUSIP'],
                                                              TICKER=d['TICKER'],COUNT=d['COUNT'],
                                                              INDUSTRY=d['INDUSTRY'],
                                                              BETA=d['BETA'],
