@@ -160,11 +160,12 @@ class EdgarCombineFn(beam.CombineFn):
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row), filtered)
         return ''.join(mapped)
 
-
-def get_company_stats(tpl):
+#TODO this need to be replaced using IEXAPI instead of fmprep
+def get_company_stats(tpl, apikey):
     name, ticker, count = tpl
 
-    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker=ticker)
+    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}?apikey={key}'.format(
+        ticker=ticker, key=apikey)
     try:
         data = requests.get(base_url).json()['profile']
         pdict = dict(PRICE=str(data['price']),

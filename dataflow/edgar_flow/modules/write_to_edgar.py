@@ -48,8 +48,10 @@ class EdgarOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--year', default='2020')
+        parser.add_argument('--year')
+        parser.add_argument('--fmprepkey')
         parser.add_argument('--sendgridkey')
+
 
 def run(argv=None, save_main_session=True):
   parser = argparse.ArgumentParser()
@@ -86,7 +88,7 @@ def run(argv=None, save_main_session=True):
        | 'Groupring' >> beam.MapTuple(lambda word, count: (word, count))
        #| 'sampling again' >> beam.transforms.combiners.Sample.FixedSizeGlobally(20)
        | 'Adding Cusip' >> beam.MapTuple(lambda word, count: (word, cusip_to_ticker(word), count))
-       |'Fetching Statistics and Mapping to BQ' >> beam.Map(lambda tpl: get_company_stats(tpl))
+       |'Fetching Statistics and Mapping to BQ' >> beam.Map(lambda tpl: get_company_stats(tpl, pipeline_options.fmprepkey))
        #| 'Filtering' >> beam.Filter(lambda tpl: tpl[1] > 300)
        #| 'Creating BigQuery Data' >> beam.MapTuple(lambda word, ticker, count: dict(COB=date.today().strftime('%Y-%m-%d'), CUSIP=word, TICKER=ticker,COUNT=count))
        #'YEAR,COB,CUSIP,COUNT,TICKER,INDUSTRY,RANGE'
