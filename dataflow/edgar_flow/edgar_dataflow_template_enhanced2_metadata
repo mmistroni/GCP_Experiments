@@ -9,9 +9,16 @@
     },
     {
       "name": "sendgridkey",
-      "helpText": "SendGrid key",
-      "label": "SendgRidKey"
+      "helpText": "sendgrid key",
+      "label": "sendgrid key"
+    },
+    {
+      "name": "fmprepkey",
+      "helpText": "fm prep key",
+      "label": "fmprep key"
     }
+  
+  
   ]
    
 }

@@ -26,8 +26,9 @@ class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients')
-        parser.add_argument('--key')
+        parser.add_value_provider_argument('--year', type=str)
+        parser.add_argument('--fmprepkey', type=str)
+        parser.add_argument('--sendgridkey', type=str)
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -64,6 +65,10 @@ class EmailSender(beam.DoFn):
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
 
+def add_year(item, year):
+    return '{}={}'.format(item, year)
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -75,27 +80,21 @@ def run(argv=None, save_main_session=True):
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
 
-    logging.info('====key is:{}'.format(pipeline_options.key))
+    logging.info('====sg key is:{}'.format(pipeline_options.sendgridkey))
+    logging.info('===== year is:{}'.format(pipeline_options.year))
+    logging.info('====fmprep key is:{}'.format(pipeline_options.sendgridkey))
 
     logging.info(pipeline_options.get_all_options())
 
-    logging.info("=== sending to recipients:{}".format(pipeline_options.recipients))
-
-    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_test_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
-
-    logging.info('====== Destination is :{}'.format(destination))
 
     lines = (p
              | 'Get List of Tickers' >> ReadFromText(input_file)
-             | 'Split fields'  >> beam.Map(lambda item:item.split(','))
-             | 'Map to String' >> beam.MapTuple(lambda one, two, three: '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'.format(one, two, three))
-             | 'Combine' >>  beam.CombineGlobally(lambda elements: ''.join(elements))
+             | 'Split fields'  >> beam.Map(lambda item:item.split(',')[0])
+             | 'Map to String' >> beam.Map(lambda item: add_year(item, pipeline_options.year.get()))
              | 'Print out' >> beam.Map(print)
-             #| 'Sending to Email' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )
     result = p.run()
 
-    print('Result is:{}'.format(result))
     return
 
 

@@ -153,10 +153,10 @@ class EdgarCombineFn(beam.CombineFn):
         return accumulators
 
     def extract_output(self, aggregated):
-        print('Filtering only top 30')
+        logging.info('Filtering only top 30')
         sorted_accs = sorted(aggregated, key=lambda tpl: tpl[2], reverse=True)
-        filtered = sorted_accs[0:30]
-        print('Mapping now to string')
+        filtered = sorted_accs
+        logging.info('Mapping now to string')
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row), filtered)
         return ''.join(mapped)
 

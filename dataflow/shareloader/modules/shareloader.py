@@ -60,7 +60,7 @@ class EmailSender(beam.DoFn):
         msg, ptf_diff = element
         logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
         template = \
-            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th>{}</table></body></html>"
+            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th><th>Action</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
@@ -86,25 +86,31 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_argument('--key')
+        parser.add_argument('--iexkey')
 
-def get_prices(tpl):
-    logging.info('Input tpl is:{}'.format(tpl))
-    ticker, qty, original_price = tpl.split(',')
-    logging.info('Retreiving prices for {}'.format(ticker))
-    full_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/Daily/{}?timeseries=1&apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)
-    result = requests.get(full_url).json()
-    historical_data = result['historical'][0]
-    pandl = historical_data['change'] * int(qty)
-    current_pos = int(qty) * historical_data['adjClose']
-    return [ticker, qty,
-        historical_data['adjClose'],
-        historical_data['change'],
-        historical_data['volume'],
-        pandl, current_pos]
+
+def get_prices(tpl, iexkey):
+    try:
+        ticker, qty, original_price = tpl.split(',')
+        logging.info('Retreiving prices for {}'.format(ticker))
+        stat_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=iexkey)
+        historical_data = requests.get(stat_url).json()
+        pandl = historical_data['change'] * int(qty)
+        current_pos = int(qty) * historical_data['iexClose']
+        wk52high = historical_data['week52High']
+        return [ticker, qty,
+             historical_data['iexClose'],
+             historical_data['change'],
+             historical_data['latestVolume'],
+             pandl, current_pos, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
+    except Exception as e :
+        print('Excepiton for {}:{}'.format(symbol, str(e)))
+        return []
+
 
 def combine_portfolio(elements):
     # Calculating variance, we need it for subject
-    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
     combined = map(lambda el: row_template.format(*el), elements)
     joined = ''.join(list(combined))
     return (joined, 100.0)
@@ -127,7 +133,7 @@ def run(argv=None, save_main_session=True):
 
     lines = (p
              | 'Get List of Tickers' >> ReadFromText(input_file)
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol))
+             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, pipeline_options.iexkey))
              | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
              | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
              )

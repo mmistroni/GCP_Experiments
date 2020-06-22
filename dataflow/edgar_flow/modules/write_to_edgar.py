@@ -8,6 +8,7 @@ from apache_beam.metrics import Metrics
 from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.options.value_provider import StaticValueProvider
 from itertools import groupby
 from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, get_company_stats,\
                                         EdgarEmailSender
@@ -48,9 +49,9 @@ class EdgarOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--year')
-        parser.add_argument('--fmprepkey')
-        parser.add_argument('--sendgridkey')
+        parser.add_value_provider_argument('--year', type=str)
+        parser.add_value_provider_argument('--fmprepkey', type=str)
+        parser.add_value_provider_argument('--sendgridkey', type=str)
 
 
 def run(argv=None, save_main_session=True):
@@ -61,11 +62,18 @@ def run(argv=None, save_main_session=True):
 
   known_args, pipeline_args = parser.parse_known_args(argv)
 
-  pipeline_options =EdgarOptions()
+  po = PipelineOptions()
+
+
+  pipeline_options = po.view_as(EdgarOptions)
+
   pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-  p4 = beam.Pipeline(options=pipeline_options)
+  p4 = beam.Pipeline(options=po)
   logging.info('Kicking off pipelne for year :{}'.format(pipeline_options.year))
   destination = 'gs://mm_dataflow_bucket/outputs/edgar_quarterly_run_withindustry-{}.csv'.format(datetime.now().strftime('%Y-%m-%d-%H%M'))
+
+
+
 
   lines = (
        p4
@@ -88,7 +96,7 @@ def run(argv=None, save_main_session=True):
        | 'Groupring' >> beam.MapTuple(lambda word, count: (word, count))
        #| 'sampling again' >> beam.transforms.combiners.Sample.FixedSizeGlobally(20)
        | 'Adding Cusip' >> beam.MapTuple(lambda word, count: (word, cusip_to_ticker(word), count))
-       |'Fetching Statistics and Mapping to BQ' >> beam.Map(lambda tpl: get_company_stats(tpl, pipeline_options.fmprepkey))
+       |'Fetching Statistics and Mapping to BQ' >> beam.Map(lambda tpl: get_company_stats(tpl, pipeline_options.fmprepkey ))
        #| 'Filtering' >> beam.Filter(lambda tpl: tpl[1] > 300)
        #| 'Creating BigQuery Data' >> beam.MapTuple(lambda word, ticker, count: dict(COB=date.today().strftime('%Y-%m-%d'), CUSIP=word, TICKER=ticker,COUNT=count))
        #'YEAR,COB,CUSIP,COUNT,TICKER,INDUSTRY,RANGE'
@@ -105,7 +113,7 @@ def run(argv=None, save_main_session=True):
         )
   write_to_bigquery = (
           lines
-          | 'Map to Another Dict' >> beam.Map(lambda d: dict(EDGAR_YEAR=pipeline_options.year,
+          | 'Map to Another Dict' >> beam.Map(lambda d: dict(EDGAR_YEAR='{}'.format(pipeline_options.year.get()),
                                                              COB=d['COB'],CUSIP=d['CUSIP'],
                                                              TICKER=d['TICKER'],COUNT=d['COUNT'],
                                                              INDUSTRY=d['INDUSTRY'],
