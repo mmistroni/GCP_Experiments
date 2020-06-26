@@ -164,23 +164,35 @@ class EdgarCombineFn(beam.CombineFn):
 def get_company_stats(tpl, apikey):
     name, ticker, count = tpl
 
-    base_url = 'https://financialmodelingprep.com/api/v3/company/profile/{ticker}?apikey={key}'.format(
-        ticker=ticker, key=apikey)
-    try:
-        data = requests.get(base_url).json()['profile']
-        pdict = dict(PRICE=str(data['price']),
-                     RANGE=data['range'],
-                     BETA=str(data['beta']),
-                     INDUSTRY=data['industry'],
-                     TICKER=ticker)
-        ratings = requests.get('https://financialmodelingprep.com/api/v3/company/rating/{}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)).json()
-        pdict['RATING'] = ratings.get("rating")['recommendation'] if ratings.get("rating") else 'N/A'
+    return dict(PRICE='0.0',
+                     RANGE='N/A',
+                     BETA='N/A',
+                     INDUSTRY='NOINDUSTRY',
+                     TICKER=ticker,
+                     RATING='N/A',
+                     DCF='NA'
+                      )
 
-        metrics = requests.get(
-            'https://financialmodelingprep.com/api/v3/company/discounted-cash-flow/{}?apikey=79d4f398184fb636fa32ac1f95ed67e6'.format(ticker)).json()
-        pdict['DCF'] = string(metrics.get('dcf'))
+    res = requests.get().json()
+
+    base_url = 'https://cloud.iexapis.com/stable/stock/{}/company?token={}'.format(ticker, apikey)
+    price_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(
+        symbol=ticker, token=apikey)
+    stats_url = 'https://cloud.iexapis.com/stable/stock/{}/stats/?token={}'.format(ticker, apikey)
+
+
+    try:
+        company_data = requests.get(base_url).json()
+        prices_data = requests.get(prices_url).json()
+        stats_data = requests.get(stats_url).json()
+        pdict = dict(PRICE=str(prices_data['latest_price']),
+                     RANGE=str(stats_data['ytdChangePercent']),
+                     BETA=str(stats_data['beta']),
+                     INDUSTRY=company_data['industry'],
+                     TICKER=ticker,
+                     RATINGS='N/A',
+                     DCF='N/A')
     except Exception as  e:
-        logging.info('Unable to find data for {}:{}'.format(str(tpl), str(e)))
         pdict = dict(PRICE='0.0',
                      RANGE='N/A',
                      BETA='N/A',
