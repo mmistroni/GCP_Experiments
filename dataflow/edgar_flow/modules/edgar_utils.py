@@ -164,43 +164,32 @@ class EdgarCombineFn(beam.CombineFn):
 def get_company_stats(tpl, apikey):
     name, ticker, count = tpl
 
-    return dict(PRICE='0.0',
-                     RANGE='N/A',
-                     BETA='N/A',
-                     INDUSTRY='NOINDUSTRY',
-                     TICKER=ticker,
-                     RATING='N/A',
-                     DCF='NA'
-                      )
-
-    res = requests.get().json()
-
     base_url = 'https://cloud.iexapis.com/stable/stock/{}/company?token={}'.format(ticker, apikey)
-    price_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(
-        symbol=ticker, token=apikey)
-    stats_url = 'https://cloud.iexapis.com/stable/stock/{}/stats/?token={}'.format(ticker, apikey)
-
+    price_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=apikey)
+    stats_url = 'https://cloud.iexapis.com/stable/stock/{}/stats?token={}'.format(ticker, apikey)
+    pdict = dict()
 
     try:
         company_data = requests.get(base_url).json()
-        prices_data = requests.get(prices_url).json()
+        pdict['INDUSTRY'] = company_data['industry']
+    except Exception as e:
+        pdict['INDUSTRY'] = base_url + str(e)
+    try :
+        prices_data = requests.get(price_url).json()
+        pdict['PRICE'] = str(prices_data['iexClose'])
+    except Exception as e:
+        pdict['PRICE'] = price_url + str(e)
+    try:
         stats_data = requests.get(stats_url).json()
-        pdict = dict(PRICE=str(prices_data['latest_price']),
-                     RANGE=str(stats_data['ytdChangePercent']),
-                     BETA=str(stats_data['beta']),
-                     INDUSTRY=company_data['industry'],
-                     TICKER=ticker,
-                     RATINGS='N/A',
-                     DCF='N/A')
-    except Exception as  e:
-        pdict = dict(PRICE='0.0',
-                     RANGE='N/A',
-                     BETA='N/A',
-                     INDUSTRY='NOINDUSTRY',
-                     TICKER=ticker,
-                     RATING='N/A',
-                     DCF='NA'
-                      )
+        pdict['RANGE'] = str(stats_data['ytdChangePercent'])
+        pdict['BETA'] = str(stats_data['beta'])
+    except Exception as e:
+        pdict['RANGE'] = stats_url + str(e)
+        pdict['BETA'] = stats_url + str(e)
+
+    pdict['TICKER'] = ticker
+    pdict['RATINGS']= 'N/A'
+    pdict['DCF'] = 'N/A'
     pdict['CUSIP'] = name
     pdict['COUNT'] = count
     pdict['COB'] = datetime.now().strftime('%Y-%m-%d')

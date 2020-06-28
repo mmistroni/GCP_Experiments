@@ -22,7 +22,7 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
 
-ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
 class PortfolioCombineFn(beam.CombineFn):
   def create_accumulator(self):
@@ -60,7 +60,7 @@ class EmailSender(beam.DoFn):
         msg, ptf_diff = element
         logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
         template = \
-            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th><th>Action</th>{}</table></body></html>"
+            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th><th>Total Gain</th><th>Action</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
@@ -97,12 +97,13 @@ def get_prices(tpl, iexkey):
         historical_data = requests.get(stat_url).json()
         pandl = historical_data['change'] * int(qty)
         current_pos = int(qty) * historical_data['iexClose']
+        total_gain = int(qty) * (historical_data['iexClose'] - float(original_price))
         wk52high = historical_data['week52High']
         return [ticker, qty,
              historical_data['iexClose'],
              historical_data['change'],
              historical_data['latestVolume'],
-             pandl, current_pos, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
+             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
     except Exception as e :
         print('Excepiton for {}:{}'.format(symbol, str(e)))
         return []
@@ -110,7 +111,7 @@ def get_prices(tpl, iexkey):
 
 def combine_portfolio(elements):
     # Calculating variance, we need it for subject
-    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
     combined = map(lambda el: row_template.format(*el), elements)
     joined = ''.join(list(combined))
     return (joined, 100.0)

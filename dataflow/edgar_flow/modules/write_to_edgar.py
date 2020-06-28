@@ -46,6 +46,10 @@ def get_edgar_table_spec():
       tableId='form_13hf_data_enhanced')
 
 
+def map_to_year(path, ppln_year):
+    return path.format(ppln_year)
+
+
 class EdgarOptions(PipelineOptions):
 
     @classmethod
@@ -72,19 +76,16 @@ def run(argv=None, save_main_session=True):
   p4 = beam.Pipeline(options=po)
   destination = 'gs://mm_dataflow_bucket/outputs/edgar_quarterly_run_withindustry-{}.csv'.format(datetime.now().strftime('%Y-%m-%d-%H%M'))
 
-  parsed_year = pipeline_options.year.get()
-  logging.info('We parsed year:{}'.format(parsed_year))
-
-
   lines = (
        p4
        #| 'generate master url' >>beam.Create(['https://www.sec.gov/Archives/edgar/full-index/2019/QTR1/master.idx'])
        | 'Sampling Data' >> beam.Create([
-                                         'https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/master.idx'.format(parsed_year),
-                                         'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/master.idx'.format(parsed_year),
-                                         'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/master.idx'.format(parsed_year),
-                                         'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/master.idx'.format(parsed_year)
+                                         'https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/master.idx',
+                                         #'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/master.idx',
+                                         #'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/master.idx',
+                                         #'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/master.idx'
                       ])
+       | 'Map to year'  >> beam.Map(lambda epath: map_to_year(epath, pipeline_options.year.get()))
        | 'readFromText' >> beam.ParDo(ReadRemote())
        | 'map to Str'   >> beam.Map(lambda line:str(line))
        | 'Filter only form 13HF' >> beam.Filter(lambda row: len(row.split('|')) > 4 and form_type in row.split('|')[2])
@@ -100,16 +101,19 @@ def run(argv=None, save_main_session=True):
   write_to_bucket = (
           lines
           | 'Map to String' >> beam.Map(
-                    lambda tpl: '{},{},{},{}'.format(datetime.now().strftime('%Y-%m-%d-%H:%M'),
+                    lambda tpl: '{},{},{},{}'.format(tpl['COB'],
                                                      tpl['CUSIP'], tpl['TICKER'],
-                                                     tpl['COUNT']))
-          | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, header='COB,CUSIP,TICKER,COUNT',
+                                                     tpl['COUNT'],
+                                                     tpl['INDUSTRY'],
+                                                     tpl['BETA']
+                                                     ))
+          | 'WRITE TO BUCKET' >> beam.io.WriteToText(destination, header='COB,CUSIP,TICKER,COUNT,INDUSTRY,BETAs',
                                                 num_shards=1)
         )
   write_to_bigquery = (
           lines
-          | 'Map to Another Dict' >> beam.Map(lambda tpl: dict(EDGAR_year=parsed_year,
-                                                            COB=datetime.now().strftime('%Y-%m-%d'),
+          | 'Map to Another Dict' >> beam.Map(lambda tpl: dict(EDGAR_year=pipeline_options.year.get(),
+                                                            COB=tpl['COB'],
                                                              CUSIP=tpl['CUSIP'],
                                                              TICKER=tpl['TICKER'],
                                                              COUNT=tpl['COUNT'],
