@@ -19,16 +19,30 @@ from collections import OrderedDict
 import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+import pandas_datareader.data as dr
+from apache_beam.io.gcp.internal.clients import bigquery
+from datetime import date
 
+input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
+
+
+def map_to_dict(input_df):
+  dd = input_df.to_dict()
+  return dict(    (k.replace(' ', ''), [vl for vl in v.values()][0]) for k, v in dd.items())
+
+
+def get_prices(ticker, start_date, end_date):
+  try:
+    print('Fetching {} from {} to {}'.format(ticker, start_date, end_date))
+    df = dr.get_data_yahoo(ticker, start_date, end_date)
+    df['Ticker'] = ticker
+    return map_to_dict(df)
+  except Exception as e:
+    print('could not fetch {}'.format(ticker))
 
 
 class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_value_provider_argument('--year', type=str)
-        parser.add_argument('--fmprepkey', type=str)
-        parser.add_argument('--sendgridkey', type=str)
+    pass
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -65,9 +79,38 @@ class EmailSender(beam.DoFn):
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
 
-def add_year(item, year):
-    return '{}={}'.format(item, year)
+def add_year(item):
+    return get_prices(item, date.today(), date.today())
 
+
+def split_fields(line):
+    print('processing {}'.format(line))
+    return line.split(',')[0]
+
+
+def get_edgar_table_schema():
+  edgar_table_schema = 'Ticker:STRING,AdjClose:FLOAT64,Close:FLOAT64,High:FLOAT64,Low:FLOAT64,Open:FLOAT64,Volume:INT64'
+  return edgar_table_schema
+
+def get_edgar_table_spec():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='pipeline_tester')
+
+def run_step_2(p, sink):
+    result =  (p
+            | 'Map to String' >> beam.Map(add_year)
+            | sink
+            )
+
+def run_my_pipeline(p, options, sink):
+    print('We got options:{}'.format(options))
+
+    lines = (p
+             | 'Split fields' >> beam.Map(split_fields)
+             )
+    run_step_2(lines, sink)
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -76,26 +119,19 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    p = beam.Pipeline(options=pipeline_options)
-
-    input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
-
-    logging.info('====sg key is:{}'.format(pipeline_options.sendgridkey))
-    logging.info('===== year is:{}'.format(pipeline_options.year))
-    logging.info('====fmprep key is:{}'.format(pipeline_options.sendgridkey))
-
     logging.info(pipeline_options.get_all_options())
 
+    #sink = beam.Map(print)
 
-    lines = (p
-             | 'Get List of Tickers' >> ReadFromText(input_file)
-             | 'Split fields'  >> beam.Map(lambda item:item.split(',')[0])
-             | 'Map to String' >> beam.Map(lambda item: add_year(item, pipeline_options.year.get()))
-             | 'Print out' >> beam.Map(print)
-             )
-    result = p.run()
+    with beam.Pipeline(options=pipeline_options) as p:
+        source = p | 'Get List of Tickers' >> ReadFromText(input_file)
+        sink = beam.io.WriteToBigQuery(
+            get_edgar_table_spec(),
+            schema=get_edgar_table_schema(),
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
-    return
+        return run_my_pipeline(source, p.options, sink)
 
 
 if __name__ == '__main__':

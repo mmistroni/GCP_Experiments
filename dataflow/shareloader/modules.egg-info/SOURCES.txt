@@ -1,8 +1,10 @@
 setup.py
 modules/__init__.py
+modules/bq_utils.py
 modules/marketstats.py
 modules/marketstats_utils.py
 modules/metrics.py
+modules/monthly_data.py
 modules/shareloader.py
 modules/utils.py
 modules.egg-info/PKG-INFO
@@ -10,3 +12,5 @@ modules.egg-info/SOURCES.txt
 modules.egg-info/dependency_links.txt
 modules.egg-info/requires.txt
 modules.egg-info/top_level.txt
+test/__init__.py
+test/test_monthly_data.py

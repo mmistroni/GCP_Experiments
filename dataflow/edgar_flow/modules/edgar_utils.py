@@ -52,24 +52,13 @@ class ParseForm13F(beam.DoFn):
                   if 'cusip' in child.tag]
         return all_dt
 
-    def _group_data(self, lst):
-        all_dict = defaultdict(list)
-        if lst:
-            logging.info('Attempting to group..')
-            data = sorted(lst, key=lambda x: x)
-            for k, g in groupby(data, lambda x: x):
-                grp = len(list(g))
-                if grp > 1:
-                    print('{} has {}'.format(k, grp))
-                all_dict[k].append(grp)
-
     def process(self, element):
         try:
-            file_content = self.open_url_content(element)
+            cob_dt, file_url = element
+            file_content = self.open_url_content(file_url)
             all_cusips = self.get_cusips(file_content)
-            # self._group_data(all_cusips)
-            # print('Found:{} in Processing {}'.format(len(all_cusips), element))
-            return all_cusips
+            mapped = map(lambda item: (cob_dt, item), all_cusips)
+            return mapped
         except Exception as e:
             print('could not fetch data from {}:{}'.format(element, str(e)))
             return []
@@ -154,19 +143,17 @@ class EdgarCombineFn(beam.CombineFn):
 
     def extract_output(self, aggregated):
         logging.info('Filtering only top 30')
-        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[2], reverse=True)
+        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[3], reverse=True)
         filtered = sorted_accs
         logging.info('Mapping now to string')
-        mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row), filtered)
+        mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row[1:]), filtered)
         return ''.join(mapped)
 
-#TODO this need to be replaced using IEXAPI instead of fmprep
 def get_company_stats(tpl, apikey):
-    name, ticker, count = tpl
-
+    cob, name, ticker, count = tpl
     base_url = 'https://cloud.iexapis.com/stable/stock/{}/company?token={}'.format(ticker, apikey)
     price_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=apikey)
-    stats_url = 'https://cloud.iexapis.com/stable/stock/{}/stats?token={}'.format(ticker, apikey)
+    #stats_url = 'https://cloud.iexapis.com/stable/stock/{}/stats?token={}'.format(ticker, apikey)
     pdict = dict()
 
     try:
@@ -180,19 +167,19 @@ def get_company_stats(tpl, apikey):
     except Exception as e:
         pdict['PRICE'] = price_url + str(e)
     try:
-        stats_data = requests.get(stats_url).json()
-        pdict['RANGE'] = str(stats_data['ytdChangePercent'])
-        pdict['BETA'] = str(stats_data['beta'])
+        #stats_data = requests.get(stats_url).json()
+        pdict['RANGE'] = 'NA'#str(stats_data['ytdChangePercent'])
+        pdict['BETA'] = 'NA'#str(stats_data['beta'])
     except Exception as e:
-        pdict['RANGE'] = stats_url + str(e)
-        pdict['BETA'] = stats_url + str(e)
+        pdict['RANGE'] = 'NA'#stats_url + str(e)
+        pdict['BETA'] = 'NA'#stats_url + str(e)
 
     pdict['TICKER'] = ticker
     pdict['RATINGS']= 'N/A'
     pdict['DCF'] = 'N/A'
     pdict['CUSIP'] = name
     pdict['COUNT'] = count
-    pdict['COB'] = datetime.now().strftime('%Y-%m-%d')
+    pdict['COB'] = cob
     return pdict
 
 

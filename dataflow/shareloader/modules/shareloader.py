@@ -105,7 +105,7 @@ def get_prices(tpl, iexkey):
              historical_data['latestVolume'],
              pandl, current_pos, total_gain, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
     except Exception as e :
-        print('Excepiton for {}:{}'.format(symbol, str(e)))
+        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
         return []
 
 
@@ -116,6 +116,15 @@ def combine_portfolio(elements):
     joined = ''.join(list(combined))
     return (joined, 100.0)
 
+def run_my_pipeline(p, options):
+    lines = (p
+             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.iexkey))
+             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
+             | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+             )
+    return lines
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -123,24 +132,15 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    p = beam.Pipeline(options=pipeline_options)
-
-    logging.info(pipeline_options.get_all_options())
     input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
-    logging.info("=== readign from textfile:{}".format(input_file))
     destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
-
+    logging.info(pipeline_options.get_all_options())
+    logging.info("=== readign from textfile:{}".format(input_file))
     logging.info('====== Destination is :{}'.format(destination))
 
-    lines = (p
-             | 'Get List of Tickers' >> ReadFromText(input_file)
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, pipeline_options.iexkey))
-             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
-             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
-             )
-    p.run()
-
-    return
+    with beam.Pipeline(options=pipeline_options) as p:
+        input = p  | 'Get List of Tickers' >> ReadFromText(input_file)
+        run_my_pipeline(input, pipeline_options)
 
 
 if __name__ == '__main__':

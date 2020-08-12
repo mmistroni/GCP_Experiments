@@ -5,6 +5,7 @@ logger = logging.getLogger(__name__)
 from math import sqrt
 from pprint import pprint
 from datetime import date
+import pandas as pd
 
 def calculate_daily_returns(prices):
   return prices.pct_change(1)
@@ -42,9 +43,13 @@ def check_prices_vs_moving_averages(prices, day=30):
 
 def compute_data_performance(historical_df, ticker):
   # Use this FUNCTION CALL
-  start = historical_df[ticker].values[0]
-  end = historical_df[ticker].values[-1]
-  return end*1.0/start - 1
+  try:
+    start = historical_df[ticker].values[0]
+    end = historical_df[ticker].values[-1]
+    return end*1.0/start - 1
+  except Exception as e:
+    logging.info('Could not find anything for {}:{}'.format(ticker, str(e)))
+    return 0.0
 
 def compute_metrics(prices):
   # Add Trade Volumne to spot momentum stocks
