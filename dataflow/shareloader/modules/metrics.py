@@ -54,14 +54,23 @@ def compute_data_performance(historical_df, ticker):
 def compute_metrics(prices):
   # Add Trade Volumne to spot momentum stocks
   ticker = prices.columns[0]
+
   perf_dict = {}
   perf_dict['Ticker'] = ticker
-  perf_dict['Performance'] = compute_data_performance(prices, ticker)
-  perf_dict['Start_Price'] = prices[ticker].values[0]
-  perf_dict['End_Price'] = prices[ticker].values[-1]
-  perf_dict['AboveMovingAvgPcnt'] = check_prices_vs_moving_averages(prices)
-  perf_dict['SharpeRatio'] = compute_sharpe_ratio(prices)
-  #news_dict =calculate_news_sentiment(ticker)
+  try:
+    perf_dict['Performance'] = compute_data_performance(prices, ticker)
+    perf_dict['Start_Price'] = prices[ticker].values[0]
+    perf_dict['End_Price'] = prices[ticker].values[-1]
+    perf_dict['AboveMovingAvgPcnt'] = check_prices_vs_moving_averages(prices)
+    perf_dict['SharpeRatio'] = compute_sharpe_ratio(prices)
+  except Exception as e:
+    perf_dict['Performance'] = 0.0
+    perf_dict['Start_Price'] = 0.0
+    perf_dict['End_Price'] = 0.0
+    perf_dict['AboveMovingAvgPcnt'] = 0.0
+    perf_dict['SharpeRatio'] = 0.0
+
+    #news_dict =calculate_news_sentiment(ticker)
   #news_measure = sum(news_dict['positive']) + sum(news_dict['negative'])
   #perf_dict['News_Sentiment'] = news_measure
   return pd.DataFrame([perf_dict])

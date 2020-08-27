@@ -8,14 +8,7 @@ import json
 import pandas as pd
 from pandas.tseries.offsets import BDay
 import pandas_datareader.data as dr
-import numpy as np
 from datetime import datetime, date
-from bs4 import BeautifulSoup
-from urllib.request import urlopen, Request
-
-
-from past.builtins import unicode
-from datetime import datetime
 import apache_beam as beam
 from apache_beam.io import ReadFromText
 from apache_beam.io import WriteToText
@@ -53,6 +46,7 @@ def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
         end_date = date.today()
         data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Adj Close']]
         df = data.rename(columns={'Adj Close': symbol})
+        df['COB'] = date.today().strftime('%Y-%m-%d')
         #df['sector'] = sector
         return df
     except Exception as e:
@@ -60,7 +54,7 @@ def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
 
 def map_to_dict(df_pipeline):
     dicted = (df_pipeline
-                | 'Map' >> beam.Map(lambda x: x[['Ticker', 'Start_Price', 'End_Price', 'Performance']].to_dict())
+                | 'Map' >> beam.Map(lambda x: x[['Ticker', 'Start_Price', 'End_Price', 'Performance', 'COB']].to_dict())
                 | 'TODICT' >> beam.Map(lambda d: dict((k, v[0]) for k, v in d.items()))
                 #| 'Enhance' >> beam.Map(map_to_bq_dict)
               )

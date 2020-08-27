@@ -9,6 +9,7 @@ from hamcrest.core.core.allof import all_of
 from apache_beam.transforms import util
 from shareloader.modules.monthly_data import run_my_pipeline, map_to_dict, write_data
 from apache_beam.options.pipeline_options import PipelineOptions
+from datetime import date
 
 
 import unittest
@@ -43,7 +44,8 @@ class TestBeamFunctions(unittest.TestCase):
 
     def test_map_to_dict(self):
         import pandas as pd
-        test_dict = {'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406}
+        test_dict = {'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406,
+                     'COB' : date.today().strftime('%Y-%m-%d')}
         dicts = [test_dict]
         df = pd.DataFrame(dicts)
         with TestPipeline() as p:
