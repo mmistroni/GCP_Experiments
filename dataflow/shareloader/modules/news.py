@@ -17,9 +17,11 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--sector', default='Utilities')
-        parser.add_argument('--business_days', default=2)
+        parser.add_argument('--sector', default='Utilities,Consumer Cyclical,Energy')
+        parser.add_argument('--business_days', default=1)
         parser.add_argument('--key')
+
+
 
 
 def map_to_bq_dict(original_dict):
@@ -37,7 +39,7 @@ def write_data(data, sink):
 def prepare_for_big_query(dframes):
     return (dframes
             | 'Convert to Dictionary' >> beam.Map(df_to_dict)
-            | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0,0) > 0.5)
+            | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0,-1) > 0.5)
 
     )
 
@@ -50,6 +52,7 @@ def send_notification(list_of_dicts, options):
 
 
 def find_news_for_ticker(tickers, bus_days):
+
     return (tickers
                 | 'Find News' >> beam.Map(lambda tick: find_news_scores_for_ticker([tick], bus_days))
                 | 'Filter out Nones' >> beam.Filter(lambda df: df is not None)

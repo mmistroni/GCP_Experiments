@@ -2,6 +2,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 from datetime import datetime, date
 from bs4 import BeautifulSoup
 from urllib.request import urlopen, Request
+from functools import reduce
 import pandas as pd
 from pandas.tseries.offsets import BDay
 import logging
@@ -10,27 +11,6 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 import apache_beam as beam
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
-
-class NewsCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return ''
-
-  def add_input(self, accumulator, input):
-    print('Adding{}'.format(input))
-    print('acc is:{}'.format(accumulator))
-    row_acc = accumulator
-    return row_acc + ROW_TEMPLATE.format(*input)
-
-  def merge_accumulators(self, accumulators):
-    sums, counts = zip(*accumulators)
-    return ''.join(sums), sum(counts)
-
-  def extract_output(self, sum_count):
-    (sum, count) = sum_count
-    return sum_count
-
-
-
 
 def get_news_from_finviz(tickers):
     news_tables = {}
@@ -115,13 +95,14 @@ class NewsEmailSender(beam.DoFn):
     def process(self, element):
         msg = element
         logging.info('Attepmting to send emamil to:{} '.format(self.recipients))
+        logging.info('Incoming message is:{}'.format(msg))
         template = \
-            "<html><body><p> Today's headlines </p></br><table><th>Ticker</th><th>Quantity</th><th>Ticker</th><th>Headline</th><th>Score</th>{}</table></body></html>"
+            "<html><body><p> Today's headlines </p></br><table><th>Ticker</th><th>Headline</th><th>Score</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_portfolio@mmistroni.com',
-            subject='Sentiment analysis from news',
+            from_email='gcp_portfolio_news@mmistroni.com',
+            subject='News Sentiment analysis for {}'.format(date.today().strftime('%Y-%m-%d')),
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -129,17 +110,22 @@ class NewsEmailSender(beam.DoFn):
             message.add_personalization(pers)
 
         sg = SendGridAPIClient(self.key)
-
+        logging.info('Now sending.....')
         response = sg.send(message)
         logging.info('Mail Sent:{}'.format(response.status_code))
         logging.info('Body:{}'.format(response.body))
 
 def stringify_news(single_news):
     row_template = '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'
-    return row_template.format(single_news.get('TICKER'),
-                               single_news.get('HEADLINE'),
-                               single_news.get('SCORE'))
+    logging.info('Stringifhying:{}'.format(single_news))
+    res =  row_template.format(single_news.get('ticker'),
+                               single_news.get('headline'),
+                               single_news.get(0))
+    return res
 
 def combine_news(elements):
-    return ''.join(elements)
+    logging.info('Combining:{}'.format(elements))
+    logging.info('Item is of type:{}'.format(type(elements)))
+    return reduce(lambda acc, current: acc + current, elements, '')
+
 
