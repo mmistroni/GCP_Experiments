@@ -4,7 +4,7 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.pipeline_verifiers import PipelineStateMatcher
 from apache_beam.testing.test_pipeline import TestPipeline
-from testing.email_pipeline import run
+from samples.email_pipeline import run
 from hamcrest.core.core.allof import all_of
 from apache_beam.transforms import util
 from shareloader.modules.monthly_data import run_my_pipeline, map_to_dict, write_data

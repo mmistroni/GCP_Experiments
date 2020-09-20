@@ -8,8 +8,8 @@ import setuptools
 # restriction is specified.
 REQUIRED_PACKAGES = [
     'sendgrid==6.2.1',
-    'pandas_datareader'
-
+    'pandas_datareader',
+    'vaderSentiment'
     ]
 
 

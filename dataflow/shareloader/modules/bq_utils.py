@@ -26,3 +26,15 @@ def map_to_bq_dict(original_dict):
                      START_DATE=original_dict['Start_Date'],
                      END_DATE=original_dict['End_Date'],
                      PERFORMANCE=original_dict['PERFORMANCE'])
+
+def get_news_table_schema():
+  edgar_table_schema = 'RUN_DATE:STRING,TICKER:STRING,HEADLINE:STRING,SCORE:FLOAT'
+  return edgar_table_schema
+
+def get_news_table_spec():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_shareloader',
+      tableId='daily_news')
+
+

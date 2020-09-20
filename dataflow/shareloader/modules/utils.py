@@ -49,12 +49,6 @@ def create_email_template(input_elements):
 
     ))
 
-
-
-
-
-
-
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
         self.recipients = recipients.split(',')

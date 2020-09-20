@@ -5,6 +5,8 @@ modules/marketstats.py
 modules/marketstats_utils.py
 modules/metrics.py
 modules/monthly_data.py
+modules/news.py
+modules/news_util.py
 modules/shareloader.py
 modules/utils.py
 modules.egg-info/PKG-INFO
@@ -14,3 +16,4 @@ modules.egg-info/requires.txt
 modules.egg-info/top_level.txt
 test/__init__.py
 test/test_monthly_data.py
+test/test_news_pipeline.py
