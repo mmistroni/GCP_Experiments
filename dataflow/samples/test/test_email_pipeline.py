@@ -1,14 +1,14 @@
 from mock import patch, Mock
-from testing.email_pipeline import *
+from samples.email_pipeline import *
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.pipeline_verifiers import PipelineStateMatcher
 from apache_beam.testing.test_pipeline import TestPipeline
-from testing.email_pipeline import run
+from samples.email_pipeline import run
 from hamcrest.core.core.allof import all_of
 from apache_beam.transforms import util
-from testing.email_pipeline import   split_fields, run_my_pipeline
-from testing.bq_read_pipeline import join_sinks
+from samples.email_pipeline import   split_fields, run_my_pipeline
+from samples.bq_read_pipeline import join_sinks
 import logging
 
 import unittest
@@ -71,7 +71,7 @@ class MyTestOptions(PipelineOptions):
 
 class TestBeamFunctions(unittest.TestCase):
 
-    @patch('testing.email_pipeline.ReadFromText')
+    @patch('samples.email_pipeline.ReadFromText')
     def test_create_pipelne(self, mock_read_from_text):
         sample_list = ['One,Two,Three']
         with TestPipeline() as p:
@@ -82,7 +82,7 @@ class TestBeamFunctions(unittest.TestCase):
 
             assert_that(res, equal_to(['One']))
 
-    @patch('testing.email_pipeline.get_prices')
+    @patch('samples.email_pipeline.get_prices')
     def test_create_pipeline2(self, mock_get_prices):
         get_prices_return = [{'High': 3098, 'Low': 3015.77001953125, 'Open': 3062, 'Close': 3055.2099609375, 'Volume': 4026365, 'AdjClose': 3055.2099609375, 'Ticker': 'AMZN'}]
         mock_get_prices.return_value = get_prices_return

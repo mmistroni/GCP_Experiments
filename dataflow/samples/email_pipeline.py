@@ -23,7 +23,7 @@ import pandas_datareader.data as dr
 from apache_beam.io.gcp.internal.clients import bigquery
 from datetime import date
 
-input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
+#input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
 
 
 def map_to_dict(input_df):
@@ -42,7 +42,11 @@ def get_prices(ticker, start_date, end_date):
 
 
 class XyzOptions(PipelineOptions):
-    pass
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_value_provider_argument('--input_file', type=str,
+                                           default='gs://dataflow-samples/shakespeare/kinglear.txt')
+
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -109,8 +113,11 @@ def run_my_pipeline(p, options, sink):
 
     lines = (p
              | 'Split fields' >> beam.Map(split_fields)
-             )
-    run_step_2(lines, sink)
+             | 'Print out' >> beam.Map(logging.info)             )
+
+def get_input_file(option_file):
+    return option_file.get()
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -124,7 +131,7 @@ def run(argv=None, save_main_session=True):
     #sink = beam.Map(print)
 
     with beam.Pipeline(options=pipeline_options) as p:
-        source = p | 'Get List of Tickers' >> ReadFromText(input_file)
+        source = p | 'Get List of Tickers' >> ReadFromText(pipeline_options.input_file.get())
         sink = beam.io.WriteToBigQuery(
             get_edgar_table_spec(),
             schema=get_edgar_table_schema(),

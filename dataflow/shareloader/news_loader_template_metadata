@@ -6,6 +6,11 @@
       "name": "sector",
       "helpText": "List of Sectors",
       "label": "sector"
+    },
+    {
+      "name": "business_days",
+      "helpText": "Past business day",
+      "label": "business_days"
     }
 
 
