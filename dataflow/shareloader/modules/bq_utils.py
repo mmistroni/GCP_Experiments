@@ -11,21 +11,21 @@ import os
 from apache_beam.io.gcp.internal.clients import bigquery
 
 def get_table_schema():
-  edgar_table_schema = 'COB:STRING,Ticker:STRING,Start_Price:FLOAT,End_Price:FLOAT,Performance:FLOAT'
-  return edgar_table_schema
+  mshares_table_schema = 'RUN_DATE:STRING,TICKER:STRING,START_PRICE:FLOAT,END_PRICE:FLOAT,PERFORMANCE:FLOAT'
+  return mshares_table_schema
 
 def get_table_spec():
   return bigquery.TableReference(
       projectId="datascience-projects",
-      datasetId='gcp_edgar',
-      tableId='monthly_perf')
+      datasetId='gcp_shareloader',
+      tableId='monthly_perf_latest')
 
 def map_to_bq_dict(original_dict):
     return dict(     RUN_DATE=date.today().strftime('%Y-%m-%d'),
                      TICKER=original_dict['Ticker'],
-                     START_DATE=original_dict['Start_Date'],
-                     END_DATE=original_dict['End_Date'],
-                     PERFORMANCE=original_dict['PERFORMANCE'])
+                     START_PRICE=original_dict['Start_Price'],
+                     END_PRICE=original_dict['End_Price'],
+                     PERFORMANCE=original_dict['Performance'])
 
 def get_news_table_schema():
   edgar_table_schema = 'RUN_DATE:STRING,TICKER:STRING,HEADLINE:STRING,SCORE:FLOAT'

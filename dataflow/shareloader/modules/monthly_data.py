@@ -54,9 +54,9 @@ def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
 
 def map_to_dict(df_pipeline):
     dicted = (df_pipeline
-                | 'Map' >> beam.Map(lambda x: x[['Ticker', 'Start_Price', 'End_Price', 'Performance', 'COB']].to_dict())
+                | 'Map' >> beam.Map(lambda x: x[['Ticker', 'Start_Price', 'End_Price', 'Performance']].to_dict())
                 | 'TODICT' >> beam.Map(lambda d: dict((k, v[0]) for k, v in d.items()))
-                #| 'Enhance' >> beam.Map(map_to_bq_dict)
+                | 'Enhance' >> beam.Map(map_to_bq_dict)
               )
     return dicted
 

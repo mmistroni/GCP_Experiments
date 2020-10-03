@@ -44,14 +44,14 @@ class TestBeamFunctions(unittest.TestCase):
 
     def test_map_to_dict(self):
         import pandas as pd
-        test_dict = {'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406,
-                     'COB' : date.today().strftime('%Y-%m-%d')}
+        test_dict = {'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406}
         dicts = [test_dict]
         df = pd.DataFrame(dicts)
         with TestPipeline() as p:
             input = p | beam.Create([df])
             res = map_to_dict(input)
-            assert_that(res, equal_to([{'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406}]))
+            assert_that(res, equal_to([{'TICKER': 'AMZN', 'START_PRICE': 3000.1201171875, 'END_PRICE': 3138.830078125,
+                                        'PERFORMANCE': 0.046234802447688406, 'RUN_DATE' : date.today().strftime('%Y-%m-%d')}]))
 
     def test_write_data(self):
         test_dict = {'Ticker': 'AMZN', 'Start_Price': 3000.1201171875, 'End_Price': 3138.830078125, 'Performance': 0.046234802447688406}
