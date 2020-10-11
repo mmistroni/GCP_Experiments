@@ -1,25 +1,13 @@
 import apache_beam as beam
-from datetime import date
-from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
-from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.pipeline_options import SetupOptions
-from apache_beam.io import WriteToText
-from apache_beam.io.textio import ReadAllFromText
+from xml.etree import ElementTree
+from pprint import pprint
 import urllib
-from collections import defaultdict
-from datetime import date, datetime
-from itertools import groupby
-import requests
-from apache_beam.io.gcp.internal.clients import bigquery
-from datetime import date, datetime
 import re, requests
 from bs4 import BeautifulSoup
 import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+from apache_beam.io.gcp.internal.clients import bigquery
 
 
 
@@ -53,16 +41,54 @@ class ParseForm13F(beam.DoFn):
         return all_dt
 
     def process(self, element):
+        cob_dt, file_url = element
         try:
-            cob_dt, file_url = element
             file_content = self.open_url_content(file_url)
             all_cusips = self.get_cusips(file_content)
-            mapped = map(lambda item: (cob_dt, item), all_cusips)
+            mapped = list(map(lambda item: (cob_dt, item), all_cusips))
+            logging.info('returning:{}'.format(list(mapped)))
             return mapped
         except Exception as e:
-            print('could not fetch data from {}:{}'.format(element, str(e)))
-            return []
+            logging.info('could not fetch data from {}:{}'.format(element, str(e)))
+            return [(cob_dt, '')]
 
+
+class ParseForm4(beam.DoFn):
+
+    def open_url_content(self, file_path):
+        import requests
+        return requests.get(file_path)
+
+    def get_purchase_transactions(self, content):
+        data = content.text
+        data = data.replace('\n', '')
+        subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
+        tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
+        root = tree.getroot()
+        trading_symbol = [child.text for infoTable in root.getchildren() for child in infoTable.getchildren()
+                          if 'issuerTradingSymbol' in child.tag][0]
+        tcodes = [elem.text for elem in root.iter()
+                  if 'transactionCode' in elem.tag]
+        # print('TCODES:{}'.format(tcodes))
+        purchases = [c for c in tcodes if 'A' or 'P' in c]
+        if purchases:
+            return trading_symbol
+        return ''
+
+    def process(self, element):
+        cob_dt, file_url = element
+        try:
+
+            logging.info('Processing :{}={}'.format(cob_dt, file_url))
+            file_content = self.open_url_content(file_url)
+            trading_symbols = self.get_purchase_transactions(file_content)
+            #print('Trarding symblsa re:{}'.format(trading_symbols))
+            result =  (trading_symbols, 1)
+            #print('Returning:{}'.format(result))
+            return  [result]
+        except Exception as e:
+            logging.info('Exceptin fo r:{}/{}:{}'.format(cob_dt, file_url, str(e)))
+            return [('N/A', 0)]
 
 def format_string(input_str):
     return str(input_str.replace("b'", "").replace("'", "")).strip()
@@ -79,7 +105,7 @@ def cusip_to_ticker(cusip):
         return format_string(ticker)
     except Exception as e:
         print('Unable to retrieve ticker for {}'.format(cusip))
-        return ''
+
 
 def processUrl(url):
   if 'master.idx' in url:
@@ -222,6 +248,27 @@ class EdgarEmailSender(beam.DoFn):
 
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
+
+def get_edgar_table_schema():
+  edgar_table_schema = 'COB:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING'
+  return edgar_table_schema
+
+def get_edgar_daily_table_spec():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='form_13hf_daily')
+
+def get_edgar_table_schema_form4():
+  edgar_table_schema = 'COB:STRING,TICKER:STRING,COUNT:INTEGER'
+  return edgar_table_schema
+
+def get_edgar_daily_table_spec_form4():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='form_4_daily')
+
 
 
 

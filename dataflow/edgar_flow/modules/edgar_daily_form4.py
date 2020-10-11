@@ -30,13 +30,13 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
-        template = "<html><body><table><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
+        template = "<html><body><table border='1' cellspacing='0' cellpadding='0' align='center'><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             #to_emails=self.recipients,
-            subject='Edgar Daily Filings',
+            subject='Edgar Form4 Daily Filings (Insider Trading)',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -48,10 +48,8 @@ class EmailSender(beam.DoFn):
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
 
-
-
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
-form_type = '13F-HR'
+form_type = '4'
 
 EDGAR_URL = 'https://www.sec.gov/Archives/edgar/daily-index/{year}/{quarter}/master.{current}.idx'
 
@@ -73,19 +71,16 @@ def find_current_quarter(current_date):
     print('Fetching quarter for month:{}'.format(current_month))
     return [key for key, v in quarter_dictionary.items() if current_month in v][0]
 
-
-def combine_data(elements):
-    return (elements
-            | 'Combining similar' >> beam.combiners.Count.PerElement()
-            | 'Groupring' >> beam.MapTuple( lambda tpl, count: (tpl[0], tpl[1], count))
-            | 'Adding Cusip' >> beam.MapTuple(lambda cob, word, count: [cob, word, cusip_to_ticker(word), count]))
-
-
-def enhance_data(lines):
+def enhance_form_4(lines):
     result = (
             lines
-            | 'parsing form 13 filing' >> beam.ParDo(ParseForm13F())
-                )
+            | 'parsing form 4 filing' >> beam.ParDo(ParseForm4())
+            | 'Combining all ' >> beam.CombinePerKey(sum)
+            | 'Mapping to tuple to be in line with mail templates' >>  beam.Map(
+                                            lambda tpl: [date.today().strftime('%Y-%m-%d'), '' ,tpl[0], tpl[1]])
+
+
+    )
     return result
 
 def run_my_pipeline(source):
@@ -95,18 +90,17 @@ def run_my_pipeline(source):
             | 'map to Str' >> beam.Map(lambda line: str(line))
     )
 
-
-def filter_form_13hf(source):
-    lines = (
+def filter_form_4(source):
+    return (
             source
-            | 'Filter only form 13HF' >> beam.Filter(
-                    lambda row: len(row.split('|')) > 4 and form_type in row.split('|')[2])
-            | 'Generating Proper file path' >> beam.Map(lambda row: (row.split('|')[3],
+            | 'Filter only form 4' >> beam.Filter(
+                    lambda row: len(row.split('|')) > 4 and '4' in row.split('|')[2])
+            | 'Generating form 4 file path' >> beam.Map(lambda row: (row.split('|')[3],
                                                                      '{}/{}'.format('https://www.sec.gov/Archives',
                                                                                     row.split('|')[4])))
-            | 'replacing eol on form13' >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
+            | 'replacing eol on form4' >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
     )
-    return enhance_data(lines)
+
 
 def send_email(lines, pipeline_options):
     email = (
@@ -115,20 +109,18 @@ def send_email(lines, pipeline_options):
             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
     )
 
-def write_to_bigquery(lines):
+def write_to_form4_bq(lines):
     big_query = (
             lines
-            | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
-                                                                       CUSIP=tpl[1],
+            | 'Map to BQ FORM4 Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        TICKER=tpl[2],
-                                                                       COUNT=tpl[3]))
-            | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-        get_edgar_daily_table_spec(),
-        schema=get_edgar_table_schema(),
+                                                                  COUNT=tpl[3]))
+            | 'Write to BigQuery F4' >> beam.io.WriteToBigQuery(
+        get_edgar_daily_table_spec_form4(),
+        schema=get_edgar_table_schema_form4(),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     )
-
 
 def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
@@ -147,12 +139,12 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         source = p  | 'Sampling Data' >> beam.Create([master_idx_url])
         lines = run_my_pipeline(source)
-        enhanced_data = filter_form_13hf(lines)
-        logging.info('Next step')
-        form113 = combine_data(enhanced_data)
+        form4 = filter_form_4(lines)
+        enhanced_data = enhance_form_4(form4)
         logging.info('Now sendig meail....')
-        send_email(form113, pipeline_options)
-        write_to_bigquery(form113)
+        send_email(enhanced_data, pipeline_options)
+        write_to_form4_bq(enhanced_data)
+
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
