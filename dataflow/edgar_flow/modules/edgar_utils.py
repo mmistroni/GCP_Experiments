@@ -59,6 +59,14 @@ class ParseForm4(beam.DoFn):
         import requests
         return requests.get(file_path)
 
+    def get_transaction_codes(self, root):
+        tcodes = root.findall(".//transactionCode")
+        return [tcode.text for tcode in tcodes]
+
+    def get_shares_acquired(self, root):
+        ts = root.findall(".//transactionAmounts/transactionShares/value")
+        return sum([int(t.text) for t in ts])
+
     def get_purchase_transactions(self, content):
         data = content.text
         data = data.replace('\n', '')
@@ -67,13 +75,14 @@ class ParseForm4(beam.DoFn):
         root = tree.getroot()
         trading_symbol = [child.text for infoTable in root.getchildren() for child in infoTable.getchildren()
                           if 'issuerTradingSymbol' in child.tag][0]
-        tcodes = [elem.text for elem in root.iter()
-                  if 'transactionCode' in elem.tag]
+        tcodes = self.get_transaction_codes(root)
         # print('TCODES:{}'.format(tcodes))
         purchases = [c for c in tcodes if 'A' or 'P' in c]
         if purchases:
-            return trading_symbol
-        return ''
+            logging.info('found purchase transction for {}'.format(trading_symbol))
+            shares_acquired = self.get_shares_acquired(root)
+            return (trading_symbol, shares_acquired)
+
 
     def process(self, element):
         cob_dt, file_url = element
@@ -81,13 +90,14 @@ class ParseForm4(beam.DoFn):
 
             logging.info('Processing :{}={}'.format(cob_dt, file_url))
             file_content = self.open_url_content(file_url)
-            trading_symbols = self.get_purchase_transactions(file_content)
+            trading_symbols_tpl = self.get_purchase_transactions(file_content)
             #print('Trarding symblsa re:{}'.format(trading_symbols))
-            result =  (trading_symbols, 1)
             #print('Returning:{}'.format(result))
-            return  [result]
+            if trading_symbols_tpl:
+                return  [trading_symbols_tpl]
+            return [('N/A', 0)]
         except Exception as e:
-            logging.info('Exceptin fo r:{}/{}:{}'.format(cob_dt, file_url, str(e)))
+            print('Exceptin fo r:{}/{}:{}'.format(cob_dt, file_url, str(e)))
             return [('N/A', 0)]
 
 def format_string(input_str):
@@ -122,7 +132,7 @@ def crawl(base_page):
           res = processUrl(url)
           if res:
             full_url = '{}{}'.format(base_page, res)
-            print('Appending..:{}'.format(full_url))
+            logging.info('Appending..:{}'.format(full_url))
             good_ones.append(full_url)
       return good_ones
 
@@ -139,8 +149,8 @@ def generate_master_urls(all_url):
 def generate_edgar_urls_for_year(year):
     test_urls = ['https://www.sec.gov/Archives/edgar/full-index/{}/QTR1/'
              ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR2/'
-            # ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/',
-            # ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/'
+             ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR3/'
+             ,'https://www.sec.gov/Archives/edgar/full-index/{}/QTR4/'
               ]
     urls = map(lambda b_url: b_url.format(year), test_urls)
     return generate_master_urls(urls)

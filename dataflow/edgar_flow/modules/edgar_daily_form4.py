@@ -71,15 +71,24 @@ def find_current_quarter(current_date):
     print('Fetching quarter for month:{}'.format(current_month))
     return [key for key, v in quarter_dictionary.items() if current_month in v][0]
 
+def find_current_day_url():
+    current_date = date.today() - BDay(1)
+    logging.info('=== CURRENTDATE IS:{}'.format(current_date))
+    current_quarter = find_current_quarter(current_date)
+    current_year = find_current_year(current_date)
+    master_idx_url = EDGAR_URL.format(quarter=current_quarter, year=current_year,
+                                      current=current_date.strftime('%Y%m%d'))
+    logging.info('Extracting data from:{}'.format(master_idx_url))
+    return master_idx_url
+
 def enhance_form_4(lines):
     result = (
             lines
             | 'parsing form 4 filing' >> beam.ParDo(ParseForm4())
             | 'Combining all ' >> beam.CombinePerKey(sum)
+            | 'Filtering out blanks' >> beam.Filter(lambda tpl: tpl[0] != '' and tpl[0] != 'N/A' )
             | 'Mapping to tuple to be in line with mail templates' >>  beam.Map(
                                             lambda tpl: [date.today().strftime('%Y-%m-%d'), '' ,tpl[0], tpl[1]])
-
-
     )
     return result
 
@@ -100,7 +109,6 @@ def filter_form_4(source):
                                                                                     row.split('|')[4])))
             | 'replacing eol on form4' >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
     )
-
 
 def send_email(lines, pipeline_options):
     email = (
@@ -127,24 +135,14 @@ def run(argv=None, save_main_session=True):
     known_args, pipeline_args = parser.parse_known_args(argv)
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
-    current_date = date.today() - BDay(1)
-    current_quarter = find_current_quarter(current_date)
-    current_year = find_current_year(current_date)
-    master_idx_url = EDGAR_URL.format(quarter=current_quarter, year=current_year,
-                                    current=current_date.strftime('%Y%m%d'))
-    logging.info('Extracting data from:{}'.format(master_idx_url))
-    destination =   bucket_destination.format(current_date.strftime('%Y%m%d'))
-    logging.info('Writing to:{}'.format(destination))
-
     with beam.Pipeline(options=pipeline_options) as p:
-        source = p  | 'Sampling Data' >> beam.Create([master_idx_url])
+        source = p  | 'Sampling Data' >> beam.Create([find_current_day_url()])
         lines = run_my_pipeline(source)
         form4 = filter_form_4(lines)
         enhanced_data = enhance_form_4(form4)
         logging.info('Now sendig meail....')
         send_email(enhanced_data, pipeline_options)
         write_to_form4_bq(enhanced_data)
-
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)

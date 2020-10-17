@@ -118,7 +118,7 @@ def send_email(lines, pipeline_options):
 def write_to_bigquery(lines):
     big_query = (
             lines
-            | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
+            | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=date.today().strftime('%Y-%m-%d'),
                                                                        CUSIP=tpl[1],
                                                                        TICKER=tpl[2],
                                                                        COUNT=tpl[3]))
