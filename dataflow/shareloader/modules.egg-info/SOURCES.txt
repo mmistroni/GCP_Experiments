@@ -1,10 +1,12 @@
 setup.py
 modules/__init__.py
 modules/bq_utils.py
+modules/mail_utils.py
 modules/marketstats.py
 modules/marketstats_utils.py
 modules/metrics.py
 modules/monthly_data.py
+modules/monthly_sub_pipelines.py
 modules/news.py
 modules/news_util.py
 modules/shareloader.py

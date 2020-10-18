@@ -1,11 +1,23 @@
-
-
 import logging
 logger = logging.getLogger(__name__)
 from math import sqrt
-from pprint import pprint
-from datetime import date
+import requests
 import pandas as pd
+import apache_beam as beam
+from itertools import product
+from functools import reduce
+from datetime import date
+import argparse
+import logging
+import re
+import urllib
+import json
+import pandas as pd
+from pandas.tseries.offsets import BDay
+import pandas_datareader.data as dr
+from datetime import datetime, date
+
+
 
 def calculate_daily_returns(prices):
   return prices.pct_change(1)
@@ -59,11 +71,13 @@ def compute_metrics(prices):
   perf_dict['Ticker'] = ticker
   try:
     perf_dict['Performance'] = compute_data_performance(prices, ticker)
+    print('after perf calclation')
     perf_dict['Start_Price'] = prices[ticker].values[0]
     perf_dict['End_Price'] = prices[ticker].values[-1]
-    perf_dict['AboveMovingAvgPcnt'] = check_prices_vs_moving_averages(prices)
-    perf_dict['SharpeRatio'] = compute_sharpe_ratio(prices)
+    #perf_dict['AboveMovingAvgPcnt'] = check_prices_vs_moving_averages(prices)
+    #perf_dict['SharpeRatio'] = compute_sharpe_ratio(prices)
   except Exception as e:
+    logging.info('Exception:{}'.format(str(e)))
     perf_dict['Performance'] = 0.0
     perf_dict['Start_Price'] = 0.0
     perf_dict['End_Price'] = 0.0
@@ -74,3 +88,96 @@ def compute_metrics(prices):
   #news_measure = sum(news_dict['positive']) + sum(news_dict['negative'])
   #perf_dict['News_Sentiment'] = news_measure
   return pd.DataFrame([perf_dict])
+
+def infer_ratings(json):
+  rating_scale = float(json.get('ratingScaleMark'))
+  txt = ''
+  if rating_scale < 1.5:
+    txt = 'STRONG-BUY'
+  elif rating_scale <2:
+    txt =  'BUY'
+  elif rating_scale <2.5:
+    txt =  'HOLD'
+  else:
+    txt =  'SELL'
+  return '({}={})'.format(rating_scale, txt)
+
+def get_analyst_recommendations(data_dict, token):
+
+  ticker = data_dict['Ticker']
+  new_dict = data_dict
+  try:
+
+    analyst_url = \
+      'https://cloud.iexapis.com/stable/stock/{symbol}/recommendation-trends?token={token}'.format(symbol=ticker, token=token)
+    json = requests.get(analyst_url).json()
+    logging.info('======calling analys trecomm. for {}.got:{}'.format(ticker, json))
+
+    if len(json) > 0:
+      ratings =  infer_ratings(json[0])
+    else:
+      ratings= 'N/A'
+    new_dict['Ratings'] = ratings
+    logging.info('data dict is:{}'.format(new_dict))
+
+  except Exception as e :
+    logging.info('Could not find print ratings for:{}:{}'.format(ticker, str(e)))
+    new_dict['Ratings'] = 'N/A'
+  return new_dict
+
+class AnotherLeftJoinerFn(beam.DoFn):
+
+  def __init__(self):
+    super(AnotherLeftJoinerFn, self).__init__()
+
+  def process(self, row, **kwargs):
+    print('kw args is :{}'.format(kwargs))
+    right_dict = dict(kwargs['right_list'])
+    left_key = row[0]
+    left = row[1]
+    if left_key in right_dict:
+      print('Row is:{}'.format(row))
+      right = right_dict[left_key]
+      left.update(right)
+      yield (left_key, left)
+
+class Display(beam.DoFn):
+  def process(self, element):
+    logging.info(str(element))
+    yield element
+
+def output_fields(input_dict):
+    return dict((k,v) for k,v in input_dict.items())
+
+def merge_dicts(input):
+    d1, d2 = input
+    d1.update(d2)
+    return d1
+
+def join_lists(lst):
+  logging.info('Input list is:{}'.format(lst))
+  k, v = lst
+  if v.get('perflist') and v.get('edgarlist'):
+    return product(v['perflist'], v['edgarlist'])
+
+
+
+def get_date_ranges(prev_bus_days):
+    logging.info('Checking result sfor {}'.format(prev_bus_days))
+    end_date = date.today()
+    start_date = end_date - BDay(
+        prev_bus_days)  # go back 3 months to find crossovers. Start to plan to move to Dataflow
+    return start_date, end_date
+
+
+def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
+    try:
+        end_date = date.today()
+        logging.info('Finding dta between {} and {}'.format(start_dt, end_dt))
+        data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Adj Close']]
+        df = data.rename(columns={'Adj Close': symbol})
+        df['COB'] = date.today().strftime('%Y-%m-%d')
+        #df['sector'] = sector
+        return df
+    except Exception as e:
+        return pd.DataFrame(columns=[symbol])

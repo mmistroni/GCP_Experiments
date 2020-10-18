@@ -11,7 +11,7 @@ import os
 from apache_beam.io.gcp.internal.clients import bigquery
 
 def get_table_schema():
-  mshares_table_schema = 'RUN_DATE:STRING,TICKER:STRING,START_PRICE:FLOAT,END_PRICE:FLOAT,PERFORMANCE:FLOAT'
+  mshares_table_schema = 'RUN_DATE:STRING,TICKER:STRING,START_PRICE:FLOAT,END_PRICE:FLOAT,PERFORMANCE:FLOAT,RATINGS:STRING'
   return mshares_table_schema
 
 def get_table_spec():
@@ -25,7 +25,8 @@ def map_to_bq_dict(original_dict):
                      TICKER=original_dict['Ticker'],
                      START_PRICE=original_dict['Start_Price'],
                      END_PRICE=original_dict['End_Price'],
-                     PERFORMANCE=original_dict['Performance'])
+                     PERFORMANCE=original_dict['Performance'],
+                     RATINGS=original_dict['Ratings'])
 
 def get_news_table_schema():
   edgar_table_schema = 'RUN_DATE:STRING,TICKER:STRING,HEADLINE:STRING,SCORE:FLOAT'
@@ -36,5 +37,8 @@ def get_news_table_spec():
       projectId="datascience-projects",
       datasetId='gcp_shareloader',
       tableId='daily_news')
+
+
+
 
 
