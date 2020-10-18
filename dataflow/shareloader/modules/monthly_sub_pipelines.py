@@ -66,7 +66,6 @@ def join_performance_with_edgar(performance_p, edgar_p):
             | 'co groupting' >> beam.CoGroupByKey()
             | 'flatmapping' >> beam.FlatMap(join_lists)
             | 'mergedicts' >> beam.Map(merge_dicts)
-            | 'Print out' >> beam.Map(logging.info)
     )
 
 def generate_performance(pandas_data):

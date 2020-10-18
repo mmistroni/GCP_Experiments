@@ -51,7 +51,7 @@ def combine_data(elements):
 def send_mail(input, options):
     logging.info('Sending emailnow....')
     return (input
-            | 'Map to Template' >> beam.Map(lambda row: TEMPLATE.format(**row))
+            | 'Map to Template' >> beam.Map(lambda row:  TEMPLATE.format(**row) if row else '')
             | 'Combine' >> beam.CombineGlobally(combine_data)
             | 'SendEmail' >> beam.ParDo(MonthlyEmailSender(options.recipients, options.key))
             )
