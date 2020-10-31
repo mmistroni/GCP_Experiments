@@ -32,7 +32,7 @@ class EmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
         template = "<html><body><table border='1' cellspacing='0' cellpadding='0' align='center'><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
         content = template.format(element)
-        print('Sending \n {}'.format(content))
+        logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             #to_emails=self.recipients,
@@ -46,7 +46,7 @@ class EmailSender(beam.DoFn):
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        logging.info(response.status_code, response.body, response.headers)
 
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
 form_type = '4'
@@ -68,12 +68,14 @@ def find_current_quarter(current_date):
         "QTR4": [10, 11, 12]
     }
     current_month = current_date.month
-    print('Fetching quarter for month:{}'.format(current_month))
-    return [key for key, v in quarter_dictionary.items() if current_month in v][0]
+    logging.info('Fetching quarter for month:{}'.format(current_month))
+    res=  [key for key, v in quarter_dictionary.items() if current_month in v][0]
+    logging.info('Returning :{}'.format(res))
+    return res
 
-def find_current_day_url():
-    current_date = date.today() - BDay(1)
-    logging.info('=== CURRENTDATE IS:{}'.format(current_date))
+def find_current_day_url(sample):
+    current_date = (datetime.now() - BDay(1))
+    logging.info('Finding Edgar URL for {}  at:{}'.format(current_date, datetime.now().strftime('%Y-%m-%d')))
     current_quarter = find_current_quarter(current_date)
     current_year = find_current_year(current_date)
     master_idx_url = EDGAR_URL.format(quarter=current_quarter, year=current_year,
@@ -86,13 +88,14 @@ def enhance_form_4(lines):
             lines
             | 'parsing form 4 filing' >> beam.ParDo(ParseForm4())
             | 'Combining all ' >> beam.CombinePerKey(sum)
-            | 'Filtering out blanks' >> beam.Filter(lambda tpl: tpl[0] != '' and tpl[0] != 'N/A' )
+            | 'Filtering out blanks' >> beam.Filter(lambda tpl: tpl[0][1] != '' and tpl[0][1] != 'N/A' )
             | 'Mapping to tuple to be in line with mail templates' >>  beam.Map(
-                                            lambda tpl: [date.today().strftime('%Y-%m-%d'), '' ,tpl[0], tpl[1]])
+                                            lambda tpl: [tpl[0][0], '' ,tpl[0][1], tpl[1]])
     )
     return result
 
 def run_my_pipeline(source):
+
     return (
             source
             | 'readFromText' >> beam.ParDo(ReadRemote())
@@ -135,8 +138,12 @@ def run(argv=None, save_main_session=True):
     known_args, pipeline_args = parser.parse_known_args(argv)
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
+    logging.info('starting pipeline..')
     with beam.Pipeline(options=pipeline_options) as p:
-        source = p  | 'Sampling Data' >> beam.Create([find_current_day_url()])
+        source = (p  | 'Startup' >> beam.Create(['start_token'])
+                     |'Add current date' >> beam.Map(find_current_day_url)
+                  )
+
         lines = run_my_pipeline(source)
         form4 = filter_form_4(lines)
         enhanced_data = enhance_form_4(form4)

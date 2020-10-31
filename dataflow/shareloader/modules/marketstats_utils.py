@@ -4,16 +4,22 @@ import logging
 from itertools import chain
 
 def get_all_stocks(iexapikey):
-    return get_all_us_stocks(token)
+    logging.info('Getting all stocks')
+    all_stocks =  get_all_us_stocks(iexapikey)
+    logging.info('We got:{}'.format(len(all_stocks)))
+    return all_stocks
 
 def get_all_us_stocks(token, security_type='cs', nasdaq=True):
-  nyse_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
-  nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
-  all_symbols = nyse_symbols + nas_symbols if nasdaq else nyse_symbols
-  return [d['symbol'] for d in all_symbols  if d['type'].lower() == security_type]
 
-
-
+    logging.info('Getting all stocks...')
+    nyse_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
+    logging.info('Got:{}'.format(len(nyse_symbols)))
+    nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
+    logging.info('Got:{}'.format(len(nas_symbols)))
+    all_symbols = nyse_symbols + nas_symbols if nasdaq else nyse_symbols
+    stocks =  [d['symbol'] for d in all_symbols  if d['type'].lower() == security_type]
+    logging.info('We picked up:{} out of {}'.format(len(stocks), len(all_symbols)))
+    return stocks
 
 def get_prices(ticker, iexapikey):
     try:

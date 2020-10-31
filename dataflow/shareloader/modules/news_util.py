@@ -97,7 +97,7 @@ class NewsEmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{} '.format(self.recipients))
         logging.info('Incoming message is:{}'.format(msg))
         template = \
-            "<html><body><p> Today's headlines </p></br><table><th>Ticker</th><th>Headline</th><th>Score</th>{}</table></body></html>"
+            "<html><body><p> Today's headlines </p></br><table border='1' cellspacing='0' cellpadding='0' align='center'><th>Ticker</th><th>Headline</th><th>Score</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(

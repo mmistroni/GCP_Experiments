@@ -8,6 +8,7 @@ import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
+from datetime import datetime
 
 
 
@@ -67,7 +68,7 @@ class ParseForm4(beam.DoFn):
         ts = root.findall(".//transactionAmounts/transactionShares/value")
         return sum([int(t.text) for t in ts])
 
-    def get_purchase_transactions(self, content):
+    def get_purchase_transactions(self, content, cob_dt):
         data = content.text
         data = data.replace('\n', '')
         subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
@@ -81,24 +82,26 @@ class ParseForm4(beam.DoFn):
         if purchases:
             logging.info('found purchase transction for {}'.format(trading_symbol))
             shares_acquired = self.get_shares_acquired(root)
-            return (trading_symbol, shares_acquired)
+            return ((cob_dt, trading_symbol), shares_acquired)
 
 
     def process(self, element):
-        cob_dt, file_url = element
+        logging.info('Processing element@{}'.format(element))
+        edgar_dt, file_url = element
+        logging.info('Processing :{}={}'.format(edgar_dt, file_url))
+        cob_dt = datetime.strptime(edgar_dt, '%Y%m%d').strftime('%Y-%m-%d')
+        logging.info('{} converted to {}'.format(edgar_dt, cob_dt))
         try:
-
-            logging.info('Processing :{}={}'.format(cob_dt, file_url))
             file_content = self.open_url_content(file_url)
-            trading_symbols_tpl = self.get_purchase_transactions(file_content)
+            trading_symbols_tpl = self.get_purchase_transactions(file_content, cob_dt)
             #print('Trarding symblsa re:{}'.format(trading_symbols))
             #print('Returning:{}'.format(result))
             if trading_symbols_tpl:
                 return  [trading_symbols_tpl]
-            return [('N/A', 0)]
+            return [((cob_dt, 'N/A'), 0)]
         except Exception as e:
             print('Exceptin fo r:{}/{}:{}'.format(cob_dt, file_url, str(e)))
-            return [('N/A', 0)]
+            return [((cob_dt, 'N/A'), 0)]
 
 def format_string(input_str):
     return str(input_str.replace("b'", "").replace("'", "")).strip()
@@ -218,11 +221,6 @@ def get_company_stats(tpl, apikey):
     pdict['COB'] = cob
     return pdict
 
-
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
-
-
 class EdgarEmailSender(beam.DoFn):
     def __init__(self, recipients, key, content):
         self.recipients = recipients.split(',')
@@ -237,7 +235,6 @@ class EdgarEmailSender(beam.DoFn):
             person1.add_to(Email(recipient))
             personalizations.append(person1)
         return personalizations
-
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))

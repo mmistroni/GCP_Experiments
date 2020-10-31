@@ -69,6 +69,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--key')
         parser.add_argument('--sendgridkey')
+        #parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""

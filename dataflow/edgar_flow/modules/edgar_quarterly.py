@@ -55,12 +55,6 @@ def find_current_year(current_date):
     logging.info('Year to use is{}'.format(edgar_year))
     return edgar_year
 
-
-
-
-
-
-
 def get_edgar_table_schema():
   edgar_table_schema = 'COB:STRING, CUSIP:STRING, COUNT:INTEGER, TICKER:STRING'
   return edgar_table_schema

@@ -5,6 +5,7 @@ from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 from mock import patch, Mock
 from edgar_flow.modules.edgar_utils import  cusip_to_ticker, ParseForm4, EdgarCombineFn
+from edgar_flow.modules.edgar_daily_form4 import find_current_day_url
 
 
 import unittest
@@ -37,3 +38,9 @@ class TestEdgarDailyForm4Pipeline(unittest.TestCase):
 
               | 'Printing out' >> beam.Map(print)#
               )
+
+    def test_find_current_day_url(self):
+        from datetime import date
+        from pandas.tseries.offsets import BDay
+        dt  = date.today() - BDay(1)
+        print('Current daY URL:{}'.format(find_current_day_url(dt)))

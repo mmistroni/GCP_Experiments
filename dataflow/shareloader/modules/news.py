@@ -16,7 +16,7 @@ class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
+        parser.add_argument('--recipients', default='mmistroni@gmail.com,alexmistroni@gmail.com')
         parser.add_argument('--sector', default='Utilities,Consumer Cyclical,Energy')
         parser.add_argument('--business_days', default=1)
         parser.add_argument('--key')

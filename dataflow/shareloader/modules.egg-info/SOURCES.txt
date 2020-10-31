@@ -17,5 +17,6 @@ modules.egg-info/dependency_links.txt
 modules.egg-info/requires.txt
 modules.egg-info/top_level.txt
 test/__init__.py
+test/test_market52week.py
 test/test_monthly_data.py
 test/test_news_pipeline.py

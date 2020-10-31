@@ -35,25 +35,29 @@ class LeftJoinerFn(beam.DoFn):
 
         if left_key in right_dict:
             for each in row[1]:
+                print(each)
                 yield each + right_dict[left_key]
 
         else:
             for each in row[1]:
                 yield each
 
-class InnerJoinerFn(beam.DoFn):
+class AnotherLeftJoinerFn(beam.DoFn):
 
     def __init__(self):
-        super(InnerJoinerFn, self).__init__()
+        super(AnotherLeftJoinerFn, self).__init__()
 
     def process(self, row, **kwargs):
 
         right_dict = dict(kwargs['right_list'])
         left_key = row[0]
-
+        left = row[1]
+        print('Left is of tpe:{}'.format(type(left)))
         if left_key in right_dict:
-            for each in row[1]:
-                yield (left_key, each + right_dict[left_key])
+            print('Row is:{}'.format(row))
+            right = right_dict[left_key]
+            left.update(right)
+            yield (left_key, left)
 
 
 class Display(beam.DoFn):
@@ -95,21 +99,18 @@ class TestBeamFunctions(unittest.TestCase):
     def test_left_joins(self):
 
         with TestPipeline() as p:
-            pcoll1 = p| beam.Create(
-                   [ ('AMZN', [['a', 10, 20]]),
-                      ('key2', [[('a', 12)], [('b', 21)], [('c', 13)]]),
-                      ('key3', [[('a', 21)], [('b', 23)], [('c', 31)]])
+            pcoll1 = p| 'Create coll1' >> beam.Create(
+                   [ ('AMZN', {'price': 20, 'performance' : 20}),
+                      ('key2', {'price': 2, 'performance' : 1}),
+                      ('key3', {'price': 3, 'performance' : 3})
                       ])
-            pcoll2 = [('AMZN', [410]),
-                      ('key2', [[('x', 20)]])]
-
+            pcoll2 = p| 'Create coll2' >> beam.Create([('AMZN', {'count':410}),
+                      ('key2', {'count':4})]
+                                    )
             left_joined = (
                     pcoll1
-                    | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(), right_list=pcoll2)
-                    | 'Display' >> beam.ParDo(Display())
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                right_list=beam.pvalue.AsIter(pcoll2))
+                    | 'Display' >> beam.Map(print)
             )
-            #p.run()
-
-
-
 

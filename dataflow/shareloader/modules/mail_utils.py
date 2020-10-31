@@ -23,6 +23,7 @@ class MonthlyEmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        logging.info('We are going ot use key:{}'.format(self.key))
         template_start = "<html><body><head><style>table, th, td {border: 1px solid black;}</style>" + \
                     "<table><th>Ticker</th><th>Start Price</th><th>End Price</th>" + \
                     "<th>Performance</th><th>Ratings</th><th>Edgar Fills</th>"
@@ -38,10 +39,13 @@ class MonthlyEmailSender(beam.DoFn):
         for pers in personalizations:
             message.add_personalization(pers)
 
-        sg = SendGridAPIClient(self.key)
+        try:
+            sg = SendGridAPIClient(self.key)
 
-        response = sg.send(message)
-        logging.info(response.status_code, response.body, response.headers)
+            response = sg.send(message)
+            logging.info(response.status_code, response.body, response.headers)
+        except Exception as e :
+            logging.info('Exception in sending email:{}'.format(str(e)))
 
 def combine_data(elements):
     logging.info('Combining:{}'.format(elements))
@@ -53,5 +57,5 @@ def send_mail(input, options):
     return (input
             | 'Map to Template' >> beam.Map(lambda row:  TEMPLATE.format(**row) if row else '')
             | 'Combine' >> beam.CombineGlobally(combine_data)
-            | 'SendEmail' >> beam.ParDo(MonthlyEmailSender(options.recipients, options.key))
+            | 'SendEmail' >> beam.ParDo(MonthlyEmailSender(options.recipients, options.sgridkey))
             )

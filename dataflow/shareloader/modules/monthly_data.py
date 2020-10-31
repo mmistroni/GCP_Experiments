@@ -24,8 +24,9 @@ class XyzOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
+        parser.add_argument('--recipients')
         parser.add_argument('--key')
+        parser.add_argument('--sgridkey')
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""

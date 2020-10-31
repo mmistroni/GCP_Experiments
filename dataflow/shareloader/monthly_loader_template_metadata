@@ -11,6 +11,11 @@
       "name": "recipients",
       "helpText": "email recpients",
       "label": "recipients"
+    },
+    {
+      "name": "sgridkey",
+      "helpText": "send grid key",
+      "label": "sgkey"
     }
 
 

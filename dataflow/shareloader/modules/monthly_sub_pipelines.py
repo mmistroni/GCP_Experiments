@@ -20,6 +20,7 @@ from .metrics import get_analyst_recommendations, get_historical_data_yahoo, get
 def enhance_with_ratings(all_dicts, cloud_token):
     return (all_dicts
              |  'Filtering only the ones with Perf > 0.6' >> beam.Filter(lambda d: d['Performance'] > 0.6)
+             |  'Filtering also where price > 10$' >> beam.Filter(lambda d: d['Start_Price'] > 10.0)
              | 'Enhance with Ratings' >> beam.Map(lambda d: get_analyst_recommendations(d, cloud_token))
              | 'TO BQ DICT' >> beam.Map(map_to_bq_dict)
             )
