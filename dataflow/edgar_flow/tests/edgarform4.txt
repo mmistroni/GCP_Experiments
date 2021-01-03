@@ -1,0 +1,136 @@
+<SEC-DOCUMENT>0001437749-20-016426.txt : 20200804
+<SEC-HEADER>0001437749-20-016426.hdr.sgml : 20200804
+<ACCEPTANCE-DATETIME>20200804105029
+ACCESSION NUMBER:		0001437749-20-016426
+CONFORMED SUBMISSION TYPE:	4
+PUBLIC DOCUMENT COUNT:		1
+CONFORMED PERIOD OF REPORT:	20200731
+FILED AS OF DATE:		20200804
+DATE AS OF CHANGE:		20200804
+
+REPORTING-OWNER:
+
+	OWNER DATA:
+		COMPANY CONFORMED NAME:			FULGONI GIAN
+		CENTRAL INDEX KEY:			0001254384
+
+	FILING VALUES:
+		FORM TYPE:		4
+		SEC ACT:		1934 Act
+		SEC FILE NUMBER:	000-28827
+		FILM NUMBER:		201071750
+
+ISSUER:
+
+	COMPANY DATA:
+		COMPANY CONFORMED NAME:			PETMED EXPRESS INC
+		CENTRAL INDEX KEY:			0001040130
+		STANDARD INDUSTRIAL CLASSIFICATION:	RETAIL-DRUG STORES AND PROPRIETARY STORES [5912]
+		IRS NUMBER:				650680967
+		STATE OF INCORPORATION:			FL
+		FISCAL YEAR END:			0331
+
+	BUSINESS ADDRESS:
+		STREET 1:		420 SOUTH CONGRESS AVENUE
+		CITY:			DELRAY BEACH
+		STATE:			FL
+		ZIP:			33445
+		BUSINESS PHONE:		(561) 426-4444
+
+	MAIL ADDRESS:
+		STREET 1:		420 SOUTH CONGRESS AVENUE
+		CITY:			DELRAY BEACH
+		STATE:			FL
+		ZIP:			33445
+</SEC-HEADER>
+<DOCUMENT>
+<TYPE>4
+<SEQUENCE>1
+<FILENAME>rdgdoc.xml
+<DESCRIPTION>FORM 4
+<TEXT>
+<XML>
+<?xml version="1.0"?>
+<ownershipDocument>
+
+    <schemaVersion>X0306</schemaVersion>
+
+    <documentType>4</documentType>
+
+    <periodOfReport>2020-07-31</periodOfReport>
+
+    <issuer>
+        <issuerCik>0001040130</issuerCik>
+        <issuerName>PETMED EXPRESS INC</issuerName>
+        <issuerTradingSymbol>PETS</issuerTradingSymbol>
+    </issuer>
+
+    <reportingOwner>
+        <reportingOwnerId>
+            <rptOwnerCik>0001254384</rptOwnerCik>
+            <rptOwnerName>FULGONI GIAN</rptOwnerName>
+        </reportingOwnerId>
+        <reportingOwnerAddress>
+            <rptOwnerStreet1>420 SOUTH CONGRESS AVENUE</rptOwnerStreet1>
+            <rptOwnerStreet2></rptOwnerStreet2>
+            <rptOwnerCity>DELRAY BEACH</rptOwnerCity>
+            <rptOwnerState>FL</rptOwnerState>
+            <rptOwnerZipCode>33445</rptOwnerZipCode>
+            <rptOwnerStateDescription></rptOwnerStateDescription>
+        </reportingOwnerAddress>
+        <reportingOwnerRelationship>
+            <isDirector>1</isDirector>
+        </reportingOwnerRelationship>
+    </reportingOwner>
+
+    <nonDerivativeTable>
+        <nonDerivativeTransaction>
+            <securityTitle>
+                <value>Common Stock</value>
+            </securityTitle>
+            <transactionDate>
+                <value>2020-07-31</value>
+            </transactionDate>
+            <transactionCoding>
+                <transactionFormType>4</transactionFormType>
+                <transactionCode>A</transactionCode>
+                <equitySwapInvolved>0</equitySwapInvolved>
+            </transactionCoding>
+            <transactionAmounts>
+                <transactionShares>
+                    <value>7500</value>
+                    <footnoteId id="F1"/>
+                </transactionShares>
+                <transactionPricePerShare>
+                    <value>31.20</value>
+                </transactionPricePerShare>
+                <transactionAcquiredDisposedCode>
+                    <value>A</value>
+                </transactionAcquiredDisposedCode>
+            </transactionAmounts>
+            <postTransactionAmounts>
+                <sharesOwnedFollowingTransaction>
+                    <value>66400</value>
+                </sharesOwnedFollowingTransaction>
+            </postTransactionAmounts>
+            <ownershipNature>
+                <directOrIndirectOwnership>
+                    <value>D</value>
+                </directOrIndirectOwnership>
+            </ownershipNature>
+        </nonDerivativeTransaction>
+    </nonDerivativeTable>
+
+    <footnotes>
+        <footnote id="F1">Issued pursuant to the terms and conditions of the PetMed Express, Inc. 2015 Outside Director Equity Compensation Restricted Stock Plan, and held in escrow to be released ratable over a three year period condition upon continued employment.  Mr. Fulgoni retains voting rights over all the shares while in escrow.</footnote>
+    </footnotes>
+
+    <ownerSignature>
+        <signatureName>/s/ Gian M. Fulgoni</signatureName>
+        <signatureDate>2020-08-04</signatureDate>
+    </ownerSignature>
+</ownershipDocument>
+</XML>
+</TEXT>
+</DOCUMENT>
+</SEC-DOCUMENT>

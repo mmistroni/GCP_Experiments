@@ -9,7 +9,8 @@ import setuptools
 REQUIRED_PACKAGES = [
     'sendgrid==6.2.1',
     'pandas_datareader',
-    'vaderSentiment'
+    'vaderSentiment',
+    'numpy'
     ]
 
 

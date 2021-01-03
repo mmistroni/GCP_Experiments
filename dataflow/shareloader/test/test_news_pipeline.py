@@ -61,19 +61,20 @@ class TestNewsPipeline(unittest.TestCase):
         print(d)
 
 
-    def test_prepare_for_bigquery(self):
-        with TestPipeline() as p:
-            lst = ['AMZN', 'TestHeadline', 0.8]
-            lst2 = ['ABBV', 'TESTABBV', 0.5]
-            # Calling DataFrame constructor on list
-            df = pd.DataFrame([lst, lst2], columns=['ticker', 'headline', 0])
+    def prepare_for_big_query_tst(self, items):
+        raise Exception('Raising an Exception')
 
-            input = p | beam.Create([df])
-            res = prepare_for_big_query(input)
-            print(res)
-            assert_that(res, equal_to([
-                dict(TICKER='AMZN',HEADLINE='TestHeadline',
-                            SCORE=0.8, RUN_DATE=date.today().strftime('%Y-%m-%d'))]))
+    def test_prepare_for_bigquery(self):
+
+        with self.assertRaises(Exception):
+            with TestPipeline() as p:
+                lst = ['AMZN', 'TestHeadline', 0.8]
+                lst2 = ['ABBV', 'TESTABBV', 0.5]
+                # Calling DataFrame constructor on list
+                df = pd.DataFrame([lst, lst2], columns=['ticker', 'headline', 0])
+
+                input = p | beam.Create([df])
+                res = self.prepare_for_big_query_tst(input)
 
     def test_pipeline_options(self):
         options = XyzOptions.from_dictionary({'sector': 'Utilities', 'business_days' : 1})

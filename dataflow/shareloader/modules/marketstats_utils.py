@@ -16,8 +16,8 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     logging.info('Got:{}'.format(len(nyse_symbols)))
     nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
     logging.info('Got:{}'.format(len(nas_symbols)))
-    all_symbols = nyse_symbols + nas_symbols if nasdaq else nyse_symbols
-    stocks =  [d['symbol'] for d in all_symbols  if d['type'].lower() == security_type]
+    all_symbols = nyse_symbols + nas_symbols
+    stocks =  [d['symbol'] for d in all_symbols  if d['isEnabled'] and d['type'].lower() in ['ad', 'cs', 'et']]
     logging.info('We picked up:{} out of {}'.format(len(stocks), len(all_symbols)))
     return stocks
 

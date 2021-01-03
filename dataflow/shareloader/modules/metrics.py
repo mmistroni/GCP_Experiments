@@ -16,6 +16,7 @@ import pandas as pd
 from pandas.tseries.offsets import BDay
 import pandas_datareader.data as dr
 from datetime import datetime, date
+import numpy as np
 
 
 
@@ -172,7 +173,6 @@ def get_date_ranges(prev_bus_days):
 
 def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
     try:
-        end_date = date.today()
         logging.info('Finding dta between {} and {}'.format(start_dt, end_dt))
         data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Adj Close']]
         df = data.rename(columns={'Adj Close': symbol})
@@ -181,3 +181,29 @@ def get_historical_data_yahoo(symbol, sector, start_dt, end_dt):
         return df
     except Exception as e:
         return pd.DataFrame(columns=[symbol])
+
+
+def get_historical_data_yahoo_2(symbol, sector, start_dt, end_dt):
+  try:
+    data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Adj Close']]
+    ret = data['Adj Close'].values[0]
+    logging.info('YH2.Finding dta between {} and {} = {}'.format(start_dt, end_dt, ret))
+    return ret
+  except Exception as e:
+    return 0
+
+
+def get_return(ticker, start_date, end_date, stop=False):
+  try:
+    logging.info('Getting Return between {} and {}'.format(start_date, end_date))
+    data = dr.get_data_yahoo(ticker, start_date, end_date)[['Adj Close']]
+    data['return'] = np.log(data) - np.log(data.shift(7))
+    ret =  data['return'].values[-1]
+    return ret
+  except Exception as e:
+    logging.info('Exception for {},  {}:{}'.format(ticker, start_date, str(e)))
+    if stop:
+      logging.info('Stopping here')
+      return None
+    return get_return(ticker, start_date, (end_date + BDay(1).date()), stop=True)
+
