@@ -1,11 +1,13 @@
-from edgar_flow.modules.beam_functions import *
-from edgar_flow.modules.edgar_utils import ReadRemote, ReadAllFromText, EdgarCombineFn,\
-            ParseForm13F
-from mock import patch, Mock
-from apache_beam.testing.test_pipeline import TestPipeline
-from apache_beam.testing.util import assert_that, equal_to
 
 import unittest
+from lxml import etree
+from io import StringIO, BytesIO
+from edgar_flow.modules.edgar_utils import fast_iter2
+CATEGORIES = set(
+    ['issuerTradingSymbol', 'transactionCode', 'transactionShares'])
+SKIP_CATEGORIES = set(['phdthesis', 'mastersthesis', 'www'])
+DATA_ITEMS = ["value"]
+
 
 class TestEdgarUtils(unittest.TestCase):
 
@@ -21,3 +23,17 @@ class TestEdgarUtils(unittest.TestCase):
     def test_parse_form_13f(self):
         self.assertTrue(False)
 
+    def test_parsexml(self):
+        with open('edgarform4.txt') as f:
+            from pprint import pprint
+            data = f.read()
+        xml_str = data[data.rfind('<XML>') + 5: data.rfind("</XML>")].strip()
+        some_file_like = BytesIO(xml_str.encode('utf-8'))
+        #context = etree.iterparse(xml_str)
+        context = etree.iterparse(some_file_like)
+        res = self.parse_xml(context)
+        print('We got:{}'.format(res))
+
+
+    def parse_xml(self, tree):
+        return fast_iter2(tree)

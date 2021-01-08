@@ -11,6 +11,11 @@
       "name": "recipients",
       "helpText": "comma separated list of recipients",
       "label": "email recipients"
+    },
+    {
+      "name": "quarters",
+      "helpText": "quarters",
+      "label": "quarters"
     }
   ]
   

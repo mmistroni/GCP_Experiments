@@ -58,6 +58,9 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
+        parser.add_value_provider_argument('--quarters', type=str,
+                                           default='QTR1,QTR2,QTR3,QTR4')
+
         parser.add_argument('--key')
 
 def find_current_quarter(current_date):

@@ -114,7 +114,8 @@ REQUIRED_PACKAGES = [
     'numpy',
     'beautifulsoup4',
     'pandas',
-    'sendgrid==6.2.1'
+    'sendgrid==6.2.1',
+    'lxml'
     ]
 
 

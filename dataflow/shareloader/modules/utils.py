@@ -12,6 +12,21 @@ def get_all_shares_dataframe():
   return pd.DataFrame.from_dict(ds)
 
 
+def get_isr_and_kor():
+  isr_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/TAE/symbols?token={token}'.format(token=token)).json())
+  kor_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/KRX/symbols?token={token}'.format(token=token)).json())
+  isr_stocks.update(kor_stocks)
+  return isr_stocks
+
+def get_usr_adrs():
+  nas_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NAS/symbols?token={token}'.format(token=token)).json()]
+  nys_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NYS/symbols?token={token}'.format(token=token)).json()]
+  all_us = nys_stocks + nas_stocks
+  return dict((c['name'].split('-')[0].strip(), c['symbol']) for c in all_us if c['type'] == 'ad')# and c['name'].split('-')[0].strip() in kor_stocks)
+
+
+
+
 def get_latest_price_yahoo(symbol, cob_date):
     try:  #
         print('--latest price for{}'.format(symbol))

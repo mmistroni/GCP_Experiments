@@ -5,7 +5,8 @@ from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 from mock import patch, Mock
 from edgar_flow.modules.edgar_utils import  cusip_to_ticker, ParseForm4, EdgarCombineFn
-from edgar_flow.modules.edgar_daily_form4 import find_current_day_url
+from edgar_flow.modules.edgar_quarterly_form4 import find_quarter_urls
+import urllib
 
 
 import unittest
@@ -20,27 +21,16 @@ class Check(beam.PTransform):
       assert_that(pcoll, self._checker)
 
 
-class TestEdgarDailyForm4Pipeline(unittest.TestCase):
+class TestEdgarQuarterlyForm4Pipeline(unittest.TestCase):
 
-    def test_enhance_form4(self):
+    def test_find_quarter_urls(self):
+        print(find_quarter_urls('foo'))
 
-        sample_list = [('20201009', 'https://www.sec.gov/Archives/edgar/data/925741/0001437749-20-021024.txt'),
-                       ('20201009', 'https://www.sec.gov/Archives/edgar/data/925741/0001437749-20-021025.txt'),
-                       ('20201009', 'https://www.sec.gov/Archives/edgar/data/925741/0001437749-20-021026.txt')]
-        with TestPipeline() as p:
-            ( p | beam.Create(sample_list)
-              | 'parsing form 4 filing' >> beam.ParDo(ParseForm4())
-              | 'Combining all ' >> beam.CombinePerKey(sum)
-              #| 'Mapping to Tuple' >> beam.Map(lambda tpl: (tpl[0][0], tpl[0][1], tpl[1]))
-              | 'Mapping to be lin line withedgar fn' >> beam.Map(lambda tpl: ['', '' ,tpl[0], tpl[1]])
+    def test_readRemote(self):
+        element = 'https://www.sec.gov/Archives/edgar/daily-index/2020/QTR4/master.20201112.idx'
+        data = urllib.request.urlopen(element)  # it's a file like object and works just like a file
+        data = [line for line in data]
+        print(data)
 
-              | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFn())
 
-              | 'Printing out' >> beam.Map(print)#
-              )
 
-    def test_find_current_day_url(self):
-        from datetime import date
-        from pandas.tseries.offsets import BDay
-        dt  = date.today() - BDay(1)
-        print('Current daY URL:{}'.format(find_current_day_url(dt)))

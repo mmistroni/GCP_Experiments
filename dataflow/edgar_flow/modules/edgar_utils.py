@@ -9,8 +9,32 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
 from datetime import datetime
+from lxml import etree
+from io import StringIO, BytesIO
 
 
+CATEGORIES = set(
+    ['issuerTradingSymbol', 'transactionCode', 'transactionShares'])
+
+def clear_element(element):
+    element.clear()
+    while element.getprevious() is not None:
+        del element.getparent()[0]
+
+
+def fast_iter2(context):
+    test_dict = {}
+    for event, element in context:
+        if element.tag in CATEGORIES:
+            if element.tag == 'issuerTradingSymbol':
+                test_dict['Symbol'] = element.text
+            elif element.tag == 'transactionCode':
+                test_dict['trans_code'] = element.text
+            elif element.tag == 'transactionShares':
+                vals = [author.text for author in element.findall("value")]
+                test_dict['shares'] = int(vals[0]) if vals else 0
+            clear_element(element)
+    return test_dict
 
 class ReadRemote(beam.DoFn):
     def process(self, element):
@@ -21,7 +45,7 @@ class ReadRemote(beam.DoFn):
             logging.info('data has:{}'.format(len(data)))
             return data
         except Exception as e:
-            logging.info('Error fetching {}'.format(element))
+            logging.info('Error fetching {}:{}'.format(element, str(e)))
             return []
 
 class ParseForm13F(beam.DoFn):
@@ -80,22 +104,35 @@ class ParseForm4(beam.DoFn):
         # print('TCODES:{}'.format(tcodes))
         purchases = [c for c in tcodes if 'A' or 'P' in c]
         if purchases:
-            logging.info('found purchase transction for {}'.format(trading_symbol))
             shares_acquired = self.get_shares_acquired(root)
             return ((cob_dt, trading_symbol), shares_acquired)
 
+    def parse_xml(self, tree):
+        return fast_iter2(tree)
+
+
+    def get_purchase_transactions_2(self, content, cob_dt):
+        some_file_like = BytesIO(content.encode('utf-8'))
+        context = etree.iterparse(some_file_like)
+        res = self.parse_xml(context)
+        if res['trans_code'] in ['A' , 'P' ]:
+            shares_acquired = res['shares']
+            return ((cob_dt, res['Symbol']), shares_acquired)
 
     def process(self, element):
-        logging.info('Processing element@{}'.format(element))
         edgar_dt, file_url = element
         logging.info('Processing :{}={}'.format(edgar_dt, file_url))
-        cob_dt = datetime.strptime(edgar_dt, '%Y%m%d').strftime('%Y-%m-%d')
-        logging.info('{} converted to {}'.format(edgar_dt, cob_dt))
+        try:
+            cob_dt = datetime.strptime(edgar_dt, '%Y%m%d').strftime('%Y-%m-%d')
+        except:
+            logging.info('Attempting other form of parsing')
+            cob_dt = datetime.strptime(edgar_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
         try:
             file_content = self.open_url_content(file_url)
-            trading_symbols_tpl = self.get_purchase_transactions(file_content, cob_dt)
-            #print('Trarding symblsa re:{}'.format(trading_symbols))
-            #print('Returning:{}'.format(result))
+            data = file_content.text
+            data = data.replace('\n', '')
+            subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
+            trading_symbols_tpl = self.get_purchase_transactions_2(subset, cob_dt)
             if trading_symbols_tpl:
                 return  [trading_symbols_tpl]
             return [((cob_dt, 'N/A'), 0)]
@@ -276,6 +313,17 @@ def get_edgar_daily_table_spec_form4():
       datasetId='gcp_edgar',
       tableId='form_4_daily')
 
+def get_edgar_daily_table_spec_form4():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='form_4_daily')
+
+def get_edgar_daily_table_spec_form4_historical():
+  return bigquery.TableReference(
+      projectId="datascience-projects",
+      datasetId='gcp_edgar',
+      tableId='form_4_daily_historical')
 
 
 

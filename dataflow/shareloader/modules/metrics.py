@@ -17,6 +17,7 @@ from pandas.tseries.offsets import BDay
 import pandas_datareader.data as dr
 from datetime import datetime, date
 import numpy as np
+import math
 
 
 
@@ -193,17 +194,14 @@ def get_historical_data_yahoo_2(symbol, sector, start_dt, end_dt):
     return 0
 
 
-def get_return(ticker, start_date, end_date, stop=False):
+def get_return(ticker, start_date, end_date):
   try:
     logging.info('Getting Return between {} and {}'.format(start_date, end_date))
     data = dr.get_data_yahoo(ticker, start_date, end_date)[['Adj Close']]
-    data['return'] = np.log(data) - np.log(data.shift(7))
-    ret =  data['return'].values[-1]
-    return ret
+    all_dt = data.iloc[[0, -1]]
+    return (np.log(all_dt) - np.log(all_dt.shift(1)))['Adj Close'].values[-1]
+
   except Exception as e:
     logging.info('Exception for {},  {}:{}'.format(ticker, start_date, str(e)))
-    if stop:
-      logging.info('Stopping here')
-      return None
-    return get_return(ticker, start_date, (end_date + BDay(1).date()), stop=True)
+    return None
 
