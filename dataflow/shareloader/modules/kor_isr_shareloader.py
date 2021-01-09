@@ -19,7 +19,8 @@ from collections import OrderedDict
 import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
-from .utils import get_isr_and_kor, get_usr_adrs
+from .utils import get_isr_and_kor, get_usr_adrs, get_latest_price_yahoo
+from functools import reduce
 
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
@@ -71,31 +72,9 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--iexkey')
 
 
-def get_prices(tpl, iexkey):
-    try:
-        ticker, qty, original_price = tpl.split(',')
-        logging.info('Retreiving prices for {}'.format(ticker))
-        stat_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=iexkey)
-        historical_data = requests.get(stat_url).json()
-        pandl = historical_data['change'] * int(qty)
-        current_pos = int(qty) * historical_data['iexClose']
-        total_gain = int(qty) * (historical_data['iexClose'] - float(original_price))
-        wk52high = historical_data['week52High']
-        return [ticker, qty,
-             historical_data['iexClose'],
-             historical_data['change'],
-             historical_data['latestVolume'],
-             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
-    except Exception as e :
-        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
-        return []
-
-def get_adrs(iexkey)
-
-
-def create_us_and_foreign_dict():
-    adrs = get_usr_adrs()
-    intern_stocks = get_isr_and_kor()
+def create_us_and_foreign_dict(token):
+    adrs = get_usr_adrs(token)
+    intern_stocks = get_isr_and_kor(token)
     intern_symbols = [(k, v) for k, v in intern_stocks.items() if k in adrs.keys()]
     adr_symbols = dict((k, v) for k, v in adrs.items() if k in intern_stocks)
     intern_and_adr = dict(
@@ -106,14 +85,25 @@ def create_us_and_foreign_dict():
     us_and_foreign = map(lambda tpl: (tpl[0], tpl[1], intern_and_adr.get(tpl[0])), adr_symbols.items())
     return list(us_and_foreign)
 
+def map_ticker_to_html_string(elements):
+    return map(lambda tpl: ROW_TEMPLATE.map(tpl[0], tpl[1], tpl[2], tpl[3]), elements)
+
+def combine_to_html_rows(elements):
+    return reduce(lambda acc, current: acc + current, elements, '')
+
+def find_diff(ticker, start_date):
+    res  = get_latest_price_yahoo(ticker, start_date)
+    print('Data for {}={}'.format(ticker, res))
+    return res['Adj Close_t'] / res['Adj Close_y'] - 1
+
 
 def run_my_pipeline(p, options):
     lines = (p
-             | 'Getting ADRs' >> beam.Create(get_adrs(options.iexkey))
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.iexkey))
-             | 'Filtering Increases' >> beam.Filter()
-             | 'Map to HTML Table' >> beam.Map()
-             | 'Combine to one Text' >> beam.CombineFn(todo)
+             | 'Getting ADRs' >> beam.Create(create_us_and_foreign_dict(options.iexkey))
+             | 'Getting Prices' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], find_diff(tpl[2], date.today())))
+             | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[2] > 0.05)
+             | 'Map to HTML Table' >> beam.Map(map_ticker_to_html_string)
+             | 'Combine to one Text' >> beam.CombineFn(combine_to_html_rows)
              | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
              )
     return lines

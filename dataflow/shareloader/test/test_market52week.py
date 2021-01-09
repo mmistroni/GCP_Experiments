@@ -34,7 +34,7 @@ class TestMarketDailyPipeline(unittest.TestCase):
                     )
 
     def test_get_all_stocks(self):
-        all_stocks = get_all_stocks('sk_98e397d4bee940488e1f48e9b419508f')
+        all_stocks = get_all_stocks('<tests>')
         print(len(all_stocks))
         print([s for s in all_stocks if s in ['PXLG','PXMV','RGSE','LGCY', 'AMZN']])
 

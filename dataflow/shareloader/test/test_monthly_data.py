@@ -96,7 +96,7 @@ class TestBeamFunctions(unittest.TestCase):
 
     def test_get_analyst_recomm(self):
         t = dict(Ticker='QDEL')
-        print(get_analyst_recommendations(t, 'sk_98e397d4bee940488e1f48e9b419508f'))
+        print(get_analyst_recommendations(t, '<token>'))
 
 
     def test_join_performance_with_edgar(self):

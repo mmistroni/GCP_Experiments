@@ -5,26 +5,16 @@ import pandas_datareader.data as dr
 import numpy as np
 from datetime import datetime, date
 import requests
+import logging
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
+import apache_beam as beam
+
 
 def get_all_shares_dataframe():
   all_shares = requests.get('https://k1k1xtrm88.execute-api.us-west-2.amazonaws.com/test/query-shares').json()
   ds = [d for d in all_shares if d['QTY'] > 1]
   return pd.DataFrame.from_dict(ds)
-
-
-def get_isr_and_kor():
-  isr_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/TAE/symbols?token={token}'.format(token=token)).json())
-  kor_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/KRX/symbols?token={token}'.format(token=token)).json())
-  isr_stocks.update(kor_stocks)
-  return isr_stocks
-
-def get_usr_adrs():
-  nas_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NAS/symbols?token={token}'.format(token=token)).json()]
-  nys_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NYS/symbols?token={token}'.format(token=token)).json()]
-  all_us = nys_stocks + nas_stocks
-  return dict((c['name'].split('-')[0].strip(), c['symbol']) for c in all_us if c['type'] == 'ad')# and c['name'].split('-')[0].strip() in kor_stocks)
-
-
 
 
 def get_latest_price_yahoo(symbol, cob_date):
@@ -63,6 +53,23 @@ def create_email_template(input_elements):
     mapped_str = map(lambda lst: base_template.format(
 
     ))
+
+def get_isr_and_kor(token):
+  isr_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/TAE/symbols?token={token}'.format(token=token)).json())
+  kor_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/KRX/symbols?token={token}'.format(token=token)).json())
+  isr_stocks.update(kor_stocks)
+  return isr_stocks
+
+def get_usr_adrs(token):
+  nas_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NAS/symbols?token={token}'.format(token=token)).json()]
+  nys_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NYS/symbols?token={token}'.format(token=token)).json()]
+  all_us = nys_stocks + nas_stocks
+  return dict((c['name'].split('-')[0].strip(), c['symbol']) for c in all_us if c['type'] == 'ad')# and c['name'].split('-')[0].strip() in kor_stocks)
+
+
+
+
+
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):

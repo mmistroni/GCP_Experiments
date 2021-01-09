@@ -45,10 +45,10 @@ def create_form4_vs_13_ppln(p):
               |'Extractign only what we need..' >> beam.Map(lambda elem: elem.split(',')[1:])
               |'Filter out first row' >> beam.Filter(lambda arr: arr[1] != "F4_COB")
                   | 'Adding LogReturns' >> beam.Map(
-                            lambda tpl: (tpl[0], tpl[1], tpl[2],
+                            lambda tpl: (tpl[0], tpl[3], tpl[4],
                                          get_return(tpl[0],
-                                    datetime.strptime(tpl[1], '%Y-%m-%d').date(),
-                                    datetime.strptime(tpl[2], '%Y-%m-%d').date())))
+                                    datetime.strptime(tpl[3], '%Y-%m-%d').date(),
+                                    datetime.strptime(tpl[4], '%Y-%m-%d').date())))
                   | 'Mapping to CSV File' >> beam.Map(lambda tpl: ','.join([str(e) for e in tpl]))
                 )
 
