@@ -2,7 +2,7 @@ from __future__ import absolute_import
 import requests
 
 from datetime import date
-
+from pandas.tseries.offsets import BDay
 import logging
 from apache_beam.io.gcp.internal.clients import bigquery
 import apache_beam as beam
@@ -46,7 +46,7 @@ class ParseRSS(beam.DoFn):
             detail = item[1]
             link = item[2]
             pubDate = item[3]
-            if pubDate <date.today():
+            if pubDate < (date.today() - BDay(1)).date() :
                 logging.info('Skipping obsolete :{} for {}'.format(pubDate, item))
                 continue;
             date_str = pubDate.strftime('%Y-%m-%d')

@@ -5,33 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/edgar_flow/edgar_quarterly_main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edgar_flow/modules/price_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/adr_main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/stock_picks_main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_quarterly_form4_template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/edgar_dataflow_quarterly_form4_template_metadata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily_form4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules.egg-info/SOURCES.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules.egg-info/requires.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules.egg-info/requires.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/form4_strat_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/form4_strat_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/news.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/news_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/news_loader_template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/news_loader_template_metadata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/shares.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/shares.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/stock_picks.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/stock_picks.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -41,6 +16,27 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/shareloader/modules/stock_picks.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="164">
+              <caret line="48" column="56" selection-start-line="48" selection-start-column="56" selection-end-line="48" selection-end-column="56" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/shareloader/modules/bq_utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -62,7 +58,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="129">
@@ -101,7 +97,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>genera</find>
       <find>filter_form_13hf</find>
       <find>readFro</find>
       <find>DataReader</find>
@@ -131,6 +126,7 @@
       <find>transactionAmounts</find>
       <find>fast_iter2</find>
       <find>parse_xml</find>
+      <find>BDay</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -191,11 +187,11 @@
         <option value="$PROJECT_DIR$/shareloader/stock_picks_main.py" />
         <option value="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" />
         <option value="$PROJECT_DIR$/shareloader/setup.py" />
-        <option value="$PROJECT_DIR$/shareloader/modules/stock_picks.py" />
         <option value="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily_form4.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" />
         <option value="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/stock_picks.py" />
       </list>
     </option>
   </component>
@@ -433,12 +429,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.8135593" visible="true" weight="0.2909226" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8135593" visible="true" weight="0.2909226" />
       <window_info id="Structure" order="1" sideWeight="0.18644068" side_tool="true" weight="0.171875" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.24222586" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.24222586" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -617,16 +613,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/bq_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="38" column="27" selection-start-line="35" selection-start-column="9" selection-end-line="38" selection-end-column="27" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_dataflow_quarterly_form4_template_metadata">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -780,16 +766,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/shareloader/modules/stock_picks.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="253">
-          <caret line="53" column="47" selection-start-line="53" selection-start-column="47" selection-end-line="53" selection-end-column="47" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/shareloader/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -904,6 +880,23 @@
             <element signature="e#9862#10258#0" />
             <element signature="e#10494#11346#0" />
             <element signature="e#11395#12466#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/bq_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/stock_picks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="164">
+          <caret line="48" column="56" selection-start-line="48" selection-start-column="56" selection-end-line="48" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
