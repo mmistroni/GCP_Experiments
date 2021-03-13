@@ -19,13 +19,13 @@ from collections import OrderedDict
 import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
-from .utils import get_isr_and_kor, get_usr_adrs, get_latest_price_yahoo
+from .utils import get_isr_and_kor, get_usr_adrs, get_latest_price_yahoo_2
 from functools import reduce
 
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
-class EmailSender(beam.DoFn):
+class ADREmailSender(beam.DoFn):
     def __init__(self, recipients, key):
         self.recipients = recipients.split(',')
         self.key = key
@@ -40,27 +40,29 @@ class EmailSender(beam.DoFn):
         return personalizations
 
     def process(self, element):
-        msg = element
-        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients))
-        template = \
-            "<html><body><table><th>Foreign Ticker</th><th>ADR Ticker</th><th>Latest Price</th><th>Change</th>{}</table></body></html>"
-        content = template.format(msg)
-        logging.info('Sending \n {}'.format(content))
-        message = Mail(
-            from_email='gcp_portfolio@mmistroni.com',
-            subject='KOR-ISR Stocks spiked up!',
-            html_content=content)
+        if element:
+            msg = element
+            logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients,msg))
+            template = \
+                "<html><body><table><th>Foreign Ticker</th><th>ADR Ticker</th><th>Latest Price</th><th>Change</th>{}</table></body></html>"
+            content = template.format(msg)
+            logging.info('Sending \n {}'.format(content))
+            message = Mail(
+                from_email='gcp_portfolio@mmistroni.com',
+                subject='KOR-ISR Stocks spiked up!',
+                html_content=content)
 
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
+            personalizations = self._build_personalization(self.recipients)
+            for pers in personalizations:
+                message.add_personalization(pers)
 
-        sg = SendGridAPIClient(self.key)
+            sg = SendGridAPIClient(self.key)
 
-        response = sg.send(message)
-        logging.info('Mail Sent:{}'.format(response.status_code))
-        logging.info('Body:{}'.format(response.body))
-
+            response = sg.send(message)
+            logging.info('Mail Sent:{}'.format(response.status_code))
+            logging.info('Body:{}'.format(response.body))
+        else:
+            logging.info('Not Sending email...nothing to do')
 
 
 class XyzOptions(PipelineOptions):
@@ -69,7 +71,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_argument('--key')
-        parser.add_argument('--iexkey')
+        parser.add_argument('--iexapikey')
 
 
 def create_us_and_foreign_dict(token):
@@ -83,30 +85,37 @@ def create_us_and_foreign_dict(token):
     # adr_symbols
 
     us_and_foreign = map(lambda tpl: (tpl[0], tpl[1], intern_and_adr.get(tpl[0])), adr_symbols.items())
-    return list(us_and_foreign)
+    res = list(us_and_foreign)
+    logging.info('US and foreign:{}'.format(res))
+    return res
 
-def map_ticker_to_html_string(elements):
-    return map(lambda tpl: ROW_TEMPLATE.map(tpl[0], tpl[1], tpl[2], tpl[3]), elements)
+def map_ticker_to_html_string(tpl):
+    res =   ROW_TEMPLATE.format(tpl[0], tpl[1], tpl[2], tpl[3])
+    logging.info('Mapped is:{}'.format(res))
+    return res
 
 def combine_to_html_rows(elements):
-    return reduce(lambda acc, current: acc + current, elements, '')
+    logging.info('Combining')
+    combined =  reduce(lambda acc, current: acc + current, elements, '')
+    logging.info('Combined string is:{}'.format(combined))
+    return combined
 
 def find_diff(ticker, start_date):
-    res  = get_latest_price_yahoo(ticker, start_date)
-    print('Data for {}={}'.format(ticker, res))
-    return res['Adj Close_t'] / res['Adj Close_y'] - 1
-
+    print('finding prices for:{}'.format(ticker))
+    res =  get_latest_price_yahoo_2(ticker, start_date)
+    logging.info('Data for {}={}'.format(ticker, res))
+    return res
 
 def run_my_pipeline(p, options):
-    lines = (p
-             | 'Getting ADRs' >> beam.Create(create_us_and_foreign_dict(options.iexkey))
+    return (p
+             |  'Start'>> beam.Create(create_us_and_foreign_dict(options.iexapikey))
              | 'Getting Prices' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], find_diff(tpl[2], date.today())))
-             | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[2] > 0.05)
+             | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[3] > 0.1)
+             | 'Printing out' >> beam.Map(logging.info)
              | 'Map to HTML Table' >> beam.Map(map_ticker_to_html_string)
-             | 'Combine to one Text' >> beam.CombineFn(combine_to_html_rows)
-             | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+             | 'Combine to one Text' >> beam.CombineGlobally(combine_to_html_rows)
+             | 'SendEmail' >> beam.ParDo(ADREmailSender(options.recipients, options.key))
              )
-    return lines
 
 
 def run(argv=None, save_main_session=True):
@@ -116,16 +125,17 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
-    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
     logging.info(pipeline_options.get_all_options())
-    logging.info("=== readign from textfile:{}".format(input_file))
-    logging.info('====== Destination is :{}'.format(destination))
-
+    start_list = create_us_and_foreign_dict(pipeline_options.iexapikey)
+    logging.info('===== STARTING===== with :{}'.format(start_list))
     with beam.Pipeline(options=pipeline_options) as p:
-        input = p  | 'Get List of Tickers' >> ReadFromText(input_file)
-        run_my_pipeline(input, pipeline_options)
-
+        result =  (p|  'Start' >> beam.Create(start_list)
+                        | 'Getting Prices' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], find_diff(tpl[2], date.today())))
+                        | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[3] > 0.05)
+                        | 'Map to HTML Table' >> beam.Map(lambda t:map_ticker_to_html_string(t))
+                        | 'Combine to one Text' >> beam.CombineGlobally(combine_to_html_rows)
+                        | 'SendEmail' >> beam.ParDo(ADREmailSender(pipeline_options.recipients, pipeline_options.key))
+                   )
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

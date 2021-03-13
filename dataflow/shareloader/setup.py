@@ -10,7 +10,9 @@ REQUIRED_PACKAGES = [
     'sendgrid==6.2.1',
     'pandas_datareader',
     'vaderSentiment',
-    'numpy'
+    'numpy',
+    'bs4',
+    'lxml'
     ]
 
 

@@ -115,7 +115,8 @@ REQUIRED_PACKAGES = [
     'beautifulsoup4',
     'pandas',
     'sendgrid==6.2.1',
-    'lxml'
+    'lxml',
+    'pandas_datareader'
     ]
 
 

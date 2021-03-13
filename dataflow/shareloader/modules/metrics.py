@@ -91,6 +91,30 @@ def compute_metrics(prices):
   #perf_dict['News_Sentiment'] = news_measure
   return pd.DataFrame([perf_dict])
 
+def hurst_f(input_ts, lags_to_test=20):
+  # interpretation of return value
+  # hurst < 0.5 - input_ts is mean reverting
+  # hurst = 0.5 - input_ts is effectively random/geometric brownian motion
+  # hurst > 0.5 - input_ts is trending
+  tau = []
+  lagvec = []
+  #  Step through the different lags
+  for lag in range(2, lags_to_test):
+      #  produce price difference with lag
+      pp = np.subtract(input_ts[lag:], input_ts[:-lag])
+      #  Write the different lags into a vector
+      lagvec.append(lag)
+      #  Calculate the variance of the differnce vector
+      tau.append(np.sqrt(np.std(pp)))
+  #  linear fit to double-log graph (gives power)
+  m = np.polyfit(np.log10(lagvec), np.log10(tau), 1)
+  # calculate hurst
+  hurst = m[0]*2
+
+  return hurst
+
+
+
 def infer_ratings(json):
   rating_scale = float(json.get('ratingScaleMark'))
   txt = ''
@@ -112,6 +136,7 @@ def get_analyst_recommendations(data_dict, token):
 
     analyst_url = \
       'https://cloud.iexapis.com/stable/stock/{symbol}/recommendation-trends?token={token}'.format(symbol=ticker, token=token)
+    logging.info('Analyst URL is:{}.'.format(analyst_url))
     json = requests.get(analyst_url).json()
     logging.info('======calling analys trecomm. for {}.got:{}'.format(ticker, json))
 

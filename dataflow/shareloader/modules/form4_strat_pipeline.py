@@ -49,7 +49,10 @@ def create_form4_vs_13_ppln(p):
                                          get_return(tpl[0],
                                     datetime.strptime(tpl[3], '%Y-%m-%d').date(),
                                     datetime.strptime(tpl[4], '%Y-%m-%d').date())))
-                  | 'Mapping to CSV File' >> beam.Map(lambda tpl: ','.join([str(e) for e in tpl]))
+                |'Addign Original Price' >> beam.Map(
+                        lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], get_historical_data_yahoo_2(tpl[0], '', tpl[1], tpl[1])))
+
+                | 'Mapping to CSV File' >> beam.Map(lambda tpl: ','.join([str(e) for e in tpl]))
                 )
 
 
@@ -82,7 +85,7 @@ def run(argv=None, save_main_session=True):
         # result = ( edgar_fills  | sink)
 
         form4_vs_13 = create_form4_vs_13_ppln(p)
-        sink2 = beam.io.WriteToText(destination2, header='ticker,cob,next_date,return',
+        sink2 = beam.io.WriteToText(destination2, header='ticker,cob,next_date,return,cob_price',
                                    num_shards=1)
 
         result2 = ( form4_vs_13  | sink2)

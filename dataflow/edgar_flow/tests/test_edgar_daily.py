@@ -5,7 +5,8 @@ from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 from mock import patch, Mock
 from edgar_flow.modules.edgar_utils import  cusip_to_ticker
-
+from edgar_flow.modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
+            find_current_year, EdgarCombineFn, ParseForm4
 
 import unittest
 
@@ -43,3 +44,14 @@ class TestEdgarDailyPipeline(unittest.TestCase):
                 sample_list)
             | 'Count unique elements' >> beam.combiners.Count.PerElement()
             | beam.Map(print))
+
+    def test_combine_elements(self):
+        sample_list = [[str(i), str(i), str(i), i] for i in range(1,20)]
+        with TestPipeline() as p:
+            res = (p
+            | 'Create produce' >> beam.Create(
+                sample_list)
+            | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFn())
+            | beam.Map(print))
+
+

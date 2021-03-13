@@ -1,21 +1,16 @@
 {
   "description": "An example pipeline that downlod edgar form4 quarterly files",
-  "name": "Edgar Daily Form 4 Pipeline",
+  "name": "Edgar Daily Form 4 Pipeline Quarterly",
   "parameters": [
     {
-      "name": "key",
-      "helpText": "sendgrid key",
-      "label": "sendgrid key"
+      "name": "quarter",
+      "helpText": "quarter for which we want to run",
+      "label": "quarter"
     },
     {
-      "name": "recipients",
-      "helpText": "comma separated list of recipients",
-      "label": "email recipients"
-    },
-    {
-      "name": "quarters",
-      "helpText": "quarters",
-      "label": "quarters"
+      "name": "year",
+      "helpText": "year for which we want to run",
+      "label": "year"
     }
   ]
   

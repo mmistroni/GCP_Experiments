@@ -11,7 +11,12 @@
       "name": "business_days",
       "helpText": "Past business day",
       "label": "business_days"
-    }
+    },
+    {
+      "name": "iexkey",
+      "helpText": "iexapi keyPast business day",
+      "label": "iexapi key"
+    },
 
 
   ]

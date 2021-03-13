@@ -8,7 +8,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from .bq_utils import get_table_schema, get_table_spec, map_to_bq_dict
 from datetime import date
-from .news_util import find_news_scores_for_ticker, df_to_dict, NewsEmailSender, combine_news, stringify_news
+from .news_util import find_news_scores_for_ticker, df_to_dict, NewsEmailSender, combine_news, stringify_news, \
+            enhance_with_price
 from .bq_utils import get_news_table_schema, get_news_table_spec
 
 
@@ -19,7 +20,9 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', default='mmistroni@gmail.com,alexmistroni@gmail.com')
         parser.add_argument('--sector', default='Utilities,Consumer Cyclical,Energy')
         parser.add_argument('--business_days', default=1)
+
         parser.add_argument('--key')
+        parser.add_argument('--iexkey')
 
 
 
@@ -30,16 +33,21 @@ def map_to_bq_dict(original_dict):
     return dict(     RUN_DATE=date.today().strftime('%Y-%m-%d'),
                      TICKER=original_dict.get('ticker', 'NA'),
                      HEADLINE=original_dict['headline'][0:50],
-                     SCORE=original_dict.get(0, 0))
+                     SCORE=original_dict.get(0, 0),
+                     EXTENDED_PRICE=original_dict.get('EXTENDED_PRICE', 0.0),
+                     EXTENDED_CHANGE = original_dict.get('EXTENDED_CHANGE', 0.0))
 
 def write_data(data, sink):
+
+    logging.info('Writing data....')
     return (data | 'MAP TO BigQuery' >> beam.Map(map_to_bq_dict)
                  | sink)
 
-def prepare_for_big_query(dframes):
+def prepare_for_big_query(dframes, iexkey):
     return (dframes
             | 'Convert to Dictionary' >> beam.Map(df_to_dict)
-            | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0,-1) > 0.5)
+            | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0,-1) > 0.7)
+            | 'Add Currentlyquoted price' >> beam.Map(lambda d: enhance_with_price(d,iexkey=iexkey))
 
     )
 
@@ -81,14 +89,17 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         source = p  | 'Read Source File' >> ReadFromText('gs://datascience-bucket-mm/all_sectors.csv')
         sink = beam.io.WriteToBigQuery(
-            get_news_table_spec(),
-            schema=get_news_table_schema(),
+            bigquery.TableReference(
+                projectId="datascience-projects",
+                datasetId='gcp_shareloader',
+                tableId='news_enhanced'),
+            schema='RUN_DATE:STRING,TICKER:STRING,HEADLINE:STRING,SCORE:FLOAT,EXTENDED_PRICE:FLOAT,EXTENDED_CHANGE:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
         tickers = run_my_pipeline(source, pipeline_options)
         news = find_news_for_ticker(tickers, pipeline_options.business_days)
-        bq_data = prepare_for_big_query(news)
+        bq_data = prepare_for_big_query(news, pipeline_options.iexkey)
         write_data(bq_data, sink)
         send_notification(bq_data, pipeline_options)
 

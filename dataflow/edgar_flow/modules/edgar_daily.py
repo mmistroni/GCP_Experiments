@@ -12,6 +12,7 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
 from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4
+from .price_utils import get_current_price
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -30,7 +31,7 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
-        template = "<html><body><table><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
+        template = "<html><body><table><th>PeriodOfReport</th><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
@@ -77,8 +78,8 @@ def find_current_quarter(current_date):
 def combine_data(elements):
     return (elements
             | 'Combining similar' >> beam.combiners.Count.PerElement()
-            | 'Groupring' >> beam.MapTuple( lambda tpl, count: (tpl[0], tpl[1], count))
-            | 'Adding Cusip' >> beam.MapTuple(lambda cob, word, count: [cob, word, cusip_to_ticker(word), count]))
+            | 'Groupring' >> beam.MapTuple( lambda tpl, count: (tpl[0], tpl[1], tpl[2], count))
+            | 'Adding Cusip' >> beam.MapTuple(lambda cob, period, word, count: [cob, period, word, cusip_to_ticker(word), count]))
 
 
 def enhance_data(lines):
@@ -118,16 +119,37 @@ def send_email(lines, pipeline_options):
 def write_to_bigquery(lines):
     big_query = (
             lines
-            | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=date.today().strftime('%Y-%m-%d'),
-                                                                       CUSIP=tpl[1],
-                                                                       TICKER=tpl[2],
-                                                                       COUNT=tpl[3]))
+            |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
+                                                              tpl[4], get_current_price(tpl[3],
+                                                                    start_dt=datetime.strptime(tpl[0], '%Y-%m-%d').date())))
+
+            | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
+                                                                       PERIODOFREPORT=tpl[1],
+                                                                       CUSIP=tpl[2],
+                                                                       TICKER=tpl[3],
+                                                                       COUNT=tpl[4],
+                                                                       PRICE=float(tpl[5])))
             | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-        get_edgar_daily_table_spec(),
-        schema=get_edgar_table_schema(),
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_edgar',
+            tableId='form_13hf_daily_enhanced'),
+        schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT',
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     )
+
+def find_current_day_url(sample):
+    current_date = (datetime.now() - BDay(1))
+    logging.info('Finding Edgar URL for {}  at:{}'.format(current_date, datetime.now().strftime('%Y-%m-%d')))
+    current_quarter = find_current_quarter(current_date)
+    current_year = find_current_year(current_date)
+    master_idx_url = EDGAR_URL.format(quarter=current_quarter, year=current_year,
+                                      current=current_date.strftime('%Y%m%d'))
+    logging.info('Extracting data from:{}'.format(master_idx_url))
+    return master_idx_url
+
+
 
 
 def run(argv=None, save_main_session=True):
@@ -135,17 +157,11 @@ def run(argv=None, save_main_session=True):
     known_args, pipeline_args = parser.parse_known_args(argv)
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
-    current_date = date.today() - BDay(1)
-    current_quarter = find_current_quarter(current_date)
-    current_year = find_current_year(current_date)
-    master_idx_url = EDGAR_URL.format(quarter=current_quarter, year=current_year,
-                                    current=current_date.strftime('%Y%m%d'))
-    logging.info('Extracting data from:{}'.format(master_idx_url))
-    destination =   bucket_destination.format(current_date.strftime('%Y%m%d'))
-    logging.info('Writing to:{}'.format(destination))
 
     with beam.Pipeline(options=pipeline_options) as p:
-        source = p  | 'Sampling Data' >> beam.Create([master_idx_url])
+        source = (p  | 'Startup' >> beam.Create(['start_token'])
+                    |'Add current date' >> beam.Map(find_current_day_url)
+                  )
         lines = run_my_pipeline(source)
         enhanced_data = filter_form_13hf(lines)
         logging.info('Next step')

@@ -14,7 +14,8 @@ from io import StringIO, BytesIO
 
 
 CATEGORIES = set(
-    ['issuerTradingSymbol', 'transactionCode', 'transactionShares'])
+    ['issuerTradingSymbol', 'transactionCode', 'transactionShares',
+     'sharesOwnedFollowingTransaction', 'transactionPricePerShare', 'isDirector'])
 
 def clear_element(element):
     element.clear()
@@ -28,13 +29,33 @@ def fast_iter2(context):
         if element.tag in CATEGORIES:
             if element.tag == 'issuerTradingSymbol':
                 test_dict['Symbol'] = element.text
+            elif element.tag == 'isDirector':
+                test_dict['IsDirector'] = 'Yes' if element.text == "1" else ''
             elif element.tag == 'transactionCode':
                 test_dict['trans_code'] = element.text
             elif element.tag == 'transactionShares':
                 vals = [author.text for author in element.findall("value")]
-                test_dict['shares'] = int(vals[0]) if vals else 0
+                test_dict['shares'] = float(vals[0]) if vals else 0
+            elif element.tag == 'sharesOwnedFollowingTransaction':
+                vals = [shares.text for shares in element.findall("value")]
+                test_dict['sharesFollowingTransaction'] = float(vals[0]) if vals else 0
+            elif element.tag == 'transactionPricePerShare':
+                vals = [shares.text for shares in element.findall("value")]
+                test_dict['transactionPricePerShare'] = float(vals[0]) if vals else 0
             clear_element(element)
     return test_dict
+
+def get_period_of_report(content):
+    data = content.text
+    data = data.replace('\n', '')
+    subset = data[data.find('<headerData>'): data.rfind("</headerData>") + 13]
+    print(subset)
+    from xml.etree import ElementTree
+    tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
+    root = tree.getroot()
+    tcodes = root.findall(".//periodOfReport")
+    return tcodes[0].text
+
 
 class ReadRemote(beam.DoFn):
     def process(self, element):
@@ -54,6 +75,9 @@ class ParseForm13F(beam.DoFn):
         import requests
         return requests.get(file_path)
 
+    def get_period_of_report(self, content):
+        return get_period_of_report(content)
+
     def get_cusips(self, content):
         data = content.text
         data = data.replace('\n', '')
@@ -68,14 +92,23 @@ class ParseForm13F(beam.DoFn):
     def process(self, element):
         cob_dt, file_url = element
         try:
+            cob_dt = datetime.strptime(cob_dt, '%Y%m%d').strftime('%Y-%m-%d')
+            logging.info('{} converted to {}'.format(cob_dt, cob_dt))
+        except:
+            logging.info('Attempting other form of parsing to y-m-d')
+            cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
+
+        try:
             file_content = self.open_url_content(file_url)
+            logging.info('Parsing :{}'.format(file_url))
             all_cusips = self.get_cusips(file_content)
-            mapped = list(map(lambda item: (cob_dt, item), all_cusips))
+            period_of_report = self.get_period_of_report(file_content)
+            mapped = list(map(lambda item: (cob_dt, period_of_report, item), all_cusips))
             logging.info('returning:{}'.format(list(mapped)))
             return mapped
         except Exception as e:
             logging.info('could not fetch data from {}:{}'.format(element, str(e)))
-            return [(cob_dt, '')]
+            return [(cob_dt, '', '')]
 
 
 class ParseForm4(beam.DoFn):
@@ -90,12 +123,17 @@ class ParseForm4(beam.DoFn):
 
     def get_shares_acquired(self, root):
         ts = root.findall(".//transactionAmounts/transactionShares/value")
-        return sum([int(t.text) for t in ts])
+        return sum([float(t.text) for t in ts])
 
-    def get_purchase_transactions(self, content, cob_dt):
-        data = content.text
-        data = data.replace('\n', '')
-        subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
+    def get_shares_posttransaction(self, root):
+        ts = root.findall(".//postTransactionAmounts/sharesOwnedFollowingTransaction/value")
+        return sum([float(t.text) for t in ts])
+
+    def get_transaction_price_per_share(self, root):
+        ts = root.findall(".//transactionAmounts/transactionPricePerShare/value")
+        return sum([float(t.text) for t in ts])
+
+    def get_purchase_transactions(self, subset, cob_dt):
         tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
         root = tree.getroot()
         trading_symbol = [child.text for infoTable in root.getchildren() for child in infoTable.getchildren()
@@ -104,26 +142,39 @@ class ParseForm4(beam.DoFn):
         # print('TCODES:{}'.format(tcodes))
         purchases = [c for c in tcodes if 'A' or 'P' in c]
         if purchases:
+            logging.info('found purchase transction for {}'.format(trading_symbol))
             shares_acquired = self.get_shares_acquired(root)
-            return ((cob_dt, trading_symbol), shares_acquired)
+            shares_post_transaction  = self.get_shares_posttransaction(root)
+            shares_pre_transaction = shares_post_transaction - shares_acquired
+            share_increase = (shares_post_transaction - shares_pre_transaction) / shares_pre_transaction
+            transaction_price = self.get_transaction_price_per_share(root)
+            res = ((cob_dt, trading_symbol), shares_acquired, share_increase, transaction_price)
+            logging.info('Returing:{}'.format(res))
+            return
 
     def parse_xml(self, tree):
         return fast_iter2(tree)
 
 
-    def get_purchase_transactions_2(self, content, cob_dt):
+    def get_purchase_transactions_2(self, content, cob_dt, file_content):
         some_file_like = BytesIO(content.encode('utf-8'))
         context = etree.iterparse(some_file_like)
         res = self.parse_xml(context)
-        if res['trans_code'] in ['A' , 'P' ]:
+        trans_code = res.get('trans_code', 'X')
+        if trans_code in ['A' , 'P' ]:
+            logging.info('found purchase transction for {}'.format(res['Symbol']))
             shares_acquired = res['shares']
-            return ((cob_dt, res['Symbol']), shares_acquired)
+            shares_post_transaction = res['sharesFollowingTransaction']
+            shares_pre_transaction = shares_post_transaction - shares_acquired
+            return ((cob_dt, res['Symbol']), shares_acquired, res['sharesFollowingTransaction'], res['transactionPricePerShare'], file_content)
 
     def process(self, element):
+        logging.info('Processing element@{}'.format(element))
         edgar_dt, file_url = element
         logging.info('Processing :{}={}'.format(edgar_dt, file_url))
         try:
             cob_dt = datetime.strptime(edgar_dt, '%Y%m%d').strftime('%Y-%m-%d')
+            logging.info('{} converted to {}'.format(edgar_dt, cob_dt))
         except:
             logging.info('Attempting other form of parsing')
             cob_dt = datetime.strptime(edgar_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
@@ -131,14 +182,19 @@ class ParseForm4(beam.DoFn):
             file_content = self.open_url_content(file_url)
             data = file_content.text
             data = data.replace('\n', '')
-            subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
-            trading_symbols_tpl = self.get_purchase_transactions_2(subset, cob_dt)
-            if trading_symbols_tpl:
-                return  [trading_symbols_tpl]
-            return [((cob_dt, 'N/A'), 0)]
+            if data.rfind('<XML>') < 0:
+                logging.info('Skipping. no good data')
+                return [((cob_dt, 'N/A'), 0, 0, 0)]
+            else:
+                subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
+                trading_symbols_tpl = self.get_purchase_transactions_2(subset, cob_dt, file_url)
+                if trading_symbols_tpl:
+                    logging.info('Returning :{}'.format(trading_symbols_tpl))
+                    return  [trading_symbols_tpl]
+                return [((cob_dt, 'N/A'), 0, 0, 0, file_url)]
         except Exception as e:
             print('Exceptin fo r:{}/{}:{}'.format(cob_dt, file_url, str(e)))
-            return [((cob_dt, 'N/A'), 0)]
+            return [((cob_dt, 'N/A'), 0, 0, 0, file_url)]
 
 def format_string(input_str):
     return str(input_str.replace("b'", "").replace("'", "")).strip()
@@ -205,25 +261,58 @@ def find_current_year(current_date):
 
 class EdgarCombineFn(beam.CombineFn):
     def __init__(self):
-        self.ROW_TEMPLATE = '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'
+        self.ROW_TEMPLATE = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
 
     def create_accumulator(self):
-        return ([])
+        return []
 
     def add_input(self, accumulator, input):
-        return accumulator + input
+        accumulator.append(input)
+        return accumulator
 
     def merge_accumulators(self, accumulators):
-        return accumulators
+        print('Merging:{}'.format(accumulators))
+        from functools import reduce
+        return reduce(lambda acc, current: acc + current, accumulators)
 
     def extract_output(self, aggregated):
-        logging.info('Filtering only top 30')
-        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[3], reverse=True)
+        print('Filtering only top 30 for:{}'.format(aggregated))
+        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[4], reverse=True)
+        filtered = sorted_accs
+        logging.info('Mapping now to string')
+        mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row[1:]), filtered[0:20])
+        return ''.join(mapped)
+
+class EdgarCombineFnForm4(beam.CombineFn):
+    def __init__(self):
+        self.ROW_TEMPLATE = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+        # cob, ticker, shares, increase, trans price, volume
+        ##cob, ticker, shares, increase, trans price, volume, url
+
+    def create_accumulator(self):
+        return []
+
+    def add_input(self, accumulator, input):
+        accumulator.append(input)
+        return accumulator
+
+    def merge_accumulators(self, accumulators):
+        print('Merging:{}'.format(accumulators))
+        from functools import reduce
+        return reduce(lambda acc, current: acc + current, accumulators)
+
+    def extract_output(self, aggregated):
+        logging.info('Filtering only top 30 for:{}'.format(len(aggregated)))
+        logging.info('First one is :{}'.format(aggregated[0:2]))
+        sorted_accs = sorted(aggregated, key=lambda tpl: tpl[5], reverse=True)
         filtered = sorted_accs
         logging.info('Mapping now to string')
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row[1:]), filtered)
         return ''.join(mapped)
+
+
+
 
 def get_company_stats(tpl, apikey):
     cob, name, ticker, count = tpl

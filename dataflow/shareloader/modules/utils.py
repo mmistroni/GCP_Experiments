@@ -33,11 +33,21 @@ def get_latest_price_yahoo(symbol, cob_date):
         print('Merged shap eis:{}'.format(merged.shape))
         return merged.iloc[0].to_dict()
 
-
     except Exception as e:
         print('Unable to find data for {}'.format(symbol))
         return pd.DataFrame.from_dict(
             {'symbol': [symbol], 'Adj Close_t': [0], 'Adj Close_y': [0], 'diff': [0]}).to_dict()
+
+def get_latest_price_yahoo_2(symbol, cob_date):
+    try:  #
+        logging.info('--latest price for{}'.format(symbol))
+        start_date = cob_date - BDay(1)
+        res = dr.get_data_yahoo(symbol, start_date, cob_date)['Adj Close'].pct_change().values[-1]
+        logging.info('We got:{}'.format(res))
+        return res
+    except Exception as e:
+        print('Unable to find data for {}'.format(symbol))
+        return 0
 
 
 def get_prices(symbols):
@@ -47,7 +57,7 @@ def get_prices(symbols):
 
 
 def create_email_template(input_elements):
-    total_ptf_value = sum(map(lambda elm_list: elm_lst[6], input_elements))
+    total_ptf_value = sum(map(lambda elm_list: elm_list[6], input_elements))
 
     base_template = '<tr><td>{ticker}</td><td>{qty}</td><td>{}</td></tr>'.format(one, two, three)
     mapped_str = map(lambda lst: base_template.format(
@@ -59,6 +69,20 @@ def get_isr_and_kor(token):
   kor_stocks = dict((d['name'], d['symbol']) for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/KRX/symbols?token={token}'.format(token=token)).json())
   isr_stocks.update(kor_stocks)
   return isr_stocks
+
+def get_out_of_hour_info(token, ticker):
+  logging.info('Getting out of quote info for {}'.format(ticker))
+  try:
+      quote_url = 'https://cloud.iexapis.com/stable/stock/{ticker}/quote?token={token}'\
+                                  .format(token=token, ticker=ticker)
+      latest_quote = requests.get(quote_url).json()
+      logging.info('we got:{}'.format(latest_quote))
+      return latest_quote.get('extendedPrice', 0),\
+            latest_quote.get('extendedChangePercent', 0)
+  except Exception as e:
+      logging.info('exception in retrieving quote for :{}:{}'.format(ticker, str(e)))
+      return 0,0
+
 
 def get_usr_adrs(token):
   nas_stocks = [d for d in requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/NAS/symbols?token={token}'.format(token=token)).json()]

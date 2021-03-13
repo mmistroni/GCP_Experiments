@@ -9,6 +9,7 @@ import logging
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 import apache_beam as beam
+from .utils import get_out_of_hour_info
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
@@ -77,6 +78,15 @@ def df_to_dict(df):
     logging.info('DF TO DICT is:{}'.format(res))
     return res
 
+def enhance_with_price(dct, iexkey=None):
+    nd = dct.copy()
+    ticker = dct['ticker']
+    logging.info('Enhancing with Price...')
+    price, changeout_of_hour = get_out_of_hour_info(iexkey, ticker)
+    nd['EXTENDED_PRICE'] = price
+    nd['EXTENDED_CHANGE'] = changeout_of_hour
+    logging.info('Returning:'.format(nd))
+    return nd
 
 class NewsEmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -97,7 +107,8 @@ class NewsEmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{} '.format(self.recipients))
         logging.info('Incoming message is:{}'.format(msg))
         template = \
-            "<html><body><p> Today's headlines </p></br><table border='1' cellspacing='0' cellpadding='0' align='center'><th>Ticker</th><th>Headline</th><th>Score</th>{}</table></body></html>"
+            "<html><body><p> Today's headlines </p></br><table border='1' cellspacing='0' cellpadding='0' align='center'>" + \
+             "<th>Ticker</th><th>Headline</th><th>Score</th><th>Extended Price</th><th>Extended Change</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
@@ -116,11 +127,13 @@ class NewsEmailSender(beam.DoFn):
         logging.info('Body:{}'.format(response.body))
 
 def stringify_news(single_news):
-    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td></tr>'
+    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
     logging.info('Stringifhying:{}'.format(single_news))
     res =  row_template.format(single_news.get('ticker'),
                                single_news.get('headline'),
-                               single_news.get(0))
+                               single_news.get(0),
+                               single_news.get('EXTENDED_PRICE'),
+                               single_news.get('EXTENDED_CHANGE'))
     return res
 
 def combine_news(elements):

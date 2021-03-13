@@ -4,7 +4,7 @@ import logging
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
-            find_current_year, EdgarCombineFn, ParseForm4
+            find_current_year, EdgarCombineFnForm4, ParseForm4
 from datetime import date, datetime
 from pandas.tseries.offsets import BDay
 from sendgrid import SendGridAPIClient
@@ -12,6 +12,7 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
 from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4
+from .price_utils import get_current_price
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -30,12 +31,17 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
-        template = "<html><body><table border='1' cellspacing='0' cellpadding='0' align='center'><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
+        template = "<html><body><table border='1' cellspacing='0' cellpadding='0' align='center'>" + \
+         "<th>Ticker</th><th>Counts</th><th>ShareIncrease</th><th>TransactionPrice</th><th>TotalVolume</th><th>FilingURL</th>{}</table></body></html>"
+
+        # cob, ticker, shares, increase, trans price, volume
+
+
         content = template.format(element)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
-            #to_emails=self.recipients,
+            to_emails=['mmistroni@gmail.com'],
             subject='Edgar Form4 Daily Filings (Insider Trading)',
             html_content=content)
 
@@ -60,7 +66,6 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_value_provider_argument('--quarters', type=str,
                                            default='QTR1,QTR2,QTR3,QTR4')
-
         parser.add_argument('--key')
 
 def find_current_quarter(current_date):
@@ -86,52 +91,87 @@ def find_current_day_url(sample):
     logging.info('Extracting data from:{}'.format(master_idx_url))
     return master_idx_url
 
-def enhance_form_4(lines):
+def enhance_form_4(lines, qtr=''):
+    # Need to find outstanding shares
     result = (
             lines
-            | 'parsing form 4 filing' >> beam.ParDo(ParseForm4())
-            | 'Combining all ' >> beam.CombinePerKey(sum)
-            | 'Filtering out blanks' >> beam.Filter(lambda tpl: tpl[0][1] != '' and tpl[0][1] != 'N/A' )
-            | 'Mapping to tuple to be in line with mail templates' >>  beam.Map(
-                                            lambda tpl: [tpl[0][0], '' ,tpl[0][1], tpl[1]])
+            | 'parsing form 4 filing_{}'.format(qtr) >> beam.ParDo(ParseForm4())
+
+            #| 'Combining all ' >> beam.CombinePerKey(sum) # need a better one as now we have more items
+            | 'Filtering out blanks_{}'.format(qtr) >> beam.Filter(lambda tpl: tpl[0][1] != '' and tpl[0][1] != 'N/A' )
+            | 'Filtering out commasn_{}'.format(qtr) >> beam.Filter(lambda tpl: len(tpl[0][1].split(',')) == 1)
+            | 'Mapping to tuple to be in line with mail templates_{}'.format(qtr) >>  beam.Map(
+                                            lambda tpl: [tpl[0][0], tpl[0][1], tpl[1], #((cob_dt, trading_symbol), shares_acquired, share_increase, transaction_price, url)
+                                                         tpl[2], tpl[3], tpl[4]])
+            | 'Getting Current Market Price_{}'.format(qtr) >> beam.Map(lambda tpl: [tpl[0], tpl[1], tpl[2], #((cob_dt, trading_symbol), shares_acquired, share_increase, transaction_price, url)
+                                                         tpl[3], tpl[4], tpl[5]] )
+            | 'Getting Current Volumne_{}'.format(qtr) >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], #cob, ticker, shares, increase, trans price, volume, url
+                                                                 tpl[4],  tpl[2] * tpl[4] , tpl[5].split('/')[-1]))
+            | 'Deduplicate elements' >> beam.Distinct()
+
+
     )
     return result
 
-def run_my_pipeline(source):
+def run_my_pipeline(source, qtr=''):
 
     return (
             source
-            | 'readFromText' >> beam.ParDo(ReadRemote())
-            | 'map to Str' >> beam.Map(lambda line: str(line))
+            | 'readFromText_{}'.format(qtr) >> beam.ParDo(ReadRemote())
+            | 'map to Str_{}'.format(qtr) >> beam.Map(lambda line: str(line))
     )
 
-def filter_form_4(source):
+def filter_form_4(source, qtr=''):
     return (
             source
-            | 'Filter only form 4' >> beam.Filter(
+            | 'Filter only form 4_{}'.format(qtr) >> beam.Filter(
                     lambda row: len(row.split('|')) > 4 and '4' in row.split('|')[2])
-            | 'Generating form 4 file path' >> beam.Map(lambda row: (row.split('|')[3],
+            | 'Generating form 4 file path_{}'.format(qtr) >> beam.Map(lambda row: (row.split('|')[3],
                                                                      '{}/{}'.format('https://www.sec.gov/Archives',
                                                                                     row.split('|')[4])))
-            | 'replacing eol on form4' >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
+            | 'replacing eol on form4_{}'.format(qtr) >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
     )
 
 def send_email(lines, pipeline_options):
     email = (
             lines
-            | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFn())
+            | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFnForm4())
             | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
     )
 
-def write_to_form4_bq(lines):
-    big_query = (
+
+def write_to_form4_bucket(lines, pipeline_options):
+
+    bucket_destination = 'gs://mm_dataflow_bucket/outputs/edgar_daily_form4_{}.csv'.format(
+        datetime.now().strftime('%Y%m%d%H%M'))
+    return (
             lines
+            | 'Map to  String' >> beam.Map(lambda lst: ','.join([str(i) for i in lst]))
+
+            | 'WRITE TO BUCKET' >> beam.io.WriteToText(bucket_destination, header='date,ticker,count,price,share_incraese,volume,filing_file',
+                                                       num_shards=1)
+
+
+    )
+
+
+
+
+def write_to_form4_bq(lines, form_name='form_4_daily_enhanced_test'):
+    logging.info('writing to:{}'.format(form_name))
+    big_query = (
+            lines   ##cob, ticker, shares, increase, trans price, volume, url
             | 'Map to BQ FORM4 Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
-                                                                       TICKER=tpl[2],
-                                                                  COUNT=tpl[3]))
+                                                                  TICKER=tpl[1],
+                                                                  COUNT=int(tpl[2]),
+                                                                  PRICE=float(tpl[4]) if tpl[4] else 0.0,
+                                                                  VOLUME=float(tpl[5])))
             | 'Write to BigQuery F4' >> beam.io.WriteToBigQuery(
-        get_edgar_daily_table_spec_form4(),
-        schema=get_edgar_table_schema_form4(),
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_edgar',
+            tableId='form_4_daily_enhanced'),
+        schema='COB:STRING,TICKER:STRING,COUNT:INTEGER,PRICE:FLOAT,VOLUME:FLOAT',
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     )
@@ -152,6 +192,7 @@ def run(argv=None, save_main_session=True):
         enhanced_data = enhance_form_4(form4)
         logging.info('Now sendig meail....')
         send_email(enhanced_data, pipeline_options)
+        write_to_form4_bucket(enhanced_data, pipeline_options)
         write_to_form4_bq(enhanced_data)
 
 if __name__ == '__main__':
