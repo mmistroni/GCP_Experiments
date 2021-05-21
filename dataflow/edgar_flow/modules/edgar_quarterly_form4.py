@@ -37,7 +37,7 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
 
     destinationUrl = 'gs://mm_dataflow_bucket/outputs/edgar_quarterly_form4_{}_{}_{}.csv'.format(
             quarter.get(),
-            quarter.get(), datetime.now().strftime('%Y%m%d%H%M'))
+            year.get(), datetime.now().strftime('%Y%m%d%H%M'))
 
     logging.info('Writing to:{}'.format(destinationUrl))
     return (
@@ -63,7 +63,7 @@ def run_for_quarter(p, quarter, year):
     lines = run_my_pipeline(source)
     form4 = filter_form_4(lines, '{}_{}'.format(quarter, year))
     enhanced_data = enhance_form_4(form4, '{}_{}'.format(quarter, year))
-    write_to_form4_bucket_quarterly(source, quarter, year)
+    write_to_form4_bucket_quarterly(enhanced_data, quarter, year)
 
 
 def run(argv=None, save_main_session=True):
