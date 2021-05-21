@@ -41,7 +41,7 @@ class EmailSender(beam.DoFn):
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
-            to_emails=['mmistroni@gmail.com'],
+            #to_emails=['mmistroni@gmail.com'],
             subject='Edgar Form4 Daily Filings (Insider Trading)',
             html_content=content)
 
@@ -107,7 +107,7 @@ def enhance_form_4(lines, qtr=''):
                                                          tpl[3], tpl[4], tpl[5]] )
             | 'Getting Current Volumne_{}'.format(qtr) >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], #cob, ticker, shares, increase, trans price, volume, url
                                                                  tpl[4],  tpl[2] * tpl[4] , tpl[5].split('/')[-1]))
-            | 'Deduplicate elements' >> beam.Distinct()
+            | 'Deduplicate elements_{}'.format(qtr) >> beam.Distinct()
 
 
     )
