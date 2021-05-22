@@ -4,3 +4,4 @@ vaderSentiment
 numpy
 bs4
 lxml
+pandas_datareader

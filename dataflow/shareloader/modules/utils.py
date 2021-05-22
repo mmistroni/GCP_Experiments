@@ -42,9 +42,9 @@ def get_latest_price_yahoo_2(symbol, cob_date):
     try:  #
         logging.info('--latest price for{}'.format(symbol))
         start_date = cob_date - BDay(1)
-        res = dr.get_data_yahoo(symbol, start_date, cob_date)['Adj Close'].pct_change().values[-1]
+        res = dr.get_data_yahoo(symbol, start_date, cob_date)['Adj Close']
         logging.info('We got:{}'.format(res))
-        return res
+        return res.pct_change().values[-1]
     except Exception as e:
         print('Unable to find data for {}'.format(symbol))
         return 0

@@ -128,12 +128,25 @@ def infer_ratings(json):
     txt =  'SELL'
   return '({}={})'.format(rating_scale, txt)
 
+
+def get_marketcap(data_dict, token):
+  ticker = data_dict['Ticker']
+  logging.info('Enhancing with MarketCap..for :{}'.format(ticker))
+  res = requests.get('https://cloud.iexapis.com/stable/stock/{}/stats/?token={}'.format(ticker, token)).json()
+  mcap = res.get('marketcap', 0)
+  beta = res.get('beta', 0)
+  peRatio = res.get('peRatio', 0)
+  new_dict = data_dict
+  new_dict['marketCap'] = mcap
+  new_dict['beta'] = beta
+  new_dict['peRatio'] = peRatio
+  return new_dict
+
 def get_analyst_recommendations(data_dict, token):
 
   ticker = data_dict['Ticker']
   new_dict = data_dict
   try:
-
     analyst_url = \
       'https://cloud.iexapis.com/stable/stock/{symbol}/recommendation-trends?token={token}'.format(symbol=ticker, token=token)
     logging.info('Analyst URL is:{}.'.format(analyst_url))
@@ -150,7 +163,7 @@ def get_analyst_recommendations(data_dict, token):
   except Exception as e :
     logging.info('Could not find print ratings for:{}:{}'.format(ticker, str(e)))
     new_dict['Ratings'] = 'N/A'
-  return new_dict
+  return get_marketcap(new_dict, token)
 
 class AnotherLeftJoinerFn(beam.DoFn):
 

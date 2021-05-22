@@ -1,16 +1,9 @@
 from __future__ import absolute_import
-
-import argparse
+from bs4 import BeautifulSoup
 import logging
-import re
-
-from past.builtins import unicode
-from datetime import datetime
+from bs4 import BeautifulSoup
 import apache_beam as beam
 from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import re, requests
@@ -19,107 +12,80 @@ from collections import OrderedDict
 import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
-
-
-ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
-
-class PortfolioCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return ('', 0.0)
-
-  def add_input(self, accumulator, input):
-    print('Adding{}'.format(input))
-    print('acc is:{}'.format(accumulator))
-    (row_acc, current_diff) = accumulator
-    return row_acc + ROW_TEMPLATE.format(*input), current_diff + input[5]
-
-  def merge_accumulators(self, accumulators):
-    sums, counts = zip(*accumulators)
-    return ''.join(sums), sum(counts)
-
-  def extract_output(self, sum_count):
-    (sum, count) = sum_count
-    return sum_count
-
-class EmailSender(beam.DoFn):
-    def __init__(self, recipients, key):
-        self.recipients = recipients.split(',')
-        self.key = key
-
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-    def process(self, element):
-        msg, ptf_diff = element
-        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
-        template = \
-            "<html><body><table><th>Ticker</th><th>Quantity</th><th>Latest Price</th><th>Change</th><th>Volume</th><th>Diff</th><th>Positions</th><th>Total Gain</th><th>Action</th>{}</table></body></html>"
-        content = template.format(msg)
-        logging.info('Sending \n {}'.format(content))
-        message = Mail(
-            from_email='gcp_portfolio@mmistroni.com',
-            subject='Portfolio change:{}'.format(ptf_diff),
-            html_content=content)
-
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
-        sg = SendGridAPIClient(self.key)
-
-        response = sg.send(message)
-        logging.info('Mail Sent:{}'.format(response.status_code))
-        logging.info('Body:{}'.format(response.body))
+import re
 
 
 
-class XyzOptions(PipelineOptions):
+class MyOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--key')
         parser.add_argument('--iexkey')
 
 
-def get_prices(tpl, iexkey):
+
+def get_all_sectors(sectors_url):
+    logging.info('Getting all sectors from:{}'.format(sectors_url))
+    page = requests.get(sectors_url)
+    soup = BeautifulSoup(page.content, 'html')
+    items = soup.find_all('a')
+    return [(l.get_text(), 'https://www.stockmonitor.com' + l.get('href')) for l in items if l.get('href').startswith('/sector')]
+
+
+
+
+def get_industry(tpl, token):
+    logging.info('Getting Industry')
+    lst = list(tpl)
+    logging.info('tpl is:{}'.format(tpl))
+    ticker = lst[0]
+    industry = ''
+    sic_code = ''
     try:
-        ticker, qty, original_price = tpl.split(',')
-        logging.info('Retreiving prices for {}'.format(ticker))
-        stat_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=iexkey)
-        historical_data = requests.get(stat_url).json()
-        pandl = historical_data['change'] * int(qty)
-        current_pos = int(qty) * historical_data['iexClose']
-        total_gain = int(qty) * (historical_data['iexClose'] - float(original_price))
-        wk52high = historical_data['week52High']
-        return [ticker, qty,
-             historical_data['iexClose'],
-             historical_data['change'],
-             historical_data['latestVolume'],
-             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
-    except Exception as e :
-        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
-        return []
+        data =  requests.get('https://cloud.iexapis.com/stable/stock/{}/company?token={}'.format(ticker, token))\
+                            .json()
+        industry = data.get('industry', '')
+        sic_code = data.get('primarySicCode', '')
+    except Exception as e:
+        logging.info('Could not find industry for :{}:{}'.format(ticker, str(e)))
 
+    lst += [industry, sic_code]
+    res = tuple(lst)
+    logging.info('Returning:{}'.format(res))
+    return res
 
-def combine_portfolio(elements):
-    # Calculating variance, we need it for subject
-    row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
-    combined = map(lambda el: row_template.format(*el), elements)
-    joined = ''.join(list(combined))
-    return (joined, 100.0)
+def parse_row(row, sector_name):
+  cols = [td for td in row.find_all('td')]
+  ticker = cols[1].a.get('href').split('/')[2]
+  name = cols[2].get_text().strip()
+  return (ticker, name, sector_name)
+
+def get_stocks_for_sector(sector_tpl):
+  logging.info('Gettign stocks for sector:{}'.format(sector_tpl))
+  sector_name, sector_url = sector_tpl
+  logging.info('Finding all stocks for :{} @ {}'.format(sector_name, sector_url))
+  page = requests.get(sector_url)
+  soup = BeautifulSoup(page.content, 'html')
+  main_table = soup.find_all('table', {"class" : "table table-hover top-stocks"})[0]
+  rows = [t for t in main_table.find_all('tr')][1:]
+  return [parse_row(r, sector_name) for r in rows]
+
+def write_to_bucket(lines):
+    bucket_destination = 'gs://mm_dataflow_bucket/outputs/all_sectors_and_industries.csv'.format(
+        datetime.now().strftime('%Y%m%d%H%M'))
+    return (
+            lines
+            | 'Map to  String' >> beam.Map(lambda lst: ','.join([re.sub('\W', ' ',  str(i)) for i in lst]))
+
+            | 'WRITE TO BUCKET' >> beam.io.WriteToText(bucket_destination, header='ticker,name,sector,industry,sic_code',
+                                                       num_shards=1)
+    )
 
 def run_my_pipeline(p, options):
     lines = (p
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.iexkey))
-             | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
-             | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+             | 'Getting Sectors' >> beam.FlatMap(lambda url: get_all_sectors(url))
+             | 'Get Stocks For Sector' >> beam.FlatMap(lambda tpl: get_stocks_for_sector(tpl))
+             | 'Getting  Industry' >> beam.Map(lambda tpl: get_industry(tpl, options.iexkey))
              )
     return lines
 
@@ -129,18 +95,14 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
+    pipeline_options = MyOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
-    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
-    logging.info(pipeline_options.get_all_options())
-    logging.info("=== readign from textfile:{}".format(input_file))
-    logging.info('====== Destination is :{}'.format(destination))
 
     with beam.Pipeline(options=pipeline_options) as p:
-        input = p  | 'Get List of Tickers' >> ReadFromText(input_file)
-        run_my_pipeline(input, pipeline_options)
-
+        input = p  | 'get Sectors Url' >> beam.Create(['https://www.stockmonitor.com/sectors'])
+        res = run_my_pipeline(input, pipeline_options)
+        write_to_bucket(res)
+    # Need to get sic codes from https://en.wikipedia.org/wiki/Standard_Industrial_Classification
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

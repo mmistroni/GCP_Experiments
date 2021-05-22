@@ -12,7 +12,8 @@ REQUIRED_PACKAGES = [
     'vaderSentiment',
     'numpy',
     'bs4',
-    'lxml'
+    'lxml',
+    'pandas_datareader'
     ]
 
 

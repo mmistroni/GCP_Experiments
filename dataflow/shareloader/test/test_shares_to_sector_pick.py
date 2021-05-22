@@ -3,13 +3,13 @@ import unittest
 import requests
 from lxml import etree
 from io import StringIO, BytesIO
-from shareloader.modules.stock_picks import  map_to_bq_dict, run_my_pipeline
+from shareloader.modules.shares_to_sector import get_stocks_for_sector, get_industry,\
+                                                get_all_sectors, run_my_pipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
-
-
+import os
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -20,30 +20,29 @@ class Check(beam.PTransform):
       assert_that(pcoll, self._checker)
 
 
-class TestEdgarUtils(unittest.TestCase):
+class TestSharesToSector(unittest.TestCase):
 
-    def test_generate_initial_feeds(self):
-        pass
-        #print(generate_initial_feeds(as_of_date=date(2021,3,3)))
 
-    def test_map_to_bq_dict(self):
-        test_elemns = [('2021-03-03', 'AMZN', 'is facebook a buy today in the face negative news flow?', 'BUY', 'https://seekingalpha.com/article/4411109-is-fb-stock-a-buy-today-negative-news-flow?utm_source=feed_articles_stock_ideas_editors_picks&utm_medium=referral'),
-                       ]
-        res = map_to_bq_dict(test_elemns[0])
+    def test_get_all_sectors(self):
+        print(get_all_sectors('https://www.stockmonitor.com/sectors'))
 
-        assert res['AS_OF_DATE'] == test_elemns[0][0]
-        assert res['TICKER'] == test_elemns[0][1]
-        assert res['HEADLINE'] == test_elemns[0][2]
-        assert res['ACTION'] ==  test_elemns[0][3]
-        assert res['LINK'] == test_elemns[0][4]
+    def test_get_stocks_for_sector(self):
+        sectors_tpl = ('Basic Materials Sector',
+                                    'https://www.stockmonitor.com/sector/basic-materials/')
+        print(get_stocks_for_sector(sectors_tpl))
 
-    def test_run_my_pipeline(self):
+    def test_get_industry(self):
+        iexkey = os.environ['IEXAPI_KEY']
+        stocks = [('asix', 'AdvanSix Inc', 'Basic Materials Sector'),
+                  ('aem', 'Agnico Eagle Mines Limited', 'Basic Materials Sector'),
+                  ('apd', 'Air Products and Chemicals, Inc', 'Basic Materials Sector')
+                ]
+        for tpl in stocks:
+            print(get_industry(tpl, iexkey))
+
+    def test_pipeline(self):
         with TestPipeline() as p:
-            sink = Check(equal_to({'AS_OF_DATE' : '2021-03-03',
-                                   'TICKER' : 'AMZN',
-                                   'HEADLINE' : 'XXX',
-                                  'ACTION' : 'BUY',
-                                'LINK' : 'xxx'}))
-            run_my_pipeline(p)
-
-
+            input = (p | 'get Sectors Url' >> beam.Create(['https://www.stockmonitor.com/sectors'])
+                        | 'Getting Sectors' >> beam.FlatMap(lambda url: get_all_sectors(url))
+                        | 'Get Stocks For Sector' >> beam.Map(lambda tpl: get_stocks_for_sector(tpl))
+                        | beam.Map(print))

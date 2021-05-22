@@ -1,0 +1,9 @@
+set PROJECT_ID=datascience-projects
+set TEMPLATE_BUCKET=mm_dataflow_bucket/templates/flex
+set TEMPLATE_PATH=gs://%TEMPLATE_BUCKET%/python_command_spec.json
+set TEMPLATE_IMAGE=gcr.io/%PROJECT_ID%/my-logic:latest
+
+gcloud dataflow flex-template build %TEMPLATE_PATH% --image "%TEMPLATE_IMAGE%" --sdk-language "PYTHON" --metadata-file spec/template_metadata
+
+
+gcloud builds submit --project=%PROJECT_ID% --tag %TEMPLATE_IMAGE%

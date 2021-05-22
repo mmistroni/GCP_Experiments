@@ -110,7 +110,7 @@ def run_my_pipeline(p, options):
     return (p
              |  'Start'>> beam.Create(create_us_and_foreign_dict(options.iexapikey))
              | 'Getting Prices' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], find_diff(tpl[2], date.today())))
-             | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[3] > 0.1)
+             | 'Filtering Increases' >> beam.Filter(lambda tpl: tpl[3] > 0.15)
              | 'Printing out' >> beam.Map(logging.info)
              | 'Map to HTML Table' >> beam.Map(map_ticker_to_html_string)
              | 'Combine to one Text' >> beam.CombineGlobally(combine_to_html_rows)

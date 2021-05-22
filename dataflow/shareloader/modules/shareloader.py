@@ -7,10 +7,6 @@ import re
 from past.builtins import unicode
 from datetime import datetime
 import apache_beam as beam
-from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import re, requests
@@ -28,8 +24,8 @@ class PortfolioCombineFn(beam.CombineFn):
     return ('', 0.0)
 
   def add_input(self, accumulator, input):
-    print('Adding{}'.format(input))
-    print('acc is:{}'.format(accumulator))
+    logging.info('Adding{}'.format(input))
+    logging.info('acc is:{}'.format(accumulator))
     (row_acc, current_diff) = accumulator
     return row_acc + ROW_TEMPLATE.format(*input), current_diff + input[5]
 
@@ -90,27 +86,36 @@ class XyzOptions(PipelineOptions):
 
 def get_prices(tpl, iexkey):
     try:
-        ticker, qty, original_price = tpl.split(',')
-        logging.info('Retreiving prices for {}'.format(ticker))
+        ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
+        logging.info('{}|{}|{}'.format(ticker, qty, original_price))
         stat_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=iexkey)
         historical_data = requests.get(stat_url).json()
-        pandl = historical_data['change'] * int(qty)
-        current_pos = int(qty) * historical_data['iexClose']
-        total_gain = int(qty) * (historical_data['iexClose'] - float(original_price))
-        wk52high = historical_data['week52High']
+        logging.info('Historical data for:{}={}'.format(ticker, historical_data))
+        pandl = historical_data.get('change', 0) * int(qty)
+        logging.info('After pandl')
+        current_pos = int(qty) * historical_data.get('latestPrice', 0)
+        logging.info('After cpos')
+
+        total_gain = int(qty) * (historical_data.get('latestPrice', 0) - float(original_price))
+        logging.info('After pandl')
+
+        wk52high = historical_data.get('week52High',0)
+        logging.info('After pandl')
+
         return [ticker, qty,
-             historical_data['iexClose'],
-             historical_data['change'],
-             historical_data['latestVolume'],
-             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data['iexClose'] > wk52high else '' ]
+             historical_data.get('latestPrice', 0),
+             historical_data.get('change', 0),
+             historical_data.get('latestVolume', 0),
+             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data.get('latestPrice', 0) > wk52high else '' ]
     except Exception as e :
-        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
-        return []
+        logging.info('Excepiton for {}:{}'.format(tpl[0], str(e)))
+        return None
 
 
 def combine_portfolio(elements):
     # Calculating variance, we need it for subject
     row_template = '<tr><td>{}</td><td>{}</td><td>{}</td>td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+    logging.info('Combining:{}'.format(elements))
     combined = map(lambda el: row_template.format(*el), elements)
     joined = ''.join(list(combined))
     return (joined, 100.0)
@@ -118,6 +123,7 @@ def combine_portfolio(elements):
 def run_my_pipeline(p, options):
     lines = (p
              | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.iexkey))
+             | 'Filtering empties' >> beam.Filter(lambda row: row is not None)
              | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
              | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
              )
@@ -138,7 +144,12 @@ def run(argv=None, save_main_session=True):
     logging.info('====== Destination is :{}'.format(destination))
 
     with beam.Pipeline(options=pipeline_options) as p:
-        input = p  | 'Get List of Tickers' >> ReadFromText(input_file)
+        input = (p | 'Start' >> beam.io.textio.ReadFromText(input_file)
+                   |' Split each line' >> beam.Map(lambda f: tuple(f.split(",")))
+                   | 'Deduplicate elements_{}' >> beam.Distinct()
+                   | 'Filter only elements wtih length 3' >> beam.Filter(lambda l: len(l) == 3)
+                 )
+
         run_my_pipeline(input, pipeline_options)
 
 

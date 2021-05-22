@@ -35,19 +35,21 @@ class ParseRSS(beam.DoFn):
         return (ticks, title, link, dt)
 
     def generate_initial_feeds(self ,feed_url):
-        page = requests.get('https://seekingalpha.com/feed/stock-ideas/editors-picks')
+        logging.info('Parsing URL:{}'.format(feed_url))
+        page = requests.get(feed_url)
         soup = BeautifulSoup(page.content, 'lxml')
         items = soup.find_all('item')
         mapped = map(lambda i: self.extract_data(i), items)
         holder = []
         for item in mapped:
-            logging.info('Parsing:{}'.format(item))
+            #logging.info('Parsing:{}'.format(item))
             ticks = item[0]
             detail = item[1]
             link = item[2]
             pubDate = item[3]
-            if pubDate < (date.today() - BDay(1)).date() :
-                logging.info('Skipping obsolete :{} for {}'.format(pubDate, item))
+            test_date = (date.today() - BDay(5)).date()
+            if pubDate < test_date :
+                logging.info('Skipping obsolete :{}({}) -  for {}'.format(pubDate, test_date, item))
                 continue;
             date_str = pubDate.strftime('%Y-%m-%d')
             action = ''

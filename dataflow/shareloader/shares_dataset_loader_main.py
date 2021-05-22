@@ -1,4 +1,4 @@
-from modules.shares_to_sector import run
+from modules.share_datset_loader import run
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
