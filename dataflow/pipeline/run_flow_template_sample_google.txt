@@ -1,0 +1,53 @@
+export BUCKET="mm-my-storage-bucket"
+gsutil mb gs://$BUCKET
+
+export TOPIC="messages"
+export SUBSCRIPTION="ratings"
+
+gcloud pubsub topics create $TOPIC
+gcloud pubsub subscriptions create --topic $TOPIC $SUBSCRIPTION
+
+gcloud scheduler jobs create pubsub positive-ratings-publisher \
+  --schedule="* * * * *" \
+  --topic="$TOPIC" \
+  --message-body='{"url": "https://beam.apache.org/", "review": "positive"}'
+
+
+gcloud scheduler jobs run positive-ratings-publisher
+
+gcloud scheduler jobs create pubsub negative-ratings-publisher \
+  --schedule="*/2 * * * *" \
+  --topic="$TOPIC" \
+  --message-body='{"url": "https://beam.apache.org/", "review": "negative"}'
+
+gcloud scheduler jobs run negative-ratings-publisher
+
+export PROJECT="$(gcloud config get-value project)"
+export DATASET="beam_samples"
+export TABLE="streaming_beam_sql"
+
+bq mk --dataset "$PROJECT:$DATASET"
+
+
+export TEMPLATE_IMAGE="gcr.io/$PROJECT/samples/dataflow/streaming-beam-sql:latest"
+
+
+gcloud config set builds/use_kaniko True
+
+
+gcloud builds submit --tag $TEMPLATE_IMAGE .
+
+export TEMPLATE_PATH="gs://$BUCKET/templates/streaming-beam-sql.json"
+
+    gcloud dataflow flex-template build $TEMPLATE_PATH \
+      --image "$TEMPLATE_IMAGE" \
+      --sdk-language "PYTHON" \
+      --metadata-file "metadata.json"
+
+  export REGION="us-central1"
+
+  gcloud dataflow flex-template run "mm_hacked_setup_streaming-beam" \
+    --template-file-gcs-location "$TEMPLATE_PATH" \
+    --parameters input_subscription="$SUBSCRIPTION" \
+    --parameters output_table="$PROJECT:$DATASET.$TABLE" \
+    --region "$REGION"

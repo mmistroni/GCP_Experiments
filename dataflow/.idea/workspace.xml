@@ -5,31 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pipeline/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pipeline/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pipeline/run_flow_template.txt" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/run_flow_template.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pipeline/spec/image_spec.json" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/spec/image_spec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pipeline/spec/python_command_spec.json" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/spec/python_command_spec.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pipeline/spec/template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/spec/template_metadata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules.egg-info/SOURCES.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules.egg-info/SOURCES.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules.egg-info/requires.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules.egg-info/requires.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/bq_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/bq_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shareloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/shares_to_sector.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shares_to_sector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/stock_picks.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/stock_picks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/shares.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/shares.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/shares_dataset_loader_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/shares_dataset_loader_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/shares_to_sector_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/shares_to_sector_main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -39,23 +20,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/pipeline/spec/image_spec.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="64" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="64" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py">
+        <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-378">
-              <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="461">
+              <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -63,8 +32,26 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+            <state relative-caret-position="527">
+              <caret line="31" selection-start-line="26" selection-end-line="31" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pipeline/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="374">
+              <caret line="22" selection-start-line="22" selection-end-line="22" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/edgar_flow/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1887">
+              <caret line="117" column="11" selection-start-line="117" selection-start-column="11" selection-end-line="117" selection-end-column="11" />
             </state>
           </provider>
         </entry>
@@ -72,8 +59,41 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pipeline/Dockerfile">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="204">
-              <caret line="12" column="42" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
+            <state relative-caret-position="461">
+              <caret line="32" selection-start-line="32" selection-end-line="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pipeline/main.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" selection-start-line="2" selection-end-line="2" />
+              <folding>
+                <element signature="e#0#14#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pipeline/spec/template_metadata">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="340">
+              <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pipeline/edgar_quarterly_form4.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="952">
+              <caret line="62" selection-end-line="76" />
+              <folding>
+                <element signature="e#0#26#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -89,8 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>bigquery</find>
-      <find>Getting Current Pri</find>
       <find>sk_98e397d4bee940488e1f48e9b419508f</find>
       <find>Extended</find>
       <find>get_purchase_transactions</find>
@@ -119,6 +137,8 @@
       <find>get_financial_ratios</find>
       <find>ParDo</find>
       <find>RUN_my_pipel</find>
+      <find>/edgar</find>
+      <find>KANIK</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -133,7 +153,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/shareloader/test/test_form4_str_pipeline.py" />
         <option value="$PROJECT_DIR$/shareloader/test/test_market52week.py" />
         <option value="$PROJECT_DIR$/shareloader/test/test_monthly_data.py" />
         <option value="$PROJECT_DIR$/shareloader/adr_main.py" />
@@ -178,20 +197,21 @@
         <option value="$PROJECT_DIR$/pipeline/modules/edgar_quarterly_form4.py" />
         <option value="$PROJECT_DIR$/pipeline/spec/python_command_spec.json" />
         <option value="$PROJECT_DIR$/edgar_flow/metadata.json" />
-        <option value="$PROJECT_DIR$/pipeline/spec/template_metadata" />
         <option value="$PROJECT_DIR$/pipeline/spec/image_spec.json" />
-        <option value="$PROJECT_DIR$/pipeline/main.py" />
-        <option value="$PROJECT_DIR$/pipeline/Dockerfile" />
-        <option value="$PROJECT_DIR$/pipeline/run_flow_template.txt" />
         <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py" />
+        <option value="$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt" />
+        <option value="$PROJECT_DIR$/pipeline/run_flow_template.txt" />
+        <option value="$PROJECT_DIR$/pipeline/Dockerfile" />
+        <option value="$PROJECT_DIR$/pipeline/main.py" />
+        <option value="$PROJECT_DIR$/pipeline/spec/template_metadata" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="90" />
-    <option name="y" value="236" />
+    <option name="x" value="158" />
+    <option name="y" value="105" />
     <option name="width" value="1049" />
-    <option name="height" value="624" />
+    <option name="height" value="788" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -199,6 +219,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -206,50 +227,10 @@
               <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
               <item name="dataflow" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="pipeline" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="pipeline" type="462c0819:PsiDirectoryNode" />
-              <item name="modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="pipeline" type="462c0819:PsiDirectoryNode" />
-              <item name="spec" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
-              <item name="modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
-              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
-              <item name="shareloader" type="462c0819:PsiDirectoryNode" />
-              <item name="test" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -420,8 +401,8 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8135593" visible="true" weight="0.2872024" />
-      <window_info id="Structure" order="1" sideWeight="0.18644068" side_tool="true" weight="0.171875" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8527725" visible="true" weight="0.28125" />
+      <window_info id="Structure" order="1" sideWeight="0.14722754" side_tool="true" visible="true" weight="0.28125" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
@@ -435,6 +416,7 @@
       <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
       <window_info anchor="bottom" id="Python Console" order="10" visible="true" weight="0.14402619" />
       <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -452,16 +434,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/samples/test/test_email_pipeline.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="93" column="51" selection-start-line="93" selection-start-column="8" selection-end-line="93" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="297">
@@ -555,16 +527,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="194">
           <caret line="55" column="42" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="59" column="6" selection-start-line="59" selection-start-column="6" selection-end-line="59" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -793,23 +755,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1615">
-          <caret line="109" column="70" selection-start-line="109" selection-start-column="12" selection-end-line="109" selection-end-column="70" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/edgar_flow/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="209">
-          <caret line="117" column="11" selection-start-line="117" selection-start-column="11" selection-end-line="117" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pipeline/modules/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -820,33 +765,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pipeline/spec/template_metadata">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pipeline/edgar_quarterly_form4.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pipeline/setup.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pipeline/main.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="5" selection-start-column="5" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pipeline/spec/python_command_spec.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
@@ -854,34 +772,102 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/spec/image_spec.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="64" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-378">
-          <caret line="39" column="16" selection-start-line="39" selection-start-column="16" selection-end-line="39" selection-end-column="16" />
+        <state relative-caret-position="867">
+          <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1717">
+          <caret line="113" column="6" selection-start-line="113" selection-start-column="6" selection-end-line="113" selection-end-column="6" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1411">
+          <caret line="97" column="71" selection-start-line="97" selection-start-column="71" selection-end-line="97" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="43" column="31" selection-start-line="43" selection-start-column="31" selection-end-line="43" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" lean-forward="true" selection-start-line="19" selection-end-line="19" />
+        <state relative-caret-position="527">
+          <caret line="31" selection-start-line="26" selection-end-line="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1887">
+          <caret line="117" column="11" selection-start-line="117" selection-start-column="11" selection-end-line="117" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/edgar_quarterly_form4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="952">
+          <caret line="62" selection-end-line="76" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/spec/template_metadata">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pipeline/Dockerfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="12" column="42" selection-start-line="12" selection-start-column="42" selection-end-line="12" selection-end-column="42" />
+        <state relative-caret-position="461">
+          <caret line="32" selection-start-line="32" selection-end-line="32" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pipeline/spec/image_spec.json">
+    <entry file="file://$PROJECT_DIR$/pipeline/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="64" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="64" />
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

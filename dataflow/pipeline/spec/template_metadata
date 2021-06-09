@@ -12,6 +12,10 @@
       "name": "year",
       "label": "Year of filing",
       "helpText": "Enter year of filing"
+    },
+    { "name" : "setup_file",
+      "label": "setup file loc",
+      "helpText": "setup location"
     }
   ]
 }
