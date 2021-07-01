@@ -114,7 +114,7 @@ REQUIRED_PACKAGES = [
     'numpy',
     'beautifulsoup4',
     'pandas',
-    'sendgrid==6.2.1',
+    'sendgrid',
     'lxml',
     'pandas_datareader',
     'apache-beam[gcp]==2.27.0',

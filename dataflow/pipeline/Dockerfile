@@ -15,7 +15,6 @@ RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.27.0
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY setup.py ${WORKDIR}/setup.py
 COPY main.py ${WORKDIR}/main.py
-COPY tester.py ${WORKDIR}/tester.py
 
 
 

@@ -5,13 +5,13 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date, datetime
 from apache_beam.options.value_provider import RuntimeValueProvider
-from .edgar_daily_form4 import run_my_pipeline, filter_form_4,\
+from modules.edgar_daily_form4 import run_my_pipeline, filter_form_4,\
                         send_email, write_to_form4_bq, enhance_form_4, XyzOptions, write_to_form4_bucket
-from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
+from modules.edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4,get_edgar_daily_table_spec_form4_historical
 
-from .price_utils import get_current_price
-from apache_beam.io.gcp.internal.clients import bigquery
+from modules.price_utils import get_current_price
+from sendgrid import SendGridAPIClient
 EDGAR_QUARTERLY_URL = 'https://www.sec.gov/Archives/edgar/full-index/{year}/{quarter}/master.idx'
 
 class QuarterlyForm4Options(PipelineOptions):
@@ -58,7 +58,9 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
 
 def run_for_quarter(p, quarter, year):
     source =  (p | 'Startup_{}'  >> beam.Create(['https://www.sec.gov/Archives/edgar/full-index/{}/{}/master.idx'])
-                | 'Geneerate URL' >> beam.ParDo(GenerateEdgarUrlFn(quarter, year))  )
+                | 'Geneerate URL' >> beam.ParDo(GenerateEdgarUrlFn(quarter, year))
+    ) 
+                
 
     lines = run_my_pipeline(source)
     form4 = filter_form_4(lines, '{}_{}'.format(quarter, year))
@@ -78,6 +80,3 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         run0 = run_for_quarter(p, pipeline_options.quarter, pipeline_options.year)
 
-if __name__ == '__main__':
-  logging.getLogger().setLevel(logging.INFO)
-  run()

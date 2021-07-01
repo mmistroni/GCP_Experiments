@@ -5,6 +5,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date, datetime
 from apache_beam.options.value_provider import RuntimeValueProvider
+from modules.utility import returnSomething
 EDGAR_QUARTERLY_URL = 'https://www.sec.gov/Archives/edgar/full-index/{year}/{quarter}/master.idx'
 
 class QuarterlyForm4Options(PipelineOptions):
@@ -36,6 +37,7 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
     return (
             lines
             | 'Map to  String_{}'.format(quarter) >> beam.Map(lambda lst: ','.join([str(i) for i in lst]))
+            | 'Map to something' >> beam.Map(lambda s: returnSomething(s))
             # cob, ticker, shares, increase, trans price, volume
 
             | 'WRITE TO BUCKET_{}'.format(quarter) >> beam.io.WriteToText(

@@ -20,15 +20,19 @@ export TEMPLATE_PATH=gs://$TEMPLATE_BUCKET/python_command_spec.json
 export TEMPLATE_IMAGE=gcr.io/$PROJECT_ID/my_logic:latest
 gcloud config set builds/use_kaniko True
 
-gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --sdk-language "PYTHON" --metadata-file spec/template_metadata
 gcloud builds submit --project=$PROJECT_ID --tag $TEMPLATE_IMAGE  .
 
+gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --sdk-language "PYTHON" --metadata-file spec/template_metadata
+
 export REGION="us-central1"
+
 gcloud dataflow flex-template run "flowtest" \
 --template-file-gcs-location "$TEMPLATE_PATH" \
 --parameters year="2018" \
---parameters quarter="Q1" \
---region "$REGION"
+--parameters quarter="QTR1" \
+--parameters setup_file="/dataflow/template/setup.py" \
+--region "$REGION" 
+
 
 
 
