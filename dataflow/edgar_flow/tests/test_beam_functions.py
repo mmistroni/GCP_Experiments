@@ -1,6 +1,5 @@
 from edgar_flow.modules.beam_functions import *
 from edgar_flow.modules.edgar_utils import *
-from mock import patch, Mock
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 

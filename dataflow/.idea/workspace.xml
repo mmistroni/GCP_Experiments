@@ -1,118 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/edgar_flow/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edgar_flow/run_flow_template.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edgar_flow/spec/image_spec.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edgar_flow/spec/python_command_spec.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edgar_flow/spec/template_metadata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataflow.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataflow.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_beam_functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_beam_functions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_quarterly_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_quarterly_form4.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/samples/test/test_email_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/samples/test/test_email_pipeline.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
-  </component>
-  <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pipeline/Dockerfile">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="32" selection-start-line="32" selection-end-line="32" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pipeline/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" selection-start-line="2" selection-end-line="2" />
-              <folding>
-                <element signature="e#0#14#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pipeline/spec/image_spec.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="64" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="64" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/spec/image_spec.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="34">
-              <caret line="2" column="77" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="77" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_quarterly_form4_main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
-              <folding>
-                <element signature="e#0#45#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/spec/python_command_spec.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="59" selection-start-line="1" selection-start-column="59" selection-end-line="1" selection-end-column="59" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/spec/template_metadata">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/Dockerfile">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="75" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/edgar_flow/run_flow_template.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="67" selection-start-line="3" selection-start-column="67" selection-end-line="3" selection-end-column="67" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pipeline/spec/template_metadata">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -227,6 +134,7 @@
     <option name="width" value="1049" />
     <option name="height" value="788" />
   </component>
+  <component name="ProjectId" id="1ukSQBHVBiPmCs3zZ1eEhqwNpGZ" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -269,9 +177,13 @@
       </pane>
     </panes>
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$USER_HOME$/anaconda3/envs/env_zipline/Lib/site-packages/zipline/data/bundles/quandl.py" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../../Marco/envs/test_conda_env" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -289,106 +201,95 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline">
-    <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_get_prices" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote">
+    <configuration name="Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_get_prices&quot;" />
+      <option name="_new_target" value="&quot;test_beam_functions.TestBeamFunctions.test_map_from_edgar_row&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_pipeline&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_all_sectors" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_shares_to_sector_pick.TestSharesToSector.test_get_all_sectors&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_stocks_for_sector" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_shares_to_sector_pick.TestSharesToSector.test_get_stocks_for_sector&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests in test_beam_functions.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_shares_to_sector_pick.TestSharesToSector.test_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/edgar_flow/tests/test_beam_functions.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_stocks_for_sector" />
-      <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_all_sectors" />
-      <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" />
-      <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_prices" />
-      <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" />
+      <item itemvalue="Python tests.Unittests in test_beam_functions.py" />
+      <item itemvalue="Python tests.Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" />
-        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_prices" />
-        <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" />
-        <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_all_sectors" />
-        <item itemvalue="Python tests.Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_stocks_for_sector" />
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
+        <item itemvalue="Python tests.Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" />
+        <item itemvalue="Python tests.Unittests in test_beam_functions.py" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -458,6 +359,18 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

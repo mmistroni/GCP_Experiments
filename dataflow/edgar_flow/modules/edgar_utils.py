@@ -61,7 +61,13 @@ class ReadRemote(beam.DoFn):
     def process(self, element):
         try:
             logging.info('REadRemote processing///{}'.format(element))
-            data = urllib.request.urlopen(element)  # it's a file like object and works just like a file
+            req = urllib.request.Request(
+                element,
+                headers={
+                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                }
+            )
+            data = urllib.request.urlopen(req)  # it's a file like object and works just like a file
             data =  [line for line in data]
             logging.info('data has:{}'.format(len(data)))
             return data
