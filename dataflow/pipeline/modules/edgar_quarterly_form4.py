@@ -30,7 +30,7 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
     logging.info('year is:{}'.format(RuntimeValueProvider.get_value('quarter', str, 'notfound')))
 
     destinationUrl = 'gs://mm_dataflow_bucket/outputs/edgar_quarterly_form4_{}_{}_{}.csv'.format(
-            quarter.get(),
+            year.get(),
             quarter.get(), datetime.now().strftime('%Y%m%d%H%M'))
 
     logging.info('Writing to:{}'.format(destinationUrl))

@@ -29,3 +29,5 @@ RUN ls -la ${WORKDIR}
 RUN echo '---- LISTING moduls-----'
 RUN ls -la ${WORKDIR}/modules
 
+ENTRYPOINT [ "/opt/apache/beam/boot" ]
+

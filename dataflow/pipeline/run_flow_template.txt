@@ -19,6 +19,9 @@ gcloud dataflow flex-template run "flowtest" \
 --region "$REGION" 
 
 
-
+gcloud builds submit \
+    --config run.yaml \
+    --substitutions _REGION=$REGION \
+    --no-source
 
 
