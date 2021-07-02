@@ -79,7 +79,9 @@ class ParseForm13F(beam.DoFn):
 
     def open_url_content(self, file_path):
         import requests
-        return requests.get(file_path)
+        return requests.get(file_path, headers={
+                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                })
 
     def get_period_of_report(self, content):
         return get_period_of_report(content)
@@ -121,7 +123,9 @@ class ParseForm4(beam.DoFn):
 
     def open_url_content(self, file_path):
         import requests
-        return requests.get(file_path)
+        return requests.get(file_path, headers={
+                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                })
 
     def get_transaction_codes(self, root):
         tcodes = root.findall(".//transactionCode")
@@ -224,7 +228,9 @@ def processUrl(url):
     return url
 
 def crawl(base_page):
-  req=requests.get(base_page)
+  req=requests.get(base_page, headers={
+                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                })
   good_ones = []
   if req.status_code==200:
       html=BeautifulSoup(req.text,'html.parser')
