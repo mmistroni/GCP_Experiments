@@ -10,7 +10,8 @@ COPY modules ${WORKDIR}/modules
 
 ENV DATAFLOW_PYTHON_COMMAND_SPEC ${WORKDIR}/python_command_spec.json
 
-RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.27.0
+RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.27.0  pandas-datareader==0.9.0
+RUN apt-get update && apt-get install -y iputils-ping dnsutils 
 
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY setup.py ${WORKDIR}/setup.py
@@ -23,11 +24,13 @@ ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/main.py"
 #RUN python ${WORKDIR}/setup.py install
 
-RUN pwd
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
-RUN echo '---- LISTING moduls-----'
-RUN ls -la ${WORKDIR}/modules
+RUN echo '-- pinging google--'
+RUN echo '-- pinging sec.gov'
+
+RUN echo '--- bulding image---'
+
 
 ENTRYPOINT [ "/opt/apache/beam/boot" ]
 

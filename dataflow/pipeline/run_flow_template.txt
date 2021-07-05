@@ -2,26 +2,21 @@
 export PROJECT_ID="$(gcloud config get-value project)"
 export TEMPLATE_BUCKET=mm_dataflow_bucket/flex
 export TEMPLATE_PATH=gs://$TEMPLATE_BUCKET/python_command_spec.json
-export TEMPLATE_IMAGE=gcr.io/$PROJECT_ID/my_logic:latest
+export TEMPLATE_IMAGE=gcr.io/$PROJECT_ID/my_logic:latest2
 gcloud config set builds/use_kaniko True
 
 gcloud builds submit --project=$PROJECT_ID --tag $TEMPLATE_IMAGE  .
 
-gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --sdk-language "PYTHON" --metadata-file spec/template_metadata
+pip install grpcio
 
 export REGION="us-central1"
+export CLOUDSDK_PYTHON_SITEPACKAGES=1
+export FMPKEY=<Replace with FMPREPPKEY>
 
-gcloud dataflow flex-template run "flowtest" \
---template-file-gcs-location "$TEMPLATE_PATH" \
---parameters year="2018" \
---parameters quarter="QTR1" \
---parameters setup_file="/dataflow/template/setup.py" \
---region "$REGION" 
-
-
-gcloud builds submit \
+gcloud beta builds submit \
     --config run.yaml \
     --substitutions _REGION=$REGION \
+    --substitutions _FMPKEY=$FMPKEY \
     --no-source
 
 

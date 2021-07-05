@@ -1,5 +1,5 @@
 {
   "docker_template_spec": {
-    "docker_image": "gcr.io/datascience-projects/my_logic:latest"
+    "docker_image": "gcr.io/datascience-projects/my_logic:latest2"
   }
 }
