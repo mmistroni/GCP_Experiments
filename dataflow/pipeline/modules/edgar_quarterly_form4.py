@@ -78,8 +78,7 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
             lines
             | 'Map to  String_{}'.format(quarter) >> beam.Map(lambda lst: ','.join([str(i) for i in lst]))
             | 'Map to something' >> beam.Map(lambda s: returnSomething(s))
-            # cob, ticker, shares, increase, trans price, volume
-
+            
             | 'WRITE TO BUCKET_{}'.format(quarter) >> beam.io.WriteToText(
         destinationUrl,header='cob,ticker,shares,increase,trans_price,volume,filing_file',
                                                        num_shards=1)
@@ -91,9 +90,7 @@ def write_to_form4_bucket_quarterly(lines, quarter, year):
 def run_for_quarter(p, quarter, year, fmpkey):
     source =  (p | 'Startup_{}'  >> beam.Create(['https://www.sec.gov/Archives/edgar/full-index/{}/{}/master.idx'])
                 | 'Geneeratex URL' >> beam.ParDo(GenerateEdgarUrlFn(quarter, year)) 
-                | 'Fetch Shares' >> beam.Map(lambda u: fetch_shares(u, fmpkey))
                 | 'Logging out'  >> beam.Map(logging.info)
-                #| 'Reading Remote' >>  beam.ParDo(ReadRemote()))
     )
     return source
     #lines = run_my_pipeline(source)

@@ -10,7 +10,7 @@ steps:
   entrypoint: python
   args:
   - /dataflow/template/main.py
-  - --runner=DataflowRunner
+  - --runner=DirectRunner
   - --project=$PROJECT_ID
   - --region=$_REGION
   - --job_name=$_JOB_NAME

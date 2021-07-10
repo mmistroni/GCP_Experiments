@@ -11,7 +11,7 @@ pip install grpcio
 
 export REGION="us-central1"
 export CLOUDSDK_PYTHON_SITEPACKAGES=1
-export FMPKEY=<Replace with FMPREPPKEY>
+export FMPKEY="abcdefghi"
 
 gcloud beta builds submit \
     --config run.yaml \
