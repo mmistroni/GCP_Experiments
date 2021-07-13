@@ -64,7 +64,7 @@ class ReadRemote(beam.DoFn):
             req = urllib.request.Request(
                 element,
                 headers={
-                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                    'User-Agent': 'WCorp Services mmistroni@gmail.com'
                 }
             )
             data = urllib.request.urlopen(req)  # it's a file like object and works just like a file
