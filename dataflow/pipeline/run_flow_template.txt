@@ -19,4 +19,5 @@ gcloud beta builds submit \
     --substitutions _FMPKEY=$FMPKEY \
     --no-source
 
-
+# the command above will work with the command line
+# there's a cloudbuild.yaml that can be used via CloudBuild, as you cannot use your own serviceaccount to kick off cloud build
