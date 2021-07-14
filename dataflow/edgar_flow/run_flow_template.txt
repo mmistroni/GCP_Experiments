@@ -10,10 +10,10 @@ gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --s
 
 
 export REGION="us-central1"
-gcloud dataflow flex-template run "edgarflow" \
+gcloud dataflow flex-template run "Q2_2017" \
 --template-file-gcs-location "$TEMPLATE_PATH" \
---parameters year="2021" \
---parameters quarter="QTR1" \
+--parameters year="2017" \
+--parameters quarter="QTR2" \
 --parameters setup_file="/dataflow/template/setup.py" \
 --region "$REGION"
 

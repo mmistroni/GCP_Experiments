@@ -80,7 +80,7 @@ class ParseForm13F(beam.DoFn):
     def open_url_content(self, file_path):
         import requests
         return requests.get(file_path, headers={
-                    'User-Agent': 'Sample Company Name AdminContact@<sample company domain>.com'
+                    'User-Agent': 'WCorp Services mmistroni@gmail.com'
                 })
 
     def get_period_of_report(self, content):
