@@ -1,0 +1,23 @@
+
+# these variables are needed
+export PROJECT_ID="$(gcloud config get-value project)"
+export PROJECT_NUMBER=682143946483
+export REGION="us-central1"
+export CLOUDSDK_PYTHON_SITEPACKAGES=1
+export FMPKEY="abcdefghi"
+
+
+pip install grpcio # needed to debug local run
+
+## build image first
+gcloud beta builds submit     --verbosity debug     --config build.yaml    
+
+
+## then kick off the TEMPLATE_BUCKET
+gcloud beta builds submit \
+    --verbosity info \
+    --config run_local.yaml \
+    --substitutions _REGION=$REGION \
+    
+
+# there's a cloudbuild.yaml that can be used via CloudBuild, as you cannot use your own serviceaccount to kick off cloud build

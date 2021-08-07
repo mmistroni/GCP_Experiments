@@ -1,0 +1,32 @@
+substitutions:
+  _IMAGE: pipeline:latestRun
+  _JOB_NAME: 'pipelinerunner'
+  _TEMP_LOCATION: ''
+  _REGION: us-central1
+  _FMPKEY: ''  
+
+# checkout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+
+steps:
+
+- name: gcr.io/$PROJECT_ID/$_IMAGE
+  entrypoint: python
+  args:
+  - /dataflow/template/main.py
+  - --runner=DataflowRunner
+  - --project=$PROJECT_ID
+  - --region=$_REGION
+  - --job_name=$_JOB_NAME
+  - --temp_location=$_TEMP_LOCATION
+  - --sdk_container_image=gcr.io/$PROJECT_ID/$_IMAGE
+  - --disk_size_gb=50
+  - --year=2018 
+  - --quarter=QTR1 
+  - --fmpkey=$_FMPKEY
+  - --setup_file=/dataflow/template/setup.py  
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# Use the Compute Engine default service account to launch the job.
+#serviceAccount: projects/$PROJECT_ID/serviceAccounts/$PROJECT_NUMBER-compute@developer.gserviceaccount.com

@@ -1,0 +1,22 @@
+
+export PROJECT_ID="$(gcloud config get-value project)"
+export TEMPLATE_BUCKET=mm_dataflow_bucket/flex
+export TEMPLATE_PATH=gs://$TEMPLATE_BUCKET/python_command_spec_edgar.json
+export TEMPLATE_IMAGE=gcr.io/datascience-projects/edgar-quarterly-form4:latest
+gcloud config set builds/use_kaniko True
+
+gcloud builds submit --project=$PROJECT_ID --tag $TEMPLATE_IMAGE  .
+gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --sdk-language "PYTHON" --metadata-file spec/template_metadata
+
+
+export REGION="us-central1"
+gcloud dataflow flex-template run "Q2_2017" \
+--template-file-gcs-location "$TEMPLATE_PATH" \
+--parameters year="2017" \
+--parameters quarter="QTR2" \
+--parameters setup_file="/dataflow/template/setup.py" \
+--region "$REGION"
+
+
+
+

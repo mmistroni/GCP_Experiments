@@ -1,0 +1,831 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/run_flow_template_edgardaily4.txt" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/run_flow_template_edgardaily4.txt" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/edgar_flow/run_flow_template_edgardaily4.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="357">
+              <caret line="21" column="20" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>sk_98e397d4bee940488e1f48e9b419508f</find>
+      <find>Extended</find>
+      <find>get_purchase_transactions</find>
+      <find>get_transaction_codes</find>
+      <find>get_purchase_transactions_2</find>
+      <find>Mappin</find>
+      <find>sharesFollowingTransaction</find>
+      <find>transactionCo</find>
+      <find>trans_</find>
+      <find>We got</find>
+      <find>write_to_</find>
+      <find>sink</find>
+      <find>Check</find>
+      <find>eDGARcOMBINEfO</find>
+      <find>Edgar</find>
+      <find>transactionAmounts</find>
+      <find>fast_iter2</find>
+      <find>parse_xml</find>
+      <find>BDay</find>
+      <find>beam.ParDo</find>
+      <find>dedu</find>
+      <find>datareader</find>
+      <find>dr</find>
+      <find>run</find>
+      <find>ReadFromText</find>
+      <find>get_financial_ratios</find>
+      <find>ParDo</find>
+      <find>RUN_my_pipel</find>
+      <find>/edgar</find>
+      <find>KANIK</find>
+    </findStrings>
+    <replaceStrings>
+      <replace />
+    </replaceStrings>
+    <dirStrings>
+      <dir>C:\Users\marco\GCP_Experiments\dataflow</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/edgar_flow/edgar_quarterly_main.py" />
+        <option value="$USER_HOME$/AUQUAN/ZIPLINE/get_binance_tickers.py" />
+        <option value="$USER_HOME$/AUQUAN/ZIPLINE/extensions.py" />
+        <option value="$USER_HOME$/anaconda3/envs/env_zipline/Lib/site-packages/zipline/data/bundles/google.py" />
+        <option value="$USER_HOME$/.zipline/extension.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/edgar_dataflow_quarterly_form4_template_metadata" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/price_utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/news_loader_template_metadata" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" />
+        <option value="$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/news_util.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/news.py" />
+        <option value="$PROJECT_DIR$/shareloader/stock_pick_main.py" />
+        <option value="$PROJECT_DIR$/shareloader/stock_picks_main.py" />
+        <option value="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/tests/test_edgar_daily_form4.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/shares_to_sector_main.py" />
+        <option value="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/shares_to_sector.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/stock_picks.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/metrics.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/bq_utils.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/utils.py" />
+        <option value="$PROJECT_DIR$/shareloader/setup.py" />
+        <option value="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" />
+        <option value="$PROJECT_DIR$/shareloader/shares_dataset_loader_main.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/shareloader.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" />
+        <option value="$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/setup.py" />
+        <option value="$PROJECT_DIR$/pipeline/modules/edgar_quarterly_form4.py" />
+        <option value="$PROJECT_DIR$/pipeline/spec/python_command_spec.json" />
+        <option value="$PROJECT_DIR$/edgar_flow/metadata.json" />
+        <option value="$PROJECT_DIR$/pipeline/spec/image_spec.json" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py" />
+        <option value="$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt" />
+        <option value="$PROJECT_DIR$/pipeline/run_flow_template.txt" />
+        <option value="$PROJECT_DIR$/pipeline/Dockerfile" />
+        <option value="$PROJECT_DIR$/pipeline/main.py" />
+        <option value="$PROJECT_DIR$/pipeline/spec/template_metadata" />
+        <option value="$PROJECT_DIR$/edgar_flow/spec/image_spec.json" />
+        <option value="$PROJECT_DIR$/edgar_flow/spec/python_command_spec.json" />
+        <option value="$PROJECT_DIR$/edgar_flow/Dockerfile" />
+        <option value="$PROJECT_DIR$/edgar_flow/run_flow_template.txt" />
+        <option value="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" />
+        <option value="$PROJECT_DIR$/edgar_flow/run_flow_template_edgardaily4.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="158" />
+    <option name="y" value="105" />
+    <option name="width" value="1049" />
+    <option name="height" value="788" />
+  </component>
+  <component name="ProjectId" id="1ukSQBHVBiPmCs3zZ1eEhqwNpGZ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
+              <item name="modules" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="edgar_flow" type="462c0819:PsiDirectoryNode" />
+              <item name="spec" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="pipeline" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="dataflow" type="b2602c69:ProjectViewProjectNode" />
+              <item name="dataflow" type="462c0819:PsiDirectoryNode" />
+              <item name="pipeline" type="462c0819:PsiDirectoryNode" />
+              <item name="spec" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/edgar_flow" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow" />
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow\spec" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow\spec" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\pipeline" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow\spec" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\pipeline" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\shareloader\modules" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow\modules" />
+      <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote">
+    <configuration name="Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_beam_functions.TestBeamFunctions.test_map_from_edgar_row&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests in test_beam_functions.py" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/edgar_flow/tests/test_beam_functions.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python tests.Unittests in test_beam_functions.py" />
+      <item itemvalue="Python tests.Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
+      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
+        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
+        <item itemvalue="Python tests.Unittests for test_beam_functions.TestBeamFunctions.test_map_from_edgar_row" />
+        <item itemvalue="Python tests.Unittests in test_beam_functions.py" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" BundledDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="" />
+      <created>1578173873121</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578173873121</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_get_industry - 2021.03.16 at 21h 36m 48s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_industry" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_get_industry - 2021.03.16 at 21h 37m 47s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_industry" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_get_industry - 2021.03.16 at 21h 42m 22s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_industry" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_get_stocks_for_sector - 2021.03.17 at 20h 28m 53s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_stocks_for_sector" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_get_all_sectors - 2021.03.17 at 20h 30m 50s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_get_all_sectors" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_pipeline - 2021.03.17 at 20h 33m 56s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_pipeline - 2021.03.17 at 20h 34m 52s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_shares_to_sector_pick_TestSharesToSector_test_pipeline - 2021.03.17 at 20h 38m 12s.xml">
+      <configuration name="Unittests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_datset_loader_TestSharesDsetLoader_test_get_prices - 2021.04.24 at 22h 39m 07s.xml">
+      <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_get_prices" configurationId="tests" />
+    </history-entry>
+    <history-entry file="Unittests_for_test_datset_loader_TestSharesDsetLoader_test_pipeline - 2021.04.24 at 22h 48m 47s.xml">
+      <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" configurationId="tests" />
+    </history-entry>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.8470363" visible="true" weight="0.28125" />
+      <window_info id="Structure" order="1" sideWeight="0.15296367" side_tool="true" visible="true" weight="0.28125" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3289689" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.42880523" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.49590835" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" visible="true" weight="0.14402619" />
+      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="bottom" id="Docker" order="12" show_stripe_button="false" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_monthly_data.py</url>
+          <line>79</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1292">
+          <caret line="80" selection-start-line="80" selection-end-line="80" />
+          <folding>
+            <element signature="e#1#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/tests/edgarform4.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1190">
+          <caret line="70" column="25" selection-start-line="70" selection-start-column="13" selection-end-line="70" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/test/test_news_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1086">
+          <caret line="92" selection-start-line="92" selection-end-line="92" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/shares_to_sector_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="5" lean-forward="true" selection-start-line="5" selection-end-line="5" />
+          <folding>
+            <element signature="e#0#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/write_to_edgar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="55" column="42" selection-start-line="55" selection-start-column="42" selection-end-line="55" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="32" column="91" selection-start-line="31" selection-start-column="8" selection-end-line="32" selection-end-column="91" />
+          <folding>
+            <element signature="e#0#28#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/stock_picks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="44" column="13" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="595">
+          <caret line="45" column="59" selection-start-line="45" selection-start-column="47" selection-end-line="45" selection-end-column="59" />
+          <folding>
+            <element signature="e#1#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="86" column="31" selection-start-line="86" selection-start-column="31" selection-end-line="86" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="833">
+          <caret line="63" column="4" selection-start-line="60" selection-start-column="4" selection-end-line="63" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/bq_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="31" column="51" selection-start-line="31" selection-start-column="51" selection-end-line="31" selection-end-column="51" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/kor_isr_shareloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1394">
+          <caret line="104" column="20" selection-start-line="104" selection-start-column="20" selection-end-line="104" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="46" column="8" selection-start-line="46" selection-start-column="8" selection-end-line="46" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="23" selection-start-line="15" selection-start-column="23" selection-end-line="15" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="194">
+          <caret line="16" column="19" lean-forward="true" selection-start-line="16" selection-end-line="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/pandas_datareader/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/test/test_datset_loader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="31" column="17" selection-start-line="31" selection-start-column="17" selection-end-line="31" selection-end-column="17" />
+          <folding>
+            <element signature="e#1#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/bq_read_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="35" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/samples/email_pipeline.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="41" selection-start-line="33" selection-end-line="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/shares_dataset_loader_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="18" selection-start-column="18" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_dataflow_quarterly_form4_template_metadata">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="48" selection-start-line="2" selection-start-column="48" selection-end-line="2" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36/Lib/site-packages/apache_beam/options/value_provider.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="98" column="6" selection-start-line="98" selection-start-column="6" selection-end-line="98" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="33" column="72" selection-start-line="33" selection-start-column="58" selection-end-line="33" selection-end-column="72" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/shares_to_sector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1003">
+          <caret line="73" column="84" selection-start-line="73" selection-start-column="58" selection-end-line="73" selection-end-column="84" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/monthly_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="40" selection-start-line="16" selection-start-column="39" selection-end-line="16" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/monthly_sub_pipelines.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1037">
+          <caret line="77" column="4" selection-start-line="77" selection-start-column="4" selection-end-line="77" selection-end-column="4" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="510">
+          <caret line="48" column="8" selection-start-line="48" selection-start-column="8" selection-end-line="48" selection-end-column="8" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="901">
+          <caret line="55" column="22" selection-start-line="55" selection-start-column="4" selection-end-line="55" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/shareloader/modules/shareloader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1360">
+          <caret line="96" column="32" selection-start-line="96" selection-start-column="32" selection-end-line="96" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/modules/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/metadata.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="1" selection-end-line="16" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/spec/python_command_spec.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_quarterly_form4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="867">
+          <caret line="64" column="23" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1411">
+          <caret line="97" column="71" selection-start-line="97" selection-start-column="71" selection-end-line="97" selection-end-column="71" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template_sample_google.txt" />
+    <entry file="file://$PROJECT_DIR$/pipeline/run_flow_template.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="527">
+          <caret line="31" selection-start-line="26" selection-end-line="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" selection-start-line="22" selection-end-line="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1887">
+          <caret line="117" column="11" selection-start-line="117" selection-start-column="11" selection-end-line="117" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/edgar_quarterly_form4.py" />
+    <entry file="file://$PROJECT_DIR$/pipeline/spec/template_metadata">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="20" column="1" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/Dockerfile" />
+    <entry file="file://$PROJECT_DIR$/pipeline/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" selection-start-line="2" selection-end-line="2" />
+          <folding>
+            <element signature="e#0#14#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pipeline/spec/image_spec.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="64" selection-start-line="2" selection-start-column="21" selection-end-line="2" selection-end-column="64" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/edgar_quarterly_form4_main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="14" selection-start-line="1" selection-start-column="14" selection-end-line="1" selection-end-column="14" />
+          <folding>
+            <element signature="e#0#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/Dockerfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="16" column="75" selection-start-line="16" selection-start-column="75" selection-end-line="16" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/spec/image_spec.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="77" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="77" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/run_flow_template.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="67" selection-start-line="3" selection-start-column="67" selection-end-line="3" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/spec/python_command_spec.json" />
+    <entry file="file://$PROJECT_DIR$/edgar_flow/spec/template_metadata">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="84" column="30" selection-start-line="84" selection-start-column="30" selection-end-line="84" selection-end-column="30" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/edgar_flow/run_flow_template_edgardaily4.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="21" column="20" selection-start-line="21" selection-start-column="20" selection-end-line="21" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

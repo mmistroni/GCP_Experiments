@@ -1,0 +1,18 @@
+{
+  "name": "Shareloader ",
+  "description": "An template for running shareloaders.",
+  "parameters": [
+    {
+      "name": "key",
+      "helpText": "key",
+      "label": "SG Key"
+    },
+    {
+      "name": "iexkey",
+      "helpText": "IEXAPI key",
+      "label": "iexkey"
+    }
+  
+  
+  ]
+}

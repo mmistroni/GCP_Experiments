@@ -1,0 +1,31 @@
+substitutions:
+  _IMAGE: shareloader:latest2
+  _JOB_NAME: 'shareloadercloudbuild2'
+  _TEMP_LOCATION: ''
+  _REGION: us-central1
+  _PROJECT_ID: datascience-projects
+  _IEXAPI_KEY: ''
+  _SENDGRID_KEY : ''
+  
+steps:
+- name: gcr.io/$_PROJECT_ID/$_IMAGE
+  entrypoint: python
+  args:
+  - /dataflow/template/shares_main.py
+  - --runner=DataflowRunner
+  - --project=$_PROJECT_ID
+  - --region=$_REGION
+  - --job_name=$_JOB_NAME
+  - --temp_location=$_TEMP_LOCATION
+  - --sdk_container_image=gcr.io/$_PROJECT_ID/$_IMAGE
+  - --disk_size_gb=50
+  - --recipients=mmistroni@gmail.com 
+  - --key=$_SENDGRID_KEY
+  - --iexkey=$_IEXAPI_KEY
+  - --setup_file=/dataflow/template/setup.py  
+
+#options:
+#  logging: CLOUD_LOGGING_ONLY
+
+# Use the Compute Engine default service account to launch the job.
+#serviceAccount: projects/$PROJECT_ID/serviceAccounts/$PROJECT_NUMBER-compute@developer.gserviceaccount.com

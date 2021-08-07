@@ -1,0 +1,27 @@
+substitutions:
+  _IMAGE: edgar-quarterly-form4:latest
+  _JOB_NAME: 'edgardirectrunner'
+  _TEMP_LOCATION: ''
+  _REGION: us-central1
+  
+steps:
+- name: gcr.io/$PROJECT_ID/$_IMAGE
+  entrypoint: python
+  args:
+  - /dataflow/template/edgar_quarterly_form4_main.py
+  - --runner=DirectRunner
+  - --project=$PROJECT_ID
+  - --region=$_REGION
+  - --job_name=$_JOB_NAME
+  - --temp_location=$_TEMP_LOCATION
+  - --sdk_container_image=gcr.io/$PROJECT_ID/$_IMAGE
+  - --disk_size_gb=50
+  - --year=2019 
+  - --quarter=QTR1 
+  - --setup_file=/dataflow/template/setup.py  
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+# Use the Compute Engine default service account to launch the job.
+#serviceAccount: projects/$PROJECT_ID/serviceAccounts/$PROJECT_NUMBER-compute@developer.gserviceaccount.com

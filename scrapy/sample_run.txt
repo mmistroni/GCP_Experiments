@@ -1,0 +1,31 @@
+def parse(self, response):
+        self.logger.info("====== GETTING ALL ITEMS for %s===", response.url)
+        items = response.xpath("//li[@class='mc']")
+        self.logger.info('=============== PARSING ===')
+        for index, item in enumerate(items):
+            self.logger.info('Parsing Index:%s', index)
+            title = items.xpath("div[@class='media-body']/div[@class='title']/a/text()").extract_first()
+            asofdate = ''.join(item.xpath("div[@class='media-body'][1]//span/text()").extract())
+            content = ' '.join(item.xpath("div[@class='media-body'][1]/div//li/text()").extract())
+            symbol = ''.join(item.xpath("div[@class='media-left'][1]//a/text()").extract())
+            yield {'symbol' : symbol, 'title':title, 'asofdate': asofdate, 'content':content}
+        self.logger.info("End of items. Now moving to next page...")
+        next_page = response.xpath("//div[@id='paging']/ul/li[@class='next']/a/@href").extract_first()
+        adj_next_page= 'https://seekingalpha.com' + next_page
+        self.logger.info('======= now opening up %s', adj_next_page)
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:48.0) Gecko/20100101 Firefox/48.0'}
+        yield response.follow(next_page, callback=self.parse, headers=headers
+        
+        
+        
+ Sample fetch
+ 
+ fetch('https://www.jobserve.com/gb/en/JobSearch.aspx?shid=C878E1EBFB58B0DDD306')
+ 
+ 
+ https://www.analyticsvidhya.com/blog/2017/07/web-scraping-in-python-using-scrapy/
+ 
+ 
+ # try these job boards == finviz
+ 
+ response.xpath("//tr[@class='nn']/@onclick").extract_first()

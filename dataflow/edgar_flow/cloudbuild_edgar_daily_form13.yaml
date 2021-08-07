@@ -1,0 +1,14 @@
+steps:
+  # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=$_IMAGE_NAME'
+      , '--file=./Dockerfile_Edgar_Daily_Form13'
+      , '.'
+      ]
+images: ['$_IMAGE_NAME']
+
+
+substitutions:
+  _IMAGE_NAME: gcr.io/datascience-projects/edgar-daily-form13:latest

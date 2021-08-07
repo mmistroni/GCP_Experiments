@@ -1,0 +1,6 @@
+# Function dependencies, for example:
+# package>=version
+requests>=2.18.4
+pandas>=0.25.3
+numpy>=1.17.5
+pandas_datareader>=0.7.0

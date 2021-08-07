@@ -1,0 +1,27 @@
+
+export PROJECT_ID="$(gcloud config get-value project)"
+export TEMPLATE_BUCKET=mm_dataflow_bucket/templates
+export TEMPLATE_PATH=gs://$TEMPLATE_BUCKET/python_command_spec_edgar_daily4.json
+export TEMPLATE_IMAGE=gcr.io/datascience-projects/edgar-daily4-form4:latest
+gcloud config set builds/use_kaniko True
+
+gcloud builds submit --project=$PROJECT_ID --tag $TEMPLATE_IMAGE --file DockerFile_Edgar_Daily_Form13 . 
+gcloud dataflow flex-template build $TEMPLATE_PATH --image "$TEMPLATE_IMAGE" --sdk-language "PYTHON" --metadata-file spec/edgar_dataflow_daily_form4_template_metadata
+
+
+#
+gcloud beta builds submit     --verbosity debug     --config cloudbuild_edgar_daily_form13.yaml   
+
+gcloud dataflow flex-template build $TEMPLATE_PATH --image "gcr.io/datascience-projects/edgar-daily-form13:latest" --sdk-language "PYTHON" --metadata-file spec/edgar_dataflow_daily_template_metadata
+
+
+
+export REGION="us-central1"
+gcloud dataflow flex-template run "edgardailyForm13" \
+--template-file-gcs-location "$TEMPLATE_PATH" \
+--parameters ^~^key="~recipients="mmistroni@gmail.com,alexmistroni@gmail.com" \
+--parameters setup_file=/dataflow/template/setup.py \
+--region "$REGION"
+
+
+

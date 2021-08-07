@@ -1,0 +1,21 @@
+{
+  "name": "Form 4 Quartery Download",
+  "description": "Download form 4 quarterly.",
+  "parameters": [
+    {
+      "name": "quarter",
+      "label": "Quarter of fling.",
+      "helpText": "Enter quarter of filing."
+
+    },
+    {
+      "name": "year",
+      "label": "Year of filing",
+      "helpText": "Enter year of filing"
+    },
+    { "name" : "setup_file",
+      "label": "setup file loc",
+      "helpText": "setup location"
+    }
+  ]
+}

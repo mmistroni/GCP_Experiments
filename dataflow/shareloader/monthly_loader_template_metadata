@@ -1,0 +1,23 @@
+{
+  "name": "Monthly Loader ",
+  "description": "An template for running stock monthly performance.",
+  "parameters": [
+    {
+      "name": "key",
+      "helpText": "IEX Api key",
+      "label": "iexapikey"
+    },
+    {
+      "name": "recipients",
+      "helpText": "email recpients",
+      "label": "recipients"
+    },
+    {
+      "name": "sgridkey",
+      "helpText": "send grid key",
+      "label": "sgkey"
+    }
+
+
+  ]
+}

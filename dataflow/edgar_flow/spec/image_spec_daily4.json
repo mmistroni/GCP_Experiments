@@ -1,0 +1,5 @@
+{
+  "docker_template_spec": {
+    "docker_image": "gcr.io/datascience-projects/edgar-quarterly-form4:latest"
+  }
+}

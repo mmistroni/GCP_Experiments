@@ -1,0 +1,29 @@
+====== PREDICT STOCK PRICES USING DATA FROM FIDELITY ===
+https://medium.com/analytics-vidhya/using-ai-ml-to-predict-stocks-price-performance-1b752f1a34ba
+
+===== QUARTERLY EARNINGS ==============
+https://medium.com/swlh/teaching-a-machine-to-trade-stocks-like-warren-buffett-part-i-445849b208c6
+
+===== ANNUAL REPORTS ==============
+https://towardsdatascience.com/beat-the-stock-market-with-machine-learning-d9432ea5241e
+
+===== ALGO TRADING ===
+https://medium.com/swlh/coding-your-way-to-wall-street-bf21a500376f
+
+
+==== predict prices using tech indicators ===========
+https://medium.com/analytics-vidhya/stock-trend-prediction-with-technical-indicators-feature-engineering-and-python-code-1fa54d5806ba
+
+
+====== predictp rices using news ====
+https://towardsdatascience.com/making-a-continual-ml-pipeline-to-predict-apple-stock-with-global-news-python-90e5d6610b21
+
+
+
+==== predict stock price performance ===========
+https://medium.com/analytics-vidhya/using-ai-ml-to-predict-stocks-price-performance-1b752f1a34ba
+
+
+
+==== backtestngn toolbxo for testing trading startegies]
+https://toolbox.auquan.com/

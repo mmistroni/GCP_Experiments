@@ -1,0 +1,21 @@
+{
+  "description": "An example pipeline that downlod edgar daily files",
+  "name": "Edgar Daily Pipeline for Form13",
+  "parameters": [
+    {
+      "name": "key",
+      "helpText": "sendgrid key",
+      "label": "sendgrid key"
+    },
+    {
+      "name": "recipients",
+      "helpText": "comma separated list of recipients",
+      "label": "email recipients"
+    },
+    { "name" : "setup_file",
+      "label": "setup file loc",
+      "helpText": "setup location"
+    }
+  ]
+  
+}

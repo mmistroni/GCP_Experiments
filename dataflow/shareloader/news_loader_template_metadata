@@ -1,0 +1,32 @@
+{
+  "name": "NewsReader",
+  "description": "An template for running news loader.",
+  "parameters": [
+    {
+      "name": "sector",
+      "helpText": "List of Sectors",
+      "label": "sector"
+    },
+    {
+      "name": "business_days",
+      "helpText": "Past business day",
+      "label": "business_days",
+      "isOptional" : true
+    },
+    {
+      "name": "iexkey",
+      "helpText": "iexapi keyPast business day",
+      "label": "iexapi key"
+    },
+    {
+      "name": "key",
+      "helpText": "SendGrid Key",
+      "label": "sendgrid key"
+    },
+    {
+      "name": "recipients",
+      "helpText": "email recipients",
+      "label": "email recipients"
+    }
+  ]
+}

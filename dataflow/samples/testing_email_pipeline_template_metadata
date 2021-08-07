@@ -1,0 +1,11 @@
+{
+  "name": "Tester Job",
+  "description": "An template for running shareloaders.",
+  "parameters": [
+    {
+      "name": "input_file",
+      "helpText": "input_file",
+      "label": "input_file"
+    }
+  ]
+}

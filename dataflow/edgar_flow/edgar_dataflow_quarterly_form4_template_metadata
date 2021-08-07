@@ -1,0 +1,17 @@
+{
+  "description": "An example pipeline that downlod edgar form4 quarterly files",
+  "name": "Edgar Daily Form 4 Pipeline Quarterly",
+  "parameters": [
+    {
+      "name": "quarter",
+      "helpText": "quarter for which we want to run",
+      "label": "quarter"
+    },
+    {
+      "name": "year",
+      "helpText": "year for which we want to run",
+      "label": "year"
+    }
+  ]
+  
+}

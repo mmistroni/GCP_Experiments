@@ -1,0 +1,86 @@
+
+# Building all the images every time we commit here
+# checkout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+# Note:this file will be invoked by a cloud trigger, that's why we need to specify as third argument of the build command
+# the relative path of the directory
+steps:
+  # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_shareloader'
+      , './dataflow/shareloader/'
+      ]
+    id: 'build-shareloader-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_marketstats'
+      , './dataflow/shareloader/'
+      ]
+    id: 'build-marketstats-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_PIPELINE_IMAGE_NAME'
+      , '--file=./dataflow/pipeline/Dockerfile_pipeline'
+      , './dataflow/pipeline/'
+      ]
+    id: 'build-pipeline-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME'
+      , '--file=./dataflow/edgar_flow/Dockerfile'
+      , './dataflow/edgar_flow/'
+      ]
+    id: 'build-form4-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME'
+      , '--file=./dataflow/edgar_flow/Dockerfile_Edgar_Daily_Form13'
+      , './dataflow/edgar_flow/'
+      ]
+    id: 'build-form13-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME'
+      , '--file=./dataflow/edgar_flow/Dockerfile_Edgar_Quarterly_Form4'
+      , './dataflow/edgar_flow/'
+      ]
+    id: 'build-quarterly_form4-image'
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_newsloader'
+      , './dataflow/shareloader/' 
+      ]
+    id: 'build-newsloader-image'
+ 
+
+
+images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 
+         'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME',
+         'gcr.io/$_PROJECT_ID/$_PIPELINE_IMAGE_NAME',
+         'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
+         'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
+         'gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
+
+          ]
+
+
+substitutions:
+  _PROJECT_ID: datascience-projects
+  _IMAGE_NAME: shareloader:latest2
+  _MARKETSTATS_IMAGE_NAME: marketstats:latest
+  _PIPELINE_IMAGE_NAME: pipeline:latestRun
+  _EDGAR_DAILY_FORM4_IMAGE_NAME: edgar-daily4-form4:latest
+  _EDGAR_DAILY_FORM13_IMAGE_NAME: edgar-daily-form13:latest
+  _EDGAR_QUARTERLY_FORM4_IMAGE_NAME: edgar-quarterly-form4:latest
+  _NEWSLOADER_NAME: newsloader:latest
+  
