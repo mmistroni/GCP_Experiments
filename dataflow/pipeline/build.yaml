@@ -36,6 +36,6 @@ substitutions:
   _PROJECT_ID: datascience-projects
   _IMAGE_NAME: pipeline:latestRun
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/pipeline_flex_template.json
-  _METADATA_FILE: metadata.json 
+  _METADATA_FILE: ./dataflow/pipeline/metadata.json 
   
   
