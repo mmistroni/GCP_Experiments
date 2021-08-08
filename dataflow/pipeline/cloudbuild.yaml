@@ -1,3 +1,4 @@
+# This approach only seem to work with beam < 2.30.0
 substitutions:
   _IMAGE: pipeline:latestRun
   _JOB_NAME: 'pipelinerunner'

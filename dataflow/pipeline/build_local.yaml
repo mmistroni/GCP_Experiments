@@ -7,8 +7,8 @@ steps:
     args:
       [ 'build'
       , '--tag=gcr.io/$PROJECT_ID/$_IMAGE_NAME'
-      , '--file=./dataflow/pipeline/Dockerfile_pipeline'
-      , './dataflow/pipeline/'
+      , '--file=./Dockerfile_pipeline'
+      , '.'
       ]
   # Push docker image to GCR
   - name: 'gcr.io/cloud-builders/docker'

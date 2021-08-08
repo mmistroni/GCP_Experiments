@@ -10,7 +10,7 @@ COPY modules ${WORKDIR}/modules
 
 ENV DATAFLOW_PYTHON_COMMAND_SPEC ${WORKDIR}/python_command_spec.json
 
-RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.27.0  pandas-datareader==0.9.0
+RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.31.0  pandas-datareader==0.9.0
 RUN apt-get update && apt-get install -y iputils-ping dnsutils 
 
 COPY __init__.py ${WORKDIR}/__init__.py
@@ -34,5 +34,5 @@ ENV HOST 0.0.0.0
 EXPOSE 8080
 
 
-#ENTRYPOINT [ "/opt/apache/beam/boot" ]
+ENTRYPOINT [ "/opt/apache/beam/boot" ]
 

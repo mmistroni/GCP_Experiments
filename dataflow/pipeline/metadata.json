@@ -1,0 +1,21 @@
+{
+  "name": "Pipeline Sample",
+  "description": "A Sample Flex Template.",
+  "parameters": [
+    {
+      "name": "year",
+      "helpText": "Year of filing",
+      "label": "year"
+    },
+    {
+      "name": "quarter",
+      "helpText": "quarter of filing",
+      "label": "quarter of filing"
+    },
+    {
+      "name": "fmpkey",
+      "helpText": "financial modelling prep key",
+      "label": "fmprep key"
+    }
+  ]
+}
