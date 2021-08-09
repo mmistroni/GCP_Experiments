@@ -20,7 +20,7 @@ steps:
           , '--parameters'
           , 'fmpkey=$_FMPKEY'
           , '--region=$_REGION'
-          ]  
+         ]  
     id: 'build-flex-template-via-cloudsdk'
 
 substitutions:

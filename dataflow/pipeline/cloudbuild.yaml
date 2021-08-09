@@ -1,29 +1,31 @@
 # This approach only seem to work with beam < 2.30.0
 substitutions:
-  _IMAGE: pipeline:latestRun
-  _JOB_NAME: 'pipelinerunner'
   _TEMP_LOCATION: ''
-  _REGION: us-central1
   _FMPKEY: '' 
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/pipeline_flex_template.json
+  _JOB_NAME: 'pipelinerunner'
+  _REGION: us-central1
   
 steps:
+  # Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'year=2017'
+          , '--parameters'
+          , 'quarter=QTR1'
+          , '--parameters'
+          , 'fmpkey=$_FMPKEY'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
 
-- name: gcr.io/$PROJECT_ID/$_IMAGE
-  entrypoint: python
-  args:
-  - /dataflow/template/main.py
-  - --runner=DataflowRunner
-  - --project=$PROJECT_ID
-  - --region=$_REGION
-  - --job_name=$_JOB_NAME
-  - --temp_location=$_TEMP_LOCATION
-  - --sdk_container_image=gcr.io/$PROJECT_ID/$_IMAGE
-  - --disk_size_gb=50
-  - --year=2018 
-  - --quarter=QTR1 
-  - --fmpkey=$_FMPKEY
-  - --setup_file=/dataflow/template/setup.py  
-
-options:
-  logging: CLOUD_LOGGING_ONLY
 

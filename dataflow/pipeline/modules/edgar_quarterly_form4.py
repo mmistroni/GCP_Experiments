@@ -5,7 +5,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date, datetime
 from apache_beam.options.value_provider import RuntimeValueProvider
-from modules.utility import returnSomething
+from .utility import returnSomething
 from datetime import date
 import pandas_datareader.data as dr
 import requests
@@ -36,10 +36,6 @@ class ReadRemote(beam.DoFn):
         except Exception as e:
             logging.info('Trying different way...:{}'.format(str(e)))
             return []
-
-
-
-
 
 class QuarterlyForm4Options(PipelineOptions):
 
