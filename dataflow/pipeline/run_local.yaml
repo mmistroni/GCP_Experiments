@@ -24,7 +24,7 @@ steps:
     id: 'build-flex-template-via-cloudsdk'
 
 substitutions:
-  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/pipeline_flex_template.json
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/flex/pipeline_flex_template.json
   _JOB_NAME: 'pipelinerunner'
   _REGION: us-central1
   _FMPKEY: ''  
