@@ -25,9 +25,6 @@ steps:
 
 
 substitutions:
-  #_PROJECT_ID: datascience-projects
-  #_IMAGE_NAME: newsloader:latest 
-  #_TEMP_LOCATION: gs://mm_dataflow_bucket/temp
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/newsloader_flex_template.json
   _JOB_NAME: cloudbuildnewsrun
   _REGION : 'us-central1'
