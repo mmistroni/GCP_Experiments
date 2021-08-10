@@ -64,7 +64,7 @@ steps:
           , '--verbosity'
           , 'debug'
           , '--config'
-          , '_PIPELINE_BUILD_FILE']  
+          , '$_PIPELINE_BUILD_FILE']  
     id: 'build-pipeline-template'
 
 
