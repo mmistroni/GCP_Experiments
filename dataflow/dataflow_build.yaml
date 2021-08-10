@@ -54,15 +54,7 @@ steps:
       , './dataflow/shareloader/' 
       ]
     id: 'build-newsloader-image'
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_PIPELINE_IMAGE_NAME'
-      , '--file=./dataflow/pipeline/Dockerfile_pipeline'
-      , './dataflow/pipeline/'
-      ]
-    id: 'build-pipeline-image-'
-  # Build flex template
+  # Kick off pipeline build
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
@@ -74,8 +66,6 @@ steps:
           , '--config'
           , '_PIPELINE_BUILD_FILE']  
     id: 'build-pipeline-template'
-    waitFor: ['build-pipeline-image']
-  
 
 
 images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 
