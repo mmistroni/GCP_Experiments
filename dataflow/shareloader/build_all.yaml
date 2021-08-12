@@ -1,0 +1,38 @@
+
+# Building all the images every time we commit here
+# checkout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+# Note:this file will be invoked by a cloud trigger, that's why we need to specify as third argument of the build command
+# the relative path of the directory
+# to be amended. this should invoke build file for each subproject
+steps:
+  # Build the container image with the Python version of our choice.
+  # Kick off shareloader
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_SHARELOADER_BUILD_FILE']  
+    id: 'build-shareloader-template'
+  # Kick off newsloader
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_NEWSLOADER_BUILD_FILE']  
+    id: 'build-shareloader-template'
+
+
+substitutions:
+  _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
+  _NEWSLOADER_BUILD_FILE: ./dataflow/shareloader/news_build.yaml
+  
