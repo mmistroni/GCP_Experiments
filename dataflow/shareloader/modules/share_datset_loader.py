@@ -26,13 +26,6 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
         
-class DeleteOriginal(beam.DoFn):
-  def __init__(self, gfs):
-    self.gfs = gfs
-
-  def process(self, file_metadata):
-    if file_metadata.size_in_bytes == 0:
-      self.gfs.delete([file_metadata.path])
 
 class GetAllTickers(beam.DoFn):
   def __init__(self, fmprepkey):
@@ -71,6 +64,14 @@ def get_industry(ticker, key):
     print('Exceptoin:{}'.format(str(e)))
     return 'NA'
 
+class DeleteOriginal(beam.DoFn):
+  def __init__(self, gfs):
+    self.gfs = gfs
+
+  def process(self, file_path):
+    logging.info('Deleting:{}'.format(file_path))
+    self.gfs.delete([file_path])
+
 
 def run_my_pipeline(p, key):
     lines = (p
@@ -79,6 +80,17 @@ def run_my_pipeline(p, key):
              )
     return lines
 
+
+
+def run_delete_pipeline(p, key, gfs):
+    lines = (p
+             | 'Creating File' >> beam.Create(['gs://mm_dataflow_bucket/inputs/msft.us.txt'])
+             | 'And Now Deleting...' >> beam.ParDo(DeleteOriginal(gfs))
+             )
+    return lines
+
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -86,9 +98,6 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
     pipeline_options = XyzOptions()
+    gfs = gcs.GCSFileSystem(pipeline_options)
     with beam.Pipeline(options=pipeline_options) as p:
-        input = p  | 'Deleting Original' >> beam.ParDo(DeleteOriginal(destination))
-            
-        data = run_my_pipeline(input, pipeline_options.fmprepkey)
-        write_to_bucket(data, destination)
-
+        run_delete_pipeline(p, pipeline_options.fmprepkey, gfs)

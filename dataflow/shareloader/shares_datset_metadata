@@ -1,0 +1,11 @@
+{
+  "name": "SharesDatasetLoader",
+  "description": "An template for loading shares avaialble.",
+  "parameters": [
+    {
+      "name": "fmprepkey",
+      "helpText": "FmPrek Key",
+      "label": "fmprepkey"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+steps:
+  # Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'fmprepkey=$_FMPREPKEY'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
+
+
+
+substitutions:
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/flex_datsetloader.json
+  _JOB_NAME: sharesdatloader
+  _REGION : 'us-central1'
+  _FMPREPKEY : ''
+  
