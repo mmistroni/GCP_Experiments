@@ -6,11 +6,6 @@
       "name": "fmprepkey",
       "helpText": "FmPrek Key",
       "label": "fmprepkey"
-    },
-    {
-      "name": "pattern",
-      "helpText": "gs file pattern",
-      "label": "file pattern"
     }
   ]
 }
