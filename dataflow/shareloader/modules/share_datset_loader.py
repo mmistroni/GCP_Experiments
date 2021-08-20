@@ -22,82 +22,88 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 class XyzOptions(PipelineOptions):
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--fmprepkey')
-        
+	@classmethod
+	def _add_argparse_args(cls, parser):
+		parser.add_argument('--fmprepkey')
+		parser.add_argument('--filepattern')
 
 class GetAllTickers(beam.DoFn):
   def __init__(self, fmprepkey):
-      self.fmprepkey = fmprepkey
-  
+	  self.fmprepkey = fmprepkey
+	  logging.info('Initialized')
+
+  def _is_valid(self, d):
+	  stock_name = d['name']
+	  exchange = d['exchange']
+	  symbol = d['symbol']
+
+	  return (stock_name is not None and stock_name.find('ETF') < 0 \
+			  and stock_name.find('ETNF') < 0  and stock_name.find('Fund') <0) \
+			  and stock_name.find('ProShares') < 0 \
+			  and   (exchange.lower().find('nasdaq') >= 0 or  exchange.lower() == 'new york stock exchange') \
+			  and symbol.find('.') < 0
+
   def get_all_tradables(self):
-    try:
-        all_symbols = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(self.fmpkey)).json()
-        return [(d['symbol'], d['name']) for d in all_symbols]
-    except Exception as e:
-        logging.info('Exception:{}'.format(str(e)))
-        return []
-    
+	  all_symbols = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(self.fmprepkey)).json()
+	  result =  [(d['symbol'], d['name'], d['exchange']) for d in all_symbols if self._is_valid(d)]
+	  return result
 
   def process(self, item):
-    return self.get_all_tradables()
-
-def write_to_bucket(lines, bucket_destination):
-    return (
-            lines
-            | 'Map to  String_' >> beam.Map(lambda lst: ','.join([str(i) for i in lst]))
-            # cob, ticker, shares, increase, trans price, volume
-            | 'WRITE TO BUCKET' >> beam.io.WriteToText(bucket_destination, header='symbol,name, industry',
-                                                       num_shards=1)
+		return self.get_all_tradables()
 
 
-    )
-
+def write_to_bucket(lines, sink):
+	return (
+			lines | sink
+	)
 
 def get_industry(ticker, key):
   try:
-    profile = requests.get('https://financialmodelingprep.com/api/v3/profile/{}?apikey={}'.format(ticker.upper(), getfmpkeys())).json()
-    print(profile)
-    return profile[0]['industry']
+	profile = requests.get('https://financialmodelingprep.com/api/v3/profile/{}?apikey={}'.format(ticker.upper(), key)).json()
+	return profile[0]['industry']
   except Exception as e:
-    print('Exceptoin:{}'.format(str(e)))
-    return 'NA'
+	logging.info('Exceptoin:{}'.format(str(e)))
+	return 'NA'
 
 class DeleteOriginal(beam.DoFn):
   def __init__(self, gfs):
-    self.gfs = gfs
+	self.gfs = gfs
 
   def process(self, file_path):
-    logging.info('Deleting:{}'.format(file_path))
-    self.gfs.delete([file_path])
+	logging.info('Deleting:{}'.format(file_path))
+	self.gfs.delete([file_path])
 
 
 def run_my_pipeline(p, key):
-    lines = (p
-             | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
-             | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
-             )
-    return lines
+	lines = (p
+			 | 'Starting' >> beam.Create(['start'])
+			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
+			 | 'Sampling' >> beam.combiners.Sample.FixedSizeGlobally(20)
+			 | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
+			 )
 
 
-
-def run_delete_pipeline(p, key, gfs):
-    lines = (p
-             | 'Creating File' >> beam.Create(['gs://mm_dataflow_bucket/inputs/msft.us.txt'])
-             | 'And Now Deleting...' >> beam.ParDo(DeleteOriginal(gfs))
-             )
-    return lines
+def run_delete_pipeline(p, file_pattern, gfs):
+	logging.info('About to delete files with pattern:{}'.format(file_pattern))
+	lines = (p
+			 | 'Creating File' >> beam.Create([file_pattern])
+			 | 'And Now Deleting...' >> beam.ParDo(DeleteOriginal(gfs))
+			 )
+	return lines
 
 
 
 def run(argv=None, save_main_session=True):
-    """Main entry point; defines and runs the wordcount pipeline."""
+	"""Main entry point; defines and runs the wordcount pipeline."""
 
-    # We use the save_main_session option because one or more DoFn's in this
-    # workflow rely on global context (e.g., a module imported at module level).
-    destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
-    pipeline_options = XyzOptions()
-    gfs = gcs.GCSFileSystem(pipeline_options)
-    with beam.Pipeline(options=pipeline_options) as p:
-        run_delete_pipeline(p, pipeline_options.fmprepkey, gfs)
+	# We use the save_main_session option because one or more DoFn's in this
+	# workflow rely on global context (e.g., a module imported at module level).
+	destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
+	delete_pattern = 'gs://mm_dataflow_bucket/inputs/shares_dataset*'
+	pipeline_options = XyzOptions()
+	sink = beam.io.WriteToText(destination, header='symbol,name,price,exchange,Industry', num_shards=1)
+	gfs = gcs.GCSFileSystem(pipeline_options)
+	with beam.Pipeline(options=pipeline_options) as p:
+		run_delete_pipeline(p, delete_pattern, gfs)
+		#data = run_my_pipeline(p, pipeline_options.fmprepkey)
+		#write_to_bucket(data, sink)

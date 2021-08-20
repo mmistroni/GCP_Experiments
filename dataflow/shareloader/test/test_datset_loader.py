@@ -3,7 +3,7 @@ import unittest
 import requests
 from lxml import etree
 from io import StringIO, BytesIO
-from shareloader.modules.share_datset_loader import get_prices
+from shareloader.modules.share_datset_loader import get_industry, GetAllTickers
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
@@ -19,14 +19,34 @@ class Check(beam.PTransform):
       assert_that(pcoll, self._checker)
 
 
+
 class TestSharesDsetLoader(unittest.TestCase):
 
 
-    def test_get_prices(self):
-        print(get_prices('AAPL')[0:10])
-
-    def test_pipeline(self):
+    def test_GetAllTickers(self):
+        key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            input = (p | 'CREATE' >> beam.Create(['MSFT'])
-                        | 'Getting PRICE' >> beam.FlatMap(lambda t: get_prices(t))
+            input = (p | 'Start' >> beam.Create(['starting'])
+                       | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
+                        | 'Sample N elements' >> beam.combiners.Sample.FixedSizeGlobally(20)
                         | beam.Map(print))
+
+    def test_get_industry(self):
+        key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Get Industry' >> beam.Map(lambda t: get_industry(t, key))
+                     | beam.Map(print))
+
+    def test_write_to_sink(self):
+
+        expected = [('AAPL', 1, 'Consumer Electronics')]
+        sink = Check(equal_to(expected))
+
+        with TestPipeline() as p:
+            input = (p | 'Start' >> beam.Create([('AAPL', 1, 'Consumer Electronics')])
+                     | 'Get Industry' >> beam.Map(lambda t: get_industry(t, key))
+                     | beam.Map(print))
+
+
+
