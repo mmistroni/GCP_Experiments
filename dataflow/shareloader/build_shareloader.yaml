@@ -7,8 +7,8 @@ steps:
     args:
       [ 'build'
       , '--tag=gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
-      , '--file=./Dockerfile_shareloader'
-      , '.'
+      , '--file=./dataflow/shareloader/Dockerfile_shareloader'
+      , './dataflow/shareloader/'
       ]
     id: 'build-shareloader-image'
   # Build flex template
@@ -31,8 +31,8 @@ steps:
     args:
       [ 'build'
       , '--tag=gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME'
-      , '--file=./Dockerfile_marketstats'
-      , '.'
+      , '--file=./dataflow/shareloader/Dockerfile_marketstats'
+      , './dataflow/shareloader/'
       ]
     id: 'build-marketstats-image'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
