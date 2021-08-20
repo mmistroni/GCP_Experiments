@@ -100,8 +100,8 @@ def run(argv=None, save_main_session=True):
     sink = beam.io.WriteToText(destination, header='symbol,name,price,exchange,Industry', num_shards=1)
     pipeline_options = XyzOptions()
     gfs = gcs.GCSFileSystem(pipeline_options)
-    destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
+    pattern = 'gs://mm_dataflow_bucket/inputs/shares_dataset*'
     with beam.Pipeline(options=pipeline_options) as p:
-        result = run_delete_pipeline(p, destination, gfs)
+        result = run_delete_pipeline(p, pattern, gfs)
         tickers = run_my_pipeline(result, pipeline_options.fmprepkey)
         write_to_bucket(tickers, sink)
