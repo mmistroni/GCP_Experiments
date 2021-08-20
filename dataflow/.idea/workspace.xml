@@ -10,7 +10,6 @@
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/shares_datset_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/shares_datset_metadata" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -204,7 +203,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_industry">
+  <component name="RunManager" selected="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers">
+    <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_GetAllTickers&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_get_industry" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -233,31 +246,17 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -276,19 +275,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
       <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
-      <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
       <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" />
       <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
+      <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
+      <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
+        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
         <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
         <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" />
         <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />
-        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline" />
-        <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_find_quarter_urls" />
       </list>
     </recent_temporary>
   </component>

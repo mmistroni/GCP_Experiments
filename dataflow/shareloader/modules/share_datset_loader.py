@@ -45,8 +45,7 @@ class GetAllTickers(beam.DoFn):
 
     def get_all_tradables(self):
         all_symbols = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(self.fmprepkey)).json()
-        result =  [(d['symbol'], d['name'], d['exchange']) for d in all_symbols if self._is_valid(d)]
-        return result
+        return   [(d['symbol'], d['name'], d['exchange']) for d in all_symbols if self._is_valid(d)]
 
     def process(self, item):
         return self.get_all_tradables()
@@ -78,8 +77,7 @@ class DeleteOriginal(beam.DoFn):
 def run_my_pipeline(p, key):
 	return (p
 			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
-			 | 'Sampling' >> beam.combiners.Sample.FixedSizeGlobally(20)
-			 | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
+             | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
 			 )
 
 
