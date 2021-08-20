@@ -9,22 +9,6 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
-      , '--file=./dataflow/shareloader/Dockerfile_shareloader'
-      , './dataflow/shareloader/'
-      ]
-    id: 'build-shareloader-image'
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME'
-      , '--file=./dataflow/shareloader/Dockerfile_marketstats'
-      , './dataflow/shareloader/'
-      ]
-    id: 'build-marketstats-image'
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
       , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME'
       , '--file=./dataflow/edgar_flow/Dockerfile'
       , './dataflow/edgar_flow/'
@@ -46,14 +30,6 @@ steps:
       , './dataflow/edgar_flow/'
       ]
     id: 'build-quarterly_form4-image'
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME'
-      , '--file=./dataflow/shareloader/Dockerfile_newsloader'
-      , './dataflow/shareloader/' 
-      ]
-    id: 'build-newsloader-image'
   # Kick off pipeline build
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
@@ -66,24 +42,31 @@ steps:
           , '--config'
           , '$_PIPELINE_BUILD_FILE']  
     id: 'build-pipeline-template'
-
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_SHARELOADER_BUILD_FILE']  
+    id: 'build-shareloader-templates'
+   
 
 images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 
-         'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
-
           ]
 
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _IMAGE_NAME: shareloader:latest2
-  _MARKETSTATS_IMAGE_NAME: marketstats:latest
   _PIPELINE_BUILD_FILE: ./dataflow/pipeline/build.yaml
   _EDGAR_DAILY_FORM4_IMAGE_NAME: edgar-daily4-form4:latest
   _EDGAR_DAILY_FORM13_IMAGE_NAME: edgar-daily-form13:latest
   _EDGAR_QUARTERLY_FORM4_IMAGE_NAME: edgar-quarterly-form4:latest
-  _NEWSLOADER_NAME: newsloader:latest
+  _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_all.yaml
   

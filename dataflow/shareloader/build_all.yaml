@@ -29,10 +29,22 @@ steps:
           , 'debug'
           , '--config'
           , '$_NEWSLOADER_BUILD_FILE']  
-    id: 'build-shareloader-template'
-
+    id: 'build-newsloader-template'
+  # Kick off shares dataset
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_SHARESDATASETLOADER_BUILD_FILE']  
+    id: 'build-datasetloader-template'
 
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
   _NEWSLOADER_BUILD_FILE: ./dataflow/shareloader/news_build.yaml
+  _SHARESDATASETLOADER_BUILD_FILE: ./dataflow/shareloader/shares_datset_build.yaml
   
