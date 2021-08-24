@@ -2,165 +2,132 @@ from datetime import datetime, date
 import requests
 import logging
 
-def filter_latest(stmnts, end_date):
-    res = [d for d in stmnts if datetime.strptime(d['date'].split()[0], '%Y-%m-%d').date() < end_date]
-    print('Statements before {} are{}'.format(end_date, len(res)))
-    return res[-1]
+# Criteria #1
+# ==== WATCH LIST ===
+# Market Cap > 2bln (mid)
+import statistics
 
 
-def get_financial_ratios(ticker, fmprepkey, end_date):
-    data = requests.get(
-        'https://financialmodelingprep.com/api/v3/ratios/{}?period=quarter&limit=30&apikey={}'.format(ticker,
-                                                                                                      fmprepkey)).json()
-    data = filter_latest(data, end_date)
-    key_to_extract = ['priceToSalesRatio', 'priceToEarningRatios', 'currentRatio'
-                                                                   'quickRatio', 'returnOnEquity', 'returnOnAssets',
-                      'returnOnCapitalEmployed', 'debtRatio',
-                      'netProfitMargin']
-    return dict((k, v) for k, v in data.items() if k in key_to_extract)
+def get_fmprep_historical(ticker, key):
+    hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?serietype=line&apikey={}'.format(
+        ticker, key)
+    data = requests.get(hist_url).json()['historical']
+    return data
 
 
-def get_key_metrics(ticker, fmprepkey, end_date):
-    data = requests.get(
-        'https://financialmodelingprep.com/api/v3/key-metrics/{}?period=quarter&limit=30&apikey={}'.format(
-            ticker.upper(), fmprepkey)).json()
-    data = filter_latest(data, end_date)
-    key_to_extract = ['debtToEquity', 'debtToAssets', 'revenuePerShare', 'roic', 'marketCap']
-    return dict((k, v) for k, v in data.items() if k in key_to_extract)
+def get_descriptive_and_technical(ticker, key):
+    res = requests.get(
+        'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
+    keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
+            'yearHigh', 'yearLow', 'exchange', 'change', 'open']
+
+    hist_prices = get_fmprep_historical(ticker, key)
+    all_prices = [d['close'] for d in hist_prices]
+    all_time_high = max(all_prices)
+    all_time_low = min(all_prices)
+    priceAvg20 = statistics.mean(all_prices[-20:])
+    base_dict = dict((k, res[0][k]) for k in keys)
+    base_dict['priceAvg20'] = priceAvg20
+    base_dict['allTimeHigh'] = all_time_high
+    base_dict['allTimeLow'] = all_time_low
+    base_dict['weeks52High'] = base_dict['yearHigh']
+    base_dict['ticker'] = ticker
+    base_dict['changeFromOpen'] = base_dict['price'] - base_dict['open']
+    return base_dict
 
 
-def get_income_statement(ticker, fmprepkey, end_date):
-    income_stmt = requests.get(
-        'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=30&apikey={apikey}'.format(
-            ticker=ticker, apikey=fmprepkey)).json()
-
-    data = filter_latest(income_stmt, end_date)
-    key_to_extract = ['netIncomeRatio', 'ebitdaratio', 'eps', 'grossProfitRatio', 'operatingIncomeRatio']
-
-    return dict((k, v) for k, v in data.items() if k in key_to_extract)
-
-
-def get_dcf(ticker, end_dt):
+def get_yearly_financial_ratios(ticker):
     key = getfmpkeys()
-    url = 'https://financialmodelingprep.com/api/v3/historical-discounted-cash-flow-statement/{}?apikey={}'.format(
-        ticker.upper(), key)
-    res = requests.get(url).json()
-    data = [(d['date'], d['dcf']) for d in res if datetime.strptime(d['date'], '%Y-%m-%d').date() <= test_dt]
+    base_url = 'https://financialmodelingprep.com/api/v3/ratios-ttm/{}?apikey={}'.format(ticker.upper(), key)
+    return requests.get(base_url).json()[0]
 
+
+def get_fundamental_parameters(ticker, key, offset=0):
+    print('Getting data for:{}, offset={}'.format(ticker, offset))
+    fundamental_dict = {}
+
+    income_statement = requests.get(
+        'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
+                                                                                                         key=key)).json()
+    if len(income_statement) > 2:
+        latest = income_statement[0]
+        previous = income_statement[1]
+        data_5yrs_ago = income_statement[-1]
+        eps_thisyear = latest['eps']  # EPS Growth this year: 20%
+        eps_prevyear = previous['eps']  # EPS Growth this year: 20%
+        eps_5yrs_ago = data_5yrs_ago['eps']
+        fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
+        fundamental_dict['eps_growth_past_5yrs'] = (eps_thisyear - eps_5yrs_ago) / eps_5yrs_ago
+    else:
+        fundamental_dict['eps_growth_this_year'] = 0
+        fundamental_dict['eps_growth_past_5yrs'] = 0
+    analyst_estimates = requests.get(
+        'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker,
+                                                                                                  key=key)).json()
+    year = date.today().year
+    if analyst_estimates:
+        estimateeps_next = [data for data in analyst_estimates if str(year + 1) in data['date']][0][
+            'estimatedEpsAvg']  # EPS Growth next year: >20%
+        fundamental_dict['eps_growth_next_year'] = estimateeps_next
+    else:
+        fundamental_dict['eps_growth_next_year'] = 0
+    income_stmnt = requests.get(
+        'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+            ticker=ticker, key=key)).json()
+    income_stmnt_as_reported = requests.get(
+        'https://financialmodelingprep.com/api/v3/income-statement-as-reported/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+            ticker=ticker, key=key)).json()
+
+    if income_stmnt and income_stmnt_as_reported:
+        eps_thisqtr = income_stmnt_as_reported[0].get('earningspersharebasic', 0)  # EPS Growt qtr over qtr: > 20%
+        eps_lastqtr = income_stmnt_as_reported[-1]['earningspersharebasic'] if 'earningspersharebasic' in \
+                                                                               income_stmnt_as_reported[-1].keys() \
+            else income_stmnt_as_reported[-1].get('earningspersharebasicanddiluted', 0)  # EPS Growt qtr over qtr: > 20%
+        net_sales_thisqtr = income_stmnt[0]['revenue']  # sakes   EPS Growt qtr over qtr: > 20%
+        net_sales_lastqtr = income_stmnt[1]['revenue']  # EPS Growt qtr over qtr: > 20%
+
+        if eps_lastqtr != 0 and net_sales_lastqtr != 0:
+            fundamental_dict['eps_growth_qtr_over_qtr'] = (eps_thisqtr - eps_lastqtr) / eps_lastqtr
+            fundamental_dict['net_sales_qtr_over_qtr'] = (net_sales_thisqtr - net_sales_lastqtr) / net_sales_lastqtr
+        else:
+            print('Setting tozero')
+            fundamental_dict['eps_growth_qtr_over_qtr'] = 0
+            fundamental_dict['net_sales_qtr_over_qtr'] = 0
+    # Net Sales
+    financial_ratios = requests.get(
+        'https://financialmodelingprep.com/api/v3/ratios/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
+                                                                                               key=key)).json()
+    latest = financial_ratios[0] if financial_ratios else {}
+    fundamental_dict['grossProfitMargin'] = latest.get('grossProfitMargin', 0)
+    fundamental_dict['returnOnEquity'] = latest.get('returnOnEquity', 0)
+    fundamental_dict['dividendPayoutRatio'] = latest.get('dividendPayoutRatio', 0.0)
+    fundamental_dict['dividendYield'] = latest.get('dividendYield', 0.0)
+    return fundamental_dict
+
+
+def get_shares_float(ticker, key):
+    res = requests.get(
+        'https://financialmodelingprep.com/api/v4/shares_float?symbol={}&apikey={}'.format(ticker, key)).json()
+    return res[0]['floatShares'] if res else 0
+
+
+def get_institutional_holders_quote(ticker, key):
+    res = requests.get(
+        'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
+    return {'institutionalHoldings': sum(d['shares'] for d in res)}
+
+
+def get_all_data(ticker, key):
     try:
-        return data[0][1] if data else None
+        desc_tech_dict = get_descriptive_and_technical(ticker, key)
+        fund_dict = get_fundamental_parameters(ticker, key)
+        inst_holders_dict = get_institutional_holders_quote(ticker, key)
+        desc_tech_dict.update(fund_dict)
+        desc_tech_dict.update(inst_holders_dict)
+        desc_tech_dict['institutionalHoldingsPercentage'] = desc_tech_dict['institutionalHoldings'] / desc_tech_dict[
+            'sharesOutstanding']
+        desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
+        return desc_tech_dict
     except Exception as e:
-        logging.info('Error finding dfcf for {}@{}:{}'.format(ticker, end_dt, str(e)))
-
-
-def get_fmprep_metrics(ticker, end_dt, key):
-    income_dict = get_income_statement(ticker.upper(), key, end_dt)
-    keymetr_dict = get_key_metrics(ticker.upper(), key, end_dt)
-    income_dict.update(keymetr_dict)
-    frdict = get_financial_ratios(ticker.upper(), key, end_dt)
-    income_dict.update(frdict)
-    return income_dict
-
-
-def create_metrics(ticker, df_stock):
-    metrics = {}
-    metrics['ticker'] = ticker
-    metrics['SMA_200'] = df_stock['SMA_200'][-1]
-    metrics['SMA_150'] = df_stock['SMA_150'][-1]
-    metrics['SMA_50'] = df_stock['SMA_50'][-1]
-    metrics['SMA_200_1mago'] = df_stock['SMA_200'][-30]
-    metrics['SMA_150_1mago'] = df_stock['SMA_150'][-30]
-    metrics['SMA_200_2mago'] = df_stock['SMA_200'][-60]
-    metrics['SMA_150_2mago'] = df_stock['SMA_150'][-60]
-    metrics['LOW_52'] = df_stock['Close'][-252:].min()
-    metrics['HIGH_52'] = df_stock['Close'][-252:].max()
-    metrics['price'] = df_stock['Close'][-1]
-    # Current Price is at least 30% above 52 week low (1.3*low_of_52week)
-    metrics['Above_30_low'] = metrics['LOW_52'] * 1.3
-    metrics['Within_25_high'] = metrics['HIGH_52'] * .7
-    metrics['Price_above_sma200_sma150'] = (metrics['price'] > metrics['SMA_200']) & (
-                metrics['price'] > metrics['SMA_150'])
-    metrics['sma150_above_sma200'] = metrics['SMA_150'] > metrics['SMA_200']
-    # 3 The 200-day moving average line is trending up for 1 month
-    metrics['sma200_above_sma200_1mago'] = metrics['SMA_200'] > metrics['SMA_200_1mago']
-    metrics['sma50_above_sma200_sma150'] = (metrics['SMA_50'] > metrics['SMA_200']) & (
-                metrics['SMA_50'] > metrics['SMA_150'])
-    metrics['price_above_sma50'] = metrics['price'] > metrics['SMA_50']
-    # 6 The current stock price is at least 30 percent above its 52-week low
-    metrics['price_above_30_low'] = metrics['price'] > metrics['Above_30_low']
-    # 7 The current stock price is within at least 25 percent of its 52-week high.
-    metrics['price_within_25high'] = metrics['price'] > metrics['Within_25_high']
-    return metrics
-
-
-def is_superperformer(stock_metrics):
-    conditions = [v for k, v in stock_metrics.items() if k in ['Price_above_sma200_sma150', 'sma150_above_sma200',
-                                                               'sma200_above_sma200_1mago', 'sma50_above_sma200_sma150',
-                                                               'price_above_sma50', 'price_above_30_low',
-                                                               'price_within_25high']]
-    return all(conditions)
-
-
-def get_historical_data_yahoo(symbol, start_dt, end_dt):
-    try:
-        end_date = date.today()
-        data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Close']]
-        data['symbol'] = symbol
-        return data
-    except Exception as e:
-        return None
-
-
-def get_historical_data_yahoo_close(symbol, start_dt, end_dt):
-    try:
-        end_date = date.today()
-        data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Close']]
-        return data.Close.values[0]
-
-    except Exception as e:
-        return None
-
-    # Moving Averages
-
-
-def add_sma_ratios(all_data):
-    all_data['SMA_50'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window=50).mean())
-    all_data['SMA_150'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window=150).mean())
-    all_data['SMA_200'] = all_data.groupby('symbol')['Close'].transform(lambda x: x.rolling(window=200).mean())
-    return all_data
-
-
-def find_high_and_low(all_data):
-    all_data['HIGH_52'] = all_data['Close'].rolling(min_periods=1, window=252, center=False).max()
-    all_data['LOW_52'] = all_data['Close'].rolling(min_periods=1, window=252, center=False).min()
-    all_data['Above_30_low'] = all_data['LOW_52'] * 1.3
-    all_data['Within_25_high'] = all_data['HIGH_52'] * .7
-    all_data['SMA_200_1mago'] = all_data['SMA_200'].shift(30)
-    all_data['SMA_150_1mago'] = all_data['SMA_150'].shift(30)
-    all_data['SMA_200_2mago'] = all_data['SMA_200'].shift(60)
-    all_data['SMA_150_2mago'] = all_data['SMA_150'].shift(60)
-    return all_data
-
-
-#def get_all_tickers():
-#    read_from_bucket('outputs/all_sectors_and_industries.csv-00000-of-00001', 'mm_dataflow_bucket', to_panda=True)
-#    df = pd.read_csv('data/all_sectors_and_industries.csv-00000-of-00001')
-#    return df
-
-
-def get_all_stock_metrics(all_data):
-    smas = add_sma_ratios(all_data)
-    return find_high_and_low(smas)
-
-
-def get_historical_data_yahoo(symbol, start_dt, end_dt):
-    try:
-        end_date = date.today()
-        data = dr.get_data_yahoo(symbol, start_dt, end_dt)[['Close']]
-        data['symbol'] = symbol
-        return data
-    except Exception as e:
-        return None
-
-
-
+        logging.info('Could not fetch data for :{}'.format(ticker))
+        return {'ticker' :ticker}

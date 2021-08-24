@@ -78,6 +78,7 @@ def run_my_pipeline(p, key):
 	return (p
 			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
              | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
+             | 'Mapping to String'  >> beam.Map(lambda tpl: ','.join(tpl))
 			 )
 
 

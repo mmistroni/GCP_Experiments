@@ -50,6 +50,6 @@ class TestSharesDsetLoader(unittest.TestCase):
         with TestPipeline() as p:
             input = (p | 'Start' >> beam.Create(['FOO']))
             res = run_my_pipeline(input, key)
-            (res | 'Print' >> beam.Map(print))
+            (res |'Print' >> beam.Map(print))
 
 

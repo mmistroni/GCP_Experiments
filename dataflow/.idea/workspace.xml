@@ -8,8 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -202,7 +206,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers">
+  <component name="RunManager" selected="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline">
     <configuration name="Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -282,8 +286,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
         <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
+        <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
         <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
         <item itemvalue="Python tests.Unittests for test_datset_loader.TestSharesDsetLoader.test_pipeline" />
         <item itemvalue="Python tests.Unittests for test_edgar_quarterly_form4.TestEdgarQuarterlyForm4Pipeline.test_readRemote" />

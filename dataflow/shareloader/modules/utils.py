@@ -131,3 +131,6 @@ class EmailSender(beam.DoFn):
         print(response.status_code, response.body, response.headers)
 
 
+
+
+
