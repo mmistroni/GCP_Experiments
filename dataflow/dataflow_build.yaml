@@ -53,7 +53,7 @@ steps:
           , '--config'
           , '$_SHARELOADER_BUILD_FILE']  
     id: 'build-shareloader-templates'
-   
+timeout: 1800s
 
 images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 
          'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
@@ -61,6 +61,7 @@ images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
           ]
 
+   
 
 substitutions:
   _PROJECT_ID: datascience-projects
