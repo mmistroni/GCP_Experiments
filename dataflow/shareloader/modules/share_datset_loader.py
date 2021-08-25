@@ -61,8 +61,8 @@ def get_industry(ticker, key):
         profile = requests.get('https://financialmodelingprep.com/api/v3/profile/{}?apikey={}'.format(ticker.upper(), key)).json()
         return profile[0]['industry']
     except Exception as e:
-        logging.info('Exceptoin:{}'.format(str(e)))
-        return 'NA'
+        print('Exceptoin:{}'.format(str(e)))
+        return ''
 
 class DeleteOriginal(beam.DoFn):
     def __init__(self, gfs):
@@ -78,7 +78,8 @@ def run_my_pipeline(p, key):
 	return (p
 			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
              | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
-             | 'Mapping to String'  >> beam.Map(lambda tpl: ','.join(tpl if all(tpl) else []))
+             | 'Filtering out None and blankos' >> beam.Filter(lambda t : all(t))
+             | 'Mapping to String'  >> beam.Map(lambda tpl: ','.join(tpl))
 			 )
 
 

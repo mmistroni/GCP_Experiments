@@ -29,13 +29,13 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-def get_univese_filter(input_dict):
-    if (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
+def get_universe_filter(input_dict):
+    return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
         and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
-            and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr',0) > 0.2)\
-            and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('df.returnOnEquity',0) > 0) \
+            and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)\
+            and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
             and (input_dict.get('grossProfitMargin', 0) > 0) \
-            and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0) )\
+            and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
             and (input_dict.get('price', 0) > input_dict.get('priceAvg50', 0)) \
             and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))
 
@@ -50,15 +50,28 @@ def load_all(source,fmpkey):
             )
 def filter_universe(data):
     return (data
-             | 'Filtering' >> beam.Filter(get_universe_filter())
+             | 'Filtering' >> beam.Filter(get_universe_filter)
             )
-
 
 def extract_data_pipeline(p):
     return (p
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
             )
+
+def find_canslim(p):
+    pass
+
+def find_leaf(p):
+    pass
+
+def find_stocks_under10m(p):
+    pass
+
+def find_stocks_alltime_high(p):
+    pass
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -75,4 +88,4 @@ def run(argv=None, save_main_session=True):
         tickers = extract_data_pipeline(source)
         all_data = load_all(tickers, pipeline_options.key)
         universe = filter_universe(all_data)
-        write_to_bucket(tickers, sink)
+        write_to_bucket(universe, sink)

@@ -25,7 +25,8 @@ def get_descriptive_and_technical(ticker, key):
     all_prices = [d['close'] for d in hist_prices]
     all_time_high = max(all_prices)
     all_time_low = min(all_prices)
-    priceAvg20 = statistics.mean(all_prices[-20:])
+    priceAvg20 = sum(all_prices[0:20]) / 20.0
+    print('Price avg 20 is:{}'.format(priceAvg20))
     base_dict = dict((k, res[0][k]) for k in keys)
     base_dict['priceAvg20'] = priceAvg20
     base_dict['allTimeHigh'] = all_time_high
