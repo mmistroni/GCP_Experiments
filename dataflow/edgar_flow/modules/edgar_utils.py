@@ -77,6 +77,25 @@ class ReadRemote(beam.DoFn):
 
 class ParseForm13F(beam.DoFn):
 
+
+    def get_filing_data(self, content):
+        xml_str = content[content.rfind('<XML>') + 5: content.rfind("</XML>")].strip()
+        tree = ElementTree.ElementTree(ElementTree.fromstring(xml_str))
+        root = tree.getroot()
+        # print(xml_str)
+
+        ts = root.findall('.//{*}infoTable')
+        return [(table.find('.//{*}cusip').text,
+                 table.find('.//{*}sshPrnamt').text) for table in ts]
+
+    def get_reporter(self, content):
+        xml_str = content[content.find('<XML>') + 5: content.find("</XML>")].strip()
+        tree = ElementTree.ElementTree(ElementTree.fromstring(xml_str))
+        root = tree.getroot()
+        reporter = root.find('.//{*}credentials/{*}cik')
+        return reporter.text
+
+
     def open_url_content(self, file_path):
         import requests
         return requests.get(file_path,
@@ -110,9 +129,10 @@ class ParseForm13F(beam.DoFn):
         try:
             file_content = self.open_url_content(file_url)
             logging.info('Parsing :{}'.format(file_url))
-            all_cusips = self.get_cusips(file_content)
+            all_cusips = self.get_filing_data(file_content)
             period_of_report = self.get_period_of_report(file_content)
-            mapped = list(map(lambda item: (cob_dt, period_of_report, item), all_cusips))
+            reporter = self.get_reporter(file_content)
+            mapped = list(map(lambda item: (cob_dt, period_of_report, reporter, item[0], item[1]), all_cusips))
             logging.info('returning:{}'.format(list(mapped)))
             return mapped
         except Exception as e:

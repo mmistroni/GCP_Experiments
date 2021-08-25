@@ -4,6 +4,8 @@ import requests
 from lxml import etree
 from io import StringIO, BytesIO
 from edgar_flow.modules.edgar_utils import fast_iter2, get_period_of_report
+from xml.etree import ElementTree
+
 CATEGORIES = set(
     ['issuerTradingSymbol', 'transactionCode', 'transactionShares'])
 SKIP_CATEGORIES = set(['phdthesis', 'mastersthesis', 'www'])
@@ -47,8 +49,9 @@ class TestEdgarUtils(unittest.TestCase):
         ts = root.findall(".//transactionAmounts/transactionPricePerShare/value")
         return sum([float(t.text) for t in ts])
 
+
+
     def test_parsexml(self):
-        from xml.etree import ElementTree
         with open('edgarform4.txt') as f:
             from pprint import pprint
             data = f.read()
@@ -82,3 +85,25 @@ class TestEdgarUtils(unittest.TestCase):
     def test_get_period_of_report(self):
         content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt')
         print(get_period_of_report(content))
+
+    def test_extractInfo_from_form13(self):
+        content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
+                               headers={
+                                   'User-Agent': 'WCorp Services mmistroni@gmail.com'
+                               }
+                               ).text
+        xml_str = content[content.rfind('<XML>') + 5: content.rfind("</XML>")].strip()
+
+        print(self.get_filing_data(xml_str))
+
+    def test_extractInfo_from_form132(self):
+        content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
+                               headers={
+                                   'User-Agent': 'WCorp Services mmistroni@gmail.com'
+                               }
+                               ).text
+        xml_str = content[content.find('<XML>') + 5: content.find("</XML>")].strip()
+        print(self.get_reporter(xml_str))
+
+    def test_parse_form13f(self):
+        pass
