@@ -43,6 +43,8 @@ steps:
           , '$_SHARESDATASETLOADER_BUILD_FILE']  
     id: 'build-datasetloader-template'
 
+timeout: 1500s
+
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
   _NEWSLOADER_BUILD_FILE: ./dataflow/shareloader/news_build.yaml
