@@ -46,10 +46,11 @@ def fast_iter2(context):
     return test_dict
 
 def get_period_of_report(content):
+    logging.info('Getting period of report.')
     data = content.text
     data = data.replace('\n', '')
-    subset = data[data.find('<headerData>'): data.rfind("</headerData>") + 13]
-    print(subset)
+    subset = data[data.find('<headerData>'): data.find("</headerData>") + 13]
+    logging.info(subset)
     from xml.etree import ElementTree
     tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
     root = tree.getroot()
