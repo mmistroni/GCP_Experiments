@@ -4,8 +4,8 @@ steps:
     args:
       [ 'build'
       , '--tag=$_IMAGE_NAME'
-      , '--file=./Dockerfile_Edgar_Daily_Form13'
-      , '.'
+      , '--file=./dataflow/edgar_flow/Dockerfile_Edgar_Daily_Form13'
+      , './dataflow/edgar_flow'
       ]
 images: ['$_IMAGE_NAME']
 

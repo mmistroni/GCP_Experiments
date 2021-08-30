@@ -83,7 +83,19 @@ class TestEdgarUtils(unittest.TestCase):
 
 
     def test_get_period_of_report(self):
-        content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt')
+        content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
+                               headers={
+                                   'User-Agent': 'WCorp Services mmistroni@gmail.com'
+                               }
+                               )
+        data = content.text
+        subset = data[data.find('<headerData>'): data.find("</headerData>") + 13]
+        print(subset)
+        from xml.etree import ElementTree
+        tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
+        root = tree.getroot()
+        tcodes = root.findall(".//periodOfReport")
+
         print(get_period_of_report(content))
 
     def test_extractInfo_from_form13(self):

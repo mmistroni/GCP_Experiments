@@ -71,8 +71,6 @@ def find_stocks_under10m(p):
 def find_stocks_alltime_high(p):
     pass
 
-
-
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -81,7 +79,7 @@ def run(argv=None, save_main_session=True):
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
     source = beam.io.textio.ReadFromText(input_file)
-    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_{}'.format(date.today().strftime('%Y-%m-%d'))
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
     sink = beam.io.WriteToText(destination, num_shards=1)
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
