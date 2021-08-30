@@ -128,7 +128,7 @@ class ParseForm13F(beam.DoFn):
             cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
 
         try:
-            file_content = self.open_url_content(file_url)
+            file_content = self.open_url_content(file_url).text
             logging.info('Parsing :{}'.format(file_url))
             all_cusips = self.get_filing_data(file_content)
             period_of_report = self.get_period_of_report(file_content)

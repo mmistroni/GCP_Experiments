@@ -9,9 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form13.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form13.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/tests/test_edgar_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
