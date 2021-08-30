@@ -4,7 +4,13 @@ import requests
 from lxml import etree
 from io import StringIO, BytesIO
 from edgar_flow.modules.edgar_utils import fast_iter2, get_period_of_report
+from edgar_flow.modules.edgar_utils import ReadRemote, ParseForm13F
+from edgar_flow.modules.edgar_daily import write_to_bigquery
+
 from xml.etree import ElementTree
+from apache_beam.testing.util import assert_that, equal_to
+from apache_beam.testing.test_pipeline import TestPipeline
+import apache_beam as beam
 
 CATEGORIES = set(
     ['issuerTradingSymbol', 'transactionCode', 'transactionShares'])
@@ -118,4 +124,10 @@ class TestEdgarUtils(unittest.TestCase):
         print(self.get_reporter(xml_str))
 
     def test_parse_form13f(self):
-        pass
+        with TestPipeline() as p:
+            input = (p | 'Start' >> beam.Create([('2021-08-26', 'https://www.sec.gov/Archives/edgar/data/1325091/0001325091-21-000019.txt')])
+                       | 'Parse Form 13F' >>  beam.ParDo(ParseForm13F())
+                       | 'Print ouit ' >> beam.Map(print)
+                     )
+
+

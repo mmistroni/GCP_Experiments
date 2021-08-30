@@ -45,9 +45,8 @@ def fast_iter2(context):
             clear_element(element)
     return test_dict
 
-def get_period_of_report(content):
+def get_period_of_report(data):
     logging.info('Getting period of report.')
-    data = content.text
     data = data.replace('\n', '')
     subset = data[data.find('<headerData>'): data.find("</headerData>") + 13]
     logging.info(subset)
@@ -128,16 +127,16 @@ class ParseForm13F(beam.DoFn):
             cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
 
         try:
-            file_content = self.open_url_content(file_url).text
-            logging.info('Parsing :{}'.format(file_url))
-            all_cusips = self.get_filing_data(file_content)
-            period_of_report = self.get_period_of_report(file_content)
-            reporter = self.get_reporter(file_content)
-            mapped = list(map(lambda item: (cob_dt, period_of_report, reporter, item[0], item[1]), all_cusips))
+            file_content = self.open_url_content(file_url)
+            print('Parsing :{}'.format(file_url))
+            all_cusips = self.get_filing_data(file_content.text)
+            period_of_report = self.get_period_of_report(file_content.text)
+            reporter = self.get_reporter(file_content.text)
+            mapped = list(map(lambda item: (cob_dt, period_of_report, item[0], item[1], reporter), all_cusips))
             logging.info('returning:{}'.format(list(mapped)))
             return mapped
         except Exception as e:
-            logging.info('could not fetch data from {}:{}'.format(element, str(e)))
+            print('could not fetch data from {}:{}'.format(element, str(e)))
             return [(cob_dt, '', '')]
 
 
@@ -245,6 +244,15 @@ def cusip_to_ticker(cusip):
     except Exception as e:
         print('Unable to retrieve ticker for {}'.format(cusip))
 
+def cusip_to_ticker2(cusip, fmpkey):
+    try:
+        # print('Attempting to get ticker for {}'.format(cusip))
+        cusip_url = "https://financialmodelingprep.com/api/v3/cusip/{}?apikey={}".format(cusip, fmpkey)
+        req = requests.get(cusip_url).json()
+        return req.get('ticker', '')
+    except Exception as e:
+        logging.info('Unable to retrieve ticker for {}'.format(cusip))
+        return ''
 
 def processUrl(url):
   if 'master.idx' in url:

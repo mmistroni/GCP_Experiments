@@ -3,16 +3,16 @@ import argparse
 import logging
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
-            find_current_year, EdgarCombineFn, ParseForm4
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker,  \
+            find_current_year, EdgarCombineFn, ParseForm4, cusip_to_ticker2
 from datetime import date, datetime
 from pandas.tseries.offsets import BDay
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
-from modules.edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
+from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4
-from modules.price_utils import get_current_price
+from .price_utils import get_current_price
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -62,6 +62,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_argument('--key')
+        parser.add_argument('--fmprepkey')
 
 def find_current_quarter(current_date):
     quarter_dictionary = {
@@ -77,9 +78,10 @@ def find_current_quarter(current_date):
 
 def combine_data(elements):
     return (elements
+            | 'Removing Reporter And Filing Counts' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2]))  #asofdate,period,cusip, num of shares,reporter
             | 'Combining similar' >> beam.combiners.Count.PerElement()
             | 'Groupring' >> beam.MapTuple( lambda tpl, count: (tpl[0], tpl[1], tpl[2], count))
-            | 'Adding Cusip' >> beam.MapTuple(lambda cob, period, word, count: [cob, period, word, cusip_to_ticker(word), count]))
+            | 'Converting Cusip to Ticker' >> beam.MapTuple(lambda cob, period, word, count: [cob, period, word, cusip_to_ticker(word), count]))
 
 
 def enhance_data(lines):
@@ -117,26 +119,23 @@ def send_email(lines, pipeline_options):
     )
 
 def write_to_bigquery(lines):
-    big_query = (
+    # eachline has asofdate,periodofreport,cusip,shares,reporter
+    return (
             lines
+            | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(2) ) )
             |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
-                                                              tpl[4], get_current_price(tpl[3],
+                                                              tpl[4], tpl[5], get_current_price(tpl[4],
                                                                     start_dt=datetime.strptime(tpl[0], '%Y-%m-%d').date())))
 
             | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        PERIODOFREPORT=tpl[1],
                                                                        CUSIP=tpl[2],
-                                                                       TICKER=tpl[3],
-                                                                       COUNT=tpl[4],
-                                                                       PRICE=float(tpl[5])))
-            | 'Write to BigQuery' >> beam.io.WriteToBigQuery(
-        bigquery.TableReference(
-            projectId="datascience-projects",
-            datasetId='gcp_edgar',
-            tableId='form_13hf_daily_enhanced'),
-        schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT',
-        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+                                                                       TICKER=tpl[5],
+                                                                       COUNT=tpl[3],
+                                                                       PRICE=float(tpl[6]),
+                                                                       REPORTER=float(tpl[4]),
+                                                                       SHARES_HELD=tpl[3]))
+
     )
 
 def find_current_day_url(sample):
@@ -158,6 +157,14 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
 
+    sink =  beam.io.WriteToBigQuery(
+                    bigquery.TableReference(
+                        projectId="datascience-projects",
+                        datasetId='gcp_edgar',
+                        tableId='form_13hf_daily_enhanced'),
+                    schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT,REPORTER:STRING,SHARES_HELD:INTEGER',
+                    write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+                    create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     with beam.Pipeline(options=pipeline_options) as p:
         source = (p  | 'Startup' >> beam.Create(['start_token'])
                     |'Add current date' >> beam.Map(find_current_day_url)
@@ -168,7 +175,10 @@ def run(argv=None, save_main_session=True):
         form113 = combine_data(enhanced_data)
         logging.info('Now sendig meail....')
         send_email(form113, pipeline_options)
-        write_to_bigquery(form113)
+        with_extra_info = write_to_bigquery(enhanced_data)
+
+        with_extra_info | 'WRite to BQ' >> sink
+
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
