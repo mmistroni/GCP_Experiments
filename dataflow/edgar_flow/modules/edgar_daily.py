@@ -172,7 +172,7 @@ def run(argv=None, save_main_session=True):
         lines = run_my_pipeline(source)
         enhanced_data = filter_form_13hf(lines)
         logging.info('Next step')
-        form113 = combine_data(enhanced_data)
+        #form113 = combine_data(enhanced_data)
         logging.info('Now sendig meail....')
         #send_email(form113, pipeline_options)
         with_extra_info = write_to_bigquery(enhanced_data)
