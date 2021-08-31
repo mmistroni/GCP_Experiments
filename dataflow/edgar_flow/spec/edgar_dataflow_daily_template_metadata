@@ -11,6 +11,11 @@
       "name": "recipients",
       "helpText": "comma separated list of recipients",
       "label": "email recipients"
+    },
+    { "name" : "setup_file",
+      "label": "setup file loc",
+      "helpText": "setup location",
+      "isOptional" : true
     }
   ]
   
