@@ -78,6 +78,7 @@ def find_current_quarter(current_date):
 
 def combine_data(elements):
     return (elements
+            | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Removing Reporter And Filing Counts' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2]))  #asofdate,period,cusip, num of shares,reporter
             | 'Combining similar' >> beam.combiners.Count.PerElement()
             | 'Groupring' >> beam.MapTuple( lambda tpl, count: (tpl[0], tpl[1], tpl[2], count))
@@ -122,6 +123,7 @@ def write_to_bigquery(lines):
     # eachline has asofdate,periodofreport,cusip,shares,reporter
     return (
             lines
+            | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
             |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
                                                               tpl[4], tpl[5], get_current_price(tpl[4],

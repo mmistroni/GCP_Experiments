@@ -8,8 +8,6 @@ WORKDIR ${WORKDIR}
 COPY spec/python_command_spec_edgar_daily_form13.json ${WORKDIR}/python_command_spec_edgar_daily_form13.json
 COPY modules ${WORKDIR}/modules
 
-ENV DATAFLOW_PYTHON_COMMAND_SPEC ${WORKDIR}/python_command_spec_edgar_daily_form13.json
-
 RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.27.0 sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0
 
 COPY __init__.py ${WORKDIR}/__init__.py

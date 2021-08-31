@@ -54,6 +54,7 @@ def get_period_of_report(data):
     tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
     root = tree.getroot()
     tcodes = root.findall(".//periodOfReport")
+    logging.info('Tcodes are:{}'.format(tcodes))
     return tcodes[0].text
 
 
@@ -121,23 +122,21 @@ class ParseForm13F(beam.DoFn):
         cob_dt, file_url = element
         try:
             cob_dt = datetime.strptime(cob_dt, '%Y%m%d').strftime('%Y-%m-%d')
-            logging.info('{} converted to {}'.format(cob_dt, cob_dt))
+            
         except:
             logging.info('Attempting other form of parsing to y-m-d')
             cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
 
         try:
             file_content = self.open_url_content(file_url)
-            print('Parsing :{}'.format(file_url))
             all_cusips = self.get_filing_data(file_content.text)
             period_of_report = self.get_period_of_report(file_content.text)
             reporter = self.get_reporter(file_content.text)
             mapped = list(map(lambda item: (cob_dt, period_of_report, item[0], item[1], reporter), all_cusips))
-            logging.info('returning:{}'.format(list(mapped)))
             return mapped
         except Exception as e:
-            print('could not fetch data from {}:{}'.format(element, str(e)))
-            return [(cob_dt, '', '')]
+            logging.info('could not fetch data from {}:{}'.format(element, str(e)))
+            return None
 
 
 class ParseForm4(beam.DoFn):

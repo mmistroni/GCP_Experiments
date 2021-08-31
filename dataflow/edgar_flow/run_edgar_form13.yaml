@@ -14,8 +14,6 @@ steps:
           , 'recipients=mmistroni@gmail.com'
           , '--parameters'
           , 'key=$_SENDGRIDKEY'
-          , '--parameters'
-          , 'recipients=mmistroni@gmail.com'
           , '--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
@@ -26,5 +24,4 @@ substitutions:
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/python_command_spec_edgar_daily_form13.json
   _JOB_NAME: form13tmprun
   _REGION : 'us-central1'
-  _IEXKEY : ''
   _SENDGRIDKEY: ''
