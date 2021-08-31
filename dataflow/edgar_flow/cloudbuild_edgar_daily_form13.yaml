@@ -23,7 +23,7 @@ steps:
           , '--metadata-file'
           , '$_EDGARFORM13_METADATA_FILE']  
     id: 'build-edgarform13-flex-template'
-    waitFor: ['build-edgarform13-template']
+    waitFor: ['build-edgarform13-image']
   
 images: ['$_IMAGE_NAME']
 
