@@ -122,7 +122,7 @@ def write_to_bigquery(lines):
     # eachline has asofdate,periodofreport,cusip,shares,reporter
     return (
             lines
-            | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(2) ) )
+            | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
             |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
                                                               tpl[4], tpl[5], get_current_price(tpl[4],
                                                                     start_dt=datetime.strptime(tpl[0], '%Y-%m-%d').date())))
@@ -174,7 +174,7 @@ def run(argv=None, save_main_session=True):
         logging.info('Next step')
         form113 = combine_data(enhanced_data)
         logging.info('Now sendig meail....')
-        send_email(form113, pipeline_options)
+        #send_email(form113, pipeline_options)
         with_extra_info = write_to_bigquery(enhanced_data)
 
         with_extra_info | 'WRite to BQ' >> sink
