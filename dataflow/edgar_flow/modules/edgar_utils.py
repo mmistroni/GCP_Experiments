@@ -46,22 +46,13 @@ def fast_iter2(context):
     return test_dict
 
 def get_period_of_report(data):
-    logging.info('Getting period of report.')
     data = data.replace('\n', '')
-    subset = data[data.find('<headerData>'): data.find("</headerData>") + 13]
-    logging.info(subset)
-    from xml.etree import ElementTree
-    tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
-    root = tree.getroot()
-    tcodes = root.findall(".//periodOfReport")
-    logging.info('Tcodes are:{}'.format(tcodes))
-    return tcodes[0].text
-
+    subset = data[data.find('<periodOfReport>')+16: data.find("</periodOfReport>")]
+    return subset
 
 class ReadRemote(beam.DoFn):
     def process(self, element):
         try:
-            logging.info('REadRemote processing///{}'.format(element))
             req = urllib.request.Request(
                 element,
                 headers={
@@ -70,31 +61,33 @@ class ReadRemote(beam.DoFn):
             )
             data = urllib.request.urlopen(req)  # it's a file like object and works just like a file
             data =  [line for line in data]
-            logging.info('data has:{}'.format(len(data)))
             return data
         except Exception as e:
-            logging.info('Error fetching {}:{}'.format(element, str(e)))
             return []
 
 class ParseForm13F(beam.DoFn):
 
 
     def get_filing_data(self, content):
+        import re
         xml_str = content[content.rfind('<XML>') + 5: content.rfind("</XML>")].strip()
         tree = ElementTree.ElementTree(ElementTree.fromstring(xml_str))
         root = tree.getroot()
-        # print(xml_str)
+        ns = re.match(r'{.*}', root.tag).group(0)
+        ts = root.findall('.//{ns}infoTable')
+        return [(table.find(f'.//{ns}cusip').text,
+                 table.find(f'.//{ns}sshPrnamt').text) for table in root]
 
-        ts = root.findall('.//{*}infoTable')
-        return [(table.find('.//{*}cusip').text,
-                 table.find('.//{*}sshPrnamt').text) for table in ts]
+
 
     def get_reporter(self, content):
         xml_str = content[content.find('<XML>') + 5: content.find("</XML>")].strip()
         tree = ElementTree.ElementTree(ElementTree.fromstring(xml_str))
         root = tree.getroot()
-        reporter = root.find('.//{*}credentials/{*}cik')
-        return reporter.text
+        ns = re.match(r'{.*}', root.tag).group(0)
+        reporter = root.find(f'.//{ns}credentials/{ns}cik')
+        rep_text = reporter.text
+        return rep_text
 
 
     def open_url_content(self, file_path):
@@ -110,7 +103,7 @@ class ParseForm13F(beam.DoFn):
     def get_cusips(self, content):
         data = content.text
         data = data.replace('\n', '')
-        subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
+        subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")].strip()
         from xml.etree import ElementTree
         tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
         root = tree.getroot()
@@ -124,7 +117,6 @@ class ParseForm13F(beam.DoFn):
             cob_dt = datetime.strptime(cob_dt, '%Y%m%d').strftime('%Y-%m-%d')
             
         except:
-            logging.info('Attempting other form of parsing to y-m-d')
             cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
 
         try:
@@ -173,14 +165,12 @@ class ParseForm4(beam.DoFn):
         # print('TCODES:{}'.format(tcodes))
         purchases = [c for c in tcodes if 'A' or 'P' in c]
         if purchases:
-            logging.info('found purchase transction for {}'.format(trading_symbol))
             shares_acquired = self.get_shares_acquired(root)
             shares_post_transaction  = self.get_shares_posttransaction(root)
             shares_pre_transaction = shares_post_transaction - shares_acquired
             share_increase = (shares_post_transaction - shares_pre_transaction) / shares_pre_transaction
             transaction_price = self.get_transaction_price_per_share(root)
             res = ((cob_dt, trading_symbol), shares_acquired, share_increase, transaction_price)
-            logging.info('Returing:{}'.format(res))
             return
 
     def parse_xml(self, tree):
@@ -193,34 +183,27 @@ class ParseForm4(beam.DoFn):
         res = self.parse_xml(context)
         trans_code = res.get('trans_code', 'X')
         if trans_code in ['A' , 'P' ]:
-            logging.info('found purchase transction for {}'.format(res['Symbol']))
             shares_acquired = res['shares']
             shares_post_transaction = res['sharesFollowingTransaction']
             shares_pre_transaction = shares_post_transaction - shares_acquired
             return ((cob_dt, res['Symbol']), shares_acquired, res['sharesFollowingTransaction'], res['transactionPricePerShare'], file_content)
 
     def process(self, element):
-        logging.info('Processing element@{}'.format(element))
         edgar_dt, file_url = element
-        logging.info('Processing :{}={}'.format(edgar_dt, file_url))
         try:
             cob_dt = datetime.strptime(edgar_dt, '%Y%m%d').strftime('%Y-%m-%d')
-            logging.info('{} converted to {}'.format(edgar_dt, cob_dt))
         except:
-            logging.info('Attempting other form of parsing')
             cob_dt = datetime.strptime(edgar_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
         try:
             file_content = self.open_url_content(file_url)
             data = file_content.text
             data = data.replace('\n', '')
             if data.rfind('<XML>') < 0:
-                logging.info('Skipping. no good data')
                 return [((cob_dt, 'N/A'), 0, 0, 0)]
             else:
                 subset = data[data.rfind('<XML>') + 5: data.rfind("</XML>")]
                 trading_symbols_tpl = self.get_purchase_transactions_2(subset, cob_dt, file_url)
                 if trading_symbols_tpl:
-                    logging.info('Returning :{}'.format(trading_symbols_tpl))
                     return  [trading_symbols_tpl]
                 return [((cob_dt, 'N/A'), 0, 0, 0, file_url)]
         except Exception as e:
@@ -270,7 +253,6 @@ def crawl(base_page):
           res = processUrl(url)
           if res:
             full_url = '{}{}'.format(base_page, res)
-            logging.info('Appending..:{}'.format(full_url))
             good_ones.append(full_url)
       return good_ones
 
@@ -297,7 +279,6 @@ def generate_edgar_urls_for_year(year):
 def find_current_year(current_date):
     current_month = current_date.month
     edgar_year = current_date.year
-    logging.info('Year to use is{}'.format(edgar_year))
     return edgar_year
 
 
@@ -322,7 +303,6 @@ class EdgarCombineFn(beam.CombineFn):
         print('Filtering only top 30 for:{}'.format(aggregated))
         sorted_accs = sorted(aggregated, key=lambda tpl: tpl[4], reverse=True)
         filtered = sorted_accs
-        logging.info('Mapping now to string')
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row[1:]), filtered[0:20])
         return ''.join(mapped)
 
@@ -345,11 +325,8 @@ class EdgarCombineFnForm4(beam.CombineFn):
         return reduce(lambda acc, current: acc + current, accumulators)
 
     def extract_output(self, aggregated):
-        logging.info('Filtering only top 30 for:{}'.format(len(aggregated)))
-        logging.info('First one is :{}'.format(aggregated[0:2]))
         sorted_accs = sorted(aggregated, key=lambda tpl: tpl[5], reverse=True)
         filtered = sorted_accs
-        logging.info('Mapping now to string')
         mapped =  map(lambda row: self.ROW_TEMPLATE.format(*row[1:]), filtered)
         return ''.join(mapped)
 
@@ -398,7 +375,6 @@ class EdgarEmailSender(beam.DoFn):
     def _build_personalization(self, recipients):
         personalizations = []
         for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
             person1 = Personalization()
             person1.add_to(Email(recipient))
             personalizations.append(person1)
