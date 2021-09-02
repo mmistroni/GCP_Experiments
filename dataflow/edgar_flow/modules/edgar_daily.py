@@ -136,7 +136,7 @@ def write_to_bigquery(lines):
                                                                        REPORTER=tpl[4],
                                                                        TICKER=tpl[5],
                                                                        PRICE=float(tpl[6]),
-                                                                       SHARES_HELD=int(tpl[3])))
+                                                                       SHARES_HELD=tpl[3]))
 
     )
 
