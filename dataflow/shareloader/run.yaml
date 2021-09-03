@@ -1,28 +1,31 @@
-substitutions:
-  _IMAGE: shareloader:latest2
-  _JOB_NAME: 'shareloadercloudbuild2'
-  _TEMP_LOCATION: ''
-  _REGION: us-central1
-  _PROJECT_ID: datascience-projects
-  _FMPREP_KEY: ''
-  _SENDGRID_KEY : ''
-  
 steps:
-- name: gcr.io/$_PROJECT_ID/$_IMAGE
-  entrypoint: python
-  args:
-  - /dataflow/template/shares_main.py
-  - --runner=DataflowRunner
-  - --project=$_PROJECT_ID
-  - --region=$_REGION
-  - --job_name=$_JOB_NAME
-  - --temp_location=$_TEMP_LOCATION
-  - --sdk_container_image=gcr.io/$_PROJECT_ID/$_IMAGE
-  - --disk_size_gb=50
-  - --recipients=mmistroni@gmail.com 
-  - --key=$_SENDGRID_KEY
-  - --fmprepkey=$_FMPREP_KEY
-  - --setup_file=/dataflow/template/setup.py  
+  # Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'key=$_SENDGRID_KEY'
+          , '--parameters'
+          , 'fmprepkey=$_FMPREP_KEY'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
+
+
+
+substitutions:
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/shareloader_flex_template.json
+  _JOB_NAME: 'shareloadercloudbuild2'
+  _REGION : 'us-central1'
+  _FMPREP_KEY : ''
+  _SENDGRID_KEY: ''
 
 #options:
 #  logging: CLOUD_LOGGING_ONLY

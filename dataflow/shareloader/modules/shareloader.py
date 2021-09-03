@@ -113,7 +113,7 @@ def combine_portfolio(elements):
 
 def run_my_pipeline(p, options):
     lines = (p
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.iexkey))
+             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, options.fmprepkey))
              | 'Filtering empties' >> beam.Filter(lambda row: row is not None)
              | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
              | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
