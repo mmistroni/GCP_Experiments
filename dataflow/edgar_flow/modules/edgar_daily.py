@@ -136,7 +136,7 @@ def write_to_bigquery(lines):
                                                                        REPORTER=tpl[4],
                                                                        TICKER=tpl[5],
                                                                        PRICE=float(tpl[6]),
-                                                                       SHARES_HELD=int(tpl[3])))
+                                                                       SHARES_HELD=tpl[3]))
 
     )
 
@@ -164,7 +164,7 @@ def run(argv=None, save_main_session=True):
                         projectId="datascience-projects",
                         datasetId='gcp_edgar',
                         tableId='form_13hf_daily_enhanced'),
-                    schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT,REPORTER:STRING,SHARES_HELD:INTEGER',
+                    schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT,REPORTER:STRING,SHARES_HELD:STRING',
                     write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     
