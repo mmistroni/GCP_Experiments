@@ -8,9 +8,9 @@
       "label": "SG Key"
     },
     {
-      "name": "iexkey",
-      "helpText": "IEXAPI key",
-      "label": "iexkey"
+      "name": "fmprepkey",
+      "helpText": "FMPREP  key",
+      "label": "fmprepkey"
     }
   
   

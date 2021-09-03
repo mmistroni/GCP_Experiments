@@ -81,36 +81,27 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_argument('--key')
-        parser.add_argument('--iexkey')
+        parser.add_argument('--fmprepkey')
 
 
-def get_prices(tpl, iexkey):
+def get_prices(tpl, fmprepkey):
     try:
         ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
-        logging.info('{}|{}|{}'.format(ticker, qty, original_price))
-        stat_url = 'https://cloud.iexapis.com/stable/stock/{symbol}/quote?token={token}'.format(symbol=ticker, token=iexkey)
-        historical_data = requests.get(stat_url).json()
-        logging.info('Historical data for:{}={}'.format(ticker, historical_data))
+        stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
+                                                                                                   token=fmprepkey)
+        historical_data = requests.get(stat_url).json()[0]
         pandl = historical_data.get('change', 0) * int(qty)
-        logging.info('After pandl')
-        current_pos = int(qty) * historical_data.get('latestPrice', 0)
-        logging.info('After cpos')
-
-        total_gain = int(qty) * (historical_data.get('latestPrice', 0) - float(original_price))
-        logging.info('After pandl')
-
-        wk52high = historical_data.get('week52High',0)
-        logging.info('After pandl')
-
+        current_pos = int(qty) * historical_data.get('price', 0)
+        total_gain = int(qty) * (historical_data.get('price', 0) - float(original_price))
+        wk52high = historical_data.get('yearHigh',0)
         return [ticker, qty,
-             historical_data.get('latestPrice', 0),
+             historical_data.get('price', 0),
              historical_data.get('change', 0),
-             historical_data.get('latestVolume', 0),
-             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data.get('latestPrice', 0) > wk52high else '' ]
+             historical_data.get('volume', 0),
+             pandl, current_pos, total_gain, 'Above 52wk High' if historical_data.get('price', 0) > wk52high else '' ]
     except Exception as e :
         logging.info('Excepiton for {}:{}'.format(tpl[0], str(e)))
         return None
-
 
 def combine_portfolio(elements):
     # Calculating variance, we need it for subject

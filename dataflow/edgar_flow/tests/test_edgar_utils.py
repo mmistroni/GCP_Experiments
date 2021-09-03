@@ -1,6 +1,7 @@
 
 import unittest
 import requests
+import re
 from lxml import etree
 from io import StringIO, BytesIO
 from edgar_flow.modules.edgar_utils import fast_iter2, get_period_of_report
@@ -89,11 +90,12 @@ class TestEdgarUtils(unittest.TestCase):
 
 
     def test_get_period_of_report(self):
-        content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
+        content = requests.get('https://www.sec.gov/Archives/edgar/data/1372130/0001372130-21-000004.txt',
                                headers={
                                    'User-Agent': 'WCorp Services mmistroni@gmail.com'
                                }
-                               )
+                               ).text
+        '''
         data = content.text
         subset = data[data.find('<headerData>'): data.find("</headerData>") + 13]
         print(subset)
@@ -101,8 +103,23 @@ class TestEdgarUtils(unittest.TestCase):
         tree = ElementTree.ElementTree(ElementTree.fromstring(subset))
         root = tree.getroot()
         tcodes = root.findall(".//periodOfReport")
-
+        '''
         print(get_period_of_report(content))
+
+    def get_filing_data(self, content):
+        xml_str = content[content.rfind('<XML>') + 5: content.rfind("</XML>")].strip()
+        tree = ElementTree.ElementTree(ElementTree.fromstring(xml_str))
+        root = tree.getroot()
+        ns = re.match(r'{.*}', root.tag).group(0)
+        print(root)
+
+        for child in root:
+            print(child.tag, child.attrib)
+
+        ts = root.findall(f'.//{ns}infoTable')
+        return [(table.find(f'.//{ns}cusip').text,
+                 table.find(f'.//{ns}sshPrnamt').text) for table in root]
+
 
     def test_extractInfo_from_form13(self):
         content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
@@ -110,9 +127,7 @@ class TestEdgarUtils(unittest.TestCase):
                                    'User-Agent': 'WCorp Services mmistroni@gmail.com'
                                }
                                ).text
-        xml_str = content[content.rfind('<XML>') + 5: content.rfind("</XML>")].strip()
-
-        print(self.get_filing_data(xml_str))
+        print(self.get_filing_data(content))
 
     def test_extractInfo_from_form132(self):
         content = requests.get('https://www.sec.gov/Archives/edgar/data/1767306/0001420506-21-000026.txt',
@@ -125,7 +140,14 @@ class TestEdgarUtils(unittest.TestCase):
 
     def test_parse_form13f(self):
         with TestPipeline() as p:
-            input = (p | 'Start' >> beam.Create([('2021-08-26', 'https://www.sec.gov/Archives/edgar/data/1325091/0001325091-21-000019.txt')])
+            input = (p | 'Start' >> beam.Create([('2021-08-26', 'https://www.sec.gov/Archives/edgar/data/1372130/0001372130-21-000004.txt')])
+                       | 'Parse Form 13F' >>  beam.ParDo(ParseForm13F())
+                       | 'Print ouit ' >> beam.Map(print)
+                     )
+
+    def test_get_reporter(self):
+        with TestPipeline() as p:
+            input = (p | 'Start' >> beam.Create([('2021-08-26', 'https://www.sec.gov/Archives/edgar/data/1372130/0001372130-21-000004.txt')])
                        | 'Parse Form 13F' >>  beam.ParDo(ParseForm13F())
                        | 'Print ouit ' >> beam.Map(print)
                      )

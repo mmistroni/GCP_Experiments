@@ -4,7 +4,7 @@ substitutions:
   _TEMP_LOCATION: ''
   _REGION: us-central1
   _PROJECT_ID: datascience-projects
-  _IEXAPI_KEY: ''
+  _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
   
 steps:
@@ -21,7 +21,7 @@ steps:
   - --disk_size_gb=50
   - --recipients=mmistroni@gmail.com 
   - --key=$_SENDGRID_KEY
-  - --iexkey=$_IEXAPI_KEY
+  - --fmprepkey=$_FMPREP_KEY
   - --setup_file=/dataflow/template/setup.py  
 
 #options:
