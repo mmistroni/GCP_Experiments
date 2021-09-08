@@ -85,7 +85,8 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        write_to_bucket(tickers, sink)
-        #all_data = load_all(tickers, pipeline_options.key)
+        all_data = load_all(tickers, pipeline_options.key)
+        write_to_bucket(all_data, sink)
+
         #universe = filter_universe(all_data)
 
