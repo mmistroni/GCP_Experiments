@@ -79,7 +79,7 @@ def run(argv=None, save_main_session=True):
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
 
-    input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
+    input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
     sink = beam.Map(lambda x: logging.info(x))#beam.io.WriteToText(destination, num_shards=1)
     pipeline_options = XyzOptions()

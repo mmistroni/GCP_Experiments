@@ -8,17 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/shareloader/Dockerfile_superperformers" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/superperformers_build.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/superperformers_main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/superperformers_metadata" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/superperformers_run.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/marketstats_template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/marketstats_template_metadata" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
