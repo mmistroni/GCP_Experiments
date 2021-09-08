@@ -63,5 +63,7 @@ substitutions:
   _SHARELOADER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/shareloader_flex_template.json
   _SHARELOADER_METADATA_FILE: ./dataflow/shareloader/shares_pipeline_template_metadata 
   _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template.json
-  _MARKETSTATS_METADATA_FILE: ./dataflow/shareloader/marketstats_template_metadata 
-  
+  _MARKETSTATS_METADATA_FILE: ./dataflow/shareloader/marketstats_template_metadata
+  _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/superperformers_flex_template.json
+  _SUPERPERFORMERS_METADATA_FILE: ./dataflow/shareloader/superperformers_metadata
+

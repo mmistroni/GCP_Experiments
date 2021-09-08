@@ -1,0 +1,11 @@
+{
+  "name": "Superperformers ",
+  "description": "An template for finding superperformers.",
+  "parameters": [
+    {
+      "name": "fmprepkey",
+      "helpText": "FMPREP  key",
+      "label": "fmprepkey"
+    }
+  ]
+}

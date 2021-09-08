@@ -10,16 +10,24 @@ def get_all_stocks(iexapikey):
     return all_stocks
 
 def get_all_us_stocks(token, security_type='cs', nasdaq=True):
+    all_dt = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(token)).json()
+    return [d['symbol'] for d in all_dt if d['exchange'] in ["New York Stock Exchange", "Nasdaq Global Select"]]
 
-    logging.info('Getting all stocks...')
-    nyse_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nys/symbols?token={token}'.format(token=token)).json()
-    logging.info('Got:{}'.format(len(nyse_symbols)))
-    nas_symbols = requests.get('https://cloud.iexapis.com/stable/ref-data/exchange/nas/symbols?token={token}'.format(token=token)).json()
-    logging.info('Got:{}'.format(len(nas_symbols)))
-    all_symbols = nyse_symbols + nas_symbols
-    stocks =  [d['symbol'] for d in all_symbols  if d['isEnabled'] and d['type'].lower() in ['ad', 'cs', 'et']]
-    logging.info('We picked up:{} out of {}'.format(len(stocks), len(all_symbols)))
-    return stocks
+
+def get_prices2(tpl, fmprepkey):
+    try:
+        ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
+        stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
+                                                                                                   token=fmprepkey)
+        historical_data = requests.get(stat_url).json()[0]
+        return (ticker, historical_data['price'], historical_data['change'],
+                historical_data['yearHigh'], historical_data['yearLow'],
+                0.0)
+    except Exception as e :
+        logging.info('Excepiton for {}:{}'.format(tpl[0], str(e)))
+        return None
+
+
 
 def get_prices(ticker, iexapikey):
     try:
