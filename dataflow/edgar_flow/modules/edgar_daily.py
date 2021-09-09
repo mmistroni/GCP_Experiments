@@ -126,8 +126,7 @@ def write_to_bigquery(lines):
             | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
             |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
-                                                              tpl[4], tpl[5], get_current_price(tpl[5],
-                                                                    start_dt=datetime.strptime(tpl[0], '%Y-%m-%d').date())))
+                                                              tpl[4], tpl[5], 0.0))
 
             | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        PERIODOFREPORT=tpl[1],
