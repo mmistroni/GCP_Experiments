@@ -120,6 +120,7 @@ class ParseForm13F(beam.DoFn):
             cob_dt = datetime.strptime(cob_dt, '%Y-%m-%d').strftime('%Y-%m-%d')
 
         try:
+            logging.info('Opening:{}'.format(file_url))
             file_content = self.open_url_content(file_url)
             all_cusips = self.get_filing_data(file_content.text)
             period_of_report = self.get_period_of_report(file_content.text)

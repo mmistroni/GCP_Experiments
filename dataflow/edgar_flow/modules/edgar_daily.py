@@ -125,19 +125,28 @@ def write_to_bigquery(lines):
             lines
             | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
-            |  'Add Current Price '  >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3],
-                                                              tpl[4], tpl[5], 0.0))
-
+            
             | 'Map to BQ Compatible Dict' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        PERIODOFREPORT=tpl[1],
                                                                        CUSIP=tpl[2],
                                                                        COUNT=int(tpl[3]),
-                                                                       REPORTER=tpl[4],
                                                                        TICKER=tpl[5],
-                                                                       PRICE=float(tpl[6]),
-                                                                       SHARES_HELD=tpl[3]))
+                                                                       ))
 
     )
+
+def write_to_bigquery2(lines):
+    # eachline has asofdate,periodofreport,cusip,shares,reporter
+    return (
+            lines
+            | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
+            | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
+            
+            
+    )
+
+
+
 
 def find_current_day_url(sample):
     current_date = (datetime.now() - BDay(1))
@@ -158,6 +167,8 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
 
+    form13_dest = 'gs://mm_dataflow_bucket/outputs/edgar_form13_{}'.format(date.today().strftime('%Y-%m-%d'))
+
     sink =  beam.io.WriteToBigQuery(
                     bigquery.TableReference(
                         projectId="datascience-projects",
@@ -166,6 +177,9 @@ def run(argv=None, save_main_session=True):
                     schema='COB:STRING,PERIODOFREPORT:STRING,CUSIP:STRING,COUNT:INTEGER,TICKER:STRING,PRICE:FLOAT,REPORTER:STRING,SHARES_HELD:STRING',
                     write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
                     create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
+    detailed_sink = beam.io.WriteToText(form13_dest, header='date,periodofreport,cusip,count,reporter,ticker',
+                                                       num_shards=1)
     
     with beam.Pipeline(options=pipeline_options) as p:
         source = (p  | 'Startup' >> beam.Create(['start_token'])
@@ -177,9 +191,10 @@ def run(argv=None, save_main_session=True):
         form113 = combine_data(enhanced_data)
         logging.info('Now sendig meail....')
         send_email(form113, pipeline_options)
-        with_extra_info = write_to_bigquery(enhanced_data)
+        with_extra_info = write_to_bigquery(form113)
         with_extra_info | 'WRite to BQ' >> sink
-
+        sink_data = write_to_bigquery2(enhanced_data)
+        sink_data | 'Writing to Bucket' >>  detailed_sink
 
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
