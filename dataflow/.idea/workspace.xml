@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,7 +203,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_extract_data">
+  <component name="RunManager" selected="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe">
     <configuration name="Unittests for test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -283,8 +283,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_extract_data" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe" />
+        <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_extract_data" />
         <item itemvalue="Python tests.Unittests for test_shareloader.TestShareLoader.test_get_prices" />
         <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13" />
         <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_parse_form13f" />

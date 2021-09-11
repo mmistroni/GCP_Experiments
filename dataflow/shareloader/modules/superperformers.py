@@ -58,7 +58,6 @@ def extract_data_pipeline(p, input_file):
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(input_file)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
-            | 'Sample. Filtering only few stocks' >> beam.Filter(lambda tpl: tpl[0] in ['AAPL', 'AMZN', 'MCD'])
             )
 
 def find_canslim(p):
@@ -86,7 +85,8 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
         all_data = load_all(tickers, pipeline_options.fmprepkey)
-        write_to_bucket(all_data, sink)
+        filtered = filter_universe(all_data)
+        write_to_bucket(all_data, filtered)
 
         #universe = filter_universe(all_data)
 
