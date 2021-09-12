@@ -20,7 +20,7 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers
+                            combine_movers,get_prices2
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -87,10 +87,12 @@ def run(argv=None, save_main_session=True):
     donefile = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.done'
 
     logging.info('====== Destination is :{}'.format(destination))
+    logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
+
 
     prices = (p
              | 'Get List of Tickers' >> beam.Create(get_all_stocks(iexapi_key))
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices(symbol, iexapi_key))
+             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices2(symbol, iexapi_key))
              | 'Filtering blanks' >> beam.Filter(lambda d: len(d) > 0)
              )
     marketbreadth = (

@@ -1,30 +1,27 @@
-substitutions:
-  _IMAGE: marketstats:latest
-  _JOB_NAME: 'marketstatscloudbuild'
-  _TEMP_LOCATION: ''
-  _REGION: us-central1
-  _PROJECT_ID: datascience-projects
-  _IEXAPI_KEY: ''
-  _SENDGRID_KEY : ''
-  
 steps:
-- name: gcr.io/$_PROJECT_ID/$_IMAGE
-  entrypoint: python
-  args:
-  - /dataflow/template/marketstats_main.py
-  - --runner=DataflowRunner
-  - --project=$_PROJECT_ID
-  - --region=$_REGION
-  - --job_name=$_JOB_NAME
-  - --temp_location=$_TEMP_LOCATION
-  - --sdk_container_image=gcr.io/$_PROJECT_ID/$_IMAGE
-  - --disk_size_gb=50
-  - --key=$_IEXAPI_KEY
-  - --sendgridkey=$_SENDGRID_KEY
-  - --setup_file=/dataflow/template/setup.py  
+# Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_MARKETSTATS_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'key=$_FMPREP_KEY'
+          , '--parameters'
+          , 'sendgridkey=$_SENDGRID_KEY'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
 
-#options:
-#  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _JOB_NAME: 'marketstatscloudbuild'
+  _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template.json
+  _REGION: us-central1
+  _FMPREP_KEY: ''
+  _SENDGRID_KEY : ''
 
-# Use the Compute Engine default service account to launch the job.
-#serviceAccount: projects/$PROJECT_ID/serviceAccounts/$PROJECT_NUMBER-compute@developer.gserviceaccount.com

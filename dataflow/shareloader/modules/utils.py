@@ -73,12 +73,11 @@ def get_isr_and_kor(token):
 def get_out_of_hour_info(token, ticker):
   logging.info('Getting out of quote info for {}'.format(ticker))
   try:
-      quote_url = 'https://cloud.iexapis.com/stable/stock/{ticker}/quote?token={token}'\
-                                  .format(token=token, ticker=ticker)
-      latest_quote = requests.get(quote_url).json()
-      logging.info('we got:{}'.format(latest_quote))
-      return latest_quote.get('extendedPrice', 0),\
-            latest_quote.get('extendedChangePercent', 0)
+    ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
+    stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
+                                                                                                token=fmprepkey)
+    historical_data = requests.get(stat_url).json()[0]
+    return historical_data['price'], historical_data['change'],
   except Exception as e:
       logging.info('exception in retrieving quote for :{}:{}'.format(ticker, str(e)))
       return 0,0
