@@ -43,7 +43,7 @@ class EmailSender(beam.DoFn):
 
 
     def process(self, element):
-        logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
         template = "<html><body>{}</body></html>"
         content = template.format(element)
         print('Sending \n {}'.format(content))

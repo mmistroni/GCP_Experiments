@@ -44,7 +44,7 @@ steps:
           , 'build'
           , '$_MARKETSTATS_TEMPLATE_GCS_LOCATION'
           , '--image'
-          , 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
+          , 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME'
           , '--sdk-language'
           , 'PYTHON'
           , '--metadata-file'
