@@ -11,7 +11,9 @@ def get_all_stocks(iexapikey):
 
 def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     all_dt = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(token)).json()
-    return [d['symbol'] for d in all_dt if d['exchange'] in ["New York Stock Exchange", "Nasdaq Global Select"]]
+    us_stocks =  [d['symbol'] for d in all_dt if d['exchange'] in ["New York Stock Exchange", "Nasdaq Global Select"]]
+    logging.info('Got:{} Stocks'.format(len(us_stocks)))
+    return us_stocks
 
 
 def get_prices2(tpl, fmprepkey):
