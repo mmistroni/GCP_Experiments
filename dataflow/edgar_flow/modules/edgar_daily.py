@@ -120,11 +120,10 @@ def send_email(lines, pipeline_options):
     )
 
 def write_to_bigquery(lines):
-    # eachline has asofdate,periodofreport,cusip,shares,reporter
+    # eachline has cob, period, word, cusip_to_ticker(word), count
     return (
             lines
             | 'Filtering Empty Tuples BQ' >> beam.Filter(lambda tpl: bool(tpl))
-            | 'Mapping To Ticker BQ' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
             | 'Map to BQ Compatible Dict BQ' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        PERIODOFREPORT=tpl[1],
                                                                        CUSIP=tpl[2],
@@ -134,11 +133,11 @@ def write_to_bigquery(lines):
 
     )
 
-def write_to_bigquery2(lines):
+def reformat_for_custom_bucket(lines):
     # eachline has asofdate,periodofreport,cusip,shares,reporter
     return (
             lines
-            | 'Filtering Empty Tuples' >> beam.Filter(lambda tpl: bool(tpl))
+            | 'Filtering Empty Tuples for custom bucket' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Mapping To Ticker' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
             
             
@@ -192,7 +191,7 @@ def run(argv=None, save_main_session=True):
         send_email(form113, pipeline_options)
         with_extra_info = write_to_bigquery(form113)
         with_extra_info | 'WRite to BQ' >> sink
-        sink_data = write_to_bigquery2(enhanced_data)
+        sink_data = reformat_for_custom_bucket(enhanced_data)
         sink_data | 'Writing to Bucket' >>  detailed_sink
 
 if __name__ == '__main__':
