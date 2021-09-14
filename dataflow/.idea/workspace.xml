@@ -9,7 +9,6 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -184,13 +183,13 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader/test" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow\spec" />
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
@@ -203,32 +202,32 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe">
-    <configuration name="Unittests for test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Unittests for test_marketstats.TestShareLoader.test_run_sample">
+    <configuration name="Unittests for test_marketstats.TestShareLoader.test_all_stocks" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_all_stocks&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_edgar_utils.TestEdgarUtils.test_parse_form13f" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_marketstats.TestShareLoader.test_run_sample" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edgar_flow/tests" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_edgar_utils.TestEdgarUtils.test_parse_form13f&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_run_sample&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -275,19 +274,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13" />
-      <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_parse_form13f" />
       <item itemvalue="Python tests.Unittests for test_shareloader.TestShareLoader.test_get_prices" />
       <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_extract_data" />
       <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe" />
+      <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_all_stocks" />
+      <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_run_sample" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_run_sample" />
+        <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_all_stocks" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_extract_data" />
         <item itemvalue="Python tests.Unittests for test_shareloader.TestShareLoader.test_get_prices" />
-        <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_extractInfo_from_form13" />
-        <item itemvalue="Python tests.Unittests for test_edgar_utils.TestEdgarUtils.test_parse_form13f" />
       </list>
     </recent_temporary>
   </component>

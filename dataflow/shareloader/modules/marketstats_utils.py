@@ -19,7 +19,7 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
 
 def get_prices2(tpl, fmprepkey):
     try:
-        ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
+        ticker = tpl
         stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
                                                                                                    token=fmprepkey)
         historical_data = requests.get(stat_url).json()[0]
@@ -27,7 +27,7 @@ def get_prices2(tpl, fmprepkey):
                 historical_data['yearHigh'], historical_data['yearLow'],
                 0.0)
     except Exception as e :
-        logging.info('Excepiton for {}:{}'.format(tpl[0], str(e)))
+        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
         return None
 
 

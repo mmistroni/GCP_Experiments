@@ -72,6 +72,12 @@ def find_stocks_under10m(p):
 def find_stocks_alltime_high(p):
     pass
 
+def write_to_bigquery(p, sink, status):
+    return (p |
+              |)
+
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -80,13 +86,22 @@ def run(argv=None, save_main_session=True):
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
-    sink = beam.Map(lambda x: logging.info(x))#beam.io.WriteToText(destination, num_shards=1)
+    sink = beam.io.WriteToText(destination, num_shards=1)
+    bq_sink = beam.io.WriteToBigQuery(
+            bigquery.TableReference(
+                projectId="datascience-projects",
+                datasetId='gcp_shareloader',
+                tableId='mm_stock_picks'),
+            schema='AS_OF_DATE:STRING,TICKER:STRING,STATUS:STRING',
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
         all_data = load_all(tickers, pipeline_options.fmprepkey)
         filtered = filter_universe(all_data)
-        write_to_bucket(all_data, filtered)
+        write_to_bucket(filtered, sink)
 
         #universe = filter_universe(all_data)
 
