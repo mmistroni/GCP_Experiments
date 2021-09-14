@@ -72,10 +72,11 @@ def find_stocks_under10m(p):
 def find_stocks_alltime_high(p):
     pass
 
-def write_to_bigquery(p, sink, status):
-    return (p |
-              |)
-
+def write_to_bigquery(p, bq_sink, status):
+    return (p | 'Mapping Tuple' >> beam.Map(lambda d: (datetime.today().strftime('%Y-%m-%d'), d['ticker'], status))
+              | 'Mapping to BQ Dict' >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], TICKER=tpl[1], STATUS=tpl[2]))
+              | bq_sink 
+              )
 
 
 def run(argv=None, save_main_session=True):
@@ -102,6 +103,7 @@ def run(argv=None, save_main_session=True):
         all_data = load_all(tickers, pipeline_options.fmprepkey)
         filtered = filter_universe(all_data)
         write_to_bucket(filtered, sink)
+        write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
 
         #universe = filter_universe(all_data)
 
