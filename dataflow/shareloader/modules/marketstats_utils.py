@@ -10,6 +10,7 @@ def get_all_stocks(iexapikey):
     return all_stocks
 
 def get_all_us_stocks(token, security_type='cs', nasdaq=True):
+    logging.info('GEt All Us stocks..')
     all_dt = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(token)).json()
     us_stocks =  [d['symbol'] for d in all_dt if d['exchange'] in ["New York Stock Exchange", "Nasdaq Global Select"]]
     logging.info('Got:{} Stocks'.format(len(us_stocks)))
