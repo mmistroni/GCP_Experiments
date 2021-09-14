@@ -143,9 +143,6 @@ def reformat_for_custom_bucket(lines):
             
     )
 
-
-
-
 def find_current_day_url(sample):
     current_date = (datetime.now() - BDay(1))
     logging.info('Finding Edgar URL for {}  at:{}'.format(current_date, datetime.now().strftime('%Y-%m-%d')))
