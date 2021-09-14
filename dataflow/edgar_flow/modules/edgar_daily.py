@@ -125,12 +125,11 @@ def write_to_bigquery(lines):
             lines
             | 'Filtering Empty Tuples BQ' >> beam.Filter(lambda tpl: bool(tpl))
             | 'Mapping To Ticker BQ' >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], cusip_to_ticker(tpl[2]) ) )
-            
             | 'Map to BQ Compatible Dict BQ' >> beam.Map(lambda tpl: dict(COB=tpl[0],
                                                                        PERIODOFREPORT=tpl[1],
                                                                        CUSIP=tpl[2],
-                                                                       COUNT=int(tpl[3]),
-                                                                       TICKER=tpl[5],
+                                                                       COUNT=int(tpl[4]),
+                                                                       TICKER=tpl[3],
                                                                        ))
 
     )
