@@ -27,7 +27,7 @@ def get_prices2(tpl, fmprepkey):
                 historical_data['yearHigh'], historical_data['yearLow'],
                 0.0)
     except Exception as e :
-        print('Excepiton for {}:{}'.format(tpl[0], str(e)))
+        logging.info('Excepiton for {}:{}'.format(tpl, str(e)))
         return ()
 
 

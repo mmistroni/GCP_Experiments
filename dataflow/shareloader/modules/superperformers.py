@@ -20,6 +20,7 @@ from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data
+from apache_beam.io.gcp.internal.clients import bigquery
 
 
 class XyzOptions(PipelineOptions):
@@ -60,8 +61,27 @@ def extract_data_pipeline(p, input_file):
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
             )
 
-def find_canslim(p):
-    pass
+def canslim_filter(input_dict):
+    return (input_dict['avgVolume'] > 200000) and (input_dict['eps_growth_this_year'] > 0.2) and (input_dict['eps_growth_next_year'] > 0.2) \
+    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict['net_sales_qtr_over_qtr'] > 0.2) \
+    and (input_dict['eps_growth_past_5yrs'] > 0.2) and (input_dict['returnOnEquity'] > 0) \
+    and (input_dict['grossProfitMargin'] > 0) and (input_dict['institutionalHoldingsPercentage'] > 0.3) \
+    and (input_dict['price'] > input_dict['priceAvg20']) and (input_dict['price'] > input_dict['priceAvg50']) \
+    and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['sharesOutstanding'] > 50000000)
+
+def stocks_under_10m_filter(input_dict):
+    return (input_dict['marketCap'] < 10000000000) and (input_dict['avgVolume'] > 100000) \
+                            and (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0.25) \
+                            and (input_dict['eps_growth_qtr_over_qtr'] > 0.2) and  (input_dict['net_sales_qtr_over_qtr'] > 0.25) \
+                            and (input_dict['returnOnEquity'] > 0.15) and (input_dict['price'] > input_dict['priceAvg200'])
+
+def new_high_filter(input_dict):
+    return (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0) \
+                    and (input_dict['eps_growth_qtr_over_qtr'] > 0) and  (input_dict['net_sales_qtr_over_qtr'] > 0) \
+                    and (input_dict['returnOnEquity'] > 0) and (input_dict['price'] > input_dict['priceAvg20']) \
+                    and (input_dict['price'] > input_dict['priceAvg50']) \
+                    and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
+                    and (input_dict['changeFromOpen'] > 0) and (input_dict['price'] >= input_dict['allTimeHigh'])
 
 def find_leaf(p):
     pass
@@ -89,7 +109,7 @@ def run(argv=None, save_main_session=True):
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
     sink = beam.io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
-            bigquery.TableReference(
+             bigquery.TableReference(
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='mm_stock_picks'),
