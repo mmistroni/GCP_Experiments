@@ -266,5 +266,5 @@ def get_all_data(ticker, key):
         desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
         return desc_tech_dict
     except Exception as e:
-        print('Could not fetch data for :{}:{}'.format(ticker, str(e)))
+        logging.info('Could not fetch data for :{}:{}'.format(ticker, str(e)))
         return {'ticker' :ticker}
