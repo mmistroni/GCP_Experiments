@@ -245,6 +245,14 @@ def get_institutional_holders_quote(ticker, key):
         'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
     return {'institutionalHoldings': sum(d['shares'] for d in res)}
 
+def evaluate_progression(input):
+  if len(input)< 2:
+    return False
+  start = input[0:-1]
+  end = input[1:]
+  zipped = zip(start, end)
+  res = [(tpl[1] > tpl[0]) for tpl in zipped]
+  return all(res)
 
 def get_all_data(ticker, key):
     try:
@@ -258,5 +266,5 @@ def get_all_data(ticker, key):
         desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
         return desc_tech_dict
     except Exception as e:
-        logging.info('Could not fetch data for :{}'.format(ticker))
+        print('Could not fetch data for :{}:{}'.format(ticker, str(e)))
         return {'ticker' :ticker}
