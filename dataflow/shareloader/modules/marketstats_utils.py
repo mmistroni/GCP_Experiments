@@ -28,7 +28,7 @@ def get_prices2(tpl, fmprepkey):
                 0.0)
     except Exception as e :
         logging.info('Excepiton for {}:{}'.format(tpl, str(e)))
-        return None
+        return ()
 
 
 
