@@ -63,7 +63,7 @@ def extract_data_pipeline(p, input_file):
 
 def canslim_filter(input_dict):
     return (input_dict['avgVolume'] > 200000) and (input_dict['eps_growth_this_year'] > 0.2) and (input_dict['eps_growth_next_year'] > 0.2) \
-    and (input_dict['eps_growth_qtr_over_qtr'] > 0.2) and (input_dict['net_sales_qtr_over_qtr'] > 0.2) \
+    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict['net_sales_qtr_over_qtr'] > 0.2) \
     and (input_dict['eps_growth_past_5yrs'] > 0.2) and (input_dict['returnOnEquity'] > 0) \
     and (input_dict['grossProfitMargin'] > 0) and (input_dict['institutionalHoldingsPercentage'] > 0.3) \
     and (input_dict['price'] > input_dict['priceAvg20']) and (input_dict['price'] > input_dict['priceAvg50']) \
