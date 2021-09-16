@@ -31,14 +31,18 @@ class XyzOptions(PipelineOptions):
 
 
 def get_universe_filter(input_dict):
+    if (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2):
+        logging.info('Found one that passes filter:{}'.format(input_dict))
     return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
         and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
-            and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)\
-            and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
-            and (input_dict.get('grossProfitMargin', 0) > 0) \
-            and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
-            and (input_dict.get('price', 0) > input_dict.get('priceAvg50', 0)) \
-            and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))
+        and (input_dict.get('grossProfitMargin', 0) > 0) \
+        and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
+        and (input_dict.get('price', 0) > input_dict.get('priceAvg50', 0)) \
+        and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))  \
+        and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
+        and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)
+        
+        
 
 def write_to_bucket(lines, sink):
     return (
@@ -107,7 +111,7 @@ def run(argv=None, save_main_session=True):
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
-    sink = beam.io.WriteToText(destination, num_shards=1)
+    sink = beam.Map(logging.info)#io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
              bigquery.TableReference(
                 projectId="datascience-projects",
