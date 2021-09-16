@@ -7,9 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-    </list>
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -274,11 +272,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_run_sample" />
       <item itemvalue="Python tests.Unittests for test_edgar_daily.TestEdgarDailyPipeline.test_enhance_data" />
-      <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_loadall" />
-      <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
+      <item itemvalue="Python tests.Unittests for test_marketstats.TestShareLoader.test_run_sample" />
       <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe" />
+      <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
+      <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_loadall" />
     </list>
     <recent_temporary>
       <list>
