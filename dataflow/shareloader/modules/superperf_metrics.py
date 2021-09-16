@@ -18,7 +18,7 @@ def get_common_shares_outstanding(ticker, key):
     res2 = requests.get(
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
-    return [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
+    return [(d['date'], d.get('commonstocksharesoutstanding', 0)) for d in res2]
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
@@ -64,7 +64,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
     if res2:
-        lst = [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
+        lst = [(d['date'], d.get('commonstocksharesoutstanding', 0)) for d in res2]
         base_dict['sharesOutstandignHist'] = lst[0]
     else:
         base_dict['sharesOutstandigHist'] = 0
@@ -266,5 +266,5 @@ def get_all_data(ticker, key):
         desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
         return desc_tech_dict
     except Exception as e:
-        logging.info('Could not fetch data for :{}:{}'.format(ticker, str(e)))
+        print('Could not fetch data for :{}:{}'.format(ticker, str(e)))
         return {'ticker' :ticker}

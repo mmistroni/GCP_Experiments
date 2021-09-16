@@ -51,7 +51,7 @@ def load_all(source,fmpkey):
             )
 def filter_universe(data):
     return (data
-             | 'Filtering' >> beam.Filter(get_universe_filter)
+             | 'Filtering on Universe' >> beam.Filter(get_universe_filter)
             )
 
 def extract_data_pipeline(p, input_file):

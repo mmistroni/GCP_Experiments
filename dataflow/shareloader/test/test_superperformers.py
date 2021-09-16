@@ -41,10 +41,23 @@ class TestSuperPerformers(unittest.TestCase):
         sink = Check(equal_to([sample_data1]))
 
         with TestPipeline() as p:
+
             input = (p | 'Start' >> beam.Create([sample_data1]))
         res = filter_universe(input)
 
         res | sink
+
+    def test_mini_pipeline(self):
+        key = os.environ['FMPREPKEY']
+
+        printingSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry')]))
+            all_data = load_all(tickers, key)
+            filtered = filter_universe(all_data)
+            filtered | printingSink
+
 
 
 
