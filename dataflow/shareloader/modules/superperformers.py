@@ -74,12 +74,13 @@ def extract_data_pipeline(p, input_file):
     )
 
 def canslim_filter(input_dict):
-    return (input_dict['avgVolume'] > 200000) and (input_dict['eps_growth_this_year'] > 0.2) and (input_dict['eps_growth_next_year'] > 0.2) \
-    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict['net_sales_qtr_over_qtr'] > 0.2) \
-    and (input_dict['eps_growth_past_5yrs'] > 0.2) and (input_dict['returnOnEquity'] > 0) \
-    and (input_dict['grossProfitMargin'] > 0) and (input_dict['institutionalHoldingsPercentage'] > 0.3) \
-    and (input_dict['price'] > input_dict['priceAvg20']) and (input_dict['price'] > input_dict['priceAvg50']) \
-    and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['sharesOutstanding'] > 50000000)
+    return (input_dict.get('avgVolume',0) > 200000) and (input_dict.get('eps_growth_this_year',0) > 0.2)\
+         and (input_dict.get('eps_growth_next_year', 0) > 0.2) \
+    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict.get('net_sales_qtr_over_qtr',0) > 0.2) \
+    and (input_dict.get('eps_growth_past_5yrs',0) > 0.2) and (input_dict.get('returnOnEquity',0) > 0) \
+    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalHoldingsPercentage', 0) > 0.3) \
+    and (input_dict.get('price',0) > input_dict.get('priceAvg20', 0)) and (input_dict.get('price',0) > input_dict.get('priceAvg50',0)) \
+    and (input_dict.get('price', 0) > input_dict.get('priceAvg200',0)) and (input_dict.get('sharesOutstanding',0) > 50000000)
 
 def stocks_under_10m_filter(input_dict):
     return (input_dict['marketCap'] < 10000000000) and (input_dict['avgVolume'] > 100000) \
@@ -133,10 +134,12 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
         tickers | sink
-        #all_data = load_all(tickers, pipeline_options.fmprepkey)
-        #filtered = filter_universe(all_data)
-        #write_to_bucket(filtered, sink)
-        #write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
+        all_data = load_all(tickers, pipeline_options.fmprepkey)
+        filtered = filter_universe(all_data)
+        canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
+        write_to_bucket(filtered, sink)
+        write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
+        write_to_bigquery(canslim, bq_sink, 'CANSLIM')
 
         #universe = filter_universe(all_data)
 
