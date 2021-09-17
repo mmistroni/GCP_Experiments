@@ -18,7 +18,7 @@ import logging
 import apache_beam as beam
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
-
+import re
 
 class XyzOptions(PipelineOptions):
 
@@ -37,6 +37,7 @@ class GetAllTickers(beam.DoFn):
         exchange = d['exchange']
         symbol = d['symbol']
 
+
         return (stock_name is not None and stock_name.find('ETF') < 0 \
                     and stock_name.find('ETNF') < 0  and stock_name.find('Fund') <0) \
                     and stock_name.find('ProShares') < 0 \
@@ -45,7 +46,7 @@ class GetAllTickers(beam.DoFn):
 
     def get_all_tradables(self):
         all_symbols = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(self.fmprepkey)).json()
-        return   [(d['symbol'], d['name'], d['exchange']) for d in all_symbols if self._is_valid(d)]
+        return   [(d['symbol'], re.sub('[^\w\s]', '', d['name']), d['exchange']) for d in all_symbols if self._is_valid(d)]
 
     def process(self, item):
         return self.get_all_tradables()
@@ -59,7 +60,8 @@ def write_to_bucket(lines, sink):
 def get_industry(ticker, key):
     try:
         profile = requests.get('https://financialmodelingprep.com/api/v3/profile/{}?apikey={}'.format(ticker.upper(), key)).json()
-        return profile[0]['industry']
+        ind = profile[0]['industry']
+        return re.sub('[^\w\s]', '', ind)
     except Exception as e:
         print('Exceptoin:{}'.format(str(e)))
         return ''
@@ -77,7 +79,9 @@ class DeleteOriginal(beam.DoFn):
 def run_my_pipeline(p, key):
 	return (p
 			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
+             | 'Cleaning Stock Name' >> beam.Map(lambda tpl: (tpl[0], ))
              | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
+             | 'Adding asOfDate'     >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], date.today().strftime('%Y%m%d')))
              | 'Filtering out None and blankos' >> beam.Filter(lambda t : all(t))
              | 'Mapping to String'  >> beam.Map(lambda tpl: ','.join(tpl))
 			 )

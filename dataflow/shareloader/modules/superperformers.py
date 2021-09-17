@@ -31,9 +31,7 @@ class XyzOptions(PipelineOptions):
 
 
 def get_universe_filter(input_dict):
-    if (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2):
-        logging.info('Found one that passes filter:{}'.format(input_dict))
-    return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
+    res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
         and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
         and (input_dict.get('grossProfitMargin', 0) > 0) \
         and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
@@ -41,6 +39,14 @@ def get_universe_filter(input_dict):
         and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))  \
         and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
         and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)
+    
+    if res:
+        logging.info('Found one that passes filter:{}'.format(input_dict))
+        return True
+    else:
+        return False        
+
+
         
         
 
@@ -59,11 +65,13 @@ def filter_universe(data):
             )
 
 def extract_data_pipeline(p, input_file):
+    logging.info('r?eadign from:{}'.format(input_file))
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(input_file)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
+            |  'Filtering only ones good enough' >> beam.Filter(lambda lst: len(lst)>=3)
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
-            )
+    )
 
 def canslim_filter(input_dict):
     return (input_dict['avgVolume'] > 200000) and (input_dict['eps_growth_this_year'] > 0.2) and (input_dict['eps_growth_next_year'] > 0.2) \
@@ -124,10 +132,11 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        all_data = load_all(tickers, pipeline_options.fmprepkey)
-        filtered = filter_universe(all_data)
-        write_to_bucket(filtered, sink)
-        write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
+        tickers | sink
+        #all_data = load_all(tickers, pipeline_options.fmprepkey)
+        #filtered = filter_universe(all_data)
+        #write_to_bucket(filtered, sink)
+        #write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
 
         #universe = filter_universe(all_data)
 
