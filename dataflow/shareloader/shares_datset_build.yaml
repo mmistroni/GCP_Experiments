@@ -4,7 +4,7 @@ steps:
     args:
       [ 'build'
       , '--tag=gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
-      , '--file=./dataflow/shareloader/Dockerfile_shareloader'
+      , '--file=./dataflow/shareloader/Dockerfile_sharedatasetloader'
       , './dataflow/shareloader'
       ]
     id: 'build-datloader-image'
