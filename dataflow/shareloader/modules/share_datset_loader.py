@@ -79,7 +79,6 @@ class DeleteOriginal(beam.DoFn):
 def run_my_pipeline(p, key):
 	return (p
 			 | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
-             | 'Cleaning Stock Name' >> beam.Map(lambda tpl: (tpl[0], ))
              | 'Mapping to Industry' >> beam.Map(lambda tpl: (tpl[0], tpl[1], get_industry(tpl[0], key)))
              | 'Adding asOfDate'     >> beam.Map(lambda tpl: (tpl[0], tpl[1], tpl[2], date.today().strftime('%Y%m%d')))
              | 'Filtering out None and blankos' >> beam.Filter(lambda t : all(t))
