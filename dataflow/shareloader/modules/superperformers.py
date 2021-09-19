@@ -106,8 +106,8 @@ def find_stocks_alltime_high(p):
     pass
 
 def write_to_bigquery(p, bq_sink, status):
-    return (p | 'Mapping Tuple' >> beam.Map(lambda d: (datetime.today().strftime('%Y-%m-%d'), d['ticker'], status))
-              | 'Mapping to BQ Dict' >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], TICKER=tpl[1], STATUS=tpl[2]))
+    return (p | 'Mapping Tuple {}'.format(status) >> beam.Map(lambda d: (datetime.today().strftime('%Y-%m-%d'), d['ticker'], status))
+              | 'Mapping to BQ Dict {}'.format(status) >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], TICKER=tpl[1], STATUS=tpl[2]))
               | bq_sink 
               )
 
