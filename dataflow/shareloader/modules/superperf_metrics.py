@@ -256,6 +256,7 @@ def evaluate_progression(input):
 
 def get_all_data(ticker, key):
     try:
+        logging.info('Getting dat for ticker:{}. key:{}'.format(ticker ,key))
         desc_tech_dict = get_descriptive_and_technical(ticker, key)
         fund_dict = get_fundamental_parameters(ticker, key)
         inst_holders_dict = get_institutional_holders_quote(ticker, key)

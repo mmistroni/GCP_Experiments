@@ -58,6 +58,17 @@ class TestSuperPerformers(unittest.TestCase):
             filtered = filter_universe(all_data)
             filtered | printingSink
 
+    def test_getalldata(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry')]))
+            all_data = load_all(tickers, key)
+            all_data  | printingSink
+
+
+
 
 
 

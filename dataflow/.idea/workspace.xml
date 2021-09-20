@@ -10,7 +10,6 @@
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -213,7 +212,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_mini_pipeline">
+  <component name="RunManager" selected="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata">
     <configuration name="Unittests for test_edgar_daily.TestEdgarDailyPipeline.test_enhance_data" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -293,9 +292,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_mini_pipeline" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_filter_universe" />
-        <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_loadall" />
         <item itemvalue="Python tests.Unittests for test_edgar_daily.TestEdgarDailyPipeline.test_enhance_data" />
       </list>
