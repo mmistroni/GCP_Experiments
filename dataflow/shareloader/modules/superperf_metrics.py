@@ -321,8 +321,8 @@ def get_all_data(ticker, key):
         desc_tech_dict.update(fund_dict)
         desc_tech_dict.update(inst_holders_dict)
         desc_tech_dict['institutionalHoldingsPercentage'] = desc_tech_dict['institutionalHoldings'] / desc_tech_dict[
-            'sharesOutstanding']
+            'sharesOutstanding'] if desc_tech_dict.get('sharesOutstanding', 0) > 0 else 0
         desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
         return desc_tech_dict
     except Exception as e:
-        print('Could not fetch data for :{}:{}'.format(ticker, str(e)))
+        logging.info('Could not fetch data for :{}:{}'.format(ticker, str(e)))
