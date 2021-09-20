@@ -56,7 +56,8 @@ def write_to_bucket(lines, sink):
 
 def load_all(source,fmpkey):
     return (source
-              | beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
+              | 'Getting All Data' >> beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
+              | ' Filtering out nones' >> beam.Filter(lambda d: d is not None)
             )
 def filter_universe(data):
     return (data

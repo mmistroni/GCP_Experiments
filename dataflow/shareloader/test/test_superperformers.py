@@ -62,6 +62,7 @@ class TestSuperPerformers(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         printingSink = beam.Map(print)
 
+        print('Key is:{}|'.format(key))
         with TestPipeline() as p:
             tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry')]))
             all_data = load_all(tickers, key)

@@ -8,17 +8,64 @@ import logging
 import statistics
 
 
+def get_historical_ttm(ticker, key, asOfDate):
+    all_incomes = requests.get(
+        'https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=40&apikey={}'.format(ticker,
+                                                                                                                key)).json()
+    all_bsheet = requests.get(
+        'https://financialmodelingprep.com/api/v3/balance-sheet-statement/{}?period=quarter&limit=40&apikey={}'.format(
+            ticker, key)).json()
+    all_incomes = filter_historical(all_incomes, asOfDate)[0:4]
+    all_bsheet = filter_historical(all_bsheet, asOfDate)[0:4]
+
+    ttm_netIncome = sum(d['netIncome'] for d in all_incomes)
+    ttm_stockholdersEquity = sum(d['totalStockholdersEquity'] for d in all_bsheet) / 4
+    print(
+        f'NetIncome:{ttm_netIncome}, stockholderEquity:{ttm_stockholdersEquity}, expectedROE:{ttm_netIncome / ttm_stockholdersEquity}')
+
+    fundamental_dict['financial_ratios_date'] = latest['date']
+    # https://financialmodelingprep.com/developer/docs/formula
+    # fundamental_dict['grossProfitMargin'] = latest.get('grossProfitMargin', 0)  #grossProfit/ revenue
+    # fundamental_dict['returnOnEquity'] = latest.get('returnOnEquity', 0)          #Net Income / stockHOlderEquity
+    # fundamental_dict['dividendPayoutRatio']= latest.get('dividendPayoutRatio', 0.0)
+    # fundamental_dict['dividendYield']= latest.get('dividendYield', 0.0)    # (dividendPaid / shareNumber) / price
+    # fundamental_dict['returnOnCapital'] = latest.get('returnOnCapitalEmployedTTM', 0) #ebit / (totalAsset - totalCurrentLiabilities)
+
+
+def evaluate_progression(input):
+    if len(input) < 2:
+        return False
+    start = input[0:-1]
+    end = input[1:]
+    zipped = zip(start, end)
+    res = [(tpl[1] > tpl[0]) for tpl in zipped]
+    return all(res)
+
+
+def get_form4_filings(ticker):
+    qry = "SELECT COB, TICKER, COUNT, PRICE  FROM `datascience-projects.gcp_edgar.form_4_daily_enhanced` WHERE TICKER = '{}' ".format(
+        ticker)
+    return get_bigquery_as_dataframe(qry)
+
+
+def get_form13_filings(ticker):
+    qry = "SELECT PERIODOFREPORT, SUM(COUNT) FROM `datascience-projects.gcp_edgar.form_13hf_daily_enhanced` WHERE TICKER = '{}' GROUP BY PERIODOFREPORT".format(
+        ticker)
+    return get_bigquery_as_dataframe(qry)
+
+
 def get_fmprep_historical(ticker, key):
     hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
     data = requests.get(hist_url).json()['historical']
     return data
 
 
-def get_common_shares_outstanding(ticker, key):
+def get_common_shares_outstanding(ticker):
+    key = getfmpkeys()
     res2 = requests.get(
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
-    return [(d['date'], d.get('commonstocksharesoutstanding', 0)) for d in res2]
+    return [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
@@ -54,6 +101,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         priceAvg20 = statistics.mean(all_prices[0:20])
         base_dict = dict((k, res[0][k]) for k in keys)
 
+    print('nearly dne')
     base_dict['priceAvg20'] = priceAvg20
     base_dict['allTimeHigh'] = all_time_high
     base_dict['allTimeLow'] = all_time_low
@@ -64,7 +112,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
     if res2:
-        lst = [(d['date'], d.get('commonstocksharesoutstanding', 0)) for d in res2]
+        lst = [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
         base_dict['sharesOutstandignHist'] = lst[0]
     else:
         base_dict['sharesOutstandigHist'] = 0
@@ -72,7 +120,8 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
     return base_dict
 
 
-def get_yearly_financial_ratios(ticker, key):
+def get_yearly_financial_ratios(ticker):
+    key = getfmpkeys()
     base_url = 'https://financialmodelingprep.com/api/v3/ratios-ttm/{}?apikey={}'.format(ticker.upper(), key)
     return requests.get(base_url).json()[0]
 
@@ -212,12 +261,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         financial_ratios = filter_historical(all_financial_ratios, asOfDate)
         latest = financial_ratios[0] if financial_ratios else {}
 
-        fundamental_dict['financial_ratios_date'] = latest['date']
-        fundamental_dict['grossProfitMargin'] = latest.get('grossProfitMargin', 0)
-        fundamental_dict['returnOnEquity'] = latest.get('returnOnEquity', 0)
-        fundamental_dict['dividendPayoutRatio'] = latest.get('dividendPayoutRatio', 0.0)
-        fundamental_dict['dividendYield'] = latest.get('dividendYield', 0.0)
-
+        all_data = get_historical_t
 
 
     else:
@@ -234,30 +278,44 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
 
     return fundamental_dict
 
+
 def get_shares_float(ticker, key):
+    # we might not have it. but for canslim it does not matter
     res = requests.get(
         'https://financialmodelingprep.com/api/v4/shares_float?symbol={}&apikey={}'.format(ticker, key)).json()
     return res[0]['floatShares'] if res else 0
 
 
-def get_institutional_holders_quote(ticker, key):
+def get_institutional_holders_quote(ticker, key, asOfDate=None):
+    # we need to be smarter here. only filter for results whose date is lessorequal the current date.
     res = requests.get(
         'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
-    return {'institutionalHoldings': sum(d['shares'] for d in res)}
+    if asOfDate:
+        iholders = filter_historical(res, asOfDate)
+    else:
+        iholders = res
+    return {'institutionalHoldings': sum(d['shares'] for d in iholders)}
 
-def evaluate_progression(input):
-  if len(input)< 2:
-    return False
-  start = input[0:-1]
-  end = input[1:]
-  zipped = zip(start, end)
-  res = [(tpl[1] > tpl[0]) for tpl in zipped]
-  return all(res)
+
+def get_institutional_holders_percentage(ticker, exchange):
+    import requests
+    import re
+    print('GEttign ihp for exchange:{}'.format(exchange))
+
+    str1 = requests.get(
+        'https://www.marketbeat.com/stocks/{}/{}/institutional-ownership/'.format(exchange, ticker.upper())).text
+    string_pattern = r"Institutional Ownership Percentage.*[\d]+\.[\d]+%<\/div>"
+    # compile string pattern to re.Pattern object
+    regex_pattern = re.compile(string_pattern)
+    res = regex_pattern.findall(str1)[0]
+    return float(res[res.find('strong>') + 7: res.rfind('%')])
+
 
 def get_all_data(ticker, key):
     try:
-        logging.info('Getting dat for ticker:{}. key:{}'.format(ticker ,key))
+        print('Getting descriptive')
         desc_tech_dict = get_descriptive_and_technical(ticker, key)
+        print('Getting fundamentan')
         fund_dict = get_fundamental_parameters(ticker, key)
         inst_holders_dict = get_institutional_holders_quote(ticker, key)
         desc_tech_dict.update(fund_dict)
@@ -267,5 +325,4 @@ def get_all_data(ticker, key):
         desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
         return desc_tech_dict
     except Exception as e:
-        logging.info('Could not fetch data for :{}:{}'.format(ticker, str(e)))
-        return {'ticker' :ticker, 'Exception' : str(e)}
+        print('Could not fetch data for :{}:{}'.format(ticker, str(e)))
