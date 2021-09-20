@@ -31,6 +31,8 @@ class XyzOptions(PipelineOptions):
 
 
 def get_universe_filter(input_dict):
+    logging.info('WE got data:{}'.format(input_dict))
+    
     res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
         and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
         and (input_dict.get('grossProfitMargin', 0) > 0) \
@@ -47,12 +49,9 @@ def get_universe_filter(input_dict):
         return False        
 
 
-        
-        
-
 def write_to_bucket(lines, sink):
     return (
-            lines | sink
+            lines | 'Writing to bucket' >> sink
     )
 
 def load_all(source,fmpkey):
@@ -108,7 +107,7 @@ def find_stocks_alltime_high(p):
 def write_to_bigquery(p, bq_sink, status):
     return (p | 'Mapping Tuple {}'.format(status) >> beam.Map(lambda d: (datetime.today().strftime('%Y-%m-%d'), d['ticker'], status))
               | 'Mapping to BQ Dict {}'.format(status) >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], TICKER=tpl[1], STATUS=tpl[2]))
-              | bq_sink 
+              | 'Writing to Sink for :{}'.format(status) >> bq_sink 
               )
 
 
@@ -133,13 +132,14 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        tickers | sink
         all_data = load_all(tickers, pipeline_options.fmprepkey)
+        all_data | sink
+        
         filtered = filter_universe(all_data)
-        canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
+        #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
         write_to_bucket(filtered, sink)
         write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
-        write_to_bigquery(canslim, bq_sink, 'CANSLIM')
+        #write_to_bigquery(canslim, bq_sink, 'CANSLIM')
 
         #universe = filter_universe(all_data)
 
