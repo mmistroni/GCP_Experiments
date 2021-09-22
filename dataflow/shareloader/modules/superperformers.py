@@ -48,6 +48,28 @@ def get_universe_filter(input_dict):
     else:
         return False        
 
+class FundamentalLoader(beam.DoFn):
+    def __init__(self, key) :
+        self.key = key
+    def process(self, elements):
+        logging.info('Attepmting to get fundamental data for all elements')
+        all_dt = []
+        for item in elements:
+            all_dt.append(get_fundamentals(item, self.key))
+        return all_dt
+
+
+class BaseLoader(beam.DoFn):
+    def __init__(self, key) :
+        self.key = key
+    def process(self, elements):
+        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
+        logging.info(elements[0:5])
+        all_dt = []
+        for ticker, _ in elements:
+            all_dt.append(get_all_data(ticker, self.key))
+        return all_dt
+
 
 def write_to_bucket(lines, sink):
     return (
@@ -56,10 +78,10 @@ def write_to_bucket(lines, sink):
 
 def load_all(source,fmpkey):
     return (source
-              | 'Mapping to get all the data' >>  beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
+              | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
               |'Filtering for the ones for which we have full data' >> beam.Filter(lambda d: d is not None)
-              #|'Adding Fundamentals' >> beam.Map(lambda d: get_fundamentals(d, fmpkey))
-              #|'Filtering for the ones with good fundamentals' >> beam.Filter(lambda d: d is not None)
+              |'Passing to Fundamental LOadder' >> beam.ParDo(FundamentalLoader(fmpkey))
+              |'Filtering again for good one' >> beam.Filter(lambda d: d is not None)
               
             )
 def filter_universe(data):
@@ -72,8 +94,8 @@ def extract_data_pipeline(p, input_file):
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(input_file)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
-            |  'Filtering only ones good enough' >> beam.Filter(lambda lst: len(lst)>=3)
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
+            
     )
 
 def canslim_filter(input_dict):
@@ -137,7 +159,7 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
         all_data = load_all(tickers, pipeline_options.fmprepkey)
-        all_data | sink
+        all_data  |'Sendig to sink' >> sink
         
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)

@@ -23,7 +23,7 @@ def get_historical_ttm(ticker, key, asOfDate):
     print(
         f'NetIncome:{ttm_netIncome}, stockholderEquity:{ttm_stockholdersEquity}, expectedROE:{ttm_netIncome / ttm_stockholdersEquity}')
 
-    fundamental_dict['financial_ratios_date'] = latest['date']
+    #fundamental_dict['financial_ratios_date'] = latest['date']
     # https://financialmodelingprep.com/developer/docs/formula
     # fundamental_dict['grossProfitMargin'] = latest.get('grossProfitMargin', 0)  #grossProfit/ revenue
     # fundamental_dict['returnOnEquity'] = latest.get('returnOnEquity', 0)          #Net Income / stockHOlderEquity
@@ -73,50 +73,10 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open']
-    if asOfDate:
-        hist_prices = get_fmprep_historical(ticker, key)
-        filtered_prices = filter_historical(hist_prices, asOfDate)
-        all_prices = [d['close'] for d in filtered_prices]
-        # we need to find all of these, historically
-        # 'marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding', 'yearHigh', 'yearLow', 'exchange', 'change', 'open'
-        # for avg volumne adn moving average, transform to datafrmae,c omput rolling means
-        # for year high, we filter data where date is >1 yr ago and we alculate high and low
-
-        # base_dict['priceAvg50'] = statistics.mean(all_prices[0:50]
-        # base_dict['priceAvg200'] = statistics.mean(all_prices[0:200]
-        # base_dict['price'] = all_prices[0]
-        # pe we can infer it from historica financial ratio {priceEarningsRatio}
-        # eps we dont need it as we fetch it already as part of other data
-        # marketcap = historical outstanding shares * stock price
-
-        # https://marketrealist.com/p/what-does-average-volume-mean-in-stocks/
-        all_time_high = max(all_prices)
-        all_time_low = min(all_prices)
-        priceAvg20 = statistics.mean(all_prices[0:20])
-    else:
-        #all_prices = [d['close'] for d in hist_prices]
-        #all_time_high = max(all_prices)
-        #all_time_low = min(all_prices)
-        priceAvg20 = -1#statistics.mean(all_prices[0:20])
-        base_dict = dict((k, res[0][k]) for k in keys)
-
     print('nearly dne')
     base_dict['priceAvg20'] = priceAvg20
-    base_dict['allTimeHigh'] = 0#all_time_high
-    base_dict['allTimeLow'] = 0#all_time_low
-    base_dict['weeks52High'] = 0#base_dict['yearHigh']
     base_dict['ticker'] = ticker
     base_dict['changeFromOpen'] = base_dict['price'] - base_dict['open']
-    '''
-    res2 = requests.get(
-        'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
-            ticker, key)).json()
-    if res2:
-        lst = [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
-        base_dict['sharesOutstandignHist'] = lst[0]
-    else:
-        base_dict['sharesOutstandigHist'] = 0
-    '''
     return base_dict
 
 
