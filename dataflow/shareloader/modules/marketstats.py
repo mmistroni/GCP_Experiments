@@ -77,6 +77,12 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--sendgridkey')
         #parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
+def retrieve_vix(p, key):
+    return (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')])
+             | 'Fetching VIX' >> beam.Map(lambda d: get_vix(key))
+             )
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -143,11 +149,6 @@ def run(argv=None, save_main_session=True):
 
     )
 
-
-    stats = (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')]))
-               | 'Fetching VIX' >> beam.Map(lambda d: get_vix(iexapi_key))
-               | 'Printint out' >> beam.Map(logging.info)
-               ) 
 
 
 
