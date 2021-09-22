@@ -58,8 +58,8 @@ def load_all(source,fmpkey):
     return (source
               | 'Mapping to get all the data' >>  beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
               |'Filtering for the ones for which we have full data' >> beam.Filter(lambda d: d is not None)
-              |'Adding Fundamentals' >> beam.Map(lambda d: get_fundamentals(d, fmpkey))
-              |'Filtering for the ones with good fundamentals' >> beam.Filter(lambda d: d is not None)
+              #|'Adding Fundamentals' >> beam.Map(lambda d: get_fundamentals(d, fmpkey))
+              #|'Filtering for the ones with good fundamentals' >> beam.Filter(lambda d: d is not None)
               
             )
 def filter_universe(data):
