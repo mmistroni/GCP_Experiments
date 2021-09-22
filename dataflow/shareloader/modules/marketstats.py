@@ -4,6 +4,12 @@ import argparse
 import logging
 import re
 
+from bs4 import BeautifulSoup# Move to aJob
+import requests
+from itertools import chain
+from apache_beam.io.gcp.internal.clients import bigquery
+
+import requests
 from past.builtins import unicode
 from datetime import datetime
 import apache_beam as beam
@@ -20,7 +26,7 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2
+                            combine_movers,get_prices2, get_vix
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -80,6 +86,17 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     p = beam.Pipeline(options=pipeline_options)
 
+    bq_sink = beam.io.WriteToBigQuery(
+             bigquery.TableReference(
+                projectId="datascience-projects",
+                datasetId='gcp_shareloader',
+                tableId='market_stats'),
+            schema='AS_OF_DATE:STRING,LABEL:STRING,VALUE:STRING',
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
+
+
     iexapi_key = pipeline_options.key
     logging.info(pipeline_options.get_all_options())
     current_dt = datetime.now().strftime('%Y%m%d-%H%M')
@@ -125,6 +142,13 @@ def run(argv=None, save_main_session=True):
 
 
     )
+
+
+    stats = (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')]))
+               | 'Fetching VIX' >> beam.Map(lambda d: get_vix(iexapi_key))
+               | 'Printint out' >> beam.Map(logging.info)
+               ) 
+
 
 
     p.run()

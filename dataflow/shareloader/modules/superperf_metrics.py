@@ -26,9 +26,8 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open']
-
-    hist_prices = get_fmprep_historical(ticker, key)
     if asOfDate:
+        hist_prices = get_fmprep_historical(ticker, key)
         filtered_prices = filter_historical(hist_prices, asOfDate)
         all_prices = [d['close'] for d in filtered_prices]
         # we need to find all of these, historically
@@ -48,18 +47,19 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         all_time_low = min(all_prices)
         priceAvg20 = statistics.mean(all_prices[0:20])
     else:
-        all_prices = [d['close'] for d in hist_prices]
-        all_time_high = max(all_prices)
-        all_time_low = min(all_prices)
-        priceAvg20 = statistics.mean(all_prices[0:20])
+        #all_prices = [d['close'] for d in hist_prices]
+        #all_time_high = max(all_prices)
+        #all_time_low = min(all_prices)
+        priceAvg20 = -1#statistics.mean(all_prices[0:20])
         base_dict = dict((k, res[0][k]) for k in keys)
 
     base_dict['priceAvg20'] = priceAvg20
-    base_dict['allTimeHigh'] = all_time_high
-    base_dict['allTimeLow'] = all_time_low
-    base_dict['weeks52High'] = base_dict['yearHigh']
+    base_dict['allTimeHigh'] = 0#all_time_high
+    base_dict['allTimeLow'] = 0#all_time_low
+    base_dict['weeks52High'] = 0#base_dict['yearHigh']
     base_dict['ticker'] = ticker
     base_dict['changeFromOpen'] = base_dict['price'] - base_dict['open']
+    '''
     res2 = requests.get(
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
@@ -68,7 +68,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         base_dict['sharesOutstandignHist'] = lst[0]
     else:
         base_dict['sharesOutstandigHist'] = 0
-
+    '''
     return base_dict
 
 
@@ -255,17 +255,26 @@ def evaluate_progression(input):
   return all(res)
 
 def get_all_data(ticker, key):
+  try:
+    desc_tech_dict = get_descriptive_and_technical(ticker, key)
+    #fund_dict = get_fundamental_parameters(ticker, key)
+    #inst_holders_dict = get_institutional_holders_quote(ticker, key)
+    #desc_tech_dict.update(fund_dict)
+    #desc_tech_dict.update(inst_holders_dict)
+    #desc_tech_dict['institutionalHoldingsPercentage'] = desc_tech_dict['institutionalHoldings'] / desc_tech_dict['sharesOutstanding']
+    #desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
+    return desc_tech_dict
+  except Exception as e:
+    logging.info('Exception:Could not fetch data for :{}:{}'.format(ticker, str(e)))
+
+def get_fundamentals(input_dict, key):
+    ticker = input_dict['ticker']
     try:
-        logging.info('Getting dat for ticker:{}. key:{}'.format(ticker ,key))
-        desc_tech_dict = get_descriptive_and_technical(ticker, key)
+        # need to think different strategy for historical. perhaps we get it at the  bottom so that we only have few hundreds to fetch
+        #
         fund_dict = get_fundamental_parameters(ticker, key)
-        inst_holders_dict = get_institutional_holders_quote(ticker, key)
-        desc_tech_dict.update(fund_dict)
-        desc_tech_dict.update(inst_holders_dict)
-        desc_tech_dict['institutionalHoldingsPercentage'] = desc_tech_dict['institutionalHoldings'] / desc_tech_dict[
-            'sharesOutstanding']
-        desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
-        return desc_tech_dict
+        newd = input_dict.copy()
+        newd.update(fund_dict)
+        return newd
     except Exception as e:
-        logging.info('Could not fetch data for :{}:{}'.format(ticker, str(e)))
-        return {'ticker' :ticker, 'Exception' : str(e)}
+        logging.info('Failed to retrieve data for {}:{}'.format(ticker, str(e)))

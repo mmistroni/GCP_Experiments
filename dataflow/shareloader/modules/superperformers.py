@@ -19,7 +19,7 @@ import apache_beam as beam
 from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
-from .superperf_metrics import get_all_data
+from .superperf_metrics import get_all_data, get_fundamentals
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -56,7 +56,11 @@ def write_to_bucket(lines, sink):
 
 def load_all(source,fmpkey):
     return (source
-              | beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
+              | 'Mapping to get all the data' >>  beam.Map(lambda tpl: get_all_data(tpl[0], fmpkey))
+              |'Filtering for the ones for which we have full data' >> beam.Filter(lambda d: d is not None)
+              |'Adding Fundamentals' >> beam.Map(lambda d: get_fundamentals(d, fmpkey))
+              |'Filtering for the ones with good fundamentals' >> beam.Filter(lambda d: d is not None)
+              
             )
 def filter_universe(data):
     return (data
@@ -135,10 +139,10 @@ def run(argv=None, save_main_session=True):
         all_data = load_all(tickers, pipeline_options.fmprepkey)
         all_data | sink
         
-        filtered = filter_universe(all_data)
+        #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
-        write_to_bucket(filtered, sink)
-        write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
+        #write_to_bucket(filtered, sink)
+        #write_to_bigquery(filtered, bq_sink, 'UNIVERSE')
         #write_to_bigquery(canslim, bq_sink, 'CANSLIM')
 
         #universe = filter_universe(all_data)
