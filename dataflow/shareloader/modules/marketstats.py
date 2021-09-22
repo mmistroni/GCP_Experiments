@@ -144,7 +144,7 @@ def run(argv=None, save_main_session=True):
     )
 
 
-    stats = (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')]))
+    stats = (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')])
                | 'Fetching VIX' >> beam.Map(lambda d: get_vix(iexapi_key))
                | 'Printint out' >> beam.Map(logging.info)
                ) 
