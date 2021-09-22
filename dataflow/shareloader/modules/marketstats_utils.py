@@ -20,42 +20,52 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     logging.info('Got:{} Stocks'.format(len(us_stocks)))
     return us_stocks
 
-def get_putcall_ratios():
-  r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')
-  bs = BeautifulSoup(r.content, 'html.parser')
-  from itertools import chain
-  div_item = bs.find_all('div', {"id":"daily-market-stats-data"})[0]
-  ratios_table = div_item.find_all('table', {"class":"data-table--zebra"})[0]
+class PutCallRatio(beam.ParDo):
+    def get_putcall_ratios(self):
+        r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')
+        bs = BeautifulSoup(r.content, 'html.parser')
+        from itertools import chain
+        div_item = bs.find_all('div', {"id": "daily-market-stats-data"})[0]
+        ratios_table = div_item.find_all('table', {"class": "data-table--zebra"})[0]
 
-  data = [[item.text for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
+        data = [[item.text for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
 
-  return [tuple(lst) for lst in data if lst]
+        return [tuple(lst) for lst in data if lst]
 
-
-def process_pmi(ratios_table):
-  dt = [[item.text.strip() for item in row.find_all('th')] for row in ratios_table.find_all('thead')]
-  vals = [[item.text.strip() for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
-
-  keys = chain(*dt)
-  values = chain(*vals)
-  return dict((k,v) for k,v in zip(keys, values))
+    def process(self, element):
+        return self.get_putcall_ratios()
 
 
-def get_latest_pmi():
-  r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi')
-  bs = BeautifulSoup(r.content, 'html.parser')
-  div_item = bs.find_all('div', {"class":"panel panel-default table-responsive"})[0]
-  tbl =  div_item.find_all('table', {"class":"table"})[0]
-  return process_pmi(tbl)
+
+
+class PMI(beam.ParDo):
+
+    def process_pmi(self, ratios_table):
+        dt = [[item.text.strip() for item in row.find_all('th')] for row in ratios_table.find_all('thead')]
+        vals = [[item.text.strip() for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
+
+        keys = chain(*dt)
+        values = chain(*vals)
+        return dict((k, v) for k, v in zip(keys, values))
+
+    def get_latest_pmi(self):
+        r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi')
+        bs = BeautifulSoup(r.content, 'html.parser')
+        div_item = bs.find_all('div', {"class": "panel panel-default table-responsive"})[0]
+        tbl = div_item.find_all('table', {"class": "table"})[0]
+        return self.process_pmi(tbl)
+
+    def process(self, element):
+        return self.get_latest_pmi()
+
+
+
+
 
 def get_vix(key):
   base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
   print('Url is:{}'.format(base_url))
   return requests.get(base_url).json()[0]['price']
-
-print(f'Vix:{get_vix(getfmpkeys())}')
-print(f'PMI:{get_latest_pmi()}')
-print(get_putcall_ratios())
 
 
 
