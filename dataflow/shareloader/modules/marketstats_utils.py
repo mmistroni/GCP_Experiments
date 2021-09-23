@@ -20,7 +20,7 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     logging.info('Got:{} Stocks'.format(len(us_stocks)))
     return us_stocks
 
-class PutCallRatio(beam.ParDo):
+class PutCallRatio(beam.DoFn):
     def get_putcall_ratios(self):
         r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')
         bs = BeautifulSoup(r.content, 'html.parser')
@@ -36,9 +36,7 @@ class PutCallRatio(beam.ParDo):
         return self.get_putcall_ratios()
 
 
-
-
-class PMI(beam.ParDo):
+class ParsePMI(beam.DoFn):
 
     def process_pmi(self, ratios_table):
         dt = [[item.text.strip() for item in row.find_all('th')] for row in ratios_table.find_all('thead')]
@@ -56,10 +54,9 @@ class PMI(beam.ParDo):
         return self.process_pmi(tbl)
 
     def process(self, element):
-        return self.get_latest_pmi()
-
-
-
+        result = self.get_latest_pmi()
+        print('Result is :{}'.format(result))
+        return [result]
 
 
 def get_vix(key):

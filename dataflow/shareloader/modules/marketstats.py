@@ -26,7 +26,7 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2, get_vix
+                            combine_movers,get_prices2, get_vix, ParsePMI
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -82,6 +82,20 @@ def retrieve_vix(p, key):
              | 'Fetching VIX' >> beam.Map(lambda d: get_vix(key))
              )
 
+def run_pmi(p):
+    return (p | 'start' >> beam.Create(['20210101'])
+                    | 'pmi' >>   beam.ParDo(ParsePMI())
+                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
+            )
+
+def run_vix(p, key):
+    return (p | 'start' >> beam.Create(['20210101'])
+                    | 'vix' >>   beam.Map(lambda d: retrieve_vix(d, key))
+                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'VIX', 'VALUE' : d})
+            )
+
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -90,10 +104,56 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    p = beam.Pipeline(options=pipeline_options)
+    with beam.Pipeline(options=pipeline_options) as p:
 
-    bq_sink = beam.io.WriteToBigQuery(
-             bigquery.TableReference(
+        iexapi_key = pipeline_options.key
+        logging.info(pipeline_options.get_all_options())
+        current_dt = datetime.now().strftime('%Y%m%d-%H%M')
+        destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
+        donefile = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.done'
+
+        logging.info('====== Destination is :{}'.format(destination))
+        logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
+
+
+        prices = (p
+                 | 'Get List of Tickers' >> beam.Create(get_all_stocks(iexapi_key))
+                 | 'Getting Prices' >> beam.Map(lambda symbol: get_prices2(symbol, iexapi_key))
+                 | 'Filtering blanks' >> beam.Filter(lambda d: len(d) > 0)
+                 )
+        marketbreadth = (
+                prices
+                | 'Combine MarketBreadth Statistics' >> beam.CombineGlobally(MarketBreadthCombineFn())
+
+        )
+        above_52 = (
+                prices
+                | 'Find 52Week High' >> beam.Filter(is_above_52wk)
+                | 'Mapping Tickers1' >> beam.Map(lambda d: d[0])
+                | 'Combine Above' >> beam.CombineGlobally(combine_movers, label='Above 52wk high:')
+                | 'ADD Label' >> beam.Map(lambda txt: 'Above 52 wk:{}'.format(txt))
+                )
+
+        below_52 = (
+                prices
+                | 'Find 52Week Low' >> beam.Filter(is_below_52wk)
+                | 'Mapping Tickers2' >> beam.Map(lambda d: d[0])
+                | 'Combine Below' >> beam.CombineGlobally(combine_movers, label='Below 52wk low:')
+                | 'ADD Label2' >> beam.Map(lambda txt: 'Below 52 wk:{}'.format(txt))
+
+        )
+
+        final = (
+                (marketbreadth, above_52, below_52)
+                | 'FlattenCombine all' >> beam.Flatten()
+                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
+
+
+        )
+
+        bq_sink = beam.io.WriteToBigQuery(
+            bigquery.TableReference(
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='market_stats'),
@@ -101,61 +161,12 @@ def run(argv=None, save_main_session=True):
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
+        logging.info('Run pmi')
+        pmi_res = run_pmi(p)
+        pmi_res | 'Writing to bq' >> bq_sink
 
-
-    iexapi_key = pipeline_options.key
-    logging.info(pipeline_options.get_all_options())
-    current_dt = datetime.now().strftime('%Y%m%d-%H%M')
-    destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
-    donefile = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.done'
-
-    logging.info('====== Destination is :{}'.format(destination))
-    logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
-
-
-    prices = (p
-             | 'Get List of Tickers' >> beam.Create(get_all_stocks(iexapi_key))
-             | 'Getting Prices' >> beam.Map(lambda symbol: get_prices2(symbol, iexapi_key))
-             | 'Filtering blanks' >> beam.Filter(lambda d: len(d) > 0)
-             )
-    marketbreadth = (
-            prices
-            | 'Combine MarketBreadth Statistics' >> beam.CombineGlobally(MarketBreadthCombineFn())
-            
-    )
-    above_52 = (
-            prices
-            | 'Find 52Week High' >> beam.Filter(is_above_52wk)
-            | 'Mapping Tickers1' >> beam.Map(lambda d: d[0])
-            | 'Combine Above' >> beam.CombineGlobally(combine_movers, label='Above 52wk high:')
-            | 'ADD Label' >> beam.Map(lambda txt: 'Above 52 wk:{}'.format(txt))
-            )
-
-    below_52 = (
-            prices
-            | 'Find 52Week Low' >> beam.Filter(is_below_52wk)
-            | 'Mapping Tickers2' >> beam.Map(lambda d: d[0])
-            | 'Combine Below' >> beam.CombineGlobally(combine_movers, label='Below 52wk low:')
-            | 'ADD Label2' >> beam.Map(lambda txt: 'Below 52 wk:{}'.format(txt))
-
-    )
-
-    final = (
-            (marketbreadth, above_52, below_52)
-            | 'FlattenCombine all' >> beam.Flatten()
-            | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-            | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
-
-
-    )
-
-
-
-
-    p.run()
-
-    return
-
+        vix_res = run_vix(p, iexapi_key)
+        vix_res | 'vix to sink' >> bq_sink
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

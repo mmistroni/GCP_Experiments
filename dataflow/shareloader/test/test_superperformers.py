@@ -1,7 +1,7 @@
 
 import unittest
 from shareloader.modules.superperformers import load_all, filter_universe, extract_data_pipeline
-from shareloader.modules.superperf_metrics import get_all_data
+from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
@@ -23,14 +23,27 @@ class TestSuperPerformers(unittest.TestCase):
     def test_loadall(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            input = (p | 'Start' >> beam.Create([('TSCO', 'Something')]))
-            res = load_all(input, key)
+            def tickerCombiners(input):
+                return ','.join(input)
 
-            res | 'Printing out' >> beam.Map(print)
+            input = (p | 'Start' >> beam.Create([('TSCO', 'Something'), ('AAPL', 'somethingelse')])
+                       | 'Map to ticker' >> beam.Map(lambda tpl:tpl[0])
+                       | 'Combine' >> beam.CombineGlobally(tickerCombiners)
+                       | 'Print out' >> beam.Map(print)
+                     )
+            #res = load_all(input, key)
+
+            #res | 'Printing out' >> beam.Map(print)
 
     def test_getalldata(self):
         key = os.environ['FMPREPKEY']
         print(get_all_data('TSCO', key))
+
+    def test_getalldata2(self):
+        key = os.environ['FMPREPKEY']
+        from pprint import pprint
+        pprint(get_descriptive_and_technical('TSCO,AAPL', key))
+
 
 
     def test_filter_universe(self):
@@ -41,7 +54,6 @@ class TestSuperPerformers(unittest.TestCase):
         sink = Check(equal_to([sample_data1]))
 
         with TestPipeline() as p:
-
             input = (p | 'Start' >> beam.Create([sample_data1]))
         res = filter_universe(input)
 

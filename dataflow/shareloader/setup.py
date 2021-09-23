@@ -13,7 +13,8 @@ REQUIRED_PACKAGES = [
     'numpy',
     'bs4',
     'lxml',
-    'pandas_datareader'
+    'pandas_datareader',
+    'beautifulsoup4==4.10.0'
     ]
 
 

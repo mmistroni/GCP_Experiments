@@ -9,9 +9,14 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +218,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_pmi">
+  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_getalldata2">
     <configuration name="Python tests for test_marketstats.TestShareLoader.test_run_pmi" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -242,7 +247,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_getalldata2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -252,7 +257,21 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_getalldata2&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_loadall" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_loadall&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -270,34 +289,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_superperformers.TestSuperPerformers.test_mini_pipeline" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_mini_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
-      <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_mini_pipeline" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_vix" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_pmi" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_loadall" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_getalldata2" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_pmi" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_vix" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_getalldata2" />
         <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_getalldata" />
-        <item itemvalue="Python tests.Unittests for test_superperformers.TestSuperPerformers.test_mini_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_loadall" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_vix" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_run_pmi" />
       </list>
     </recent_temporary>
   </component>

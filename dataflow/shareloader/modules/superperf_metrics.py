@@ -61,7 +61,6 @@ def get_fmprep_historical(ticker, key):
 
 
 def get_common_shares_outstanding(ticker):
-    key = getfmpkeys()
     res2 = requests.get(
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
@@ -73,11 +72,8 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open']
-    print('nearly dne')
-    base_dict['priceAvg20'] = priceAvg20
-    base_dict['ticker'] = ticker
-    base_dict['changeFromOpen'] = base_dict['price'] - base_dict['open']
-    return base_dict
+
+    return [dict( (k,v) for k,v in d.items() if k in keys) for d in res   ]
 
 
 def get_yearly_financial_ratios(ticker, key):
@@ -95,16 +91,8 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     print('Getting data for:{}, offset={}'.format(ticker, asOfDate))
     fundamental_dict = {}
 
-    if asOfDate:
-        # finding Historical
-        all_income_statement = requests.get(
-            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=20&apikey={key}'.format(
-                ticker=ticker, key=key)).json()
-        filtered = filter_historical(all_income_statement, asOfDate)
-        income_statement = filtered[0:5]
-    else:
-        income_statement = requests.get(
-            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(
+    income_statement = requests.get(
+            'https://financialmodelingprep.com/api/v4/income-statement-bulk?year=2020&apikey=YOUR_API_KEY&period=annual?limit=5&apikey={key}'.format(
                 ticker=ticker, key=key)).json()
 
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..

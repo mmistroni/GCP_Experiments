@@ -5,9 +5,16 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
-from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, PMI,PutCallRatio
+from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio
 from shareloader.modules.marketstats import retrieve_vix
+from bs4 import  BeautifulSoup
+import requests
+from itertools import chain
 
+
+
+class ParseForm4(beam.DoFn):
+    pass
 
 class TestShareLoader(unittest.TestCase):
     def test_all_stocks(self):
@@ -33,9 +40,10 @@ class TestShareLoader(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
                  (p | 'start' >> beam.Create(['20210101'])
-                    | 'pmi' >>   beam.ParDo(PMI())
-                    | ' out' >> beam.Map(print)
-                  )
+                    | 'pmi' >>   beam.ParDo(ParsePMI())
+                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
+                    | 'out' >> beam.Map(print)
+                )
 
 
 

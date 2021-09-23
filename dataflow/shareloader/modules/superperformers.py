@@ -76,13 +76,14 @@ def write_to_bucket(lines, sink):
             lines | 'Writing to bucket' >> sink
     )
 
+def combine_tickers(input):
+    return ','.join(input)
+
+
 def load_all(source,fmpkey):
     return (source
+              | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
               | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
-              |'Filtering for the ones for which we have full data' >> beam.Filter(lambda d: d is not None)
-              |'Passing to Fundamental LOadder' >> beam.ParDo(FundamentalLoader(fmpkey))
-              |'Filtering again for good one' >> beam.Filter(lambda d: d is not None)
-              
             )
 def filter_universe(data):
     return (data
@@ -94,7 +95,7 @@ def extract_data_pipeline(p, input_file):
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(input_file)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
-            | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0], item[2]))
+            | 'Extracting only ticker and Industry' >> beam.Map(lambda item:(item[0]))
             
     )
 
