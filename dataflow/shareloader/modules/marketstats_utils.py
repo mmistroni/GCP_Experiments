@@ -61,8 +61,10 @@ class ParsePMI(beam.DoFn):
 
 def get_vix(key):
   base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
-  print('Url is:{}'.format(base_url))
-  return requests.get(base_url).json()[0]['price']
+  logging.info('Url is:{}'.format(base_url))
+  result =  requests.get(base_url).json()
+  logging.info('Result is:{}'.format(result))
+  return result[0]['price']
 
 
 

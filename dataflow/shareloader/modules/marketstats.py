@@ -77,21 +77,17 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--sendgridkey')
         #parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
-def retrieve_vix(p, key):
-    return (p | 'Starting Up' >> beam.Create([date.today().strftime('%Y-%m-%d')])
-             | 'Fetching VIX' >> beam.Map(lambda d: get_vix(key))
-             )
 
 def run_pmi(p):
-    return (p | 'start' >> beam.Create(['20210101'])
+    return (p | 'startstart' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
-                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
             )
 
 def run_vix(p, key):
     return (p | 'start' >> beam.Create(['20210101'])
-                    | 'vix' >>   beam.Map(lambda d: retrieve_vix(d, key))
-                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'VIX', 'VALUE' : d})
+                    | 'vix' >>   beam.Map(lambda d:  get_vix(key))
+                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
 
 
@@ -115,7 +111,7 @@ def run(argv=None, save_main_session=True):
         logging.info('====== Destination is :{}'.format(destination))
         logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
 
-
+        '''
         prices = (p
                  | 'Get List of Tickers' >> beam.Create(get_all_stocks(iexapi_key))
                  | 'Getting Prices' >> beam.Map(lambda symbol: get_prices2(symbol, iexapi_key))
@@ -151,7 +147,7 @@ def run(argv=None, save_main_session=True):
 
 
         )
-
+        '''
         bq_sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
                 projectId="datascience-projects",
