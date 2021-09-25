@@ -7,11 +7,27 @@ import requests
 from itertools import chain
 
 
+class InnerJoinerFn(beam.DoFn):
+    def __init__(self):
+        super(InnerJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        if left_key in right_dict:
+            print('Row is:{}'.format(row))
+            right = right_dict[left_key]
+            left.update(right)
+            yield (left_key, left)
+
+
 def get_all_stocks(iexapikey):
     logging.info('Getting all stocks')
     all_stocks =  get_all_us_stocks(iexapikey)
     logging.info('We got:{}'.format(len(all_stocks)))
     return all_stocks
+
 
 def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     logging.info('GEt All Us stocks..')
@@ -19,6 +35,21 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
     us_stocks =  [d['symbol'] for d in all_dt if d['exchange'] in ["New York Stock Exchange", "Nasdaq Global Select"]]
     logging.info('Got:{} Stocks'.format(len(us_stocks)))
     return us_stocks
+
+
+def get_all_us_stocks2(token, exchange):
+    logging.info('GEt All Us stocks..')
+    all_dt = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(token)).json()
+    us_stocks =  [d['symbol'] for d in all_dt if d['exchange']  == exchange] # ["New York Stock Exchange", "Nasdaq Global Select"]]
+    logging.info('Got:{} Stocks'.format(len(us_stocks)))
+    return us_stocks
+
+def get_all_prices_for_date(apikey, asOfDate):
+    import pandas as pd
+    bulkRequest = pd.read_csv(
+        'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date={}&apikey={}'.format(asOfDate, apikey),
+            header=0)
+    return bulkRequest.to_dict('records')
 
 class PutCallRatio(beam.DoFn):
     def get_putcall_ratios(self):
@@ -61,10 +92,8 @@ class ParsePMI(beam.DoFn):
 
 def get_vix(key):
   base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
-  logging.info('Url is:{}'.format(base_url))
-  result =  requests.get(base_url).json()
-  logging.info('Result is:{}'.format(result))
-  return result[0]['price']
+  print('Url is:{}'.format(base_url))
+  return requests.get(base_url).json()[0]['price']
 
 
 

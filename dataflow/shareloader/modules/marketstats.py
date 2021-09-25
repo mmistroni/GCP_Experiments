@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import argparse
 import logging
 import re
-
+from pandas.tseries.offsets import BDay
 from bs4 import BeautifulSoup# Move to aJob
 import requests
 from itertools import chain
@@ -26,7 +26,8 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2, get_vix, ParsePMI
+                            combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
+                            get_all_prices_for_date, InnerJoinerFn
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -89,6 +90,27 @@ def run_vix(p, key):
                     | 'vix' >>   beam.Map(lambda d:  get_vix(key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
+
+def run_nyse_pipeline(p, key):
+    all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, "New York Stock Exchange")))
+    asOfDate = (date.today() - BDay(1)).strftime('%Y-%m-%d')
+
+    dt = get_all_prices_for_date(key, asOfDate)
+    filtered = [(d['symbol'], d)  for d in dt]
+
+    tmp = [tpl[0] for tpl in all_us_stocks]
+    fallus = [tpl for tpl in filtered if tpl[0] in tmp]
+
+    pcoll1 = p | 'Create coll1' >> beam.Create(all_us_stocks)
+    pcoll2 = p | 'Create coll2' >> beam.Create(fallus)
+
+    return  (
+            pcoll1
+            | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
+                                                      right_list=beam.pvalue.AsIter(pcoll2))
+            | 'Display' >> beam.Map(print)
+    )
+
 
 
 
@@ -163,6 +185,9 @@ def run(argv=None, save_main_session=True):
 
         vix_res = run_vix(p, iexapi_key)
         vix_res | 'vix to sink' >> bq_sink
+
+        logging.info('Run NYSE..')
+        run_nyse_pipeline(p, iexapi_key)
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
