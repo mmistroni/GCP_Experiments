@@ -91,25 +91,42 @@ def run_vix(p, key):
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
 
-def run_nyse_pipeline(p, key):
-    all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, "New York Stock Exchange")))
-    asOfDate = (date.today() - BDay(1)).strftime('%Y-%m-%d')
+def run_exchange_pipeline(p, key, exchange):
+    all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
+    asOfDate = (date.today() - BDay(1)).date()
+    prevDate = (asOfDate.today() - BDay(1)).date()
 
-    dt = get_all_prices_for_date(key, asOfDate)
+
+
+    dt = get_all_prices_for_date(key, asOfDate.strftime('%Y-%m-%d'))
+    ydt = get_all_prices_for_date(key, prevDate.strftime('%Y-%m-%d'))
+
     filtered = [(d['symbol'], d)  for d in dt]
+    y_filtered = [(d['symbol'], {'prevClose': d['close']}) for d in ydt]
 
     tmp = [tpl[0] for tpl in all_us_stocks]
     fallus = [tpl for tpl in filtered if tpl[0] in tmp]
+    yfallus = [tpl for tpl in y_filtered if tpl[0] in tmp]
+
 
     pcoll1 = p | 'Create coll1' >> beam.Create(all_us_stocks)
     pcoll2 = p | 'Create coll2' >> beam.Create(fallus)
+    pcoll3 = p | 'Crete ydaycoll' >> beam.Create(yfallus)
+
+    pcollStocks = pcoll2 | 'Joining y' >> beam.ParDo(InnerJoinerFn(),
+                                                     right_list=beam.pvalue.AsIter(pcoll3))
 
     return  (
-            pcoll1
-            | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
-                                                      right_list=beam.pvalue.AsIter(pcoll2))
-            | 'Display' >> beam.Map(print)
-    )
+                    pcoll1
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(pcollStocks))
+                    | 'Map to flat tpl' >> beam.Map(lambda tpl: (tpl[0], tpl[1]['close'], tpl[1]['close'] - tpl[1]['prevClose']))
+                    | 'Combine MarketBreadth Statistics' >> beam.CombineGlobally(MarketBreadthCombineFn())
+                    | 'mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
+                                                        'LABEL' : 'NYSE_{}'.format(d[0:d.find(':')]),
+                                                       'VALUE' : d[d.rfind(':'):]})
+                    | 'out' >> beam.Map(print)
+            )
 
 
 
@@ -187,7 +204,12 @@ def run(argv=None, save_main_session=True):
         vix_res | 'vix to sink' >> bq_sink
 
         logging.info('Run NYSE..')
-        run_nyse_pipeline(p, iexapi_key)
+        nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
+        nyse | 'nyse to sink' >> bq_sink
+        logging.info('Run Nasdaq..')
+        nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
+        nasdaq | 'nasdaq to sink' >> bq_sink
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

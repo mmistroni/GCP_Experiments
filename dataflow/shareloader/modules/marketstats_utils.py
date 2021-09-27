@@ -16,7 +16,6 @@ class InnerJoinerFn(beam.DoFn):
         left_key = row[0]
         left = row[1]
         if left_key in right_dict:
-            print('Row is:{}'.format(row))
             right = right_dict[left_key]
             left.update(right)
             yield (left_key, left)
@@ -138,6 +137,7 @@ def is_below_52wk(input):
     return False
 
 class MarketBreadthCombineFn(beam.CombineFn):
+
   def create_accumulator(self):
     return (0.0, 0.0)
 
