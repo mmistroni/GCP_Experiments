@@ -109,23 +109,23 @@ def run_exchange_pipeline(p, key, exchange):
     yfallus = [tpl for tpl in y_filtered if tpl[0] in tmp]
 
 
-    pcoll1 = p | 'Create coll1' >> beam.Create(all_us_stocks)
-    pcoll2 = p | 'Create coll2' >> beam.Create(fallus)
-    pcoll3 = p | 'Crete ydaycoll' >> beam.Create(yfallus)
+    pcoll1 = p | f'Create coll1={exchange}' >> beam.Create(all_us_stocks)
+    pcoll2 = p | f'Create coll2={exchange}' >> beam.Create(fallus)
+    pcoll3 = p | f'Crete ydaycoll={exchange}' >> beam.Create(yfallus)
 
-    pcollStocks = pcoll2 | 'Joining y' >> beam.ParDo(InnerJoinerFn(),
+    pcollStocks = pcoll2 | f'Joining y{exchange}' >> beam.ParDo(InnerJoinerFn(),
                                                      right_list=beam.pvalue.AsIter(pcoll3))
 
     return  (
                     pcoll1
-                    | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
+                    | f'InnerJoiner: JoinValues {exchange}' >> beam.ParDo(InnerJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(pcollStocks))
-                    | 'Map to flat tpl' >> beam.Map(lambda tpl: (tpl[0], tpl[1]['close'], tpl[1]['close'] - tpl[1]['prevClose']))
-                    | 'Combine MarketBreadth Statistics' >> beam.CombineGlobally(MarketBreadthCombineFn())
-                    | 'mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
+                    | f'Map to flat tpl {exchange}' >> beam.Map(lambda tpl: (tpl[0], tpl[1]['close'], tpl[1]['close'] - tpl[1]['prevClose']))
+                    | f'Combine MarketBreadth Statistics {exchange}' >> beam.CombineGlobally(MarketBreadthCombineFn())
+                    | f'mapping {exchange}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
                                                         'LABEL' : 'NYSE_{}'.format(d[0:d.find(':')]),
                                                        'VALUE' : d[d.rfind(':'):]})
-                    | 'out' >> beam.Map(print)
+                    
             )
 
 
