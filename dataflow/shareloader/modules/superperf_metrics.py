@@ -261,7 +261,8 @@ def get_institutional_holders_percentage(ticker, exchange):
 def get_all_data(ticker, key):
   try:
     desc_tech_dict = get_descriptive_and_technical(ticker, key)
-    #fund_dict = get_fundamental_parameters(ticker, key)
+    fund_dict = get_fundamental_parameters(ticker, key)
+    desc_tech_dict.update(fund_dict)
     #inst_holders_dict = get_institutional_holders_quote(ticker, key)
     #desc_tech_dict.update(fund_dict)
     #desc_tech_dict.update(inst_holders_dict)
