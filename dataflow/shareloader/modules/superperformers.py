@@ -63,10 +63,9 @@ class BaseLoader(beam.DoFn):
     def __init__(self, key) :
         self.key = key
     def process(self, elements):
-        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
-        logging.info(elements[0:5])
+        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements.split(','))))
         all_dt = []
-        for ticker, _ in elements:
+        for ticker in elements.split(','):
             all_dt.append(get_all_data(ticker, self.key))
         return all_dt
 
