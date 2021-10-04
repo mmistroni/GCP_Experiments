@@ -66,6 +66,7 @@ class BaseLoader(beam.DoFn):
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements.split(','))))
         all_dt = []
         for ticker in elements.split(','):
+            logging.info('------- FEtchign data for:{} '.format(ticker))
             all_dt.append(get_all_data(ticker, self.key))
         return all_dt
 
@@ -83,6 +84,7 @@ def load_all(source,fmpkey):
     return (source
               | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
               | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
+              | 'Filtering out Nones' >> beam.Filter(lambda item: item is not None)
             )
 def filter_universe(data):
     return (data

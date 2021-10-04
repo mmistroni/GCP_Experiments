@@ -33,17 +33,6 @@ class TestSuperPerformers(unittest.TestCase):
 
             res | 'Printing out' >> beam.Map(print)
 
-    def test_getalldata(self):
-        key = os.environ['FMPREPKEY']
-        print(get_all_data('TSCO', key))
-
-    def test_getalldata2(self):
-        key = os.environ['FMPREPKEY']
-        from pprint import pprint
-        pprint(get_descriptive_and_technical('TSCO,AAPL', key))
-
-
-
     def test_filter_universe(self):
         key = os.environ['FMPREPKEY']
 
@@ -74,7 +63,10 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry')]))
+            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry'), ('AAPL', 'foo')])
+                         | 'Map ' >> beam.Map(lambda i: i[0])
+                         | 'Filter out Nones' >> beam.Filter(lambda item: item is not None)
+                       )
             all_data = load_all(tickers, key)
             all_data  | printingSink
 
