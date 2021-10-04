@@ -72,7 +72,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open']
-
+    print(res)
     return [dict( (k,v) for k,v in d.items() if k in keys) for d in res   ]
 
 
@@ -92,8 +92,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     fundamental_dict = {}
 
     income_statement = requests.get(
-            'https://financialmodelingprep.com/api/v4/income-statement-bulk?year=2020&apikey=YOUR_API_KEY&period=annual?limit=5&apikey={key}'.format(
-                ticker=ticker, key=key)).json()
+            'https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=4&apikey={}'.format(ticker, key)).json()
 
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
@@ -260,9 +259,10 @@ def get_institutional_holders_percentage(ticker, exchange):
 
 def get_all_data(ticker, key):
   try:
-    desc_tech_dict = get_descriptive_and_technical(ticker, key)
-    fund_dict = get_fundamental_parameters(ticker, key)
-    desc_tech_dict.update(fund_dict)
+    print('Get al data.t icker is:{}'.format(ticker))
+    #desc_tech_dict = get_descriptive_and_technical(ticker, key)
+    desc_tech_dict = get_fundamental_parameters(ticker, key)
+    #desc_tech_dict.update(fund_dict)
     #inst_holders_dict = get_institutional_holders_quote(ticker, key)
     #desc_tech_dict.update(fund_dict)
     #desc_tech_dict.update(inst_holders_dict)
@@ -270,7 +270,7 @@ def get_all_data(ticker, key):
     #desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
     return desc_tech_dict
   except Exception as e:
-    logging.info('Exception:Could not fetch data for :{}:{}'.format(ticker, str(e)))
+    print('Exception:Could not fetch data for :{}:{}'.format(ticker, str(e)))
 
 def get_fundamentals(input_dict, key):
     ticker = input_dict['ticker']

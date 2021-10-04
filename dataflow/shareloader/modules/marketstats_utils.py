@@ -5,6 +5,7 @@ from itertools import chain
 from bs4 import BeautifulSoup# Move to aJob
 import requests
 from itertools import chain
+from io import StringIO
 
 
 class InnerJoinerFn(beam.DoFn):
@@ -45,9 +46,10 @@ def get_all_us_stocks2(token, exchange):
 
 def get_all_prices_for_date(apikey, asOfDate):
     import pandas as pd
-    bulkRequest = pd.read_csv(
-        'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date={}&apikey={}'.format(asOfDate, apikey),
-            header=0)
+    url = 'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date={}&apikey={}'.format(asOfDate,
+                                                                                                        apikey)
+    s = requests.get(url).content
+    bulkRequest = pd.read_csv(StringIO(s.decode('utf-8')), header=0)
     return bulkRequest.to_dict('records')
 
 class PutCallRatio(beam.DoFn):
@@ -85,7 +87,6 @@ class ParsePMI(beam.DoFn):
 
     def process(self, element):
         result = self.get_latest_pmi()
-        print('Result is :{}'.format(result))
         return [result]
 
 

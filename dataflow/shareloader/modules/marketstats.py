@@ -178,14 +178,7 @@ def run(argv=None, save_main_session=True):
 
         )
 
-        final = (
-                (marketbreadth, above_52, below_52)
-                | 'FlattenCombine all' >> beam.Flatten()
-                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
-
-
-        )
+        
         '''
         bq_sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
@@ -209,6 +202,17 @@ def run(argv=None, save_main_session=True):
         logging.info('Run Nasdaq..')
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
+
+        final = (
+                (pmi_res, vix_res, nyse, nasdaq)
+                | 'FlattenCombine all' >> beam.Flatten()
+                | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
+
+        )
+
+
 
 
 if __name__ == '__main__':

@@ -26,14 +26,12 @@ class TestSuperPerformers(unittest.TestCase):
             def tickerCombiners(input):
                 return ','.join(input)
 
-            input = (p | 'Start' >> beam.Create([('TSCO', 'Something'), ('AAPL', 'somethingelse')])
-                       | 'Map to ticker' >> beam.Map(lambda tpl:tpl[0])
-                       | 'Combine' >> beam.CombineGlobally(tickerCombiners)
-                       | 'Print out' >> beam.Map(print)
+            input = (p | 'Start' >> beam.Create([('TSCO', 'Something')])
+                       | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
                      )
-            #res = load_all(input, key)
+            res = load_all(input, key)
 
-            #res | 'Printing out' >> beam.Map(print)
+            res | 'Printing out' >> beam.Map(print)
 
     def test_getalldata(self):
         key = os.environ['FMPREPKEY']

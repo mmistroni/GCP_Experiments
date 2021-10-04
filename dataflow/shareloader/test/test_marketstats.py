@@ -7,9 +7,10 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn
-from shareloader.modules.marketstats import run_vix, InnerJoinerFn
+from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi
 from bs4 import  BeautifulSoup
 import requests
+from io import StringIO
 from itertools import chain
 
 
@@ -45,16 +46,31 @@ class TestShareLoader(unittest.TestCase):
                     | 'out' >> beam.Map(print)
                 )
 
+    def test_pmi_and_vix(self):
+        key = os.environ['FMPREPKEY']
+        print(f'{key}|')
+        with TestPipeline() as p:
+            vix_result = run_vix(p, key)
+            pmi = run_pmi(p)
+
+            final = (
+                    (vix_result, pmi)
+                    | 'FlattenCombine all' >> beam.Flatten()
+                    | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                    | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                    |' rint out' >> beam.Map(print)
+
+            )
+
+
+
+
 
     def test_getallpricesfordate(self):
         import pandas as pd
         key = os.environ['FMPREPKEY']
-        asOfDate = date(2021, 9, 23).strftime('%Y-%m-%d')
-        bulkRequest = pd.read_csv(
-            'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date={}&apikey={}'.format(
-                asOfDate, key),
-            header=0)
-        print(bulkRequest[0:10].to_dict('records'))
+        asOfDate = date(2021, 9, 30).strftime('%Y-%m-%d')
+        print(get_all_prices_for_date(key, asOfDate)[0:20])
 
     def test_nyse_tickers(self):
         from pandas.tseries.offsets import BDay
@@ -91,8 +107,25 @@ class TestShareLoader(unittest.TestCase):
                     | 'mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
                                                         'LABEL' : 'NYSE_{}'.format(d[0:d.find(':')]),
                                                        'VALUE' : d[d.rfind(':'):]})
-                    | 'out' >> beam.Map(print)
+
             )
+            vix_result = run_vix(p, key)
+            pmi = run_pmi(p)
+
+            final = (
+                    (left_joined, vix_result, pmi)
+                    | 'FlattenCombine all' >> beam.Flatten()
+                    | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                    | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                    | ' rint out' >> beam.Map(print)
+
+            )
+
+    def test_another(self):
+        import pandas as pd
+        print(requests.get(
+            'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date=2021-09-23&apikey=79d4f398184fb636fa32ac1f95ed67e6').text)
+
 
 if __name__ == '__main__':
     unittest.main()
