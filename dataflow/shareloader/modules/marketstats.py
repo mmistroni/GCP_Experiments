@@ -94,7 +94,7 @@ def run_vix(p, key):
 def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
     asOfDate = (date.today() - BDay(1)).date()
-    prevDate = (asOfDate.today() - BDay(1)).date()
+    prevDate = (asOfDate - BDay(1)).date()
 
 
 

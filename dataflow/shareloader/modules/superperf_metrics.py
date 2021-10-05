@@ -121,6 +121,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         fundamental_dict['eps_progression'] = False
         fundamental_dict['eps_progression_detail'] = 'NA'
 
+    return fundamental_dict
     # THis depends on dates.
     analyst_estimates = requests.get(
         'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker,

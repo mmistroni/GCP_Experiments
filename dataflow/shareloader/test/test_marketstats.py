@@ -7,7 +7,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn
-from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi
+from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline
 from bs4 import  BeautifulSoup
 import requests
 from io import StringIO
@@ -122,9 +122,19 @@ class TestShareLoader(unittest.TestCase):
             )
 
     def test_another(self):
-        import pandas as pd
-        print(requests.get(
-            'https://financialmodelingprep.com/api/v4/batch-request-end-of-day-prices?date=2021-09-23&apikey=79d4f398184fb636fa32ac1f95ed67e6').text)
+        iexapi_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
+            nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
+
+            final = (
+                    (nyse, nasdaq)
+                    | 'FlattenCombine all' >> beam.Flatten()
+                    | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                    | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                    | 'print outl' >> beam.Map(print)
+
+            )
 
 
 if __name__ == '__main__':
