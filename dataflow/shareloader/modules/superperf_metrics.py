@@ -94,6 +94,8 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     income_statement = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=4&apikey={}'.format(ticker, key)).json()
 
+
+
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
     if len(income_statement) > 2:
@@ -115,12 +117,12 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
 
 
     else:
-        print('No income stmpt for :{}'.format(asOfDate))
+        logging.info('No income stmpt for :{}'.format(asOfDate))
         fundamental_dict['eps_growth_this_year'] = 0
         fundamental_dict['eps_growth_past_5yrs'] = 0
         fundamental_dict['eps_progression'] = False
         fundamental_dict['eps_progression_detail'] = 'NA'
-
+    logging.info('past income statement. getting analyst ratings')
     # THis depends on dates.
     analyst_estimates = requests.get(
         'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker,
@@ -136,10 +138,9 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     else:
         fundamental_dict['eps_growth_next_year'] = 0
 
-    return fundamental_dict
     # also add previous 3ys pe . previous quarters pe
 
-    
+
     if asOfDate:
         all_income_stmnt = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=40&apikey={key}'.format(
@@ -151,6 +152,8 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         income_stmnt = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
                 ticker=ticker, key=key)).json()
+
+    logging.info('past income statement.2 getting eps')
 
     if income_stmnt:
         # these measures are for the last quarter. so we need most recent data
@@ -187,6 +190,9 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             print('Setting tozero')
             fundamental_dict['eps_growth_qtr_over_qtr'] = 0
             fundamental_dict['net_sales_qtr_over_qtr'] = 0
+    logging.info('At the e before ttm metrics')
+    return fundamental_dict
+
     # Net Sales
     # same here
     # Financial ratios, w

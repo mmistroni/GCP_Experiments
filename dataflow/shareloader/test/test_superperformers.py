@@ -63,7 +63,8 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry'), ('AAPL', 'foo')])
+            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry'), ('ARR', 'foo'),
+                                                      ('ADAP', 'foo'), ('ATGE', 'foo')])
                          | 'Map ' >> beam.Map(lambda i: i[0])
                          | 'Filter out Nones' >> beam.Filter(lambda item: item is not None)
                        )
