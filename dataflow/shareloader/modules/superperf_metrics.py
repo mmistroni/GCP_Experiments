@@ -121,7 +121,6 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         fundamental_dict['eps_progression'] = False
         fundamental_dict['eps_progression_detail'] = 'NA'
 
-    return fundamental_dict
     # THis depends on dates.
     analyst_estimates = requests.get(
         'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker,
@@ -137,20 +136,10 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     else:
         fundamental_dict['eps_growth_next_year'] = 0
 
+    return fundamental_dict
     # also add previous 3ys pe . previous quarters pe
 
-    '''
-    else:
-      # https://groww.in/blog/how-to-assess-a-companys-growth-potential/
-      # Sustainable Growth Rate = Return on Equity x (1 – Dividend Payout Ratio)
-      print('Fetching historical...')
-      all_income_statement = requests.get('https://financialmodelingprep.com/api/v3/ratios/{ticker}?limit=20&apikey={key}'.format(ticker=ticker, key=key)).json()
-      filtered = filter_historical(all_income_statement, asOfDate)[0]
-      payoutRatio = filtered.get('dividendPayoutRatio', 0)
-      roe = filtered.get('returnOnEquity', 0)
-      fundamental_dict['eps_growth_next_year'] = roe * (1 - payoutRatio)
-    '''
-
+    
     if asOfDate:
         all_income_stmnt = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=40&apikey={key}'.format(
