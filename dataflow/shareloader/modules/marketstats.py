@@ -123,7 +123,7 @@ def run_exchange_pipeline(p, key, exchange):
                     | f'Map to flat tpl {exchange}' >> beam.Map(lambda tpl: (tpl[0], tpl[1]['close'], tpl[1]['close'] - tpl[1]['prevClose']))
                     | f'Combine MarketBreadth Statistics {exchange}' >> beam.CombineGlobally(MarketBreadthCombineFn())
                     | f'mapping {exchange}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
-                                                        'LABEL' : 'NYSE_{}'.format(d[0:d.find(':')]),
+                                                        'LABEL' : '{}_{}'.format(exchange.upper(), d[0:d.find(':')]),
                                                        'VALUE' : d[d.rfind(':'):]})
                     
             )
