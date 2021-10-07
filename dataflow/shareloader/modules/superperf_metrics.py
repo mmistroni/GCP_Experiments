@@ -88,7 +88,7 @@ def filter_historical(statements, asOfDate):
 
 
 def get_fundamental_parameters(ticker, key, asOfDate=None):
-    print('Getting data for:{}, offset={}'.format(ticker, asOfDate))
+    logging.info('XXXXGetting data for:{}, offset={}'.format(ticker, asOfDate))
     fundamental_dict = {}
 
     income_statement = requests.get(
