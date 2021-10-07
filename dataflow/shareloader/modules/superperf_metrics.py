@@ -94,7 +94,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     income_statement = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=4&apikey={}'.format(ticker, key)).json()
 
-
+    logging.info('Income statement is:{}'.format(income_statement))
 
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
