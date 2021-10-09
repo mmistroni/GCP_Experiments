@@ -42,16 +42,6 @@ def evaluate_progression(input):
     return all(res)
 
 
-def get_form4_filings(ticker):
-    qry = "SELECT COB, TICKER, COUNT, PRICE  FROM `datascience-projects.gcp_edgar.form_4_daily_enhanced` WHERE TICKER = '{}' ".format(
-        ticker)
-    return get_bigquery_as_dataframe(qry)
-
-
-def get_form13_filings(ticker):
-    qry = "SELECT PERIODOFREPORT, SUM(COUNT) FROM `datascience-projects.gcp_edgar.form_13hf_daily_enhanced` WHERE TICKER = '{}' GROUP BY PERIODOFREPORT".format(
-        ticker)
-    return get_bigquery_as_dataframe(qry)
 
 
 def get_fmprep_historical(ticker, key):
@@ -60,7 +50,7 @@ def get_fmprep_historical(ticker, key):
     return data
 
 
-def get_common_shares_outstanding(ticker):
+def get_common_shares_outstanding(ticker, key):
     res2 = requests.get(
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
@@ -255,7 +245,7 @@ def get_institutional_holders_percentage(ticker, exchange):
 
 def get_all_data(ticker, key):
   try:
-    print('Get al data.t icker is:{}'.format(ticker))
+    logging.info('Get al data.t icker is:{}'.format(ticker))
     #desc_tech_dict = get_descriptive_and_technical(ticker, key)
     desc_tech_dict = get_fundamental_parameters(ticker, key)
     #desc_tech_dict.update(fund_dict)

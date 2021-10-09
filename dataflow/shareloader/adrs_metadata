@@ -1,0 +1,21 @@
+{
+  "name": "NewsReader",
+  "description": "An template for running news loader.",
+  "parameters": [
+    {
+      "name": "recipients",
+      "helpText": "mail recipients",
+      "label": "recipients"
+    },
+    {
+      "name": "key",
+      "helpText": "send grid api key",
+      "label": "sendgrid_api_key"
+    },
+    {
+      "name": "fmprepkey",
+      "helpText": "fmprepkey",
+      "label": "fmprepkey"
+    }
+  ]
+}
