@@ -96,14 +96,13 @@ def combine_to_html_rows(elements):
 
 def find_diff(ticker, fmprepkey):
     quote_url = 'https://financialmodelingprep.com/api/v3/quote/{}?apikey={}'.format(ticker, fmprepkey)
-    logging.info('Get latest price for:{}'.format(quote_url))
-
     res = requests.get(quote_url).json()
     if res:
         item = res[0]
         key_fields = ['symbol','name',  'price', 'changesPercentage', 'open', 'previousClose']
-        return dict((k, v) for k, v in item.items() if k in key_fields)
-
+        data =  dict((k, v) for k, v in item.items() if k in key_fields)
+        logging.info('Data ias:{}'.format(data))
+        return data
 
 def run_my_pipeline(p, fmprepkey, filter_fun):
     return (p
