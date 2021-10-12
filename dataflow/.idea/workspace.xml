@@ -8,7 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stock_picks" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/run_stockpicks.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/stock_picks_build.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/stock_picks_metadata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_kor_isr_shareloader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -28,6 +28,7 @@ class TestKorIsrShareLoaderPipeline(unittest.TestCase):
 
     def test_run_my_pipeline(self):
         key = os.environ['FMPREPKEY']
+        print('KEY IS:{}'.format(key))
         filter_function = lambda d: d['changesPercentage'] > 2
         with beam.Pipeline() as p:
             result = (p | 'Start' >> beam.Create(['VEDL.NS', 'WIPRO.NS', '2378.HK',
