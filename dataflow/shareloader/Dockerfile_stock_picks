@@ -17,7 +17,7 @@ COPY stock_picks_main.py ${WORKDIR}/stock_picks_main.py
 
 # Super important to add these lines.
 ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/stock_picks_main.py.py"
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/stock_picks_main.py"
 
 
 RUN echo '----- listing workdir'
