@@ -1,19 +1,14 @@
 from __future__ import absolute_import
 import requests
 
-from datetime import date
 from pandas.tseries.offsets import BDay
 import logging
 from apache_beam.io.gcp.internal.clients import bigquery
 import apache_beam as beam
-from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from .bq_utils import get_table_schema, get_table_spec, map_to_bq_dict
 from datetime import date
-from .news_util import find_news_scores_for_ticker, df_to_dict, NewsEmailSender, combine_news, stringify_news, \
-            enhance_with_price
-from .bq_utils import get_news_table_schema, get_news_table_spec
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
