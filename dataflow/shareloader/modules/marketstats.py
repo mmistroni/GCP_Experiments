@@ -82,7 +82,7 @@ class XyzOptions(PipelineOptions):
 def run_pmi(p):
     return (p | 'startstart' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
             )
 
 def run_vix(p, key):

@@ -42,7 +42,7 @@ class TestShareLoader(unittest.TestCase):
         with TestPipeline() as p:
                  (p | 'start' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
-                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Actual']})
+                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
                     | 'out' >> beam.Map(print)
                 )
 
