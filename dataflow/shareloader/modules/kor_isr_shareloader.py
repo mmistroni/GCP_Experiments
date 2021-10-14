@@ -84,7 +84,7 @@ def extract_data_pipeline(p, input_file):
             )
 
 def map_ticker_to_html_string(tpl):
-    res =   ROW_TEMPLATE.format(tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], tpl[5])
+    res =   ROW_TEMPLATE.format(tpl[0], tpl[1], tpl[2], tpl[3], tpl[4], tpl[5]) if tpl else 'No data Found'
     logging.info('Mapped is:{}'.format(res))
     return res
 

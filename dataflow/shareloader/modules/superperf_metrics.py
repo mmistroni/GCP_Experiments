@@ -247,7 +247,7 @@ def get_all_data(ticker, key):
   try:
     logging.info('Get al data.t icker is:{}'.format(ticker))
     desc_tech_dict = get_descriptive_and_technical(ticker, key)
-    desc_tech_dict = get_fundamental_parameters(ticker, key)
+    #desc_tech_dict = get_fundamental_parameters(ticker, key)
     #desc_tech_dict.update(fund_dict)
     #inst_holders_dict = get_institutional_holders_quote(ticker, key)
     #desc_tech_dict.update(fund_dict)

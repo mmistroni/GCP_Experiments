@@ -80,11 +80,18 @@ def combine_tickers(input):
     return ','.join(input)
 
 
+def combine_dict(input):
+    return [d for d in input]
+
+
+
+
 def load_all(source,fmpkey):
     return (source
               | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
               | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
               | 'Filtering out Nones' >> beam.Filter(lambda item: item is not None)
+              | 'Combining to all dict' >> beam.CombineGlobally(combine_dict)
             )
 def filter_universe(data):
     return (data
