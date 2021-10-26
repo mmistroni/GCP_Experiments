@@ -19,7 +19,7 @@ import apache_beam as beam
 from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
-from .superperf_metrics import get_all_data, get_fundamentals
+from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -28,6 +28,12 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
+
+
+def get_descriptive_and_techincal_filter(input_dict):
+    return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
+                and (input_dict.get('price', 0) > 10)
+
 
 
 def get_universe_filter(input_dict):
@@ -48,17 +54,6 @@ def get_universe_filter(input_dict):
     else:
         return False        
 
-class FundamentalLoader(beam.DoFn):
-    def __init__(self, key) :
-        self.key = key
-    def process(self, elements):
-        logging.info('Attepmting to get fundamental data for all elements')
-        all_dt = []
-        for item in elements:
-            all_dt.append(get_fundamentals(item, self.key))
-        return all_dt
-
-
 class BaseLoader(beam.DoFn):
     def __init__(self, key) :
         self.key = key
@@ -66,10 +61,22 @@ class BaseLoader(beam.DoFn):
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements.split(','))))
         all_dt = []
         for ticker in elements.split(','):
-            logging.info('------- FEtchign data for:{} '.format(ticker))
-            all_dt.append(get_all_data(ticker, self.key))
+            ticker_data = get_descriptive_and_technical(ticker, self.key)
+            all_dt.append(ticker_data)
         return all_dt
 
+class FundamentalLoader(beam.DoFn):
+    def __init__(self, key) :
+        self.key = key
+    def process(self, elements):
+        print('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
+        print('All data is\n{}'.format(elements))
+        all_dt = []
+        for ticker in elements.split(','):
+            fundamental_data = get_fundamental_parameters(ticker, self.key)
+            if fundamental_data:
+                all_dt.append(fundamental_data)
+        return all_dt
 
 def write_to_bucket(lines, sink):
     return (
@@ -81,18 +88,26 @@ def combine_tickers(input):
 
 
 def combine_dict(input):
+    print('Combining {}'.format(input))
     return [d for d in input]
 
-
-
-
-def load_all(source,fmpkey):
+def load_base_data(source,fmpkey):
     return (source
               | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
               | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
               | 'Filtering out Nones' >> beam.Filter(lambda item: item is not None)
-              | 'Combining to all dict' >> beam.CombineGlobally(combine_dict)
+              | 'Filtering out descriptives' >> beam.Filter(get_descriptive_and_techincal_filter)
             )
+
+def load_fundamental_data(source,fmpkey):
+    return (source
+            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
+            | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
+            )
+
+
+
 def filter_universe(data):
     return (data
              | 'Filtering on Universe' >> beam.Filter(get_universe_filter)
@@ -167,8 +182,8 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        all_data = load_all(tickers, pipeline_options.fmprepkey)
-        all_data  |'Sendig to sink' >> sink
+        descriptive_data = load_base_data(tickers, pipeline_options.fmprepkey)
+        descriptive_data  |'Sendig to sink' >> sink
         
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
