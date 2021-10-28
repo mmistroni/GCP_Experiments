@@ -19,7 +19,8 @@ import apache_beam as beam
 from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
-from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical
+from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
+                                            get_financial_ratios
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -34,7 +35,10 @@ def get_descriptive_and_techincal_filter(input_dict):
     return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
                 and (input_dict.get('price', 0) > 10)
 
-
+def get_fundamental_filter(input_dict):
+    return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
+             and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
+             and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
 
 def get_universe_filter(input_dict):
     logging.info('WE got data:{}'.format(input_dict))
@@ -75,7 +79,10 @@ class FundamentalLoader(beam.DoFn):
         for ticker in elements.split(','):
             fundamental_data = get_fundamental_parameters(ticker, self.key)
             if fundamental_data:
-                all_dt.append(fundamental_data)
+                financial_ratios = get_financial_ratios(ticker, self.key)
+                if financial_ratios:
+                    fundamental_data.update(financial_ratios)
+                    all_dt.append(fundamental_data)
         return all_dt
 
 def write_to_bucket(lines, sink):
@@ -96,7 +103,7 @@ def load_base_data(source,fmpkey):
               | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
               | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
               | 'Filtering out Nones' >> beam.Filter(lambda item: item is not None)
-              | 'Filtering out descriptives' >> beam.Filter(get_descriptive_and_techincal_filter)
+              #| 'Filtering out descriptives' >> beam.Filter(get_descriptive_and_techincal_filter)
             )
 
 def load_fundamental_data(source,fmpkey):
@@ -104,6 +111,7 @@ def load_fundamental_data(source,fmpkey):
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
+            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
 
@@ -182,9 +190,10 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        descriptive_data = load_base_data(tickers, pipeline_options.fmprepkey)
-        descriptive_data  |'Sendig to sink' >> sink
-        
+        #descriptive_data = load_base_data(tickers, pipeline_options.fmprepkey)
+        #descriptive_data  |'Sendig to sink' >> sink
+        fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
+        fundamental_data  |'Sendig to sink' >> sink
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
         #write_to_bucket(filtered, sink)

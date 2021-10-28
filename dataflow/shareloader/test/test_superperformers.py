@@ -67,7 +67,7 @@ class TestSuperPerformers(unittest.TestCase):
                 return ','.join(input)
 
             input = (p | 'Start' >> beam.Create([('TSCO', 'Something'), ('MCD', 'Something'),
-                                                 ('MSFT', 'Something')])
+                                                 ('MSFT', 'Something'), ('KL', 'Something')])
                        | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
                      )
             res = load_base_data(input, key)
