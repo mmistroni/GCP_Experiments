@@ -152,9 +152,10 @@ def get_financial_ratios(ticker, key):
     financial_ratios = requests.get(
         'https://financialmodelingprep.com/api/v3/ratios-ttm/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
                                                                                                    key=key)).json()
-    latest = financial_ratios[0] if financial_ratios else {}
+    if financial_ratios:
+        latest = financial_ratios[0]
 
-    return dict(grossProfitMargin=latest.get('grossProfitMarginTTM', 0),
+        return dict(grossProfitMargin=latest.get('grossProfitMarginTTM', 0),
                 returnOnEquity=latest.get('returnOnEquityTTM', 0),
                 dividendPayoutRatio= latest.get('payoutRatioTTM', 0.0),
                 dividendYield=latest.get('dividendYielTTM', 0.0),
