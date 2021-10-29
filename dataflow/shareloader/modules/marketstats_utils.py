@@ -82,6 +82,8 @@ class ParsePMI(beam.DoFn):
         r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi')
         bs = BeautifulSoup(r.content, 'html.parser')
         div_item = bs.find_all('div', {"id":"ctl00_ContentPlaceHolder1_ctl00_ctl02_Panel1"})[0]
+
+
         tbl = div_item.find_all('table', {"class": "table"})[0]
         print('tbl is:{}'.format(tbl))
         return self.process_pmi(tbl)
