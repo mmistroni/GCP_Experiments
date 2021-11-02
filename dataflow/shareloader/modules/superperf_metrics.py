@@ -153,14 +153,17 @@ def get_financial_ratios(ticker, key):
         'https://financialmodelingprep.com/api/v3/ratios-ttm/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
                                                                                                    key=key)).json()
     if financial_ratios:
-        latest = financial_ratios[0]
+        try:
+            latest = financial_ratios[0]
 
-        return dict(grossProfitMargin=latest.get('grossProfitMarginTTM', 0),
-                returnOnEquity=latest.get('returnOnEquityTTM', 0),
-                dividendPayoutRatio= latest.get('payoutRatioTTM', 0.0),
-                dividendYield=latest.get('dividendYielTTM', 0.0),
-                returnOnCapital = latest.get('returnOnCapitalEmployedTTM', 0))
-
+            return dict(grossProfitMargin=latest.get('grossProfitMarginTTM', 0),
+                    returnOnEquity=latest.get('returnOnEquityTTM', 0),
+                    dividendPayoutRatio= latest.get('payoutRatioTTM', 0.0),
+                    dividendYield=latest.get('dividendYielTTM', 0.0),
+                    returnOnCapital = latest.get('returnOnCapitalEmployedTTM', 0))
+        except Exception as e:
+            logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
+            return {}
 
 def get_shares_float(ticker, key):
     # we might not have it. but for canslim it does not matter
