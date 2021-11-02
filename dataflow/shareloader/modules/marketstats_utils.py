@@ -89,8 +89,12 @@ class ParsePMI(beam.DoFn):
         return self.process_pmi(tbl)
 
     def process(self, element):
-        result = self.get_latest_pmi()
-        return [result]
+        try:
+            result = self.get_latest_pmi()
+            return [result]
+        except Exception as e:
+            logging.info('Failed to get PMI:{}'.format(str(e)))
+            return [{'Last' : 'N/A'}]
 
 
 def get_vix(key):
