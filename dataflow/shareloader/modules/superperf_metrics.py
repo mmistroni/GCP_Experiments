@@ -91,8 +91,8 @@ def get_fundamental_parameters_qtr(ticker,key):
         net_sales_lastqtr = income_stmnt[1]['revenue']  # EPS Growt qtr over qtr: > 20%
         qtr_fundamental_dict['income_statement_qtr_date'] = income_stmnt[0]['date']
         qtr_fundamental_dict['income_statement_qtr_date_prev'] = income_stmnt[1]['date']
-        sales = [stmnt['revenue'] / 1000 for stmnt in income_stmnt[::-1]]
-        eps_qtr = [stmnt['eps'] for stmnt in income_stmnt[::-1]]  # EPS Growt qtr over qtr: > 20%
+        sales = [stmnt.get('revenue', 0)/ 1000 for stmnt in income_stmnt[::-1]]
+        eps_qtr = [stmnt.get('eps', 0) for stmnt in income_stmnt[::-1]]  # EPS Growt qtr over qtr: > 20%
         randD = [stmnt.get('researchAndDevelopmentExpenses', 0) / 1000 for stmnt in income_stmnt[::-1]]
 
         qtr_fundamental_dict['researchAndDevelopmentExpenses_qtr'] = income_stmnt[0].get('researchAndDevelopmentExpenses')
