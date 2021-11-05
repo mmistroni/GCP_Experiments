@@ -141,7 +141,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         eps_prevyear = previous['eps']  # EPS Growth this year: 20%
         eps_5yrs_ago = data_5yrs_ago['eps']
         fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
-        fundamental_dict['eps_growth_past_5yrs'] = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 if eps_5yrs_ago > 0 else 0
+        fundamental_dict['eps_growth_past_5yrs'] = 0#pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 if eps_5yrs_ago > 0 else 0
 
         # Now we get the quarterl stats
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
