@@ -124,7 +124,7 @@ def run_exchange_pipeline(p, key, exchange):
                     | f'Combine MarketBreadth Statistics {exchange}' >> beam.CombineGlobally(MarketBreadthCombineFn())
                     | f'mapping {exchange}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
                                                         'LABEL' : '{}_{}'.format(exchange.upper(), d[0:d.find(':')]),
-                                                       'VALUE' : d[d.rfind(':'):]})
+                                                       'VALUE' : d[d.rfind(':')+1:]})
                     
             )
 
