@@ -14,10 +14,10 @@ from pandas.tseries.offsets import BDay
 def create_bigquery_ppln(p):
     cutoff_date = (date.today() - BDay(5)).date()
     logging.info('Cutoff is:{}'.format(cutoff_date))
-    edgar_sql = """SELECT E.TICKER,  SUM(COUNT) AS TOTAL_FILLS 
-FROM `datascience-projects.gcp_shareloader.market_stats` E 
-WHERE PARSE_DATE("%F", E.AS_OF_DATE) > PARSE_DATE("%F", '{cutoff}')
-ORDER BY PARSE_DATE("%F", E.AS_OF_DATE) ASC 
+    edgar_sql = """SELECT * FROM `datascience-projects.gcp_shareloader.market_stats` 
+WHERE PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "2021-10-25")
+AND LABEL="PMI"
+ORDER BY PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date.strftime('%Y-%m-%d') )
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | beam.io.Read(beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
