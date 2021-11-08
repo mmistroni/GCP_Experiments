@@ -186,14 +186,9 @@ def run(argv=None, save_main_session=True):
         nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
         pmibqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
 
-        final_stats = (
-                (vbqp, nysebqp, nasdaqbqp, pmibqp)
-                | 'FlattenCombine all' >> beam.Flatten()
-                | 'Mapping to String' >> beam.Map(lambda data: '{}@{}={}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
-                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'pRINTING OUT DATA' >> beam.Map(logging.info)
+        vbqp  | 'pRINTING OUT DATA' >> beam.Map(logging.info)
 
-        )
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
