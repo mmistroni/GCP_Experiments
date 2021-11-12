@@ -129,6 +129,14 @@ def run_exchange_pipeline(p, key, exchange):
             )
 
 
+def run_prev_dates_statistics(p) :
+    vbqp = create_bigquery_ppln(p, 'VIX')
+    #nysebqp = create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
+    #nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
+    #pmibqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
+
+    vbqp  | 'pRINTING OUT DATA' >> beam.Map(logging.info)
+
 
 
 
@@ -181,13 +189,8 @@ def run(argv=None, save_main_session=True):
                 | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
-        vbqp = create_bigquery_ppln(p, 'VIX')
-        nysebqp = create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
-        nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
-        pmibqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
-
-        vbqp  | 'pRINTING OUT DATA' >> beam.Map(logging.info)
-
+        logging.info('Running previous statistics...')
+        #run_prev_dates_statistics(p)
 
 
 if __name__ == '__main__':
