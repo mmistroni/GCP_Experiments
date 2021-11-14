@@ -131,11 +131,16 @@ def run_exchange_pipeline(p, key, exchange):
 
 def run_prev_dates_statistics(p) :
     vbqp = create_bigquery_ppln(p, 'VIX')
-    #nysebqp = create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
-    #nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
-    #pmibqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
+    nysebqp = create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
+    nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
+    pmibqp = create_bigquery_ppln(p, 'PMI')
 
-    vbqp  | 'pRINTING OUT DATA' >> beam.Map(logging.info)
+    final = (
+                (vbqp, nysebqp, nasdaqbqp, pmibqp)
+                | 'Combine all stats' >> beam.Flatten()
+                | 'Mappping' >> beam.Map(logging.info)
+                
+        )
 
 
 
@@ -152,6 +157,7 @@ def run(argv=None, save_main_session=True):
         iexapi_key = pipeline_options.key
         logging.info(pipeline_options.get_all_options())
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
+        
         destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
         donefile = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.done'
 
@@ -189,8 +195,11 @@ def run(argv=None, save_main_session=True):
                 | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
+        
         logging.info('Running previous statistics...')
-        #run_prev_dates_statistics(p)
+        #
+
+        run_prev_dates_statistics(p)
 
 
 if __name__ == '__main__':

@@ -15,14 +15,12 @@ def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date))
     edgar_sql = """SELECT * FROM `datascience-projects.gcp_shareloader.market_stats` 
-WHERE PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")
-AND LABEL="PMI"
+WHERE LABEL="PMI"
 ORDER BY PARSE_DATE("%F", AS_OF_DATE) ASC 
-  """.format(cutoff=cutoff_date.strftime('%Y-%m-%d'))
+  """.format(cutoff=cutoff_date)
     logging.info('executing SQL :{}'.format(edgar_sql))
-    return (p | beam.io.Read(beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
-                  |'Printing Out what we got' >> beam.Map(logging.info)
-            )
+    return (p | 'Reading-{}'.format(label) >> beam.io.Read(beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+           )
 
 class InnerJoinerFn(beam.DoFn):
     def __init__(self):
