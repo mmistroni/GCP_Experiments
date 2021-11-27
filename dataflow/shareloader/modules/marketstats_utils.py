@@ -14,12 +14,13 @@ from pandas.tseries.offsets import BDay
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date))
-    edgar_sql = """SELECT * FROM `datascience-projects.gcp_shareloader.market_stats` 
-WHERE LABEL="PMI"
+    edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+WHERE LABEL="{label}"
 ORDER BY PARSE_DATE("%F", AS_OF_DATE) ASC 
-  """.format(cutoff=cutoff_date)
+  """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | 'Reading-{}'.format(label) >> beam.io.Read(beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+              
            )
 
 class InnerJoinerFn(beam.DoFn):

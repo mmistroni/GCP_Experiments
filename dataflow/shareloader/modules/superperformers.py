@@ -20,7 +20,7 @@ from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
-                                            get_financial_ratios
+                                            get_financial_ratios, get_fundamental_parameters_qtr
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -36,6 +36,8 @@ def get_descriptive_and_techincal_filter(input_dict):
                 and (input_dict.get('price', 0) > 10)
 
 def get_fundamental_filter(input_dict):
+    if not input_dict:
+        return False
     return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
              and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
              and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
@@ -79,10 +81,13 @@ class FundamentalLoader(beam.DoFn):
         for ticker in elements.split(','):
             fundamental_data = get_fundamental_parameters(ticker, self.key)
             if fundamental_data:
-                financial_ratios = get_financial_ratios(ticker, self.key)
-                if financial_ratios:
-                    fundamental_data.update(financial_ratios)
-                    all_dt.append(fundamental_data)
+                fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
+                if fundamental_qtr:
+                    fundamental_data.update(fundamental_qtr)                
+                    financial_ratios = get_financial_ratios(ticker, self.key)
+                    if financial_ratios:
+                        fundamental_data.update(financial_ratios)
+                all_dt.append(fundamental_data)
         return all_dt
 
 def write_to_bucket(lines, sink):

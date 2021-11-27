@@ -81,7 +81,7 @@ def get_fundamental_parameters_qtr(ticker,key):
         'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
             ticker=ticker, key=key)).json()
     qtr_fundamental_dict = {}
-    if income_stmnt:
+    if income_stmnt and len(income_stmnt) > 1:
         # these measures are for the last quarter. so we need most recent data
 
         eps_thisqtr = income_stmnt[0].get('eps', 0)  # EPS Growt qtr over qtr: > 20%
@@ -140,9 +140,15 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         eps_thisyear = latest['eps']  # EPS Growth this year: 20%
         eps_prevyear = previous['eps']  # EPS Growth this year: 20%
         eps_5yrs_ago = data_5yrs_ago['eps']
-        fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
-        fundamental_dict['eps_growth_past_5yrs'] = 0#pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 if eps_5yrs_ago > 0 else 0
-
+        if eps_prevyear > 0:
+            fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
+        else:
+            fundamental_dict['eps_growth_this_year'] = -1
+        if eps_5yrs_ago > 0:
+            complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 
+            fundamental_dict['eps_growth_past_5yrs'] = float(complex_n.real)
+        else:
+            fundamental_dict['eps_growth_past_5yrs'] = -1
         # Now we get the quarterl stats
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
         fundamental_dict.update(qtrly_fundamental_dict)
@@ -156,11 +162,11 @@ def get_financial_ratios(ticker, key):
         try:
             latest = financial_ratios[0]
 
-            return dict(grossProfitMargin=latest.get('grossProfitMarginTTM', 0),
-                    returnOnEquity=latest.get('returnOnEquityTTM', 0),
-                    dividendPayoutRatio= latest.get('payoutRatioTTM', 0.0),
-                    dividendYield=latest.get('dividendYielTTM', 0.0),
-                    returnOnCapital = latest.get('returnOnCapitalEmployedTTM', 0))
+            return dict(grossProfitMargin=0 if latest.get('grossProfitMarginTTM') is None else latest.get('grossProfitMarginTTM',
+                    returnOnEquity= 0 if latest.get('returnOnEquityTTM') is None else latest.get('returnOnEquityTTM'),
+                    dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
+                    dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
+                    returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('dividendYielTTM'))
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}

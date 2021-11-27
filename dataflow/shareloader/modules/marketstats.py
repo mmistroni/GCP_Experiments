@@ -129,21 +129,31 @@ def run_exchange_pipeline(p, key, exchange):
             )
 
 
+def see_what_is_inside(input):
+    logging.info('---- we got:{}'.format(input))
+
+
 def run_prev_dates_statistics(p) :
-    vbqp = create_bigquery_ppln(p, 'VIX')
-    nysebqp = create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
-    nasdaqbqp = create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
-    pmibqp = create_bigquery_ppln(p, 'PMI')
+    vbqp = (create_bigquery_ppln(p, 'VIX')
+            | 'map to tpl1' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+    )
+    nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
+               | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+    )
+    nasdaqbqp = (create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
+                 | 'map to tpl3' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+    )
+    pmibqp = (create_bigquery_ppln(p, 'PMI')
+                | 'map to tpl4' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+    )
 
-    final = (
+
+    return (
                 (vbqp, nysebqp, nasdaqbqp, pmibqp)
-                | 'Combine all stats' >> beam.Flatten()
-                | 'Mappping' >> beam.Map(logging.info)
+                | 'FlattenCombine all stats' >> beam.Flatten()
+                | 'Deduplicate stats' >>  beam.Distinct()                
+                )
                 
-        )
-
-
-
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -163,7 +173,7 @@ def run(argv=None, save_main_session=True):
 
         logging.info('====== Destination is :{}'.format(destination))
         logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
-
+        
         bq_sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
                 projectId="datascience-projects",
@@ -173,7 +183,9 @@ def run(argv=None, save_main_session=True):
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
+        
         logging.info('Run pmi')
+        
         pmi_res = run_pmi(p)
         pmi_res | 'Writing to bq' >> bq_sink
 
@@ -187,6 +199,8 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
+        statistics = run_prev_dates_statistics(p)
+
         final = (
                 (pmi_res, vix_res, nyse, nasdaq)
                 | 'FlattenCombine all' >> beam.Flatten()
@@ -196,11 +210,17 @@ def run(argv=None, save_main_session=True):
 
         )
         
+
+        statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
+
+        statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
+                                                       num_shards=1)
+    
+
+
         logging.info('Running previous statistics...')
-        #
-
-        run_prev_dates_statistics(p)
-
+        statistics | 'Printing out stats' >> statistics_sink
+        
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
