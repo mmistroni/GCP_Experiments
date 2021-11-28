@@ -162,7 +162,7 @@ def get_financial_ratios(ticker, key):
         try:
             latest = financial_ratios[0]
 
-            return dict(grossProfitMargin=0 if latest.get('grossProfitMarginTTM') is None else latest.get('grossProfitMarginTTM',
+            return dict(grossProfitMargin=0 if latest.get('grossProfitMarginTTM') is None else latest.get('grossProfitMarginTTM'),
                     returnOnEquity= 0 if latest.get('returnOnEquityTTM') is None else latest.get('returnOnEquityTTM'),
                     dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),

@@ -134,6 +134,7 @@ def see_what_is_inside(input):
 
 
 def run_prev_dates_statistics(p) :
+    # Need to amend the query to order by asofdate sc
     vbqp = (create_bigquery_ppln(p, 'VIX')
             | 'map to tpl1' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
     )
