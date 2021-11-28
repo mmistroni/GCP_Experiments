@@ -201,11 +201,10 @@ def run(argv=None, save_main_session=True):
         nasdaq | 'nasdaq to sink' >> bq_sink
 
         statistics = run_prev_dates_statistics(p)
-
         final = (
-                (pmi_res, vix_res, nyse, nasdaq)
+                (pmi_res, vix_res, nyse, nasdaq, statistics)
                 | 'FlattenCombine all' >> beam.Flatten()
-                | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 

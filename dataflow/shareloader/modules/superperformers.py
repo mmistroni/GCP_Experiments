@@ -116,7 +116,7 @@ def load_fundamental_data(source,fmpkey):
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
-            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
+            #| 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
 
