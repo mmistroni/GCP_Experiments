@@ -38,9 +38,10 @@ def get_descriptive_and_techincal_filter(input_dict):
 def get_fundamental_filter(input_dict):
     if not input_dict:
         return False
-    return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
-             and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
-             and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
+    #and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
+    return input_dict.get('grossProfitMargin', 0)        
+    #return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
+    #         and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
 
 def get_universe_filter(input_dict):
     logging.info('WE got data:{}'.format(input_dict))
@@ -116,7 +117,7 @@ def load_fundamental_data(source,fmpkey):
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
-            #| 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
+            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
 
