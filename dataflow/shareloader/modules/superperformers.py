@@ -20,7 +20,7 @@ from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
-                                            get_financial_ratios, get_fundamental_parameters_qtr
+                                            get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -39,9 +39,8 @@ def get_fundamental_filter(input_dict):
     if not input_dict:
         return False
     #and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
-    return input_dict.get('grossProfitMargin', 0)        
-    #return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
-    #         and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
+    return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
+             and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
 
 def get_universe_filter(input_dict):
     logging.info('WE got data:{}'.format(input_dict))
@@ -88,7 +87,8 @@ class FundamentalLoader(beam.DoFn):
                     financial_ratios = get_financial_ratios(ticker, self.key)
                     if financial_ratios:
                         fundamental_data.update(financial_ratios)
-                all_dt.append(fundamental_data)
+                updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
+                all_dt.append(updated_dict)
         return all_dt
 
 def write_to_bucket(lines, sink):
@@ -182,8 +182,8 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
-    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_universe_{}'.format(date.today().strftime('%Y-%m-%d'))
-    sink = beam.Map(logging.info)#io.WriteToText(destination, num_shards=1)
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_tester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
+    sink = beam.io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
              bigquery.TableReference(
                 projectId="datascience-projects",

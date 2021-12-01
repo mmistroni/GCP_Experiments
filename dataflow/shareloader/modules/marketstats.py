@@ -135,22 +135,14 @@ def see_what_is_inside(input):
 
 def run_prev_dates_statistics(p) :
     # Need to amend the query to order by asofdate sc
-    vbqp = (create_bigquery_ppln(p, 'VIX')
-            | 'map to tpl1' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+    vbqp = (p | beam.Create[('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')]
     )
     nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
                | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
     )
-    nasdaqbqp = (create_bigquery_ppln(p, 'NASDAQ GLOBAL SELECT_MARKET BREADTH')
-                 | 'map to tpl3' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
-    )
-    pmibqp = (create_bigquery_ppln(p, 'PMI')
-                | 'map to tpl4' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
-    )
-
-
+    
     return (
-                (vbqp, nysebqp, nasdaqbqp, pmibqp)
+                (vbqp, nysebqp)
                 | 'FlattenCombine all stats' >> beam.Flatten()
                 | 'Deduplicate stats' >>  beam.Distinct()                
                 )
@@ -219,7 +211,7 @@ def run(argv=None, save_main_session=True):
 
 
         logging.info('Running previous statistics...')
-        (statistics | 'Printing out stats' >> statistics_sink)
+        (statistics | 'Printing out stats' >> beam.Map(logging.info))
         
 
 if __name__ == '__main__':

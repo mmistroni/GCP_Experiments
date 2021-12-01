@@ -115,6 +115,19 @@ def get_fundamental_parameters_qtr(ticker,key):
     return qtr_fundamental_dict
 
 
+def get_analyst_estimates(ticker, key,  fundamental_dict):
+    analyst_estimates = requests.get('https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
+    # achievable. we just need to sort the date
+    year = date.today().year if not asOfDate else datetime.strptime(income_statement_date, '%Y-%m-%d').date().year
+    if analyst_estimates:
+        estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']][0]
+        fundamental_dict['eps_growth_next_year'] = estimateeps_next['estimatedEpsAvg'] 
+    else:
+        fundamental_dict['eps_growth_next_year'] = 0
+
+    return fundamental_dict
+
+
 
 def get_fundamental_parameters(ticker, key, asOfDate=None):
     fundamental_dict = {}
@@ -170,6 +183,8 @@ def get_financial_ratios(ticker, key):
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
+
+
 
 def get_shares_float(ticker, key):
     # we might not have it. but for canslim it does not matter
