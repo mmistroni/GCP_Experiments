@@ -120,9 +120,13 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
     # achievable. we just need to sort the date
     income_statement_date = fundamental_dict.get('income_statement_date', date.today())
     year = datetime.strptime(income_statement_date, '%Y-%m-%d').date().year
+    logging.info('getting estimates for {}@{}'.format(ticker, income_statement_date))
     if analyst_estimates:
-        estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']][0]
-        fundamental_dict['eps_growth_next_year'] = estimateeps_next['estimatedEpsAvg'] 
+        estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']]
+        if estimateeps_next:
+            fundamental_dict['eps_growth_next_year'] = estimateeps_next['estimatedEpsAvg'] 
+        else:
+            fundamental_dict['eps_growth_next_year'] = 0
     else:
         fundamental_dict['eps_growth_next_year'] = 0
 
