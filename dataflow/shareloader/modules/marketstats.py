@@ -135,7 +135,7 @@ def see_what_is_inside(input):
 
 def run_prev_dates_statistics(p) :
     # Need to amend the query to order by asofdate sc
-    vbqp = (p | beam.Create[('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')]
+    vbqp = (p | beam.Create([('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')])
     )
     nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
                | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))

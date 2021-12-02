@@ -87,7 +87,7 @@ class FundamentalLoader(beam.DoFn):
                     financial_ratios = get_financial_ratios(ticker, self.key)
                     if financial_ratios:
                         fundamental_data.update(financial_ratios)
-                updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
+                updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                 all_dt.append(updated_dict)
         return all_dt
 
