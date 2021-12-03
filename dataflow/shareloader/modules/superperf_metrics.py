@@ -124,7 +124,7 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
     if analyst_estimates:
         estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']]
         if estimateeps_next:
-            fundamental_dict['eps_growth_next_year'] = estimateeps_next['estimatedEpsAvg'] 
+            fundamental_dict['eps_growth_next_year'] = estimateeps_next[0]['estimatedEpsAvg'] 
         else:
             fundamental_dict['eps_growth_next_year'] = 0
     else:
@@ -140,8 +140,6 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     income_statement = requests.get(
         'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
                                                                                                          key=key)).json()
-    logging.info('Income statement is:{}'.format(income_statement))
-
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
     if len(income_statement) > 2:

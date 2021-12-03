@@ -75,8 +75,8 @@ class FundamentalLoader(beam.DoFn):
     def __init__(self, key) :
         self.key = key
     def process(self, elements):
-        print('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
-        print('All data is\n{}'.format(elements))
+        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
+        logging.info('All data is\n{}'.format(elements))
         all_dt = []
         for ticker in elements.split(','):
             fundamental_data = get_fundamental_parameters(ticker, self.key)
