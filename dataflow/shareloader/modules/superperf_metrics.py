@@ -64,6 +64,8 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
     if res:
         return dict( (k,v) for k,v in res[0].items() if k in keys)
+    else:
+        return dict((k, -1) for k in keys )
 
 
 def get_yearly_financial_ratios(ticker, key):

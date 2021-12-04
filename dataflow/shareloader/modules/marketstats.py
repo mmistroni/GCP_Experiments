@@ -212,7 +212,8 @@ def run(argv=None, save_main_session=True):
 
         logging.info('Running previous statistics...')
         (statistics | 'Printing out stats' >> beam.Map(logging.info))
-        
+        (statistics | 'Printing out to siknk' >> statistics_sink)
+            
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

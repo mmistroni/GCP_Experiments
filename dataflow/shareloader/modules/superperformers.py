@@ -32,15 +32,20 @@ class XyzOptions(PipelineOptions):
 
 
 def get_descriptive_and_techincal_filter(input_dict):
-    return (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
-                and (input_dict.get('price', 0) > 10)
+    if not input_dict:
+        return False
+    return (input_dict.get('marketCap') is not None and input_dict.get('marketCap') > 300000000) and \
+        (input_dict.get('avgVolume') is not None and input_dict.get('avgVolume') > 200000) \
+                and (input_dict.get('price') is not None and input_dict.get('price') > 10)
 
 def get_fundamental_filter(input_dict):
     if not input_dict:
         return False
-    #and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) \
+    # \
     return (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
-             and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2)
+             and (input_dict.get('grossProfitMargin', 0) > 0) and  (input_dict.get('eps_growth_this_year', 0) > 0.2) \
+             and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)    
+
 
 def get_universe_filter(input_dict):
     logging.info('WE got data:{}'.format(input_dict))
@@ -87,7 +92,10 @@ class FundamentalLoader(beam.DoFn):
                     financial_ratios = get_financial_ratios(ticker, self.key)
                     if financial_ratios:
                         fundamental_data.update(financial_ratios)
+                                            
                 updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
+                descr_and_tech = get_descriptive_and_technical(ticker, self.key)
+                updated_dict.update(descr_and_tech)
                 all_dt.append(updated_dict)
         return all_dt
 
@@ -104,19 +112,12 @@ def combine_dict(input):
     print('Combining {}'.format(input))
     return [d for d in input]
 
-def load_base_data(source,fmpkey):
-    return (source
-              | 'Combine all at once' >> beam.CombineGlobally(combine_tickers)
-              | 'Mapping to get all the data' >>  beam.ParDo(BaseLoader(fmpkey))
-              | 'Filtering out Nones' >> beam.Filter(lambda item: item is not None)
-              #| 'Filtering out descriptives' >> beam.Filter(get_descriptive_and_techincal_filter)
-            )
-
 def load_fundamental_data(source,fmpkey):
     return (source
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
+            | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)            
             | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
@@ -196,7 +197,6 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        #descriptive_data = load_base_data(tickers, pipeline_options.fmprepkey)
         #descriptive_data  |'Sendig to sink' >> sink
         fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
         fundamental_data  |'Sendig to sink' >> sink
