@@ -36,7 +36,12 @@ def get_descriptive_and_techincal_filter(input_dict):
         return False
     return (input_dict.get('marketCap') is not None and input_dict.get('marketCap') > 300000000) and \
         (input_dict.get('avgVolume') is not None and input_dict.get('avgVolume') > 200000) \
-                and (input_dict.get('price') is not None and input_dict.get('price') > 10)
+                and (input_dict.get('price') is not None and input_dict.get('price') > 10) \
+                and (input_dict.get('priceAvg50') is not None) and (input_dict.get('priceAvg200') is not None) \
+                and (input_dict.get('priceAvg20') is not None) \
+                and (input_dict.get('price') > input_dict.get('priceAvg20')) \
+                and (input_dict.get('price') > input_dict.get('priceAvg50')) \
+                and (input_dict.get('price') > input_dict.get('priceAvg200'))
 
 def get_fundamental_filter(input_dict):
     if not input_dict:
@@ -189,8 +194,8 @@ def run(argv=None, save_main_session=True):
              bigquery.TableReference(
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
-                tableId='mm_stock_picks'),
-            schema='AS_OF_DATE:STRING,TICKER:STRING,STATUS:STRING',
+                tableId='stock_selection'),
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
@@ -200,6 +205,13 @@ def run(argv=None, save_main_session=True):
         #descriptive_data  |'Sendig to sink' >> sink
         fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
         fundamental_data  |'Sendig to sink' >> sink
+
+        fundamental_data | 'Mapping only Relevant fields' | beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                    TICKER=d['symbol'],
+                                                                                    LABEL='STOCK_UNIVERSE'))
+                         | 'Writing to stock selection' | bq_sink
+
+
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
         #write_to_bucket(filtered, sink)

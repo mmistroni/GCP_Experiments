@@ -1,6 +1,7 @@
 from datetime import datetime, date
 import requests
 import logging
+import statistics
 
 # Criteria #1
 # ==== WATCH LIST ===
@@ -44,10 +45,12 @@ def evaluate_progression(input):
 
 
 
-def get_fmprep_historical(ticker, key):
+def get_fmprep_historical(ticker, key, numdays=20):
     hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
-    data = requests.get(hist_url).json()['historical']
-    return data
+    data = requests.get(hist_url).json().get('historical')
+    if data:
+        return [d['adjClose'] for d in data[numdays:]]
+    return [100000] * numdays
 
 
 def get_common_shares_outstanding(ticker, key):
@@ -63,7 +66,12 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
     if res:
-        return dict( (k,v) for k,v in res[0].items() if k in keys)
+        logging.info('Getting historicla prices')
+        hist_prices = get_fmprep_historical(ticker, key)
+        priceAvg20 = statistics.mean(hist_prices)
+        descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
+        descriptive_dict['priceAvg20'] = priceAvg20
+        return descriptive_dict
     else:
         return dict((k, -1) for k in keys )
 
