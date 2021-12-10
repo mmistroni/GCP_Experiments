@@ -206,10 +206,10 @@ def run(argv=None, save_main_session=True):
         fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
         fundamental_data  |'Sendig to sink' >> sink
 
-        (fundamental_data | 'Mapping only Relevant fields' | beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+        (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                     TICKER=d['symbol'],
                                                                                     LABEL='STOCK_UNIVERSE'))
-                         | 'Writing to stock selection' | bq_sink)
+                         | 'Writing to stock selection' >> bq_sink)
 
 
         #filtered = filter_universe(all_data)
