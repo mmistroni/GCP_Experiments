@@ -2,18 +2,25 @@ import os
 import unittest
 from shareloader.modules.marketstats_utils import get_all_stocks
 import apache_beam as beam
-from apache_beam.testing.util import assert_that, equal_to
+from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
-                        get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn
+                        get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
+                        ParseManufacturingPMI
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline
 from bs4 import  BeautifulSoup
 import requests
 from io import StringIO
 from itertools import chain
 
+class Check(beam.PTransform):
+    def __init__(self, checker):
+      self._checker = checker
 
+    def expand(self ,pcoll):
+      print('Invoking sink....')
+      assert_that(pcoll, self._checker)
 
 
 class TestShareLoader(unittest.TestCase):
@@ -39,12 +46,27 @@ class TestShareLoader(unittest.TestCase):
 
     def test_run_pmi(self):
         key = os.environ['FMPREPKEY']
+
+        sink = Check(is_not_empty())
+
         with TestPipeline() as p:
                  (p | 'start' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
                     | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
-                    | 'out' >> beam.Map(print)
+                    | 'out' >> sink
                 )
+
+    def test_run_manuf_pmi(self):
+        key = os.environ['FMPREPKEY']
+        sink = Check(is_not_empty())
+
+        with TestPipeline() as p:
+                 (p | 'start' >> beam.Create(['20210101'])
+                    | 'pmi' >>   beam.ParDo(ParseManufacturingPMI())
+                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
+                    | 'out' >> sink
+                )
+
 
     def test_pmi_and_vix(self):
         key = os.environ['FMPREPKEY']

@@ -27,7 +27,8 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
                             combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
-                            get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln
+                            get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
+                            ParseManufacturingPMI
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -84,6 +85,14 @@ def run_pmi(p):
                     | 'pmi' >>   beam.ParDo(ParsePMI())
                     | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
             )
+
+def run_manufacturing_pmi(p):
+    return (p | 'startstart' >> beam.Create(['20210101'])
+                    | 'pmi' >>   beam.ParDo(ParseManufacturingPMI())
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
+            )
+
+
 
 def run_vix(p, key):
     return (p | 'start' >> beam.Create(['20210101'])
@@ -178,6 +187,9 @@ def run(argv=None, save_main_session=True):
         pmi_res = run_pmi(p)
         pmi_res | 'Writing to bq' >> bq_sink
 
+        manuf_pmi_res = run_manufacturing_pmi()
+        manuf_pmi_res | 'manuf pmi to sink' >> bq_sink
+
         vix_res = run_vix(p, iexapi_key)
         vix_res | 'vix to sink' >> bq_sink
 
@@ -190,7 +202,7 @@ def run(argv=None, save_main_session=True):
 
         statistics = run_prev_dates_statistics(p)
         final = (
-                (pmi_res, vix_res, nyse, nasdaq)
+                (manuf_pmi_res, pmi_res, vix_res, nyse, nasdaq)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))

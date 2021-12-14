@@ -83,6 +83,29 @@ class PutCallRatio(beam.DoFn):
         return self.get_putcall_ratios()
 
 
+class ParseManufacturingPMI(beam.DoFn):
+
+    def get_manufacturing_pmi(self):
+        r = requests.get('https://tradingeconomics.com/united-states/business-confidence',
+                         headers={'user-agent': 'my-app/0.0.1'})
+        bs = BeautifulSoup(r.content, 'html.parser')
+        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl01_Panel1"})[0]  #
+        tbl = div_item.find_all('table', {"class": "table"})[0]
+        vals = [[item.text.strip() for item in row.find_all('td')] for row in tbl.find_all('tr')]
+        good_ones = [lst for lst in vals if lst and 'Business Confidence' in lst]
+        if good_ones:
+            return [{'Last': good_ones[0][1]}]
+        return []
+
+    def process(self, element):
+        try:
+            result = self.get_manufacturing_pmi()
+            return result
+        except Exception as e:
+            print('Failed to get PMI:{}'.format(str(e)))
+            return []
+
+
 class ParsePMI(beam.DoFn):
 
     def process_pmi(self, ratios_table):
