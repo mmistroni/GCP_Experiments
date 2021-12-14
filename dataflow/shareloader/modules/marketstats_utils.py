@@ -94,13 +94,11 @@ class ParsePMI(beam.DoFn):
         return dict((k, v) for k, v in zip(keys, values))
 
     def get_latest_pmi(self):
-        r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi')
+        r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi',
+                            headers={'user-agent': 'my-app/0.0.1'})
         bs = BeautifulSoup(r.content, 'html.parser')
-        div_item = bs.find_all('div', {"id":"ctl00_ContentPlaceHolder1_ctl00_ctl02_Panel1"})[0]
-
-
+        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl01_Panel1"})[0]  #
         tbl = div_item.find_all('table', {"class": "table"})[0]
-        print('tbl is:{}'.format(tbl))
         return self.process_pmi(tbl)
 
     def process(self, element):
@@ -108,7 +106,7 @@ class ParsePMI(beam.DoFn):
             result = self.get_latest_pmi()
             return [result]
         except Exception as e:
-            logging.info('Failed to get PMI:{}'.format(str(e)))
+            print('Failed to get PMI:{}'.format(str(e)))
             return [{'Last' : 'N/A'}]
 
 
