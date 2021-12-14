@@ -210,8 +210,7 @@ def run(argv=None, save_main_session=True):
                                                                                     TICKER=d['symbol'],
                                                                                     LABEL='STOCK_UNIVERSE'))
                          | 'Writing to stock selection' >> bq_sink)
-
-
+        
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
         #write_to_bucket(filtered, sink)

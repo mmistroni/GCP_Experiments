@@ -141,11 +141,7 @@ def run_prev_dates_statistics(p) :
                | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
     )
     
-    return (
-                (vbqp, nysebqp)
-                | 'FlattenCombine all stats' >> beam.Flatten()
-                | 'Deduplicate stats' >>  beam.Distinct()                
-                )
+    return nysebqp
                 
 
 def run(argv=None, save_main_session=True):

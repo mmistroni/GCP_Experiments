@@ -68,7 +68,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
     if res:
         logging.info('Getting historicla prices')
         hist_prices = get_fmprep_historical(ticker, key)
-        priceAvg20 = statistics.mean(hist_prices)
+        priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
         descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
         descriptive_dict['priceAvg20'] = priceAvg20
         return descriptive_dict
@@ -153,32 +153,47 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
     # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
     if len(income_statement) > 2:
-        latest = income_statement[0]
-        fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
-        fundamental_dict['income_statement_date'] = latest['date']
-        previous = income_statement[1]
-        fundamental_dict['income_statement_prev_date'] = previous['date']
-        earnings = [stmnt['eps'] for stmnt in income_statement[0:3][::-1]]
-        fundamental_dict['eps_progression'] = evaluate_progression(earnings)
-        fundamental_dict['eps_progression_detail'] = ','.join([str(e) for e in earnings])
+        try:
+            latest = income_statement[0]
+            fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
+            fundamental_dict['income_statement_date'] = latest['date']
+            previous = income_statement[1]
+            fundamental_dict['income_statement_prev_date'] = previous['date']
+            earnings = [stmnt['eps'] for stmnt in income_statement[0:3][::-1]]
+            fundamental_dict['eps_progression'] = evaluate_progression(earnings)
+            fundamental_dict['eps_progression_detail'] = ','.join([str(e) for e in earnings])
 
-        data_5yrs_ago = income_statement[-1]
-        eps_thisyear = latest['eps']  # EPS Growth this year: 20%
-        eps_prevyear = previous['eps']  # EPS Growth this year: 20%
-        eps_5yrs_ago = data_5yrs_ago['eps']
-        if eps_prevyear > 0:
-            fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
-        else:
+            data_5yrs_ago = income_statement[-1]
+            eps_thisyear = latest['eps']  # EPS Growth this year: 20%
+            eps_prevyear = previous['eps']  # EPS Growth this year: 20%
+            eps_5yrs_ago = data_5yrs_ago['eps']
+            if eps_prevyear > 0:
+                fundamental_dict['eps_growth_this_year'] = (eps_thisyear - eps_prevyear) / eps_prevyear
+            else:
+                fundamental_dict['eps_growth_this_year'] = -1
+            if eps_5yrs_ago > 0:
+                complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 
+                fundamental_dict['eps_growth_past_5yrs'] = float(complex_n.real)
+            else:
+                fundamental_dict['eps_growth_past_5yrs'] = -1
+            # Now we get the quarterl stats
+            qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
+            fundamental_dict.update(qtrly_fundamental_dict)
+            return fundamental_dict
+        except Exception as e:
+            logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
+            fundamental_dict['cost_of_research_and_dev'] = 0
+            fundamental_dict['income_statement_prev_date'] = 0
+            fundamental_dict['eps_progression'] = []
+            fundamental_dict['eps_progression_detail'] = []
+
             fundamental_dict['eps_growth_this_year'] = -1
-        if eps_5yrs_ago > 0:
-            complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 
-            fundamental_dict['eps_growth_past_5yrs'] = float(complex_n.real)
-        else:
             fundamental_dict['eps_growth_past_5yrs'] = -1
-        # Now we get the quarterl stats
-        qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
-        fundamental_dict.update(qtrly_fundamental_dict)
-        return fundamental_dict
+            # Now we get the quarterl stats
+            qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
+            fundamental_dict.update(qtrly_fundamental_dict)
+            return fundamental_dict
+            
 
 def get_financial_ratios(ticker, key):
     financial_ratios = requests.get(
