@@ -20,7 +20,8 @@ from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
-                                            get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates
+                                            get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
+                                            get_stock_benchmarks
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -101,6 +102,8 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                 updated_dict.update(descr_and_tech)
+                benchmark_dict = get_stock_benchmarks(ticker, self.key)
+                updated_dict.update(benchmark_dict)
                 all_dt.append(updated_dict)
         return all_dt
 

@@ -272,3 +272,122 @@ def get_fundamentals(input_dict, key):
         return newd
     except Exception as e:
         logging.info('Failed to retrieve data for {}:{}'.format(ticker, str(e)))
+
+
+def get_stock_benchmarks(ticker, key):
+    try:
+
+
+        dataDict = {}
+        dataDict['ticker'] = ticker
+        # mktcap > 2bn
+        res = requests.get('https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
+                                                                                                         key=key)).json()[
+            0]
+        keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
+                'yearHigh', 'yearLow', 'exchange', 'change', 'open']
+        dataDict['marketCap'] = res['marketCap']
+        dataDict['sharesOutstanding'] = res['sharesOutstanding']
+
+        # current ratio t least 2.  -- currentRatioTTM
+        # long term debt <working capital
+        balance_sheet = requests.get(
+            'https://financialmodelingprep.com/api/v3/balance-sheet-statement/{ticker}?limit=1&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+        debtOverCapital = 1
+        if balance_sheet and len(balance_sheet) > 0:
+            bs = balance_sheet[0]
+            totalAssets = bs.get('totalCurrentAssets') or 0
+            totalLiabilities = bs.get('totalCurrentLiabilities') or 0
+            longTermDebt = bs.get('longTermDebt') or 0
+            debtOverCapital = longTermDebt - (totalAssets - totalLiabilities)
+            dataDict['debtOverCapital'] = debtOverCapital
+            dataDict['enterpriseDebt'] = longTermDebt / (totalAssets - totalLiabilities)
+
+            # some eps in last 10 yrs
+        income_statement = requests.get(
+            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=10&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+        all_eps = [d['eps'] for d in income_statement]
+
+        if len(all_eps) >= 6:
+
+            latest_three = statistics.mean(all_eps[0:3])
+            first_eps = statistics.mean(all_eps[-3:])
+            if first_eps > 0:
+                dataDict['epsGrowth'] = (latest_three - first_eps) / first_eps
+
+            else:
+                dataDict['epsGrowth'] = 0
+
+            if all_eps[4] > 0:
+                dataDict['epsGrowth5yrs'] = (all_eps[0] - all_eps[4]) / all_eps[4]
+            else:
+                dataDict['epsGrowth5yrs'] = 0
+        else:
+            dataDict['epsGrowth'] == 0
+            dataDict['epsGrowth5yrs'] = 0
+
+        positive_eps = [e > 0 for e in all_eps]
+        dataDict['positiveEps'] = len(positive_eps)
+        dataDict['positiveEpsLast5Yrs'] = len([e > 0 for e in all_eps[0:5]])
+        keyMetrics = requests.get(
+            'https://financialmodelingprep.com/api/v3/key-metrics-ttm/{}?limit=2&apikey={}'.format(ticker, key)).json()
+
+        if keyMetrics:
+
+            dataDict['tangibleBookValuePerShare'] = keyMetrics[0].get('tangibleBookValuePerShareTTM') or 0
+            dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
+        else:
+            dataDict['tangibleBookValuePerShare'] = 1000000
+            dataDict['netCurrentAssetValue'] = 0
+
+        print('before fratio')
+        financial_ratios = requests.get(
+            'https://financialmodelingprep.com/api/v3/ratios-ttm/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
+                                                                                                       key=key)).json()
+        if isinstance(financial_ratios, list) and financial_ratios:
+            try:
+                latest = financial_ratios[0]
+            except Exception as e:
+                logging.info('Exception for {}:data is:{}'.format(ticker, financial_ratios))
+                latest = {}
+        else:
+            latest = {}
+        # dividends paid 20 yrs in a row
+        try:
+            divis = requests.get(
+                'https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{}?apikey={}'.format(
+                    ticker, key)).json()['historical']
+            currentDate = date.today()
+            hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
+            all_divis = [d.get('adjDividend', 0) for d in divis if
+                         datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
+            dataDict['dividendPaid'] = len([d > 0 for d in all_divis])
+        except Exception as e:
+            logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
+            dataDict['dividendPaid'] = 0
+        # earnings growth. average of first 3 yrs vs average of last 3 yrs.. growth of at least 33%
+
+        # pe ratio no more than 15
+        dataDict['peRatio'] = latest.get('priceEarningsRatioTTM') or 0
+        # price to book ratio no more than 1.5
+        dataDict['currentRatio'] = latest.get('currentRatioTTM') or 0
+        dataDict['priceToBookRatio'] = latest.get('priceToBookRatioTTM') or 0
+
+        # then check ownership < 60% fund ownership
+        dataDict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
+
+        if dataDict.get('sharesOutstanding') is not None and dataDict.get('sharesOutstanding') > 0:
+            pcnt = dataDict['instOwnership'] / dataDict['sharesOutstanding']
+            dataDict['institutionalOwnershipPercentage'] = pcnt
+
+        else:
+            dataDict['institutionalOwnershipPercentage'] = 0
+
+        # then check proxy, management compensation etc
+        return dataDict
+    except Exception as e:
+        logging.info('Exception in getting data for {}:{}'.format(ticker, str(e)))
+        return None
+

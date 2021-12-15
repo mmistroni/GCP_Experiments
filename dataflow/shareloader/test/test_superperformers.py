@@ -2,7 +2,7 @@
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
-                get_financial_ratios, get_fmprep_historical
+                get_financial_ratios, get_fmprep_historical, get_stock_benchmarks
 
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
@@ -147,6 +147,11 @@ class TestSuperPerformers(unittest.TestCase):
         printingSink = beam.Map(print)
 
         print(get_financial_ratios('AAPL', key))
+
+    def test_get_stock_benchmarks(self):
+        key = os.environ['FMPREPKEY']
+        print(get_stock_benchmarks('FB', key))
+
 
 
 
