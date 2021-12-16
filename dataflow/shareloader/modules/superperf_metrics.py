@@ -389,5 +389,5 @@ def get_stock_benchmarks(ticker, key):
         return dataDict
     except Exception as e:
         logging.info('Exception in getting data for {}:{}'.format(ticker, str(e)))
-        return None
+        return {}
 
