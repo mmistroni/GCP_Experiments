@@ -87,9 +87,9 @@ def run_pmi(p):
             )
 
 def run_manufacturing_pmi(p):
-    return (p | 'startstart' >> beam.Create(['20210101'])
-                    | 'pmi' >>   beam.ParDo(ParseManufacturingPMI())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
+    return (p | 'startstartnpmi' >> beam.Create(['20210101'])
+                    | 'manifpmi' >>   beam.ParDo(ParseManufacturingPMI())
+                    | 'manufremap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
 
