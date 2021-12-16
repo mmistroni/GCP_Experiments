@@ -187,7 +187,7 @@ def run(argv=None, save_main_session=True):
         pmi_res = run_pmi(p)
         pmi_res | 'Writing to bq' >> bq_sink
 
-        manuf_pmi_res = run_manufacturing_pmi()
+        manuf_pmi_res = run_manufacturing_pmi(p)
         manuf_pmi_res | 'manuf pmi to sink' >> bq_sink
 
         vix_res = run_vix(p, iexapi_key)
