@@ -227,7 +227,7 @@ def run(argv=None, save_main_session=True):
          | 'Writing to stock selection 10' >> bq_sink)
 
         (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
-         | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+         | 'Mapping only Relevant nh fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                         TICKER=d['symbol'],
                                                                         LABEL='NEWHIGHS'))
          | 'Writing to stock selection nh' >> bq_sink)
