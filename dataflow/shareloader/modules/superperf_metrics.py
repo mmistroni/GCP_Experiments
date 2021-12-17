@@ -126,20 +126,23 @@ def get_fundamental_parameters_qtr(ticker,key):
 
 
 def get_analyst_estimates(ticker, key,  fundamental_dict):
-    analyst_estimates = requests.get('https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
-    # achievable. we just need to sort the date
-    income_statement_date = fundamental_dict.get('income_statement_date', date.today())
-    year = datetime.strptime(income_statement_date, '%Y-%m-%d').date().year
-    logging.info('getting estimates for {}@{}'.format(ticker, income_statement_date))
-    if analyst_estimates:
-        estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']]
-        if estimateeps_next:
-            fundamental_dict['eps_growth_next_year'] = estimateeps_next[0]['estimatedEpsAvg'] 
+    try:
+        analyst_estimates = requests.get('https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
+        # achievable. we just need to sort the date
+        income_statement_date = fundamental_dict.get('income_statement_date', date.today())
+        year = datetime.strptime(income_statement_date, '%Y-%m-%d').date().year
+        logging.info('getting estimates for {}@{}'.format(ticker, income_statement_date))
+        if analyst_estimates:
+            estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']]
+            if estimateeps_next:
+                fundamental_dict['eps_growth_next_year'] = estimateeps_next[0]['estimatedEpsAvg'] 
+            else:
+                fundamental_dict['eps_growth_next_year'] = 0
         else:
             fundamental_dict['eps_growth_next_year'] = 0
-    else:
+    except Exception as e:
+        logging.info('Failed to find analyst estimates for:{}:{}'.format(ticker, str(e)))
         fundamental_dict['eps_growth_next_year'] = 0
-
     return fundamental_dict
 
 
