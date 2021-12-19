@@ -71,9 +71,13 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
         descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
         descriptive_dict['priceAvg20'] = priceAvg20
+        descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
         return descriptive_dict
     else:
-        return dict((k, -1) for k in keys )
+        d=  dict((k, -1) for k in keys )
+        d['priceAvg20'] = 0
+        d['changeFromOpen'] = 0
+        return d
 
 
 def get_yearly_financial_ratios(ticker, key):
