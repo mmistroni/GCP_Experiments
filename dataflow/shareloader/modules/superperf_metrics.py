@@ -69,14 +69,20 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         logging.info('Getting historicla prices')
         hist_prices = get_fmprep_historical(ticker, key)
         priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
+
         descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
         descriptive_dict['priceAvg20'] = priceAvg20
         descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
+        descriptive_dict['allTimeHigh'] = max(hist_prices)
+        descriptive_dict['allTimeLow'] = min(hist_prices)
         return descriptive_dict
     else:
         d=  dict((k, -1) for k in keys )
         d['priceAvg20'] = 0
         d['changeFromOpen'] = 0
+        descriptive_dict['allTimeHigh'] = 1000000
+        descriptive_dict['allTimeLow'] = 1000000
+        
         return d
 
 
