@@ -208,6 +208,7 @@ def run(argv=None, save_main_session=True):
         )
 
         static = (p | beam.Create([('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')])
+                    | 'Mapping to Dict static' >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], LABEL=tpl[1], VALUE=tpl[2]))
                  )
         statistics = run_prev_dates_statistics(p)
 
