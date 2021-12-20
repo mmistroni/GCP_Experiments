@@ -166,7 +166,8 @@ def new_high_filter(input_dict):
                     and (input_dict['returnOnEquity'] > 0) and (input_dict['price'] > input_dict['priceAvg20']) \
                     and (input_dict['price'] > input_dict['priceAvg50']) \
                     and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
-                    and (input_dict['changeFromOpen'] > 0) and (input_dict['price'] >= input_dict['allTimeHigh'])
+                    and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
+                    and ( input_dict.get('allTimeHigh') is not None and input['price'] >= input_dict.get('allTimeHigh'))
 
 def find_leaf(p):
     pass

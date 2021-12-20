@@ -80,8 +80,6 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         d=  dict((k, -1) for k in keys )
         d['priceAvg20'] = 0
         d['changeFromOpen'] = 0
-        descriptive_dict['allTimeHigh'] = 1000000
-        descriptive_dict['allTimeLow'] = 1000000
         
         return d
 
