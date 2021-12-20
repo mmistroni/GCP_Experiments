@@ -144,8 +144,6 @@ def see_what_is_inside(input):
 
 def run_prev_dates_statistics(p) :
     # Need to amend the query to order by asofdate sc
-    vbqp = (p | beam.Create([('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')])
-    )
     nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
                | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
     )
@@ -200,7 +198,6 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        statistics = run_prev_dates_statistics(p)
         final = (
                 (manuf_pmi_res, pmi_res, vix_res, nyse, nasdaq)
                 | 'FlattenCombine all' >> beam.Flatten()
@@ -209,17 +206,28 @@ def run(argv=None, save_main_session=True):
                 | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
-        
+
+        static = (p | beam.Create([('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')])
+                 )
+        statistics = run_prev_dates_statistics(p)
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
         statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
                                                        num_shards=1)
-    
 
+        final_stats = (
+                (static, statistics)
+                | 'FlattenCombine all stats' >> beam.Flatten()
+                | 'Mapping to String stats' >> beam.Map(
+                        lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
+                | 'Combine stats' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'Printing Out Stats' >> beam.Map(logging.info)
+
+        )
 
         logging.info('Running previous statistics...')
-        (statistics | 'Printing out stats' >> beam.Map(logging.info))
+
         (statistics | 'Printing out to siknk' >> statistics_sink)
             
 
