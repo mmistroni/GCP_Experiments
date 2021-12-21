@@ -145,7 +145,7 @@ def see_what_is_inside(input):
 def run_prev_dates_statistics(p) :
     # Need to amend the query to order by asofdate sc
     nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
-               | 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
+               #| 'map to tpl2' >> beam.Map(lambda d: ( d['AS_OF_DATE'], d['LABEL'], d['VALUE'] ))
     )
     
     return nysebqp
@@ -207,8 +207,7 @@ def run(argv=None, save_main_session=True):
 
         )
 
-        static = (p | beam.Create([('------- ', 'LAST 5 DAYS PERFORMANCE', '--------')])
-                    | 'Mapping to Dict static' >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], LABEL=tpl[1], VALUE=tpl[2]))
+        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='LAST 5 DAYS PERFORMANCE', VALUE='--------')])
                  )
         statistics = run_prev_dates_statistics(p)
 

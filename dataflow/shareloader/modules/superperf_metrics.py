@@ -73,8 +73,8 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
         descriptive_dict['priceAvg20'] = priceAvg20
         descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
-        descriptive_dict['allTimeHigh'] = max(hist_prices)
-        descriptive_dict['allTimeLow'] = min(hist_prices)
+        descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
+        descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
         return descriptive_dict
     else:
         d=  dict((k, -1) for k in keys )
