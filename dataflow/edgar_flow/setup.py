@@ -116,8 +116,7 @@ REQUIRED_PACKAGES = [
     'pandas',
     'sendgrid',
     'lxml',
-    'pandas_datareader',
-    'apache-beam[gcp]==2.27.0',
+    'pandas_datareader'
     ]
 
 
