@@ -163,11 +163,12 @@ def stocks_under_10m_filter(input_dict):
 def new_high_filter(input_dict):
     return (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0) \
                     and (input_dict['eps_growth_qtr_over_qtr'] > 0) and  (input_dict['net_sales_qtr_over_qtr'] > 0) \
+                    and (input_dict.get('price') is not None) \
                     and (input_dict['returnOnEquity'] > 0) and (input_dict['price'] > input_dict['priceAvg20']) \
                     and (input_dict['price'] > input_dict['priceAvg50']) \
                     and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
                     and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
-                    and ( input_dict.get('allTimeHigh') is not None and input['price'] >= input_dict.get('allTimeHigh'))
+                    and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
 
 def find_leaf(p):
     pass
