@@ -152,6 +152,24 @@ class TestSuperPerformers(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         print(get_stock_benchmarks('FB', key))
 
+    def test_get_stock_dividends(self):
+        import requests
+        from datetime import date, datetime
+        key = os.environ['FMPREPKEY']
+        divis = requests.get(
+            'https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{}?apikey={}'.format(
+                'GFI', key)).json()['historical']
+        currentDate = date.today()
+        hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
+        all_divis = [(d.get('date'), d.get('adjDividend', 0)) for d in divis if
+                     datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
+        from pprint import pprint
+        print(len(all_divis))
+        pprint(all_divis)
+
+
+
+
 
 
 

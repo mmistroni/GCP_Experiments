@@ -374,7 +374,8 @@ def get_stock_benchmarks(ticker, key):
             hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
             all_divis = [d.get('adjDividend', 0) for d in divis if
                          datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
-            dataDict['dividendPaid'] = len([d > 0 for d in all_divis])
+            dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
+            dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
         except Exception as e:
             logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
             dataDict['dividendPaid'] = 0

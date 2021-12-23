@@ -9,6 +9,7 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline
+from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
 from io import StringIO
@@ -21,6 +22,18 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
+
+
+class FlattenDoFn(beam.DoFn):
+
+    def process(self, element):
+        try:
+            return list(chain(*element))
+        except Exception as e:
+            print('Failed to get PMI:{}'.format(str(e)))
+            return [{'Last' : 'N/A'}]
+
+
 
 
 class TestShareLoader(unittest.TestCase):
@@ -157,6 +170,28 @@ class TestShareLoader(unittest.TestCase):
                     | 'print outl' >> beam.Map(print)
 
             )
+    def test_combineGlobally(self):
+        iexapi_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            nyse =  p | 'Create coll1' >> beam.Create([{'LABEL' :'One', 'VALUE' : 1},
+                                                       {'LABEL' :'Two', 'VALUE' : 2},
+                                                       {'LABEL' :'Three', 'VALUE' : 3}])
+
+            nasdaq = p | 'Create coll2' >> beam.Create([{'LABEL' :'Four', 'VALUE' : 4},
+                                                       {'LABEL' :'Five', 'VALUE' : 5},
+                                                       {'LABEL' :'Six', 'VALUE' : 6}])
+
+
+            final = (
+                (nyse, nasdaq)
+                | 'FlattenCombine all' >> beam.Flatten()
+                | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
+                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'print outl' >> beam.Map(print)
+            )
+
+
+
 
 
 if __name__ == '__main__':

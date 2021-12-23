@@ -120,16 +120,19 @@ def combine_dict(input):
     print('Combining {}'.format(input))
     return [d for d in input]
 
-def load_fundamental_data(source,fmpkey):
+def load_universe(source, fmpkey):
     return (source
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
-            | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)            
-            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
 
+def load_fundamental_data(source,fmpkey):
+    return (source
+            | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)
+            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
+            )
 
 def filter_universe(data):
     return (data
@@ -170,6 +173,28 @@ def new_high_filter(input_dict):
                     and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
 
+def defensive_stocks_filter(input_dict):
+    return  (input_dict['marketCap'] > 2000000000) and (input_dict['currentRatio'] >= 2) \
+                   and (input_dict['debtOverCapital'] < 0) \
+                   and (input_dict['dividendPaid'] == True)\
+                   and (input_dict['epsGrowth'] >= 0.33) \
+                   and (input_dict['positiveEps'] > 0 ) \
+                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 15) \
+                   and (input+dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+
+def enterprise_stock_filter(input_dict):
+    return (input_dict['currentRatio'] >= 1.5) \
+                   and (input_dict['enterpriseDebt'] <= 1.2) \
+                   and (input_dict['dividendPaidEnterprise'] == True)\
+                   and (input_dict['epsGrowth5yrs'] > 0) \
+                   and (input_dict['positiveEpsLast5Yrs'] == 5   ) \
+                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+
+
+
 def find_leaf(p):
     pass
 
@@ -207,8 +232,11 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        #descriptive_data  |'Sendig to sink' >> sink
-        fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
+        
+        universe = load_universe(tickers, pipeline_options.fmprepkey)
+
+        fundamental_data = load_fundamental_data(universe, pipeline_options.fmprepkey)
+
         fundamental_data  |'Sendig to sink' >> sink
 
         (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
@@ -233,6 +261,18 @@ def run(argv=None, save_main_session=True):
                                                                         TICKER=d['symbol'],
                                                                         LABEL='NEWHIGHS'))
          | 'Writing to stock selection nh' >> bq_sink)
+
+        (universe | 'stock defesniveS' >> beam.Filter(defensive_stocks_filter)
+         | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                        TICKER=d['symbol'],
+                                                                        LABEL='DEFENSIVE_STOCKS'))
+         | 'Writing to stock selection defensive' >> bq_sink)
+
+        (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter())
+         | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                               TICKER=d['symbol'],
+                                                                               LABEL='ENTERPRISE_STOCKS'))
+         | 'Writing to stock selection enterprise' >> bq_sink)
 
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
