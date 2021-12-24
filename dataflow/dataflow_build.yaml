@@ -53,7 +53,7 @@ steps:
           , '--config'
           , '$_SHARELOADER_BUILD_FILE']  
     id: 'build-shareloader-templates'
-timeout: 1800s
+timeout: 50000s
 
 images: ['gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
