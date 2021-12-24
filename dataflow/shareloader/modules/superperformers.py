@@ -30,7 +30,7 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
-
+        parser.add_argument('--iistocks')
 
 def get_descriptive_and_techincal_filter(input_dict):
     if not input_dict:
@@ -232,7 +232,7 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
-        
+
         universe = load_universe(tickers, pipeline_options.fmprepkey)
 
         fundamental_data = load_fundamental_data(universe, pipeline_options.fmprepkey)
@@ -262,17 +262,19 @@ def run(argv=None, save_main_session=True):
                                                                         LABEL='NEWHIGHS'))
          | 'Writing to stock selection nh' >> bq_sink)
 
-        (universe | 'stock defesniveS' >> beam.Filter(defensive_stocks_filter)
-         | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                        TICKER=d['symbol'],
-                                                                        LABEL='DEFENSIVE_STOCKS'))
-         | 'Writing to stock selection defensive' >> bq_sink)
+        if (pipeline_options.iistocks):
+            logging.info('Storing data for defensive and enterprise stocks....')
+            (universe | 'stock defesniveS' >> beam.Filter(defensive_stocks_filter)
+             | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                            TICKER=d['symbol'],
+                                                                            LABEL='DEFENSIVE_STOCKS'))
+             | 'Writing to stock selection defensive' >> bq_sink)
 
-        (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter())
-         | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                               TICKER=d['symbol'],
-                                                                               LABEL='ENTERPRISE_STOCKS'))
-         | 'Writing to stock selection enterprise' >> bq_sink)
+            (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter())
+             | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                   TICKER=d['symbol'],
+                                                                                   LABEL='ENTERPRISE_STOCKS'))
+             | 'Writing to stock selection enterprise' >> bq_sink)
 
         #filtered = filter_universe(all_data)
         #canslim = filtered | 'Filtering CANSLIM' >> beam.Filter(canslim_filter)
