@@ -6,6 +6,11 @@
       "name": "fmprepkey",
       "helpText": "FMPREP  key",
       "label": "fmprepkey"
+    },
+    {
+      "name": "iistocks",
+      "helpText": "Fla to indicate if we search for INtelligent investor stocks",
+      "label": "iistocks"
     }
   ]
 }
