@@ -241,25 +241,30 @@ def run(argv=None, save_main_session=True):
 
         (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                     TICKER=d['symbol'],
-                                                                                    LABEL='STOCK_UNIVERSE'))
+                                                                                    LABEL='STOCK_UNIVERSE',
+                                                                                    PRICE=d['price']))
                          | 'Writing to stock selection' >> bq_sink)
 
         (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
                           |'Mapping only Relevant canslim fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                       TICKER=d['symbol'],
-                                                                                      LABEL='CANSLIM'))
+                                                                                      LABEL='CANSLIM',
+                                                                                    PRICE=d['price']))
                             | 'Writing to stock selection C' >> bq_sink)
 
         (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
          | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                              TICKER=d['symbol'],
-                                                                             LABEL='UNDER10M'))
+                                                                             LABEL='UNDER10M',
+                                                                             PRICE=d['price']))
          | 'Writing to stock selection 10' >> bq_sink)
 
         (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
          | 'Mapping only Relevant nh fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                         TICKER=d['symbol'],
-                                                                        LABEL='NEWHIGHS'))
+                                                                        LABEL='NEWHIGHS',
+                                                                        PRICE=d['price']
+                                                                        ))
          | 'Writing to stock selection nh' >> bq_sink)
 
         if (pipeline_options.iistocks):
@@ -267,13 +272,15 @@ def run(argv=None, save_main_session=True):
             (universe | 'stock defesniveS' >> beam.Filter(defensive_stocks_filter)
              | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                             TICKER=d['symbol'],
-                                                                            LABEL='DEFENSIVE_STOCKS'))
+                                                                            LABEL='DEFENSIVE_STOCKS',
+                                                                            PRICE=d['price']))
              | 'Writing to stock selection defensive' >> bq_sink)
 
             (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter())
              | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                    TICKER=d['symbol'],
-                                                                                   LABEL='ENTERPRISE_STOCKS'))
+                                                                                   LABEL='ENTERPRISE_STOCKS',
+                                                                                    PRICE=d['price']))
              | 'Writing to stock selection enterprise' >> bq_sink)
 
         #filtered = filter_universe(all_data)
