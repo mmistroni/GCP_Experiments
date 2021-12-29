@@ -276,7 +276,7 @@ def run(argv=None, save_main_session=True):
                                                                             PRICE=d['price']))
              | 'Writing to stock selection defensive' >> bq_sink)
 
-            (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter())
+            (universe | 'stock enterprise' >> beam.Filter(enterprise_stock_filter)
              | 'Mapping only Relevant defensive fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                    TICKER=d['symbol'],
                                                                                    LABEL='ENTERPRISE_STOCKS',
