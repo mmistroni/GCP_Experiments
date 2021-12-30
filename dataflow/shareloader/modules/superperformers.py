@@ -176,24 +176,32 @@ def new_high_filter(input_dict):
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
 
 def defensive_stocks_filter(input_dict):
-    return  (input_dict['marketCap'] > 2000000000) and (input_dict['currentRatio'] >= 2) \
-                   and (input_dict['debtOverCapital'] < 0) \
-                   and (input_dict['dividendPaid'] == True)\
-                   and (input_dict['epsGrowth'] >= 0.33) \
-                   and (input_dict['positiveEps'] > 0 ) \
-                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 15) \
-                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
-                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+    return  (input_dict.get('marketCap') is not None and input_dict.get('marketCap') > 2000000000)\
+                   and (input_dict.get('currentRatio') is not None and  input_dict.get('currentRatio') >= 2) \
+                   and (input_dict.get('debtOverCapital') is not None and input_dict.get('debtOverCapital') < 0) \
+                   and (input_dict.get('dividendPaid') is not None and input_dict.get('dividendPaid') == True)\
+                   and (input_dict.get('epsGrowth') is not None and  input_dict.get('epsGrowth') >= 0.33) \
+                   and (input_dict.get('positiveEps') is not None and  input_dict.get('positiveEps') > 0 ) \
+                   and (input_dict.get('peRatio') is not None and input_dict.get('peRatio') > 0) and  (input_dict['peRatio'] <= 15) \
+                   and (input_dict.get('priceToBookRatio') is not None and input_dict.get('priceToBookRatio') > 0) \
+                   and (input_dict.get('priceToBookRatio') is not None and input_dict.get('priceToBookRatio') < 1.5) \
+                   and (input_dict.get('institutionalOwnershipPercentage') is not None) \
+                    and (input_dict.get('institutionalOwnershipPercentage') < 0.6) \
+                   and (input_dict.get('price') is not None and input_dict.get('price') > 0)
 
 def enterprise_stock_filter(input_dict):
     return (input_dict['currentRatio'] >= 1.5) \
-                   and (input_dict['enterpriseDebt'] <= 1.2) \
-                   and (input_dict['dividendPaidEnterprise'] == True)\
-                   and (input_dict['epsGrowth5yrs'] > 0) \
-                   and (input_dict['positiveEpsLast5Yrs'] == 5   ) \
-                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
-                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
-                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+                   and (input_dict.get('enterpriseDebt') is not None and  input_dict.get('enterpriseDebt') <= 1.2) \
+                   and (input_dict.get('dividendPaidEnterprise') is not None and input_dict.get('dividendPaidEnterprise') == True)\
+                   and (input_dict.get('epsGrowth5yrs') is not None and input_dict.get('epsGrowth5yrs')  > 0) \
+                   and (input_dict.get('positiveEpsLast5Yrs') is not None and  input_dict.get('positiveEpsLast5Yrs') == 5   ) \
+                   and (input_dict.get('peRatio') is not None and input_dict.get('peRatio') > 0) \
+                   and  (input_dict.get('peRatio') <= 10) \
+                   and (input_dict.get('priceToBookRatio') is not None and  input_dict.get('priceToBookRatio') > 0)\
+                   and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict.get('institutionalOwnershipPercentage') is not None) \
+                   and (input_dict.get('institutionalOwnershipPercentage') < 0.6) \
+                   and (input_dict.get('price') is not None and input_dict.get('price') > 0)    
 
 
 
