@@ -158,13 +158,14 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
 def get_fundamental_parameters(ticker, key, asOfDate=None):
     fundamental_dict = {}
 
-    income_statement = requests.get(
-        'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
-                                                                                                         key=key)).json()
-    # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
+    try:
+        income_statement = requests.get(
+            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
+                                                                                                            key=key)).json()
+        # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
-    if len(income_statement) > 2:
-        try:
+        if len(income_statement) > 2:
+    
             latest = income_statement[0]
             fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
             fundamental_dict['income_statement_date'] = latest['date']
@@ -191,19 +192,19 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
             fundamental_dict.update(qtrly_fundamental_dict)
             return fundamental_dict
-        except Exception as e:
-            logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
-            fundamental_dict['cost_of_research_and_dev'] = 0
-            fundamental_dict['income_statement_prev_date'] = 0
-            fundamental_dict['eps_progression'] = []
-            fundamental_dict['eps_progression_detail'] = []
+    except Exception as e:
+        logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
+        fundamental_dict['cost_of_research_and_dev'] = 0
+        fundamental_dict['income_statement_prev_date'] = 0
+        fundamental_dict['eps_progression'] = []
+        fundamental_dict['eps_progression_detail'] = []
 
-            fundamental_dict['eps_growth_this_year'] = -1
-            fundamental_dict['eps_growth_past_5yrs'] = -1
-            # Now we get the quarterl stats
-            qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
-            fundamental_dict.update(qtrly_fundamental_dict)
-            return fundamental_dict
+        fundamental_dict['eps_growth_this_year'] = -1
+        fundamental_dict['eps_growth_past_5yrs'] = -1
+        # Now we get the quarterl stats
+        qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
+        fundamental_dict.update(qtrly_fundamental_dict)
+        return fundamental_dict
             
 
 def get_financial_ratios(ticker, key):
