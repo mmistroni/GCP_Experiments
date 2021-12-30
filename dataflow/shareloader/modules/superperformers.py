@@ -62,8 +62,10 @@ def get_universe_filter(input_dict):
         and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
         and (input_dict.get('price', 0) > input_dict.get('priceAvg50', 0)) \
         and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))  \
-        and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
-        and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)
+        and (input_dict.get('net_sales_qtr_over_qtr') is not None and input_dict.get('net_sales_qtr_over_qtr') > 0.2) \
+        and (input_dict.get('returnOnEquity', 0) > 0) \
+        and (input_dict.get('eps_growth_next_year') is not None and input_dict.get('eps_growth_next_year') > 0)\
+        and (input_dict.get('eps_growth_qtr_over_qtr') is not None and input_dict.get('eps_growth_qtr_over_qtr') > 0.2)
     
     if res:
         logging.info('Found one that passes filter:{}'.format(input_dict))
@@ -180,7 +182,7 @@ def defensive_stocks_filter(input_dict):
                    and (input_dict['epsGrowth'] >= 0.33) \
                    and (input_dict['positiveEps'] > 0 ) \
                    and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 15) \
-                   and (input+dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
 
 def enterprise_stock_filter(input_dict):

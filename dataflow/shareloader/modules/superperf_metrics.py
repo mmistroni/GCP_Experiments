@@ -95,42 +95,49 @@ def filter_historical(statements, asOfDate):
     return res
 
 def get_fundamental_parameters_qtr(ticker,key):
-    income_stmnt = requests.get(
+    qtr_fundamental_dict = {}
+    
+    try:
+        income_stmnt = requests.get(
         'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
             ticker=ticker, key=key)).json()
-    qtr_fundamental_dict = {}
-    if income_stmnt and len(income_stmnt) > 1:
-        # these measures are for the last quarter. so we need most recent data
+        
+    
+    
+        if income_stmnt and len(income_stmnt) > 1:
+            # these measures are for the last quarter. so we need most recent data
 
-        eps_thisqtr = income_stmnt[0].get('eps', 0)  # EPS Growt qtr over qtr: > 20%
-        eps_lastqtr = income_stmnt[1].get('eps',
-                                          0)  # else income_stmnt_as_reported[-1].get('earningspersharebasicanddiluted', 0)    #EPS Growt qtr over qtr: > 20%
-        net_sales_thisqtr = income_stmnt[0]['revenue']  # sakes   EPS Growt qtr over qtr: > 20%
-        net_sales_lastqtr = income_stmnt[1]['revenue']  # EPS Growt qtr over qtr: > 20%
-        qtr_fundamental_dict['income_statement_qtr_date'] = income_stmnt[0]['date']
-        qtr_fundamental_dict['income_statement_qtr_date_prev'] = income_stmnt[1]['date']
-        sales = [stmnt.get('revenue', 0)/ 1000 for stmnt in income_stmnt[::-1]]
-        eps_qtr = [stmnt.get('eps', 0) for stmnt in income_stmnt[::-1]]  # EPS Growt qtr over qtr: > 20%
-        randD = [stmnt.get('researchAndDevelopmentExpenses', 0) / 1000 for stmnt in income_stmnt[::-1]]
+            eps_thisqtr = income_stmnt[0].get('eps', 0)  # EPS Growt qtr over qtr: > 20%
+            eps_lastqtr = income_stmnt[1].get('eps',
+                                            0)  # else income_stmnt_as_reported[-1].get('earningspersharebasicanddiluted', 0)    #EPS Growt qtr over qtr: > 20%
+            net_sales_thisqtr = income_stmnt[0]['revenue']  # sakes   EPS Growt qtr over qtr: > 20%
+            net_sales_lastqtr = income_stmnt[1]['revenue']  # EPS Growt qtr over qtr: > 20%
+            qtr_fundamental_dict['income_statement_qtr_date'] = income_stmnt[0]['date']
+            qtr_fundamental_dict['income_statement_qtr_date_prev'] = income_stmnt[1]['date']
+            sales = [stmnt.get('revenue', 0)/ 1000 for stmnt in income_stmnt[::-1]]
+            eps_qtr = [stmnt.get('eps', 0) for stmnt in income_stmnt[::-1]]  # EPS Growt qtr over qtr: > 20%
+            randD = [stmnt.get('researchAndDevelopmentExpenses', 0) / 1000 for stmnt in income_stmnt[::-1]]
 
-        qtr_fundamental_dict['researchAndDevelopmentExpenses_qtr'] = income_stmnt[0].get('researchAndDevelopmentExpenses')
-        qtr_fundamental_dict['researchAndDevelopmentExpenses_qtr_prev'] = income_stmnt[1].get(
-            'researchAndDevelopmentExpenses')
-        qtr_fundamental_dict['researchAndDevelopmentExpenses_over_revenues'] = income_stmnt[0].get(
-            'researchAndDevelopmentExpenses') / net_sales_thisqtr if net_sales_thisqtr > 0 else 0
-        qtr_fundamental_dict['net_sales_progression'] = evaluate_progression(sales)
-        qtr_fundamental_dict['net_sales_progression_detail'] = ','.join([str(s) for s in sales])
-        qtr_fundamental_dict['eps_progression_last4_qtrs'] = evaluate_progression(eps_qtr)
-        qtr_fundamental_dict['eps_progression_last4_qtrs_detail'] = ','.join([str(s) for s in eps_qtr])
-        qtr_fundamental_dict['researchAndDevelopmentProgression'] = evaluate_progression(randD)
-        qtr_fundamental_dict['researchAndDevelopmentProgression_detail'] = ','.join([str(s) for s in randD])
-        if eps_lastqtr != 0 and net_sales_lastqtr != 0:
-            qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = (eps_thisqtr - eps_lastqtr) / eps_lastqtr
-            qtr_fundamental_dict['net_sales_qtr_over_qtr'] = (net_sales_thisqtr - net_sales_lastqtr) / net_sales_lastqtr
-        else:
-            qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = 0
-            qtr_fundamental_dict['net_sales_qtr_over_qtr'] = 0
-    return qtr_fundamental_dict
+            qtr_fundamental_dict['researchAndDevelopmentExpenses_qtr'] = income_stmnt[0].get('researchAndDevelopmentExpenses')
+            qtr_fundamental_dict['researchAndDevelopmentExpenses_qtr_prev'] = income_stmnt[1].get(
+                'researchAndDevelopmentExpenses')
+            qtr_fundamental_dict['researchAndDevelopmentExpenses_over_revenues'] = income_stmnt[0].get(
+                'researchAndDevelopmentExpenses') / net_sales_thisqtr if net_sales_thisqtr > 0 else 0
+            qtr_fundamental_dict['net_sales_progression'] = evaluate_progression(sales)
+            qtr_fundamental_dict['net_sales_progression_detail'] = ','.join([str(s) for s in sales])
+            qtr_fundamental_dict['eps_progression_last4_qtrs'] = evaluate_progression(eps_qtr)
+            qtr_fundamental_dict['eps_progression_last4_qtrs_detail'] = ','.join([str(s) for s in eps_qtr])
+            qtr_fundamental_dict['researchAndDevelopmentProgression'] = evaluate_progression(randD)
+            qtr_fundamental_dict['researchAndDevelopmentProgression_detail'] = ','.join([str(s) for s in randD])
+            if eps_lastqtr != 0 and net_sales_lastqtr != 0:
+                qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = (eps_thisqtr - eps_lastqtr) / eps_lastqtr
+                qtr_fundamental_dict['net_sales_qtr_over_qtr'] = (net_sales_thisqtr - net_sales_lastqtr) / net_sales_lastqtr
+            else:
+                qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = 0
+                qtr_fundamental_dict['net_sales_qtr_over_qtr'] = 0
+    except Exception as e:
+        logging.info('Failin gto retrieve quarterly data for {}:{}'.format(ticker, str(e)))
+        return qtr_fundamental_dict
 
 
 def get_analyst_estimates(ticker, key,  fundamental_dict):
