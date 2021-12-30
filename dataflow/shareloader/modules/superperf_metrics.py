@@ -61,27 +61,31 @@ def get_common_shares_outstanding(ticker, key):
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
-    res = requests.get(
-        'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
-            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
-    if res:
-        logging.info('Getting historicla prices')
-        hist_prices = get_fmprep_historical(ticker, key)
-        priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
+                'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
+    descriptive_dict = {}    
+    try:
+        res = requests.get(
+            'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
+        if res:
+            logging.info('Getting historicla prices')
+            hist_prices = get_fmprep_historical(ticker, key)
+            priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
 
-        descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
-        descriptive_dict['priceAvg20'] = priceAvg20
-        descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
-        descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
-        descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
-        return descriptive_dict
-    else:
-        d=  dict((k, -1) for k in keys )
-        d['priceAvg20'] = 0
-        d['changeFromOpen'] = 0
-        
-        return d
+            descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
+            descriptive_dict['priceAvg20'] = priceAvg20
+            descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
+            descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
+            descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
+            return descriptive_dict
+    except Exception as  e:
+        descriptive_dict =  dict((k, -1) for k in keys )
+        descriptive_dict['priceAvg20'] = 0
+        descriptive_dict['changeFromOpen'] = 0
+        descriptive_dict['allTimeHigh'] =  0
+        descriptive_dict['allTimeLow'] =  0
+                
+    return descriptive_dict        
 
 
 def get_yearly_financial_ratios(ticker, key):
