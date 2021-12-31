@@ -190,7 +190,7 @@ def defensive_stocks_filter(input_dict):
                    and (input_dict.get('price') is not None and input_dict.get('price') > 0)
 
 def enterprise_stock_filter(input_dict):
-    return (input_dict['currentRatio'] >= 1.5) \
+    return (input_dict.get('currentRatio') is not None and  input_dict.get('currentRatio') >= 1.5) \
                    and (input_dict.get('enterpriseDebt') is not None and  input_dict.get('enterpriseDebt') <= 1.2) \
                    and (input_dict.get('dividendPaidEnterprise') is not None and input_dict.get('dividendPaidEnterprise') == True)\
                    and (input_dict.get('epsGrowth5yrs') is not None and input_dict.get('epsGrowth5yrs')  > 0) \
