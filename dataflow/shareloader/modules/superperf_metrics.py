@@ -214,7 +214,8 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         fundamental_dict['eps_growth_past_5yrs'] = -1
         # Now we get the quarterl stats
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
-        fundamental_dict.update(qtrly_fundamental_dict)
+        if qtrly_fundamental_dict and qtrly_fundamental_dict is not None:
+            fundamental_dict.update(qtrly_fundamental_dict)
         return fundamental_dict
             
 
