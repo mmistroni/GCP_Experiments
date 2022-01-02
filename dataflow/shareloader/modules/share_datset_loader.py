@@ -34,18 +34,18 @@ class GetAllTickers(beam.DoFn):
 
     def _is_valid(self, d):
         stock_name = d['name']
-        exchange = d['exchange']
+        exchange = d['exchangeShortName']
         symbol = d['symbol']
 
 
         return (stock_name is not None and stock_name.find('ETF') < 0 \
                     and stock_name.find('ETNF') < 0  and stock_name.find('Fund') <0) \
                     and stock_name.find('ProShares') < 0 \
-                    and   (exchange.lower().find('nasdaq') >= 0 or  exchange.lower() == 'new york stock exchange') \
+                    and   (exchange.lower().find('nasdaq') >= 0 or  exchange.lower() == 'nyse') \
                     and symbol.find('.') < 0
 
     def get_all_tradables(self):
-        all_symbols = requests.get('https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(self.fmprepkey)).json()
+        all_symbols = requests.get('https://financialmodelingprep.com/api/v3/stock/list?apikey={}'.format(self.fmprepkey)).json()
         return   [(d['symbol'], re.sub('[^\w\s]', '', d['name']), d['exchange']) for d in all_symbols if self._is_valid(d)]
 
     def process(self, item):
