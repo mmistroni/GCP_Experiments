@@ -104,8 +104,8 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                 updated_dict.update(descr_and_tech)
-                benchmark_dict = get_stock_benchmarks(ticker, self.key)
-                updated_dict.update(benchmark_dict)
+                #benchmark_dict = get_stock_benchmarks(ticker, self.key)
+                #updated_dict.update(benchmark_dict)
                 all_dt.append(updated_dict)
         return all_dt
 

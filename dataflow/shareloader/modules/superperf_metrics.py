@@ -175,7 +175,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
                                                                                                             key=key)).json()
         # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
-        if len(income_statement) > 2:
+        if income_statement and len(income_statement) > 2:
     
             latest = income_statement[0]
             fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
@@ -201,8 +201,9 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
                 fundamental_dict['eps_growth_past_5yrs'] = -1
             # Now we get the quarterl stats
             qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
+            logging.info('Quarterly dict is:{}'.format(qtrly_fundamental_dict))
             fundamental_dict.update(qtrly_fundamental_dict)
-            return fundamental_dict
+            logging.info('We got data for:{}'.format(ticker))
     except Exception as e:
         logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
         fundamental_dict['cost_of_research_and_dev'] = 0
@@ -216,7 +217,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
         if qtrly_fundamental_dict and qtrly_fundamental_dict is not None:
             fundamental_dict.update(qtrly_fundamental_dict)
-        return fundamental_dict
+    return fundamental_dict
             
 
 def get_financial_ratios(ticker, key):
