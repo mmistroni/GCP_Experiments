@@ -62,11 +62,12 @@ def get_common_shares_outstanding(ticker, key):
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
-                'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
-    descriptive_dict = {}    
+            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
+
     try:
         res = requests.get(
-            'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)).json()
+            'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
+                                                                                          key=key)).json()
         if res:
             logging.info('Getting historicla prices')
             hist_prices = get_fmprep_historical(ticker, key)
@@ -78,14 +79,18 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
             descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
             return descriptive_dict
-    except Exception as  e:
-        descriptive_dict =  dict((k, -1) for k in keys )
-        descriptive_dict['priceAvg20'] = 0
-        descriptive_dict['changeFromOpen'] = 0
-        descriptive_dict['allTimeHigh'] =  0
-        descriptive_dict['allTimeLow'] =  0
-                
-    return descriptive_dict        
+        else:
+            d=  dict((k, -1) for k in keys )
+            d['priceAvg20'] = 0
+            d['changeFromOpen'] = 0
+            d['allTimeHigh'] =  0
+            d['allTimeLow'] =  0
+
+            return d
+    except Exception as e:
+        logging.info('Failed to get descriptive for :{}:{}'.format(ticker, str(e)))
+        return dict((k, -1) for k in keys)
+
 
 
 def get_yearly_financial_ratios(ticker, key):
@@ -99,21 +104,17 @@ def filter_historical(statements, asOfDate):
     return res
 
 def get_fundamental_parameters_qtr(ticker,key):
-    qtr_fundamental_dict = {}
-    
-    try:
+    try :
         income_stmnt = requests.get(
-        'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
-            ticker=ticker, key=key)).json()
-        
-    
-    
+            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+        qtr_fundamental_dict = {}
         if income_stmnt and len(income_stmnt) > 1:
             # these measures are for the last quarter. so we need most recent data
 
             eps_thisqtr = income_stmnt[0].get('eps', 0)  # EPS Growt qtr over qtr: > 20%
             eps_lastqtr = income_stmnt[1].get('eps',
-                                            0)  # else income_stmnt_as_reported[-1].get('earningspersharebasicanddiluted', 0)    #EPS Growt qtr over qtr: > 20%
+                                              0)  # else income_stmnt_as_reported[-1].get('earningspersharebasicanddiluted', 0)    #EPS Growt qtr over qtr: > 20%
             net_sales_thisqtr = income_stmnt[0]['revenue']  # sakes   EPS Growt qtr over qtr: > 20%
             net_sales_lastqtr = income_stmnt[1]['revenue']  # EPS Growt qtr over qtr: > 20%
             qtr_fundamental_dict['income_statement_qtr_date'] = income_stmnt[0]['date']
@@ -139,9 +140,10 @@ def get_fundamental_parameters_qtr(ticker,key):
             else:
                 qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = 0
                 qtr_fundamental_dict['net_sales_qtr_over_qtr'] = 0
-    except Exception as e:
-        logging.info('Failin gto retrieve quarterly data for {}:{}'.format(ticker, str(e)))
         return qtr_fundamental_dict
+    except Exception as e:
+        logging.info('FAiled to get fundamelta qtr data for:{}:{}'.format(ticker, str(e)))
+        return {}
 
 
 def get_analyst_estimates(ticker, key,  fundamental_dict):
@@ -168,15 +170,13 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
 
 def get_fundamental_parameters(ticker, key, asOfDate=None):
     fundamental_dict = {}
-
     try:
         income_statement = requests.get(
             'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
-                                                                                                            key=key)).json()
+                                                                                                             key=key)).json()
         # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
 
-        if income_statement and len(income_statement) > 2:
-    
+        if len(income_statement) > 2:
             latest = income_statement[0]
             fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
             fundamental_dict['income_statement_date'] = latest['date']
@@ -195,15 +195,14 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             else:
                 fundamental_dict['eps_growth_this_year'] = -1
             if eps_5yrs_ago > 0:
-                complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1 
+                complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1
                 fundamental_dict['eps_growth_past_5yrs'] = float(complex_n.real)
             else:
                 fundamental_dict['eps_growth_past_5yrs'] = -1
             # Now we get the quarterl stats
             qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
-            logging.info('Quarterly dict is:{}'.format(qtrly_fundamental_dict))
             fundamental_dict.update(qtrly_fundamental_dict)
-            logging.info('We got data for:{}'.format(ticker))
+            return fundamental_dict
     except Exception as e:
         logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
         fundamental_dict['cost_of_research_and_dev'] = 0
@@ -215,10 +214,9 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         fundamental_dict['eps_growth_past_5yrs'] = -1
         # Now we get the quarterl stats
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
-        if qtrly_fundamental_dict and qtrly_fundamental_dict is not None:
-            fundamental_dict.update(qtrly_fundamental_dict)
-    return fundamental_dict
-            
+        fundamental_dict.update(qtrly_fundamental_dict)
+        return fundamental_dict
+
 
 def get_financial_ratios(ticker, key):
     financial_ratios = requests.get(
@@ -236,6 +234,7 @@ def get_financial_ratios(ticker, key):
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
+    return {}
 
 
 
@@ -275,13 +274,6 @@ def get_all_data(ticker, key):
   try:
     logging.info('Get al data.t icker is:{}'.format(ticker))
     desc_tech_dict = get_descriptive_and_technical(ticker, key)
-    #desc_tech_dict = get_fundamental_parameters(ticker, key)
-    #desc_tech_dict.update(fund_dict)
-    #inst_holders_dict = get_institutional_holders_quote(ticker, key)
-    #desc_tech_dict.update(fund_dict)
-    #desc_tech_dict.update(inst_holders_dict)
-    #desc_tech_dict['institutionalHoldingsPercentage'] = desc_tech_dict['institutionalHoldings'] / desc_tech_dict['sharesOutstanding']
-    #desc_tech_dict['sharesFloat'] = get_shares_float(ticker, key)
     return desc_tech_dict
   except Exception as e:
     print('Exception:Could not fetch data for :{}:{}'.format(ticker, str(e)))
@@ -389,7 +381,6 @@ def get_stock_benchmarks(ticker, key):
             all_divis = [d.get('adjDividend', 0) for d in divis if
                          datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
             dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
-            dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
         except Exception as e:
             logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
             dataDict['dividendPaid'] = 0
