@@ -1,8 +1,12 @@
 
 import unittest
-from shareloader.modules.superperformers import filter_universe, load_fundamental_data
+from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
+                                                combine_tickers, benchmark_filter
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
-                get_financial_ratios, get_fmprep_historical, get_stock_benchmarks
+                get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
+                get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
+                get_balancesheet_benchmark
+
 
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
@@ -61,37 +65,6 @@ class TestSuperPerformers(unittest.TestCase):
         print(' dt is:{}'.format(dt))
         return dt
 
-    def test_load_base_data(self):
-        key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            def tickerCombiners(input):
-                return ','.join(input)
-
-            input = (p | 'Start' >> beam.Create([('TSCO', 'Something'), ('MCD', 'Something'),
-                                                 ('MSFT', 'Something'), ('KL', 'Something')])
-                       | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
-                     )
-            res = load_base_data(input, key)
-
-            res | 'Printing out' >> beam.Map(print)
-
-    def test_getfundamentals(self):
-        key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            def tickerCombiners(input):
-                return ','.join(input)
-
-            input = (p | 'Start' >> beam.Create([('TSCO', 'Something'), ('MCD', 'Something'),
-                                                 ('MSFT', 'Something')])
-                       | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
-                     )
-            # new strategy. Get tickers,load fundamentals and combine
-            descriptive = load_base_data(input, key)
-
-            fundamentals =  load_fundamental_data(input, key) | 'Printing out' >> beam.Map(print)
-
-
-
     def test_filter_universe(self):
         key = os.environ['FMPREPKEY']
 
@@ -127,30 +100,11 @@ class TestSuperPerformers(unittest.TestCase):
             filtered = filter_universe(all_data)
             filtered | printingSink
 
-    def test_getalldata(self):
-        key = os.environ['FMPREPKEY']
-        printingSink = beam.Map(print)
-
-        print('Key is:{}|'.format(key))
-        with TestPipeline() as p:
-            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry'), ('ARR', 'foo'),
-                                                      ('ADAP', 'foo'), ('ATGE', 'foo')])
-                         | 'Map ' >> beam.Map(lambda i: i[0])
-                         | 'Filter out Nones' >> beam.Filter(lambda item: item is not None)
-                       )
-            all_data = load_base_data(tickers, key)
-            all_data  | printingSink
-
-
     def test_get_financial_ratios(self):
         key = os.environ['FMPREPKEY']
         printingSink = beam.Map(print)
 
         print(get_financial_ratios('AAPL', key))
-
-    def test_get_stock_benchmarks(self):
-        key = os.environ['FMPREPKEY']
-        print(get_stock_benchmarks('FB', key))
 
     def test_get_stock_dividends(self):
         import requests
@@ -166,6 +120,20 @@ class TestSuperPerformers(unittest.TestCase):
         from pprint import pprint
         print(len(all_divis))
         pprint(all_divis)
+
+    def test_benchmarkLoader(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+
+        print('Key is:{}|'.format(key))
+        with TestPipeline() as p:
+             (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
+                         | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
+                         | 'Filtering' >> beam.Filter(benchmark_filter)
+                         | printingSink
+             )
+
 
 
 

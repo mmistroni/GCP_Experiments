@@ -21,7 +21,8 @@ import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
-                                            get_stock_benchmarks
+                                            get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
+                                            get_income_benchmark, get_balancesheet_benchmark
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -82,9 +83,11 @@ class BaseLoader(beam.DoFn):
             all_dt.append(ticker_data)
         return all_dt
 
+
 class FundamentalLoader(beam.DoFn):
-    def __init__(self, key) :
+    def __init__(self, key):
         self.key = key
+
     def process(self, elements):
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
         logging.info('All data is\n{}'.format(elements))
@@ -94,18 +97,45 @@ class FundamentalLoader(beam.DoFn):
             if fundamental_data:
                 fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
                 if fundamental_qtr:
-                    fundamental_data.update(fundamental_qtr)                
+                    fundamental_data.update(fundamental_qtr)
                     financial_ratios = get_financial_ratios(ticker, self.key)
                     if financial_ratios:
                         fundamental_data.update(financial_ratios)
-                                            
+
                 updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                 updated_dict.update(descr_and_tech)
-                benchmark_dict = get_stock_benchmarks(ticker, self.key)
-                updated_dict.update(benchmark_dict)
                 all_dt.append(updated_dict)
         return all_dt
+
+
+
+class BenchmarkLoader(beam.DoFn):
+    def __init__(self, key):
+        self.key = key
+
+    def process(self, elements):
+        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
+        logging.info('All data is\n{}'.format(elements))
+        all_dt = []
+        for ticker in elements.split(','):
+            quotes_data = get_quote_benchmark(ticker, self.key)
+            if quotes_data:
+                income_data = get_income_benchmark(ticker, self.key)
+                if income_data:
+                    quotes_data.update(income_data)
+                    balance_sheet_data = get_balancesheet_benchmark(ticker, self.key)
+                    if balance_sheet_data:
+                        quotes_data.update(balance_sheet_data)
+                        financial_ratios_data = get_financial_ratios_benchmark(ticker, self.key)
+                        if financial_ratios_data:
+                            quotes_data.update(financial_ratios_data)
+                            key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
+                            if key_metrics_dta:
+                                quotes_data.update(key_metrics_dta)
+                                all_dt.append(quotes_data)
+        return all_dt
+
 
 def write_to_bucket(lines, sink):
     return (
@@ -129,6 +159,12 @@ def load_fundamental_data(source,fmpkey):
             | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
 
+def load_benchmark_data(source,fmpkey):
+    return (source
+            | 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey))
+            | 'Filtering for all fields ' >> beam.Filter(benchmark_filter)
+            )
 
 def filter_universe(data):
     return (data
@@ -168,6 +204,17 @@ def new_high_filter(input_dict):
                     and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
                     and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
+
+def benchmark_filter(input_dict):
+    fields_to_check = ['debtOverCapital', 'enterpriseDebt', 'epsGrowth',
+                       'epsGrowth5yrs', 'positiveEps', 'positiveEpsLast5Yrs',
+                       'tangibleBookValuePerShare', 'netCurrentAssetValue',
+                       'dividendPaid', 'peRatio', 'currentRatio', 'priceToBookRatio',
+                       'marketCap' ,'sharesOutstanding', 'institutionalOwnershipPercentage',
+                       'price']
+
+    result = [input_dict.get(field) is not None for field in fields_to_check]
+    return all(result)
 
 def defensive_stocks_filter(input_dict):
     return  (input_dict['marketCap'] > 2000000000) and (input_dict['currentRatio'] >= 2) \
@@ -229,35 +276,52 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
 
-        fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
+        if (pipeline_options.iistocks):
+            benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
+            (benchmark_data | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                            | 'Mapping only Relevant fields d' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                          TICKER=d['symbol'],
+                                                                                          LABEL='DEFENSIVE',
+                                                                                          PRICE=d['price']))
+                            | 'Writing to sink d' >> bq_sink)
 
-        fundamental_data  |'Sendig to sink' >> sink
+            (benchmark_data | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter())
+                             | 'Mapping only Relevant fields ent' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                         TICKER=d['symbol'],
+                                                                                         LABEL='ENTERPRISE',
+                                                                                         PRICE=d['price']))
+                             | 'Writing to sink e' >> bq_sink)
+        else:
 
-        (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                    TICKER=d['symbol'],
-                                                                                    LABEL='STOCK_UNIVERSE',
-                                                                                    PRICE=d['price']))
-                         | 'Writing to stock selection' >> bq_sink)
+            fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
 
-        (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
-                          |'Mapping only Relevant canslim fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                      TICKER=d['symbol'],
-                                                                                      LABEL='CANSLIM',
-                                                                                    PRICE=d['price']))
-                            | 'Writing to stock selection C' >> bq_sink)
+            fundamental_data  |'Sendig to sink' >> sink
 
-        (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
-         | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                             TICKER=d['symbol'],
-                                                                             LABEL='UNDER10M',
-                                                                             PRICE=d['price']))
-         | 'Writing to stock selection 10' >> bq_sink)
+            (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                        TICKER=d['symbol'],
+                                                                                        LABEL='STOCK_UNIVERSE',
+                                                                                        PRICE=d['price']))
+                             | 'Writing to stock selection' >> bq_sink)
 
-        (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
-         | 'Mapping only Relevant nh fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                        TICKER=d['symbol'],
-                                                                        LABEL='NEWHIGHS',
-                                                                            PRICE=d['price']))
-         | 'Writing to stock selection nh' >> bq_sink)
+            (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
+                              |'Mapping only Relevant canslim fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                          TICKER=d['symbol'],
+                                                                                          LABEL='CANSLIM',
+                                                                                        PRICE=d['price']))
+                                | 'Writing to stock selection C' >> bq_sink)
+
+            (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
+             | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                                 TICKER=d['symbol'],
+                                                                                 LABEL='UNDER10M',
+                                                                                 PRICE=d['price']))
+             | 'Writing to stock selection 10' >> bq_sink)
+
+            (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
+             | 'Mapping only Relevant nh fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                            TICKER=d['symbol'],
+                                                                            LABEL='NEWHIGHS',
+                                                                                PRICE=d['price']))
+             | 'Writing to stock selection nh' >> bq_sink)
 
 
