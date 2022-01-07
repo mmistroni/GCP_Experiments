@@ -223,7 +223,7 @@ def defensive_stocks_filter(input_dict):
                    and (input_dict['epsGrowth'] >= 0.33) \
                    and (input_dict['positiveEps'] > 0 ) \
                    and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 15) \
-                   and (input+dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
 
 def enterprise_stock_filter(input_dict):

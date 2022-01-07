@@ -134,6 +134,11 @@ class TestSuperPerformers(unittest.TestCase):
                          | printingSink
              )
 
+    def test_get_financial_ratios_benchmark(self):
+        key = os.environ['FMPREPKEY']
+        for ticker in ['INM', 'PHAR', 'WOOF', 'BEEM']:
+            print(get_financial_ratios_benchmark(ticker, key))
+
 
 
 
