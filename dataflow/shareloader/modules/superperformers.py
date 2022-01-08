@@ -211,7 +211,7 @@ def benchmark_filter(input_dict):
                        'tangibleBookValuePerShare', 'netCurrentAssetValue',
                        'dividendPaid', 'peRatio', 'currentRatio', 'priceToBookRatio',
                        'marketCap' ,'sharesOutstanding', 'institutionalOwnershipPercentage',
-                       'price']
+                       'price', 'dividendPaidEnterprise', 'dividendPaid']
 
     result = [input_dict.get(field) is not None for field in fields_to_check]
     return all(result)
@@ -285,7 +285,7 @@ def run(argv=None, save_main_session=True):
                                                                                           PRICE=d['price']))
                             | 'Writing to sink d' >> bq_sink)
 
-            (benchmark_data | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter())
+            (benchmark_data | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
                              | 'Mapping only Relevant fields ent' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                          TICKER=d['symbol'],
                                                                                          LABEL='ENTERPRISE',
