@@ -211,7 +211,7 @@ def benchmark_filter(input_dict):
                        'tangibleBookValuePerShare', 'netCurrentAssetValue',
                        'dividendPaid', 'peRatio', 'currentRatio', 'priceToBookRatio',
                        'marketCap' ,'sharesOutstanding', 'institutionalOwnershipPercentage',
-                       'price', 'dividendPaidEnterprise', 'dividendPaid']
+                       'price', 'dividendPaidEnterprise', 'dividendPaid', 'symbol']
 
     result = [input_dict.get(field) is not None for field in fields_to_check]
     return all(result)

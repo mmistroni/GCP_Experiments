@@ -399,7 +399,7 @@ def get_quote_benchmark(ticker, key):
         res = requests.get('https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
                                                                                                          key=key)).json()[ 0]
         keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
-                'yearHigh', 'yearLow', 'exchange', 'change', 'open']
+                'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
         dataDict['marketCap'] = res['marketCap']
         dataDict['sharesOutstanding'] = res['sharesOutstanding']
         dataDict['price'] = res['price']
