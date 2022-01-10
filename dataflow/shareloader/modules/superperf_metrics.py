@@ -407,10 +407,13 @@ def get_quote_benchmark(ticker, key):
         dataDict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
 
         if dataDict.get('sharesOutstanding') is not None and dataDict.get('sharesOutstanding') > 0:
-            pcnt = dataDict['instOwnership'] / dataDict['sharesOutstanding']
-            dataDict['institutionalOwnershipPercentage'] = pcnt
+            if dataDict['instOwnership'] > 0 and dataDict['sharesOutstanding'] > 0:
+                pcnt = dataDict['instOwnership'] / dataDict['sharesOutstanding']
+                dataDict['institutionalOwnershipPercentage'] = pcnt
+            else:
+                dataDict['institutionalOwnershipPercentage'] = 100
             return dataDict
     except Exception as e:
-        logging.info('Exception in getting data for {}:{}'.format(ticker, str(e)))
+        logging.info('Exception in getting quote benchmark for {}:{}'.format(ticker, str(e)))
         return {}
 
