@@ -278,6 +278,10 @@ def run(argv=None, save_main_session=True):
 
         if (pipeline_options.iistocks):
             benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
+
+            benchmark_data | 'Sending to Sink' >> sink
+
+
             (benchmark_data | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
                             | 'Mapping only Relevant fields d' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                           TICKER=d['symbol'],
