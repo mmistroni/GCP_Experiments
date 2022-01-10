@@ -261,7 +261,7 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
-    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_tester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_benchmark_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
     sink = beam.io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
              bigquery.TableReference(
