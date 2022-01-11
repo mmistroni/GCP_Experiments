@@ -133,7 +133,7 @@ class BenchmarkLoader(beam.DoFn):
                             key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
                             if key_metrics_dta:
                                 quotes_data.update(key_metrics_dta)
-                                all_dt.append(quotes_data)
+                        all_dt.append(quotes_data)
         return all_dt
 
 
@@ -261,7 +261,7 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
-    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_tester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_benchmark_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
     sink = beam.io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
              bigquery.TableReference(
@@ -278,6 +278,10 @@ def run(argv=None, save_main_session=True):
 
         if (pipeline_options.iistocks):
             benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
+
+            benchmark_data | 'Sending to Sink' >> sink
+
+
             (benchmark_data | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
                             | 'Mapping only Relevant fields d' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                           TICKER=d['symbol'],
