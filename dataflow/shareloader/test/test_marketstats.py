@@ -171,24 +171,56 @@ class TestShareLoader(unittest.TestCase):
 
             )
     def test_combineGlobally(self):
+
+        class AverageFn(beam.CombineFn):
+            def create_accumulator(self):
+                return []
+
+            def add_input(self, sum_count, input):
+                holder = sum_count
+                holder.append(input)
+                return holder
+
+            def merge_accumulators(self, accumulators):
+                return chain(*accumulators)
+
+            def extract_output(self, sum_count):
+                all_data = sum_count
+                sorted_els = sorted(all_data, key=lambda t: t[0])
+                mapped = list(map(lambda tpl: '{}:{}'.format(tpl[1]['LABEL'], tpl[1]['VALUE']), sorted_els))
+                return mapped
+
+
+
         iexapi_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            nyse =  p | 'Create coll1' >> beam.Create([{'LABEL' :'One', 'VALUE' : 1},
+            nyse =  (p | 'Create coll1' >> beam.Create([{'LABEL' :'One', 'VALUE' : 1},
                                                        {'LABEL' :'Two', 'VALUE' : 2},
                                                        {'LABEL' :'Three', 'VALUE' : 3}])
+                       |'Map To Key' >> beam.Map(lambda d: (1, d))
+                     )
 
-            nasdaq = p | 'Create coll2' >> beam.Create([{'LABEL' :'Four', 'VALUE' : 4},
+            nasdaq = (p | 'Create coll2' >> beam.Create([{'LABEL' :'Four', 'VALUE' : 4},
                                                        {'LABEL' :'Five', 'VALUE' : 5},
                                                        {'LABEL' :'Six', 'VALUE' : 6}])
+                       |'Map To Key1' >> beam.Map(lambda d: (3, d))
+                      )
 
+            stats = ( p | 'Create coll3' >> beam.Create([{'LABEL': 'FourtyFive', 'VALUE': 4},
+                                                        {'LABEL': 'FiveHundred', 'VALUE': 5},
+                                                        {'LABEL': 'SixThousands', 'VALUE': 6}])
+                      | 'Map To Key2' >> beam.Map(lambda d: (2, d))
+                      )
 
             final = (
-                (nyse, nasdaq)
+                (nyse, nasdaq, stats)
                 | 'FlattenCombine all' >> beam.Flatten()
-                | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
-                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+
+                | ' do A PARDO:' >> beam.CombineGlobally(AverageFn())
                 | 'print outl' >> beam.Map(print)
             )
+           # nearly there, Now we need to map each generated collection to a (key, collection) so that we can then
+           # sort keys and give it to a ParDo
 
 
 

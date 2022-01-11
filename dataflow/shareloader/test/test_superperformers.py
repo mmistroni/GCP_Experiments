@@ -135,10 +135,20 @@ class TestSuperPerformers(unittest.TestCase):
              )
 
     def test_get_financial_ratios_benchmark(self):
+        import pandas as pd
         key = os.environ['FMPREPKEY']
-        for ticker in ['INM', 'PHAR', 'WOOF', 'BEEM']:
-            print(get_financial_ratios_benchmark(ticker, key))
 
+        f = open('C:\\Users\Marco And Sofia\\GitHubProjects\\GCP_Experiments\\dataflow\\shareloader\\test\\test.csv', 'r')
+        mapped = map(lambda i: i.split(',')[0], f.readlines())
+        counter = 0
+        for ticker in mapped:
+            res = get_financial_ratios_benchmark(ticker, key)
+            if res:
+                print(res)
+                counter +=1
+
+            if counter > 50:
+                break
 
 
 

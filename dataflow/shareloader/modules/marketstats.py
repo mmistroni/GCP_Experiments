@@ -34,6 +34,25 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
+class MarketStatsCombineFn(beam.CombineFn):
+    def create_accumulator(self):
+        return []
+
+    def add_input(self, sum_count, input):
+        holder = sum_count
+        holder.append(input)
+        return holder
+
+    def merge_accumulators(self, accumulators):
+        return chain(*accumulators)
+
+    def extract_output(self, sum_count):
+        all_data = sum_count
+        sorted_els = sorted(all_data, key=lambda t: t[0])
+        mapped = list(map(lambda tpl: '{}:{}'.format(tpl[1]['LABEL'], tpl[1]['VALUE']), sorted_els))
+        return mapped
+
+
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
         self.recipients = recipients.split(',')
@@ -198,39 +217,34 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b>LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
+        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL=' LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
                  )
         statistics = run_prev_dates_statistics(p)
 
+        pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
+        manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
+        vix_key = vix_res | 'Add 2' >> beam.Map(lambda d: (3, d))
+        nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
+        nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
+        stats_key = statistics | 'Add 6' >> beam.Map(lambda d: (6, d))
+
+        statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
+
+        statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
+                                              num_shards=1)
+
         final = (
-                (manuf_pmi_res, pmi_res, vix_res, nyse, nasdaq, static, statistics)
+                (pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
+                | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
 
-        '''
 
-        
-        final_stats = (
-                (static, statistics)
-                | 'FlattenCombine all stats' >> beam.Flatten()
-                | 'Mapping to String stats' >> beam.Map(
-                        lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
-                | 'Combine stats' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'Printing Out Stats' >> beam.Map(logging.info)
 
-        )
-        '''
-        logging.info('Running previous statistics...')
-        statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
-
-        statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
-                                                       num_shards=1)
-        (statistics | 'Printing out to siknk' >> statistics_sink)
-            
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
