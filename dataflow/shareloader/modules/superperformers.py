@@ -163,7 +163,6 @@ def load_benchmark_data(source,fmpkey):
     return (source
             | 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey))
-            | 'Filtering for all fields ' >> beam.Filter(benchmark_filter)
             )
 
 def filter_universe(data):
@@ -282,19 +281,23 @@ def run(argv=None, save_main_session=True):
             benchmark_data | 'Sending to Sink' >> sink
 
 
-            (benchmark_data | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+            (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
+
+                            | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
                             | 'Mapping only Relevant fields d' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                           TICKER=d['symbol'],
                                                                                           LABEL='DEFENSIVE',
                                                                                           PRICE=d['price']))
                             | 'Writing to sink d' >> bq_sink)
 
-            (benchmark_data | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
-                             | 'Mapping only Relevant fields ent' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+            (benchmark_data | 'Filtering for all fields e ' >> beam.Filter(benchmark_filter)
+            
+                            | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
+                            | 'Mapping only Relevant fields ent' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                          TICKER=d['symbol'],
                                                                                          LABEL='ENTERPRISE',
                                                                                          PRICE=d['price']))
-                             | 'Writing to sink e' >> bq_sink)
+                            | 'Writing to sink e' >> bq_sink)
         else:
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
