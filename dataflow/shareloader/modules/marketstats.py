@@ -34,6 +34,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
+
 class MarketStatsCombineFn(beam.CombineFn):
     def create_accumulator(self):
         return []
