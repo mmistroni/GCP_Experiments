@@ -133,7 +133,7 @@ class BenchmarkLoader(beam.DoFn):
                             key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
                             if key_metrics_dta:
                                 quotes_data.update(key_metrics_dta)
-                        all_dt.append(quotes_data)
+                    all_dt.append(quotes_data)
         return all_dt
 
 
