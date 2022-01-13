@@ -393,11 +393,11 @@ def get_financial_ratios_benchmark(ticker, key):
 
 
 def get_quote_benchmark(ticker, key):
+    resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
     try:
         dataDict = {}
         dataDict['ticker'] = ticker
-        res = requests.get('https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
-                                                                                                         key=key)).json()[ 0]
+        res = requests.get(resUrl).json()[ 0]
         keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
                 'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
         dataDict['marketCap'] = res['marketCap']
@@ -414,6 +414,6 @@ def get_quote_benchmark(ticker, key):
                 dataDict['institutionalOwnershipPercentage'] = 100
             return dataDict
     except Exception as e:
-        logging.info('Exception in getting quote benchmark for {}:{}'.format(ticker, str(e)))
+        logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
         return {}
 
