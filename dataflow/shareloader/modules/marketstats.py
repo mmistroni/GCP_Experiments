@@ -39,9 +39,10 @@ class MarketStatsCombineFn(beam.CombineFn):
     def create_accumulator(self):
         return []
 
-    def add_input(self, sum_count, input):
+    def add_input(self, sum_count, input_data):
         holder = sum_count
-        holder.append(input)
+        logging.info('Adding:{}'.format(input_data))
+        holder.append(input_data)
         return holder
 
     def merge_accumulators(self, accumulators):
