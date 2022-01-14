@@ -51,7 +51,7 @@ class MarketStatsCombineFn(beam.CombineFn):
     def extract_output(self, sum_count):
         all_data = sum_count
         sorted_els = sorted(all_data, key=lambda t: t[0])
-        mapped = list(map(lambda tpl: '{}:{}'.format(tpl[1]['LABEL'], tpl[1]['VALUE']), sorted_els))
+        mapped = list(map(lambda tpl: tpl[1]), sorted_els))
         return mapped
 
 
@@ -240,8 +240,8 @@ def run(argv=None, save_main_session=True):
                 (pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
+                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'send to sink'  >> statistics_sink
-                #| 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
