@@ -278,9 +278,6 @@ def run(argv=None, save_main_session=True):
         if (pipeline_options.iistocks):
             benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
 
-            benchmark_data | 'Sending to Sink' >> sink
-
-
             (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
 
                             | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
@@ -302,8 +299,7 @@ def run(argv=None, save_main_session=True):
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
 
-            fundamental_data  |'Sendig to sink' >> sink
-
+            
             (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                         TICKER=d['symbol'],
                                                                                         LABEL='STOCK_UNIVERSE',

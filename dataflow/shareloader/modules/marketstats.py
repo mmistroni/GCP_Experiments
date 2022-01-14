@@ -220,10 +220,10 @@ def run(argv=None, save_main_session=True):
         nasdaq | 'nasdaq to sink' >> bq_sink
 
         
-        static1 = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> TODAYS PERFORMANCE</b>', VALUE='--------')])
+        static1 = (p |'Create static1' >>  beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> TODAYS PERFORMANCE</b>', VALUE='--------')])
                  )
         
-        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
+        static = (p | 'Create static 2' >> beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
                  )
         statistics = run_prev_dates_statistics(p)
 
@@ -245,7 +245,7 @@ def run(argv=None, save_main_session=True):
                 (static1_key, pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
+                #| 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'send to sink'  >> statistics_sink
                 #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
