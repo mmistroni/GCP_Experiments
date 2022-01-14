@@ -133,7 +133,7 @@ class BenchmarkLoader(beam.DoFn):
                             key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
                             if key_metrics_dta:
                                 quotes_data.update(key_metrics_dta)
-                    all_dt.append(quotes_data)
+                                all_dt.append(quotes_data)
         return all_dt
 
 
@@ -210,7 +210,7 @@ def benchmark_filter(input_dict):
                        'tangibleBookValuePerShare', 'netCurrentAssetValue',
                        'dividendPaid', 'peRatio', 'currentRatio', 'priceToBookRatio',
                        'marketCap' ,'sharesOutstanding', 'institutionalOwnershipPercentage',
-                       'price', 'dividendPaidEnterprise', 'dividendPaid', 'symbol']
+                       'price', 'dividendPaidEnterprise', 'dividendPaid', 'ticker']
 
     result = [input_dict.get(field) is not None for field in fields_to_check]
     return all(result)

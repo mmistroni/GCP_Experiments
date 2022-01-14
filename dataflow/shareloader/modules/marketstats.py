@@ -228,7 +228,8 @@ def run(argv=None, save_main_session=True):
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
-        stats_key = statistics | 'Add 6' >> beam.Map(lambda d: (6, d))
+        static_key = static | 'Add 6' >> beam.Map(lambda d: (6, d))
+        stats_key = statistics | 'Add 7' >> beam.Map(lambda d: (6, d))
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
@@ -236,12 +237,13 @@ def run(argv=None, save_main_session=True):
                                               num_shards=1)
 
         final = (
-                (pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static, stats_key)
+                (pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
-                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
+                | 'send to sink'  >> statistics_sink
+                #| 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
+                #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
 

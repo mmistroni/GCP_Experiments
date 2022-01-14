@@ -400,9 +400,7 @@ def get_quote_benchmark(ticker, key):
         res = requests.get(resUrl).json()[ 0]
         keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
                 'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
-        dataDict['marketCap'] = res['marketCap']
-        dataDict['sharesOutstanding'] = res['sharesOutstanding']
-        dataDict['price'] = res['price']
+        dataDict = dict((k,v) for k, v in res.items() if k in keys)
         # then check ownership < 60% fund ownership
         dataDict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
 
