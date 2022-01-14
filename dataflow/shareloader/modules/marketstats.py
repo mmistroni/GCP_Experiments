@@ -219,17 +219,22 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL=' LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
+        
+        static1 = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> TODAYS PERFORMANCE</b>', VALUE='--------')])
+                 )
+        
+        static = (p | beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> LAST 5 DAYS PERFORMANCE</b>', VALUE='--------')])
                  )
         statistics = run_prev_dates_statistics(p)
 
+        static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
         pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         static_key = static | 'Add 6' >> beam.Map(lambda d: (6, d))
-        stats_key = statistics | 'Add 7' >> beam.Map(lambda d: (6, d))
+        stats_key = statistics | 'Add 7' >> beam.Map(lambda d: (7, d))
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
@@ -237,10 +242,10 @@ def run(argv=None, save_main_session=True):
                                               num_shards=1)
 
         final = (
-                (pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
+                (static1_key, pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                #| 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
+                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
                 | 'send to sink'  >> statistics_sink
                 #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
