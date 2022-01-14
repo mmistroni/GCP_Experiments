@@ -245,7 +245,9 @@ def run(argv=None, save_main_session=True):
                 (static1_key, pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                #| 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data['AS_OF_DATE'], data['LABEL'], data['VALUE']))
+                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data.get('AS_OF_DATE', 'N/A'), 
+                                                                                 data.get('LABEL', 'NOLABEL'),
+                                                                                 data.get('VALUE', 'NOVALUE')))
                 | 'send to sink'  >> statistics_sink
                 #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
                 #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
