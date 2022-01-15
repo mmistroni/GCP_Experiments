@@ -52,7 +52,14 @@ class MarketStatsCombineFn(beam.CombineFn):
         all_data = sum_count
         sorted_els = sorted(all_data, key=lambda t: t[0])
         mapped = list(map (lambda tpl: tpl[1], sorted_els))
-        return mapped
+        
+        stringified = list(map(lambda x: '{}-{}-{}'.format(x['AS_OF_DATE'],
+                                                           x['LABEL'],
+                                                           x['VALUE']), mapped))
+                
+        
+        logging.info('MAPPED IS :{}'.format(mapped))
+        return stringified
 
 
 class EmailSender(beam.DoFn):
@@ -245,12 +252,9 @@ def run(argv=None, save_main_session=True):
                 (static1_key, pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                | 'Mapping to String' >> beam.Map(lambda data: '{}-{}:{}'.format(data.get('AS_OF_DATE', 'N/A'), 
-                                                                                 data.get('LABEL', 'NOLABEL'),
-                                                                                 data.get('VALUE', 'NOVALUE')))
-                | 'send to sink'  >> statistics_sink
-                #| 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                #| 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
+                | ' FlatMapping' >> beam.FlatMap(lambda x: x)
+                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
 
         )
 
