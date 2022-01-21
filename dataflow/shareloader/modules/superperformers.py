@@ -22,7 +22,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
-                                            get_income_benchmark, get_balancesheet_benchmark
+                                            get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -32,6 +32,18 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
         parser.add_argument('--iistocks')
+
+def asset_play_filter(input_dict):
+    if not input_dict:
+        return False
+    shares_outstanding = input_dict.get('sharesOutstanding', 0)
+    marketCap = input_dict.get('marketCap', 0)
+    bookValuePerShare = input_dict.get('bookValuePerShare', 0)
+    assetValue = shares_outstanding * bookValuePerShare
+
+    return assetValue > marketCap
+
+
 
 def get_descriptive_and_techincal_filter(input_dict):
     if not input_dict:
@@ -105,6 +117,10 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                 updated_dict.update(descr_and_tech)
+                asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                updated_dict.update(asset_play_dict)
+
+
                 all_dt.append(updated_dict)
         return all_dt
 
@@ -299,7 +315,8 @@ def run(argv=None, save_main_session=True):
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
 
-            fundamental_data  |'Sendig to sink' >> sink
+
+
 
             (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                         TICKER=d['symbol'],
@@ -326,6 +343,13 @@ def run(argv=None, save_main_session=True):
                                                                             TICKER=d['symbol'],
                                                                             LABEL='NEWHIGHS',
                                                                                 PRICE=d['price']))
+             | 'Writing to stock selection nh' >> bq_sink)
+
+            (fundamental_data | 'Asset PLays' >> beam.Filter(asset_play_filter)
+             | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                            TICKER=d['symbol'],
+                                                                            LABEL='ASSET_PLAY',
+                                                                            PRICE=d['price']))
              | 'Writing to stock selection nh' >> bq_sink)
 
 

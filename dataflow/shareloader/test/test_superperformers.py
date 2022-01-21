@@ -1,7 +1,8 @@
 
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
-                                                combine_tickers, benchmark_filter
+                                                combine_tickers, benchmark_filter, FundamentalLoader,\
+                                                asset_play_filter
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -89,16 +90,6 @@ class TestSuperPerformers(unittest.TestCase):
         print(get_descriptive_and_technical('AAPL', key))
 
 
-    def test_mini_pipeline(self):
-        key = os.environ['FMPREPKEY']
-
-        printingSink = beam.Map(print)
-
-        with TestPipeline() as p:
-            tickers = (p | 'Starting' >> beam.Create([('TSCO', 'TmpIndustry')]))
-            all_data = load_base_data(tickers, key)
-            filtered = filter_universe(all_data)
-            filtered | printingSink
 
     def test_get_financial_ratios(self):
         key = os.environ['FMPREPKEY']
@@ -133,6 +124,21 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Filtering' >> beam.Filter(benchmark_filter)
                          | printingSink
              )
+
+    def test_fundamentalLoader(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+
+        print('Key is:{}|'.format(key))
+        with TestPipeline() as p:
+             (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
+                         | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
+                         | 'Filtering' >> beam.Filter(asset_play_filter)
+                         | printingSink
+             )
+
+
 
     def test_get_financial_ratios_benchmark(self):
         import pandas as pd

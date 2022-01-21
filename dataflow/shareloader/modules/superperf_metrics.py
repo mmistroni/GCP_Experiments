@@ -91,6 +91,20 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         logging.info('Failed to get descriptive for :{}:{}'.format(ticker, str(e)))
         return dict((k, -1) for k in keys)
 
+def get_asset_play_parameters(ticker, key):
+    dataDict = {}
+    try:
+        data = requests.get('https://financialmodelingprep.com/api/v3/key-metrics-ttm/{}?limit=40&apikey={}'.format(ticker, key)).json()
+        if data:
+            current = data[0]
+            dataDict['bookValuePerShare'] = current.get('bookValuePerShareTTM') or 0
+            dataDict['tangibleBookValuePerShare'] = current.get('tangibleBookValuePerShareTTM') or 0
+
+    except Exception as e:
+        logging.info('Error in finding asset play params for :{}:{}'.format(ticker, str(e)))
+
+    return dataDict
+
 
 
 def get_yearly_financial_ratios(ticker, key):
@@ -352,6 +366,7 @@ def get_key_metrics_benchmark(ticker, key):
 
             dataDict['tangibleBookValuePerShare'] = keyMetrics[0].get('tangibleBookValuePerShareTTM') or 0
             dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
+
             return dataDict
     except Exception as e:
         logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
