@@ -144,11 +144,14 @@ class BenchmarkLoader(beam.DoFn):
                     if balance_sheet_data:
                         quotes_data.update(balance_sheet_data)
                         financial_ratios_data = get_financial_ratios_benchmark(ticker, self.key)
+
                         if financial_ratios_data:
                             quotes_data.update(financial_ratios_data)
                             key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
                             if key_metrics_dta:
                                 quotes_data.update(key_metrics_dta)
+                                asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                                quotes_data.update(asset_play_dict)
                                 all_dt.append(quotes_data)
         return all_dt
 
@@ -311,6 +314,15 @@ def run(argv=None, save_main_session=True):
                                                                                          LABEL='ENTERPRISE',
                                                                                          PRICE=d['price']))
                             | 'Writing to sink e' >> bq_sink)
+            (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
+
+             | 'Filtering for asset play' >> beam.Filter(asset_play_filter)
+             | 'Mapping only Relevant fields AP' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+                                                                             TICKER=d['symbol'],
+                                                                             LABEL='ASSET_PLAY',
+                                                                             PRICE=d['price']))
+             | 'Writing to sink ap' >> bq_sink)
+
         else:
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
@@ -347,7 +359,7 @@ def run(argv=None, save_main_session=True):
                                                                             TICKER=d['symbol'],
                                                                             LABEL='ASSET_PLAY',
                                                                             PRICE=d['price']))
-             | 'Writing to stock selection nh' >> bq_sink)
+             | 'Writing to stock selection ap' >> bq_sink)
 
 
 
