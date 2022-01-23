@@ -285,9 +285,9 @@
     <list>
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_combineGlobally" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_stock_dividends" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
     </list>
     <recent_temporary>
       <list>

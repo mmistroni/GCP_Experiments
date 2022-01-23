@@ -280,7 +280,6 @@ def run(argv=None, save_main_session=True):
 
     input_file = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv-00000-of-00001'
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_benchmark_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
-    sink = beam.io.WriteToText(destination, num_shards=1)
     bq_sink = beam.io.WriteToBigQuery(
              bigquery.TableReference(
                 projectId="datascience-projects",
@@ -296,6 +295,12 @@ def run(argv=None, save_main_session=True):
 
         if (pipeline_options.iistocks):
             benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
+
+            destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockbenchmarks_{}'.format(
+                date.today().strftime('%Y-%m-%d %H:%M'))
+
+            sink = beam.io.WriteToText(destination, num_shards=1)
+            benchmark_data | 'Sendig to bqsink' >> sink
 
             (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
 
@@ -326,6 +331,13 @@ def run(argv=None, save_main_session=True):
         else:
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
+
+            destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
+                                                    date.today().strftime('%Y-%m-%d %H:%M'))
+
+            sink = beam.io.WriteToText(destination, num_shards=1)
+
+            fundamental_data | 'Sendig to sink' >> sink
 
             (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                         TICKER=d['symbol'],
