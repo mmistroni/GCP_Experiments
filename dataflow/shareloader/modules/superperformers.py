@@ -367,6 +367,7 @@ def run(argv=None, save_main_session=True):
              | 'Writing to stock selection nh' >> bq_sink)
 
             (fundamental_data | 'Asset PLays' >> beam.Filter(asset_play_filter)
+             | 'Universe filter' >> beam.Filter(get_universe_filter)
              | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                             TICKER=d['symbol'],
                                                                             LABEL='ASSET_PLAY',
