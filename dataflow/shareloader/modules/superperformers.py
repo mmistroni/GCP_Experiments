@@ -339,7 +339,8 @@ def run(argv=None, save_main_session=True):
 
             fundamental_data | 'Sendig to sink' >> sink
 
-            (fundamental_data | 'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
+            (fundamental_data | 'fund unvierse' >> beam.Filter(get_universe_filter)
+                            |'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
                                                                                         TICKER=d['symbol'],
                                                                                         LABEL='STOCK_UNIVERSE',
                                                                                         PRICE=d['price']))
