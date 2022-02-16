@@ -9,7 +9,7 @@ from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from itertools import groupby
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
             find_current_year, EdgarCombineFn
 from apache_beam.io import WriteToText
 from apache_beam.io.textio import ReadAllFromText

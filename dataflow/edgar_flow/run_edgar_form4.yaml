@@ -1,0 +1,27 @@
+steps:
+  # Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'recipients=$_RECIPIENTS'
+          , '--parameters'
+          , 'key=$_SENDGRID_KEY'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
+
+substitutions:
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/python_command_spec_edgar_daily_form4-cbuild.json
+  _JOB_NAME: form4dailycloudbuild
+  _REGION : 'us-central1'
+  _RECIPIENTS : 'mmistroni@gmail.com'
+  _SENDGRID_KEY: ''
+  

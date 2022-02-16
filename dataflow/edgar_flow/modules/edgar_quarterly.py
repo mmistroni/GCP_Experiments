@@ -2,13 +2,13 @@ import apache_beam as beam
 import argparse
 import logging
 from apache_beam.options.pipeline_options import PipelineOptions
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker
 from datetime import date, datetime
 from apache_beam.io.gcp.internal.clients import bigquery
-from modules.edgar_daily import combine_data, filter_form_13hf
+from .edgar_daily import combine_data, filter_form_13hf
 import requests
 import os
-from modules.price_utils import get_current_price
+from .price_utils import get_current_price
 
 test_bucket = 'gs://mm_dataflow_bucket/'
 form_type = '13F-HR'

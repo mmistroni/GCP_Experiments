@@ -3,16 +3,16 @@ import argparse
 import logging
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
             find_current_year, EdgarCombineFnForm4, ParseForm4
 from datetime import date, datetime
 from pandas.tseries.offsets import BDay
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from apache_beam.io.gcp.internal.clients import bigquery
-from modules.edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
+from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4
-from modules.price_utils import get_current_price
+from .price_utils import get_current_price
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -195,6 +195,3 @@ def run(argv=None, save_main_session=True):
         write_to_form4_bucket(enhanced_data, pipeline_options)
         write_to_form4_bq(enhanced_data)
 
-if __name__ == '__main__':
-  logging.getLogger().setLevel(logging.INFO)
-  run()

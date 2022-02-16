@@ -5,12 +5,12 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date, datetime
 from apache_beam.options.value_provider import RuntimeValueProvider
-from modules.edgar_daily_form4 import run_my_pipeline, filter_form_4,\
+from .edgar_daily_form4 import run_my_pipeline, filter_form_4,\
                         send_email, write_to_form4_bq, enhance_form_4, XyzOptions, write_to_form4_bucket
-from modules.edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
+from .edgar_utils import  get_edgar_table_schema, get_edgar_table_schema_form4,\
             get_edgar_daily_table_spec, get_edgar_daily_table_spec_form4,get_edgar_daily_table_spec_form4_historical
 
-from modules.price_utils import get_current_price
+from .price_utils import get_current_price
 from sendgrid import SendGridAPIClient
 EDGAR_QUARTERLY_URL = 'https://www.sec.gov/Archives/edgar/full-index/{year}/{quarter}/master.idx'
 
