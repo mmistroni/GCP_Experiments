@@ -14,7 +14,8 @@
     },
     { "name" : "setup_file",
       "label": "setup file loc",
-      "helpText": "setup location"
+      "helpText": "setup location",
+      "isOptional" : true
     }
   ]
   

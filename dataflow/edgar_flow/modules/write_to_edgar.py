@@ -4,12 +4,12 @@ import logging
 import re
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-from modules.edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, get_company_stats,\
+from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, get_company_stats,\
                                         EdgarEmailSender
 from datetime import date, datetime
 
 import os
-from modules.beam_functions import map_to_year, get_edgar_index_files, \
+from .beam_functions import map_to_year, get_edgar_index_files, \
             map_from_edgar_row, map_to_bucket_string, \
             map_to_bq_dict, get_edgar_table_schema, get_edgar_table_spec
 
