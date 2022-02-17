@@ -17,14 +17,18 @@ steps:
           , '--config'
           , '$_EDGAR_FORM4_BUILD_FILE']  
     id: 'build-edgarform4-templates'
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME'
-      , '--file=./dataflow/edgar_flow/Dockerfile_Edgar_Daily_Form13'
-      , './dataflow/edgar_flow/'
-      ]
-    id: 'build-form13-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_EDGAR_FORM13_BUILD_FILE']  
+    id: 'build-edgarform13-templates'
+  
   - name: gcr.io/cloud-builders/docker
     args:
       [ 'build'
@@ -58,8 +62,7 @@ steps:
     id: 'build-shareloader-templates'
 timeout: 80000s
 
-images: ['gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
-         'gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
+images: ['gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
           ]
 
    
@@ -71,4 +74,5 @@ substitutions:
   _EDGAR_QUARTERLY_FORM4_IMAGE_NAME: edgar-quarterly-form4:latest
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_all.yaml
   _EDGAR_FORM4_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form4.yaml
+  _EDGAR_FORM13_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form13.yaml
   
