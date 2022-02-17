@@ -11,7 +11,7 @@ steps:
           , '--template-file-gcs-location'
           , '$_TEMPLATE_GCS_LOCATION'
           , '--parameters'
-          , 'recipients=mmistroni@gmail.com'
+          , 'recipients=$_RECIPIENTS'
           , '--parameters'
           , 'key=$_SENDGRIDKEY'
           , '--region=$_REGION'
@@ -25,3 +25,4 @@ substitutions:
   _JOB_NAME: form13tmprun
   _REGION : 'us-central1'
   _SENDGRIDKEY: ''
+  _RECIPIENTS = 'mmistroni@gmail.com,alexmistroni@gmail.com'
