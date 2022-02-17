@@ -182,6 +182,7 @@ def load_benchmark_data(source,fmpkey):
     return (source
             | 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey))
+            | 'Filtering  benchmark by price' >>  beam.Filter(lambda d: d.get('price', 0) > 10)
             )
 
 def filter_universe(data):
@@ -253,6 +254,7 @@ def enterprise_stock_filter(input_dict):
                    and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
                    and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+
 
 
 
