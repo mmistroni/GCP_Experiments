@@ -6,14 +6,17 @@
 # to be amended. this should invoke build file for each subproject
 steps:
   # Build the container image with the Python version of our choice.
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME'
-      , '--file=./dataflow/edgar_flow/Dockerfile'
-      , './dataflow/edgar_flow/'
-      ]
-    id: 'build-form4-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_EDGAR_FORM4_BUILD_FILE']  
+    id: 'build-edgarform4-templates'
   - name: gcr.io/cloud-builders/docker
     args:
       [ 'build'
@@ -53,10 +56,9 @@ steps:
           , '--config'
           , '$_SHARELOADER_BUILD_FILE']  
     id: 'build-shareloader-templates'
-timeout: 50000s
+timeout: 80000s
 
-images: ['gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
-         'gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
+images: ['gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM13_IMAGE_NAME',
          'gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
           ]
 
@@ -65,8 +67,8 @@ images: ['gcr.io/$_PROJECT_ID/$_EDGAR_DAILY_FORM4_IMAGE_NAME',
 substitutions:
   _PROJECT_ID: datascience-projects
   _PIPELINE_BUILD_FILE: ./dataflow/pipeline/build.yaml
-  _EDGAR_DAILY_FORM4_IMAGE_NAME: edgar-daily4-form4:latest
   _EDGAR_DAILY_FORM13_IMAGE_NAME: edgar-daily-form13:latest
   _EDGAR_QUARTERLY_FORM4_IMAGE_NAME: edgar-quarterly-form4:latest
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_all.yaml
+  _EDGAR_FORM4_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form4.yaml
   
