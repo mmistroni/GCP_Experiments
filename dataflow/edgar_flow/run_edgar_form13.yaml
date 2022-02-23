@@ -25,4 +25,4 @@ substitutions:
   _JOB_NAME: form13cloudbuild
   _REGION : 'us-central1'
   _SENDGRIDKEY: ''
-  _RECIPIENTS = ''
+  _RECIPIENTS : ''

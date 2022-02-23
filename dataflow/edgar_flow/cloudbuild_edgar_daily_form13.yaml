@@ -8,6 +8,10 @@ steps:
       , './dataflow/edgar_flow'
       ]
     id : 'build-edgarform13-image'
+  # Push docker image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push',  'gcr.io/$_PROJECT_ID/$_IMAGE_NAME']
+    id: 'push-image'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
@@ -25,8 +29,7 @@ steps:
     id: 'build-edgarform13-flex-template'
     waitFor: ['build-edgarform13-image']
   
-images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME']
-timeout: 1800s
+timeout: 2500s
 
 substitutions:
   _PROJECT_ID: datascience-projects
