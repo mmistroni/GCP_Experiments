@@ -22,6 +22,6 @@ substitutions:
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/python_command_spec_edgar_daily_form4-cbuild.json
   _JOB_NAME: form4dailycloudbuild
   _REGION : 'us-central1'
-  _RECIPIENTS : 'mmistroni@gmail.com,alexmistroni@gmail.com'
+  _RECIPIENTS : ''
   _SENDGRID_KEY: ''
   
