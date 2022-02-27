@@ -16,7 +16,7 @@ from .price_utils import get_current_price
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
-        self.recipients = recipients.split(',')
+        self.recipients = recipients.split(';')
         self.key = key
 
     def _build_personalization(self, recipients):
