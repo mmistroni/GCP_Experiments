@@ -10,6 +10,7 @@
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -285,16 +286,16 @@
     <list>
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_combineGlobally" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_stock_dividends" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_combineGlobally" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_stock_dividends" />
       </list>
     </recent_temporary>
@@ -406,7 +407,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>150</line>
+          <line>163</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

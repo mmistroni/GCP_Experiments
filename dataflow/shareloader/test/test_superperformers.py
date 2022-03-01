@@ -2,7 +2,7 @@
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
-                                                asset_play_filter
+                                                asset_play_filter, defensive_stocks_filter
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -53,11 +53,14 @@ class PercentagesFn(beam.CombineFn):
       return list(accumulator.values())
 
 
+def filter_basic_fields(input_dict):
+      keys = ['price', 'yearHigh', 'yearLow', 'priceAvg50', 'priceAvg200', 'marketCap',
+              'bookValuePerShare', 'tangibleBookValuePerShare']
+      s = [str(input_dict[k]) for k in keys]
+      return ','.join(s)
 
 
 class TestSuperPerformers(unittest.TestCase):
-
-
 
     def all_in_one(self, input):
         from functools import reduce
@@ -112,17 +115,24 @@ class TestSuperPerformers(unittest.TestCase):
         print(len(all_divis))
         pprint(all_divis)
 
+
+
+
+
     def test_benchmarkLoader(self):
         key = os.environ['FMPREPKEY']
         printingSink = beam.Map(print)
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
+             (p | 'Starting' >> beam.Create(['TX'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
-                         | printingSink
+                         | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                         | 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+
+              | printingSink
              )
 
     def test_fundamentalLoader(self):
@@ -134,10 +144,13 @@ class TestSuperPerformers(unittest.TestCase):
              (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
-                         | 'Filtering' >> beam.Filter(asset_play_filter)
+                         | 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+                         #| 'Filtering' >> beam.Filter(asset_play_filter)
                          | printingSink
              )
 
+
+    # Need tow rite test also for fundamental
 
 
     def test_get_financial_ratios_benchmark(self):

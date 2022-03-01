@@ -292,6 +292,16 @@ def run(argv=None, save_main_session=True):
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
     pipeline_options = XyzOptions()
+
+    # TODO in thewrite to bq sink. Add the following
+    # Current Price
+    # year high
+    # year low
+    # priceAvg50
+    # priceAvg200
+    # bookValuePerShare
+    # tangibleBookValuePerShare
+
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
 
