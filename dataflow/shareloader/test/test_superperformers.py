@@ -2,7 +2,7 @@
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
-                                                asset_play_filter, defensive_stocks_filter
+                                                asset_play_filter, defensive_stocks_filter, map_to_bq_dict
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -130,7 +130,8 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
                          | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
-                         | 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+                        | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
               | printingSink
              )
@@ -144,7 +145,8 @@ class TestSuperPerformers(unittest.TestCase):
              (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
-                         | 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+                         | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
                          #| 'Filtering' >> beam.Filter(asset_play_filter)
                          | printingSink
              )

@@ -230,7 +230,8 @@ def benchmark_filter(input_dict):
                        'tangibleBookValuePerShare', 'netCurrentAssetValue',
                        'dividendPaid', 'peRatio', 'currentRatio', 'priceToBookRatio',
                        'marketCap' ,'sharesOutstanding', 'institutionalOwnershipPercentage',
-                       'price', 'dividendPaidEnterprise', 'dividendPaid', 'symbol']
+                       'price', 'dividendPaidEnterprise', 'dividendPaid', 'symbol',
+                       'freeCashFlowPerShare']
 
     result = [input_dict.get(field) is not None for field in fields_to_check]
     return all(result)
@@ -272,6 +273,15 @@ def write_to_bigquery(p, bq_sink, status):
               | 'Mapping to BQ Dict {}'.format(status) >> beam.Map(lambda tpl: dict(AS_OF_DATE=tpl[0], TICKER=tpl[1], STATUS=tpl[2]))
               | 'Writing to Sink for :{}'.format(status) >> bq_sink 
               )
+
+def map_to_bq_dict(input_dict, label):
+    return dict(AS_OF_DATE=date.today(), TICKER=input_dict['symbol'], LABEL=label, PRICE=input_dict['price'],
+                YEARHIGH=input_dict['yearHigh'], YEARLOW=input_dict['yearLow'],
+                PRICEAVG50=input_dict['priceAvg50'], PRICEAVG200=input_dict['priceAvg200'],
+                BOOKVALUEPERSHARE=input_dict['bookValuePerShare'], TANGIBLEBOOKVALUEPERSHARE=input_dict['tangibleBookValuePerShare'],
+                CASHFLOWPERSHARE=input_dict['freeCashFlowPerShare'], MARKETCAP=input_dict['marketCap']
+
+                )
 
 
 def run(argv=None, save_main_session=True):
@@ -317,27 +327,21 @@ def run(argv=None, save_main_session=True):
             (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
 
                             | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
-                            | 'Mapping only Relevant fields d' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                          TICKER=d['symbol'],
-                                                                                          LABEL='DEFENSIVE',
-                                                                                          PRICE=d['price']))
+                            | 'Mapping only Relevant fields d' >> beam.Map(lambda d:
+                                                                           map_to_bq_dict(d, 'DEFENSIVE'))
                             | 'Writing to sink d' >> bq_sink)
 
             (benchmark_data | 'Filtering for all fields e ' >> beam.Filter(benchmark_filter)
             
                             | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
-                            | 'Mapping only Relevant fields ent' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                         TICKER=d['symbol'],
-                                                                                         LABEL='ENTERPRISE',
-                                                                                         PRICE=d['price']))
+                            | 'Mapping only Relevant fields ent' >> beam.Map(lambda d:
+                                                                             map_to_bq_dict(d, 'ENTERPRISE'))
                             | 'Writing to sink e' >> bq_sink)
             (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
 
              | 'Filtering for asset play' >> beam.Filter(asset_play_filter)
-             | 'Mapping only Relevant fields AP' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                             TICKER=d['symbol'],
-                                                                             LABEL='ASSET_PLAY',
-                                                                             PRICE=d['price']))
+             | 'Mapping only Relevant fields AP' >> beam.Map(lambda d:
+                                                                map_to_bq_dict(d, 'ASSET_PLAY'))
              | 'Writing to sink ap' >> bq_sink)
 
         else:
@@ -352,39 +356,28 @@ def run(argv=None, save_main_session=True):
             fundamental_data | 'Sendig to sink' >> sink
 
             (fundamental_data | 'fund unvierse' >> beam.Filter(get_universe_filter)
-                            |'Mapping only Relevant fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                        TICKER=d['symbol'],
-                                                                                        LABEL='STOCK_UNIVERSE',
-                                                                                        PRICE=d['price']))
+                            |'Mapping only Relevant fields' >> beam.Map(lambda d:
+                                                                             map_to_bq_dict(d, 'STOCk_UNIVERSE'))
                              | 'Writing to stock selection' >> bq_sink)
 
             (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
-                              |'Mapping only Relevant canslim fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                          TICKER=d['symbol'],
-                                                                                          LABEL='CANSLIM',
-                                                                                        PRICE=d['price']))
+                              |'Mapping only Relevant canslim fields' >> beam.Map(lambda d:
+                                                                                  map_to_bq_dict(d, 'CANSLIM'))
                                 | 'Writing to stock selection C' >> bq_sink)
 
             (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
-             | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                                 TICKER=d['symbol'],
-                                                                                 LABEL='UNDER10M',
-                                                                                 PRICE=d['price']))
+             | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: map_to_bq_dict(d, 'UNDER10M'))
              | 'Writing to stock selection 10' >> bq_sink)
 
             (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
-             | 'Mapping only Relevant nh fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                            TICKER=d['symbol'],
-                                                                            LABEL='NEWHIGHS',
-                                                                                PRICE=d['price']))
+             | 'Mapping only Relevant nh fields' >> beam.Map(lambda d:
+                                                             map_to_bq_dict(d, 'NEWHIGHS'))
              | 'Writing to stock selection nh' >> bq_sink)
 
             (fundamental_data | 'Asset PLays' >> beam.Filter(asset_play_filter)
              | 'Universe filter' >> beam.Filter(get_universe_filter)
-             | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d: dict(AS_OF_DATE=date.today(),
-                                                                            TICKER=d['symbol'],
-                                                                            LABEL='ASSET_PLAY',
-                                                                            PRICE=d['price']))
+             | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d:
+                                                                     map_to_bq_dict(d, 'ASSET_PLAY'))
              | 'Writing to stock selection ap' >> bq_sink)
 
 

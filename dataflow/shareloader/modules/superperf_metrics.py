@@ -99,6 +99,7 @@ def get_asset_play_parameters(ticker, key):
             current = data[0]
             dataDict['bookValuePerShare'] = current.get('bookValuePerShareTTM') or 0
             dataDict['tangibleBookValuePerShare'] = current.get('tangibleBookValuePerShareTTM') or 0
+            dataDict['freeCashFlowPerShare'] = current.get('freeCashFlowPerShareTTM') or 0
 
     except Exception as e:
         logging.info('Error in finding asset play params for :{}:{}'.format(ticker, str(e)))
@@ -366,6 +367,7 @@ def get_key_metrics_benchmark(ticker, key):
 
             dataDict['tangibleBookValuePerShare'] = keyMetrics[0].get('tangibleBookValuePerShareTTM') or 0
             dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
+            dataDict['freeCashFlowPerShare'] = keyMetrics[0].get('freeCashFlowPerShareTTM') or 0
 
             return dataDict
     except Exception as e:
