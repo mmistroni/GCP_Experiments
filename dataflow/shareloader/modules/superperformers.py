@@ -276,10 +276,11 @@ def write_to_bigquery(p, bq_sink, status):
 
 def map_to_bq_dict(input_dict, label):
     return dict(AS_OF_DATE=date.today(), TICKER=input_dict['symbol'], LABEL=label, PRICE=input_dict['price'],
-                YEARHIGH=input_dict['yearHigh'], YEARLOW=input_dict['yearLow'],
-                PRICEAVG50=input_dict['priceAvg50'], PRICEAVG200=input_dict['priceAvg200'],
-                BOOKVALUEPERSHARE=input_dict['bookValuePerShare'], TANGIBLEBOOKVALUEPERSHARE=input_dict['tangibleBookValuePerShare'],
-                CASHFLOWPERSHARE=input_dict['freeCashFlowPerShare'], MARKETCAP=input_dict['marketCap']
+                YEARHIGH=input_dict.get('yearHigh', 0.0), YEARLOW=input_dict.get('yearLow', 0.0),
+                PRICEAVG50=input_dict.get('priceAvg50', 0.0), PRICEAVG200=input_dict.get('priceAvg200', 0.0),
+                BOOKVALUEPERSHARE=input_dict.get('bookValuePerShare', 0.0),
+                TANGIBLEBOOKVALUEPERSHARE=input_dict.get('tangibleBookValuePerShare', 0.0),
+                CASHFLOWPERSHARE=input_dict.get('freeCashFlowPerShare',0.0), MARKETCAP=input_dict.get('marketCap', 0.0)
 
                 )
 
@@ -297,7 +298,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='stock_selection'),
-            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
