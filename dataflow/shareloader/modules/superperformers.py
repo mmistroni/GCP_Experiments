@@ -342,7 +342,7 @@ def run(argv=None, save_main_session=True):
 
              | 'Filtering for asset play' >> beam.Filter(asset_play_filter)
              | 'Mapping only Relevant fields AP' >> beam.Map(lambda d:
-                                                                map_to_bq_dict(d, 'ASSET_PLAY'))
+                                                                map_to_bq_dict(d, 'ASSET_PLAY_BENCHMARK'))
              | 'Writing to sink ap' >> bq_sink)
 
         else:
@@ -375,10 +375,11 @@ def run(argv=None, save_main_session=True):
                                                              map_to_bq_dict(d, 'NEWHIGHS'))
              | 'Writing to stock selection nh' >> bq_sink)
 
-            (fundamental_data | 'Asset PLays' >> beam.Filter(asset_play_filter)
+            (fundamental_data | 'asset universe filter' >> beam.Filter(get_universe_filter)
+             | 'Asset PLays' >> beam.Filter(asset_play_filter)
              | 'Universe filter' >> beam.Filter(get_universe_filter)
              | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d:
-                                                                     map_to_bq_dict(d, 'ASSET_PLAY'))
+                                                                     map_to_bq_dict(d, 'ASSET_PLAY_WEEKLY'))
              | 'Writing to stock selection ap' >> bq_sink)
 
 
