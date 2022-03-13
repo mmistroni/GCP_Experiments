@@ -358,7 +358,7 @@ def run(argv=None, save_main_session=True):
 
             (fundamental_data | 'fund unvierse' >> beam.Filter(get_universe_filter)
                             |'Mapping only Relevant fields' >> beam.Map(lambda d:
-                                                                             map_to_bq_dict(d, 'STOCk_UNIVERSE'))
+                                                                             map_to_bq_dict(d, 'STOCK_UNIVERSE'))
                              | 'Writing to stock selection' >> bq_sink)
 
             (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
