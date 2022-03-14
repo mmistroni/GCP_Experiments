@@ -338,12 +338,20 @@ def run(argv=None, save_main_session=True):
                             | 'Mapping only Relevant fields ent' >> beam.Map(lambda d:
                                                                              map_to_bq_dict(d, 'ENTERPRISE'))
                             | 'Writing to sink e' >> bq_sink)
-            (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
 
-             | 'Filtering for asset play' >> beam.Filter(asset_play_filter)
+            (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
+             | 'Filtering for defensive ap' >> beam.Filter(defensive_stocks_filter)
+             | 'Filtering for asset play defensive' >> beam.Filter(asset_play_filter)
              | 'Mapping only Relevant fields AP' >> beam.Map(lambda d:
-                                                                map_to_bq_dict(d, 'ASSET_PLAY_BENCHMARK'))
+                                                                map_to_bq_dict(d, 'ASSET_PLAY_DEFENSIVE'))
              | 'Writing to sink ap' >> bq_sink)
+
+            (benchmark_data | 'Filtering for all fields ENT ' >> beam.Filter(benchmark_filter)
+             | 'Filtering for ent ap' >> beam.Filter(defensive_stocks_filter)
+             | 'Filtering for asset play enterprise' >> beam.Filter(asset_play_filter)
+             | 'Mapping only Relevant fields ENT' >> beam.Map(lambda d:
+                                                             map_to_bq_dict(d, 'ASSET_PLAY_ENTERPRISE'))
+             | 'Writing to sink ENT' >> bq_sink)
 
         else:
 
