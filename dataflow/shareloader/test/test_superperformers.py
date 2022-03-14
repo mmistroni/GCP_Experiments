@@ -2,7 +2,8 @@
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
-                                                asset_play_filter, defensive_stocks_filter, map_to_bq_dict
+                                                asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
+                                                get_universe_filter
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -170,6 +171,24 @@ class TestSuperPerformers(unittest.TestCase):
 
             if counter > 50:
                 break
+
+
+    def test_fundamentalLoaderForAssetPLay(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+
+        print('Key is:{}|'.format(key))
+        with TestPipeline() as p:
+             (p | 'Starting' >> beam.Create(['IRT', 'SCU', 'PARA'])
+                         | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
+                         | 'Filtering on stock universe' >> beam.Filter(get_universe_filter)
+                         | 'Filtering' >> beam.Filter(asset_play_filter)
+                         | 'Mapping'>> beam.Map(lambda d: dict(avps=d.get('sharesOutstanding', 0) * d.get('bookValuePerShare'),
+                                                                    ticker=d['symbol'], marketCap=d['marketCap']))
+                         | printingSink
+             )
+
 
 
 
