@@ -281,8 +281,8 @@ def map_to_bq_dict(input_dict, label):
                 BOOKVALUEPERSHARE=input_dict.get('bookValuePerShare', 0.0),
                 TANGIBLEBOOKVALUEPERSHARE=input_dict.get('tangibleBookValuePerShare', 0.0),
                 CASHFLOWPERSHARE=input_dict.get('freeCashFlowPerShare',0.0), MARKETCAP=input_dict.get('marketCap', 0.0),
-                ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)
-
+                ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
+                EXCESS_MARKETCAP=input_dict.get('marketCap', 0.0) - ( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  )
                 )
 
 
