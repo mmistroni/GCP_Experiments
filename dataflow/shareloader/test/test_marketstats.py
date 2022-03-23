@@ -7,8 +7,9 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
-                        ParseManufacturingPMI
-from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline
+                        ParseManufacturingPMI, get_economic_calendar
+from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
+                                            run_economic_calendar
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -222,9 +223,17 @@ class TestShareLoader(unittest.TestCase):
            # nearly there, Now we need to map each generated collection to a (key, collection) so that we can then
            # sort keys and give it to a ParDo
 
+    def test_economicCalendarData(self):
+        iexapi_key = os.environ['FMPREPKEY']
+        data = get_economic_calendar(iexapi_key)
+        from pprint import pprint
+        pprint([d for d in data if d['impact'] == 'High'])
 
-
-
+    def test_economicCalendarPipeline(self):
+        iexapi_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            ec = run_economic_calendar(p, iexapi_key)
+            ec | 'Printing out' >> beam.Map(print)
 
 if __name__ == '__main__':
     unittest.main()

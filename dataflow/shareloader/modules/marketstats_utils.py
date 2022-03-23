@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup# Move to aJob
 import requests
 from itertools import chain
 from io import StringIO
-from datetime import date
+from datetime import date, timedelta
 from pandas.tseries.offsets import BDay
 
 
@@ -153,6 +153,15 @@ def get_prices2(tpl, fmprepkey):
     except Exception as e :
         logging.info('Excepiton for {}:{}'.format(tpl, str(e)))
         return ()
+
+def get_economic_calendar(fmprepkey):
+    startDate = date.today()
+    toEowDays = 7 - (startDate.weekday() + 1)
+    eow = startDate + timedelta(days=toEowDays)
+    economicCalendarUrl = f"https://financialmodelingprep.com/api/v3/economic_calendar?from={startDate.strftime('%Y-%m-%d')}&to={eow.strftime('%Y-%m-%d')}&apikey={fmprepkey}"
+    data = requests.get(economicCalendarUrl).json()
+    return [d for d in data if d['country'] == 'US' and d['impact'] == 'High'][::-1]
+
 
 
 

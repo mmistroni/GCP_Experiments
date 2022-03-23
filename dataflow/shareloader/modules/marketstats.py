@@ -28,7 +28,7 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
                             combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
-                            ParseManufacturingPMI
+                            ParseManufacturingPMI,get_economic_calendar
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -120,6 +120,16 @@ def run_manufacturing_pmi(p):
                     | 'manufremap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
+def run_economic_calendar(p, key):
+    return (p | 'startcal' >> beam.Create(['20210101'])
+                    | 'econcalendar' >>   beam.FlatMap(lambda d: get_economic_calendar(key))
+                    | 'reMapping' >> beam.Map(lambda d: {'AS_OF_DATE' : d['date'],
+                                                         'LABEL' : d['event'],
+                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d['estimate']}"
+                                                         }
+                                              )
+
+            )
 
 
 def run_vix(p, key):
@@ -226,7 +236,13 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        
+        econ_calendar = run_economic_calendar(p, iexapi_key)
+        econ_calendar | 'econ calendr to sink' >> bq_sink
+
+        staticStart = (p | 'Create static1' >> beam.Create(
+            [dict(AS_OF_DATE='------- ', LABEL='<b> THIS WEEK ECONOMIC CALENDAR</b>', VALUE='--------')])
+                   )
+
         static1 = (p |'Create static1' >>  beam.Create([dict(AS_OF_DATE='------- ', LABEL='<b> TODAYS PERFORMANCE</b>', VALUE='--------')])
                  )
         
@@ -234,6 +250,8 @@ def run(argv=None, save_main_session=True):
                  )
         statistics = run_prev_dates_statistics(p)
 
+        staticStart_key = staticStart | 'Add -2' >> beam.Map(lambda d: (-2, d))
+        econCalendarKey = econ_calendar | 'Add -1' >> beam.Map(lambda d: (-1, d))
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
         pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
@@ -249,7 +267,8 @@ def run(argv=None, save_main_session=True):
                                               num_shards=1)
 
         final = (
-                (static1_key, pmi_key, manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
+                (staticStart_key, econCalendarKey, static1_key, pmi_key,
+                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key, static_key, stats_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)
