@@ -16,6 +16,8 @@ def create_bigquery_ppln(p, label):
     logging.info('Cutoff is:{}'.format(cutoff_date))
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
+AND LABEL IN ('MANUFACTURING-PMI', 'PMI','NASDAQ GLOBAL SELECT_MARKET BREADTH',
+  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH' ) 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))

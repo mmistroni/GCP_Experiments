@@ -237,7 +237,6 @@ def run(argv=None, save_main_session=True):
         nasdaq | 'nasdaq to sink' >> bq_sink
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
-        econ_calendar | 'econ calendr to sink' >> bq_sink
 
         staticStart = (p | 'Create static start' >> beam.Create(
             [dict(AS_OF_DATE='------- ', LABEL='<b> THIS WEEK ECONOMIC CALENDAR</b>', VALUE='--------')])
