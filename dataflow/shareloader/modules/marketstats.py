@@ -233,7 +233,7 @@ def run(argv=None, save_main_session=True):
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
         nyse | 'nyse to sink' >> bq_sink
         logging.info('Run Nasdaq..')
-        nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
+        nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
