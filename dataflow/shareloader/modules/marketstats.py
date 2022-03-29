@@ -125,7 +125,7 @@ def run_economic_calendar(p, key):
                     | 'econcalendar' >>   beam.FlatMap(lambda d: get_economic_calendar(key))
                     | 'reMapping' >> beam.Map(lambda d: {'AS_OF_DATE' : d['date'],
                                                          'LABEL' : d['event'],
-                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d['estimate']}"
+                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d['estimate']},Actual:{d.get('actual', '')}"
                                                          }
                                               )
 

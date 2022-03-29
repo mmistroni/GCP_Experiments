@@ -228,7 +228,8 @@ class TestShareLoader(unittest.TestCase):
         data = get_economic_calendar(iexapi_key)
         from pprint import pprint
         alldt = [d for d in data if d['impact'] == 'High']
-        print(type(alldt[0]['date']))
+        from pprint import pprint
+        pprint(alldt)
 
     def test_economicCalendarPipeline(self):
         iexapi_key = os.environ['FMPREPKEY']

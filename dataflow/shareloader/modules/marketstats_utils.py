@@ -157,7 +157,7 @@ def get_prices2(tpl, fmprepkey):
         return ()
 
 def get_economic_calendar(fmprepkey):
-    startDate = date.today()
+    startDate = date.today()  - BDay(1)
     toEowDays = 7 - (startDate.weekday() + 1)
     eow = startDate + timedelta(days=toEowDays)
     economicCalendarUrl = f"https://financialmodelingprep.com/api/v3/economic_calendar?from={startDate.strftime('%Y-%m-%d')}&to={eow.strftime('%Y-%m-%d')}&apikey={fmprepkey}"
