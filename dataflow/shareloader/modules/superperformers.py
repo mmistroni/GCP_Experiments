@@ -282,7 +282,8 @@ def map_to_bq_dict(input_dict, label):
                 TANGIBLEBOOKVALUEPERSHARE=input_dict.get('tangibleBookValuePerShare', 0.0),
                 CASHFLOWPERSHARE=input_dict.get('freeCashFlowPerShare',0.0), MARKETCAP=input_dict.get('marketCap', 0.0),
                 ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
-                EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0)
+                EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
+                DIVIDENDRATIO=input_dict.get('dividendRatio', 0.0)
                 )
 
 
@@ -299,7 +300,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='stock_selection'),
-            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
