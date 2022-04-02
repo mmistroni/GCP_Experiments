@@ -243,5 +243,34 @@ class TestShareLoader(unittest.TestCase):
             res = run_exchange_pipeline(p, iexapi_key, 'NASDAQ Global Select')
             res | 'print out' >> beam.Map(print)
 
+    def test_bqueryInnerJoinernyse_tickers(self):
+        from pandas.tseries.offsets import BDay
+        with TestPipeline() as p:
+            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER' : 'FDX', 'COUNT' : 100},
+                                                        {'TICKER' : 'AMZN', 'COUNT':20},
+                                                        {'TICKER': 'MSFT', 'COUNT': 8}
+                                                        ])
+
+            pcoll2 = p | 'Create coll2' >> beam.Create([{'TICKER': 'FDX', 'PRICE' : 20, 'PRICEAVG20' : 200, 'DIVIDEND':1},
+                                                        {'TICKER' : 'AMZN', 'PRICE': 2000, 'PRICEAVG20': 1500, 'DIVIDEND': 0}
+                                                       ])
+
+            coll1Mapped =  pcoll1 | 'Mapping' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                               dictionary))
+
+
+            coll2Mapped =  (pcoll2 | 'Mapping 2' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                                 dictionary))
+                            )
+
+            left_joined = (
+                    coll1Mapped
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(coll2Mapped))
+                    | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                    | 'printing out all' >> beam.Map(print)
+            )
+
+
 if __name__ == '__main__':
     unittest.main()
