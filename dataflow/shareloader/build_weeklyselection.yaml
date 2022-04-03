@@ -1,0 +1,39 @@
+ 
+# checkout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+
+steps:
+  # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_WEEKLYSELECTION_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_weeklyselection'
+      , './dataflow/shareloader/'
+      ]
+    id: 'build-weeklyselection-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'build'
+          , '$_WEEKLYSELECTION_TEMPLATE_GCS_LOCATION'
+          , '--image'
+          , 'gcr.io/$_PROJECT_ID/$_WEEKLYSELECTION_IMAGE_NAME'
+          , '--sdk-language'
+          , 'PYTHON'
+          , '--metadata-file'
+          , '$_WEEKLYSELECTION_METADATA_FILE']
+    id: 'build-weeklyselection-flex-template'
+
+
+images: [ 'gcr.io/$_PROJECT_ID/$_WEEKLYSELECTION_IMAGE_NAME' ]
+
+
+substitutions:
+  _PROJECT_ID: datascience-projects
+  _WEEKLYSELECTION_IMAGE_NAME: weeklyselection:latest
+  _WEEKLYSELECTION_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/weeklyselection_flex_template.json
+  _WEEKLYSELECTIONMETADATA_FILE: ./dataflow/shareloader/weeklyselection_template_metadata
+
