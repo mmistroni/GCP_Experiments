@@ -155,7 +155,7 @@ class BenchmarkLoader(beam.DoFn):
                                 # CHecking if assets > stocks outstanding
                                 currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
                                 # current assets
-                                quotes_data['value_stock_check'] = quotes_data['total_assets'] - currentCompanyValue
+                                quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
                                 quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
                                                                         quotes_data['totalCurrentLiabilities'] - \
                                                                          quotes_data['inventory']) / quotes_data['sharesOutstanding']

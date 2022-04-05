@@ -323,6 +323,8 @@ def get_balancesheet_benchmark(ticker, key):
             dataDict['enterpriseDebt'] = longTermDebt / (totalAssets - totalLiabilities)
             dataDict['totalAssets'] = bs.get('totalAssets') or 0
             dataDict['inventory'] = bs.get('inventory') or 0
+            dataDict['totalCurrentAssets'] = totalAssets
+            dataDict['totalCurrentLiabilities'] = totalLiabilities
 
             return dataDict
     except Exception as e:

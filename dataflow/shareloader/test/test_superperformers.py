@@ -131,7 +131,7 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
                          | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
-                        | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                        #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
               | printingSink

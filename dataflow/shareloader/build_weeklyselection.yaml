@@ -35,5 +35,5 @@ substitutions:
   _PROJECT_ID: datascience-projects
   _WEEKLYSELECTION_IMAGE_NAME: weeklyselection:latest
   _WEEKLYSELECTION_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/weeklyselection_flex_template.json
-  _WEEKLYSELECTIONMETADATA_FILE: ./dataflow/shareloader/weeklyselection_template_metadata
+  _WEEKLYSELECTION_METADATA_FILE: ./dataflow/shareloader/weeklyselection_template_metadata
 
