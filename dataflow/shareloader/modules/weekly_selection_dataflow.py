@@ -30,8 +30,11 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar
 
+from .mail_utils import STOCK_EMAIL_TEMPLATE
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+
+
 
 
 def create_monthly_data_ppln(p):
@@ -130,14 +133,14 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     with beam.Pipeline(options=pipeline_options) as p:
-        weeklyPipeline = create_weekly_data_ppln(p) | 'MappingW' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
-                                                                                                 dictionary))
-        monthlyPipeline = create_monthly_data_ppln(p) | 'MappingM' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
-                                                                                                   dictionary))
+        weeklyPipeline = create_weekly_data_ppln(p)
+        monthlyPipeline = create_monthly_data_ppln(p)
 
         bqPipeline = kickoff_pipeline(weeklyPipeline, monthlyPipeline)
         bqSink = beam.Map(logging.info)
         bqPipeline | bqSink
+
+        ## Send email now
 
 
 

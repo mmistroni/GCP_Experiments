@@ -59,3 +59,58 @@ def send_mail(input, options):
             | 'Combine' >> beam.CombineGlobally(combine_data)
             | 'SendEmail' >> beam.ParDo(MonthlyEmailSender(options.recipients, options.sgridkey))
             )
+
+STOCK_EMAIL_TEMPLATE = """<html>
+                      <body>
+                        <p> Stock Selection for {asOfDate} </p>
+                        <ul>
+                            <li>Defensive Stock: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                            <li>Enteprise Stocks: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                            <li>CANSLIM: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                            <li>Below 10M stocks: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                            <li>New Highs: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                            <li>Asset Play: Criteria
+                                <ul>
+                                    <li></li>
+                                    <li></li>
+                                    <li></li>
+                                </ul>
+                            </li>
+                        </uls>
+                        <br>
+                        <br>
+                        {tableOfData}
+                    </body>
+                </html>
+
+"""

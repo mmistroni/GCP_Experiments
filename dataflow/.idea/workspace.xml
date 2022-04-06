@@ -9,10 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/mail_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/mail_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/weekly_selection_dataflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/weekly_selection_dataflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -286,11 +284,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_bqueryInnerJoinernyse_tickers" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_economicCalendarPipeline" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_nyse_tickers" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_bqueryInnerJoinernyse_tickers" />
       <item itemvalue="Python tests.Python tests for test_weekly_selection_dataflow.WeeklySelectionTestCase.test_run" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
     </list>
     <recent_temporary>
       <list>
@@ -429,7 +427,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/weekly_selection_dataflow.py</url>
-          <line>38</line>
+          <line>41</line>
           <option name="timeStamp" value="47" />
         </line-breakpoint>
       </breakpoints>
