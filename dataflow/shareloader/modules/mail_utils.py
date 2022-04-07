@@ -63,6 +63,7 @@ def send_mail(input, options):
 STOCK_EMAIL_TEMPLATE = """<html>
                       <body>
                         <p> Stock Selection for {asOfDate} </p>
+                        <br>
                         <ul>
                             <li>Defensive Stock: Criteria
                                 <ul>
@@ -109,7 +110,14 @@ STOCK_EMAIL_TEMPLATE = """<html>
                         </uls>
                         <br>
                         <br>
-                        {tableOfData}
+                        <table border="1">
+                            <tr>
+                                <th>TICKER</th><th>LABEL</th><th>PRICE</th>
+                                <th>YEARLOW</th><th>PRICEAVG50</th><th>PRICEAVG200</th>
+                                <th>BOOKVALUEPERSHARE</th><th>CASHFLOWPERSHARE</th>
+                                <th>POSITIVEDIVIDENDRATIO<th><th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
+                            </tr>
+                            {tableOfData}
                     </body>
                 </html>
 

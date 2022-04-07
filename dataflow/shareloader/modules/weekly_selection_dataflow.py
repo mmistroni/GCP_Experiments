@@ -34,6 +34,25 @@ from .mail_utils import STOCK_EMAIL_TEMPLATE
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
+ROW_TEMPLATE =  """<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>"""
+
+class StockSelectionCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, input):
+    logging.info('Adding{}'.format(input))
+    logging.info('acc is:{}'.format(accumulator))
+    row_acc = accumulator
+    row_acc.append(ROW_TEMPLATE.format(*input))
+    return row_acc
+
+  def merge_accumulators(self, accumulators):
+    return list(itertools.chain(*accumulators))
+
+  def extract_output(self, sum_count):
+    return ''.join(sum_count)
+
 
 
 
@@ -52,7 +71,8 @@ def create_monthly_data_ppln(p):
 def create_weekly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(3)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.stock_selection` 
+    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, POSITIVEDIVIDENDRATIO 
+        FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
     
@@ -82,13 +102,14 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
-        template = "<html><body>{}</body></html>"
-        content = template.format(element)
+        template = STOCK_EMAIL_TEMPLATE
+        asOfDateStr = date.today().strftime('%d %b % %Y')
+        content = template.format(asOfDate=asOfDateStr, tableOfData=element)
         print('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             to_emails=self.recipients,
-            subject='Market Stats',
+            subject=f'Stock selection for {asOfDateStr}',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -109,6 +130,13 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
 
+def send_email(pipeline, options):
+    return (pipeline | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
+                    | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+             )
+
+
+
 def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
 
     wMapped = weeklyPipeline | 'MapWS' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
@@ -122,6 +150,10 @@ def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
             | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
                                                       right_list=beam.pvalue.AsIter(mMapped))
             | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+            | 'Map to tuple' >> beam.Map(lambda row:(row['TICKER'], row['LABEL'], row['PRICE'], row['YEARHIGH'],
+                                                     row['YEARLOW'], row['PRICEAVG50'], row['PRICEAVG200'],
+                                                     row['BOOKVALUEPERSHARE'] , row['CASHFLOWPERSHARE'],
+                                                     row['POSITIVEDIVIDENDRATIO'], row['COUNTER']))
     )
 
 
@@ -137,8 +169,11 @@ def run(argv=None, save_main_session=True):
         monthlyPipeline = create_monthly_data_ppln(p)
 
         bqPipeline = kickoff_pipeline(weeklyPipeline, monthlyPipeline)
+
         bqSink = beam.Map(logging.info)
-        bqPipeline | bqSink
+        (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
+                   | 'Mapping' >> beam.Map(lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element))
+                   | bqSink)
 
         ## Send email now
 
