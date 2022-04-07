@@ -60,17 +60,7 @@ steps:
           , '--config'
           , '$_SHARELOADER_BUILD_FILE']  
     id: 'build-shareloader-templates'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-      entrypoint: 'gcloud'
-      args:
-        [
-            'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_STOCKSELECTION_BUILD_FILE' ]
-      id: 'build-weeklyselection-templates'
+  
 timeout: 82000s
 
 images: ['gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME',
