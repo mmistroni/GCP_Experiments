@@ -60,17 +60,6 @@ steps:
           , '--config'
           , '$_SHARELOADER_BUILD_FILE']  
     id: 'build-shareloader-templates'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-      entrypoint: 'gcloud'
-      args:
-        [
-            'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_STOCKSELECTION_BUILD_FILE' ]
-      id: 'build-stockselection-templates'
 
 
 timeout: 82000s
@@ -88,6 +77,6 @@ substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_all.yaml
   _EDGAR_FORM4_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form4.yaml
   _EDGAR_FORM13_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form13.yaml
-  _STOCKSELECTION_BUILD_FILE: ./dataflow/shareloader/build_weeklyselection.yaml
+  
 
   
