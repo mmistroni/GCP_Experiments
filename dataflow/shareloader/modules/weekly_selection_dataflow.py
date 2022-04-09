@@ -71,7 +71,7 @@ def create_monthly_data_ppln(p):
 def create_weekly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(3)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, POSITIVEDIVIDENDRATIO 
+    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO 
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
@@ -153,7 +153,7 @@ def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
             | 'Map to tuple' >> beam.Map(lambda row:(row['TICKER'], row['LABEL'], row['PRICE'], row['YEARHIGH'],
                                                      row['YEARLOW'], row['PRICEAVG50'], row['PRICEAVG200'],
                                                      row['BOOKVALUEPERSHARE'] , row['CASHFLOWPERSHARE'],
-                                                     row['POSITIVEDIVIDENDRATIO'], row['COUNTER']))
+                                                     row['DIVIDENDRATIO'], row['COUNTER']))
     )
 
 
