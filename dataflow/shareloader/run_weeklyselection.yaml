@@ -21,7 +21,7 @@ steps:
 
 substitutions:
   _JOB_NAME: 'weeklyselectioncloudbuild'
-  _WEEKLYSELECTION_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template.json
+  _WEEKLYSELECTION_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/weeklyselection_flex_template.json
   _REGION: us-central1
   _SENDGRID_KEY : ''
   _RECIPIENTS : ''
