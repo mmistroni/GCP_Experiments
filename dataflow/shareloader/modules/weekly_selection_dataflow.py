@@ -6,7 +6,7 @@ import re
 from pandas.tseries.offsets import BDay
 from bs4 import BeautifulSoup# Move to aJob
 import requests
-from itertools import chain
+import itertools
 from apache_beam.io.gcp.internal.clients import bigquery
 
 import requests
