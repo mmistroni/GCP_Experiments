@@ -43,7 +43,6 @@ ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
-                       <td>{}</td>
                        <td>{}</td></tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
@@ -113,7 +112,7 @@ class EmailSender(beam.DoFn):
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
         template = STOCK_EMAIL_TEMPLATE
-        asOfDateStr = date.today().strftime('%d %b % %Y')
+        asOfDateStr = date.today().strftime('%d %b %Y')
         content = template.format(asOfDate=asOfDateStr, tableOfData=element)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
