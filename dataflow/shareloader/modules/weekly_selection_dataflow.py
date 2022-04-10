@@ -105,7 +105,7 @@ class EmailSender(beam.DoFn):
         template = STOCK_EMAIL_TEMPLATE
         asOfDateStr = date.today().strftime('%d %b % %Y')
         content = template.format(asOfDate=asOfDateStr, tableOfData=element)
-        print('Sending \n {}'.format(content))
+        logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             to_emails=self.recipients,
@@ -131,8 +131,7 @@ class XyzOptions(PipelineOptions):
 
 
 def send_email(pipeline, options):
-    return (pipeline | 'Combine' >> beam.CombineGlobally(PortfolioCombineFn())
-                    | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
              )
 
 
@@ -171,12 +170,14 @@ def run(argv=None, save_main_session=True):
         bqPipeline = kickoff_pipeline(weeklyPipeline, monthlyPipeline)
 
         bqSink = beam.Map(logging.info)
-        (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
-                   | 'Mapping' >> beam.Map(lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element))
-                   | bqSink)
+
+        weeklySelectionPipeline = (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
+                                    | 'Mapping' >> beam.Map(
+                                    lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element)))
+        weeklySelectionPipeline | bqSink
 
         ## Send email now
-
+        send_email(weeklySelectionPipeline, pipeline_options)
 
 
 
