@@ -131,7 +131,7 @@ class XyzOptions(PipelineOptions):
 
 
 def send_email(pipeline, options):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.key))
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.sendgridkey))
              )
 
 
