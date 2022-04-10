@@ -67,44 +67,67 @@ STOCK_EMAIL_TEMPLATE = """<html>
                         <ul>
                             <li>Defensive Stock: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>LARGE CAP</li>
+                                    <li>Current Ratio >=2</li>
+                                    <li>Debt Over Capital <0 </li>
+                                    <li>Dividend always paid last 20 yrs</li>
+                                    <li>EPS Growth past 5 yrs> 33%</li>
+                                    <li>EPS always positive for last 5 years</li>
+                                    <li>PE Ratio < 15 < 0</li>
+                                    <li>PriceToBook Ratio < 1.5 < 0</li>
+                                    <li>Institutional Owner Percentage < 60%</li>
                                 </ul>
                             </li>
                             <li>Enteprise Stocks: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>LARGE CAP </li>
+                                    <li>Current Ratio >= 1.5</li>
+                                    <li>debtOverCapital < 1.2</li>
+                                    <li>Some Dividends paid in the past</li>
+                                    <li>EPS Growth Past 5 yrs > 0</li>
+                                    <li>Positive EPS in past 5 yrs</li>
+                                    <li>PE Ratio < 10</li>
+                                    <li>Price to Book Ratio < 1.5</li>
+                                    <li>InstitutuionalOwnership < 60%</li>
                                 </ul>
                             </li>
                             <li>CANSLIM: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>EPS Growth this year > 20%</li>
+                                    <li>EPS Growth next year > 20%</li>
+                                    <li>EPS Growth QTR over QTR > 20%</li>
+                                    <li>EPS Growth past 5 yrs  > 20%</li>
+                                    <li>Gross Profit Margin and ROE > 0 </li>
+                                    <li>Price > PriceAvg20  and PriceAvg200</li>
                                 </ul>
                             </li>
                             <li>Below 10M stocks: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>Mid Cap</li>
+                                    <li>EPS Growth  this year > 0</li>
+                                    <li>EPS Growth qtr over qtr > 20%</li>
+                                    <li>Net sales qtr over qtr > 25%</li>
+                                    <li>ROE > 15%</li>
+                                    <li>Price > PriceAvg200</li>
                                 </ul>
                             </li>
                             <li>New Highs: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>EPS Growth this Year > 0</li>
+                                    <li>EPS Growth next Year > 0</li>
+                                    <li>Net sales qtr over qtr > 0</li>
+                                    <li>Price > PriceAvg 50 , Price > PriceAvg200</li>
+                                    <li>Net sales qtr over qtr > 0</li>
+                                    <li>Price > All Time High</li>
                                 </ul>
                             </li>
                             <li>Asset Play: Criteria
                                 <ul>
-                                    <li></li>
-                                    <li></li>
-                                    <li></li>
+                                    <li>BookValuePerShare * sharesOutstanding > marketCap</li>
+                                    <li>MarketCap is   stockPrice * sharesOutstanding</li>
+                                    <li>Idea is that eventually stockPrice will raise to be equal to bookValue per share
+                                         
+                                    </li>
                                 </ul>
                             </li>
                         </uls>
@@ -112,10 +135,16 @@ STOCK_EMAIL_TEMPLATE = """<html>
                         <br>
                         <table border="1">
                             <tr>
-                                <th>TICKER</th><th>LABEL</th><th>PRICE</th>
-                                <th>YEARLOW</th><th>PRICEAVG50</th><th>PRICEAVG200</th>
-                                <th>BOOKVALUEPERSHARE</th><th>CASHFLOWPERSHARE</th>
-                                <th>POSITIVEDIVIDENDRATIO<th><th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
+                                <th>TICKER</th>
+                                <th>LABEL</th>
+                                <th>PRICE</th>
+                                <th>YEARLOW</th>
+                                <th>PRICEAVG50</th>
+                                <th>PRICEAVG200</th>
+                                <th>BOOKVALUEPERSHARE</th>
+                                <th>CASHFLOWPERSHARE</th>
+                                <th>POSITIVEDIVIDENDRATIO</th>
+                                <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
                             </tr>
                             {tableOfData}
                     </body>
