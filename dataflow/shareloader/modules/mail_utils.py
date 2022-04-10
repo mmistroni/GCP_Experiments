@@ -134,19 +134,24 @@ STOCK_EMAIL_TEMPLATE = """<html>
                         <br>
                         <br>
                         <table border="1">
-                            <tr>
-                                <th>TICKER</th>
-                                <th>LABEL</th>
-                                <th>PRICE</th>
-                                <th>YEARLOW</th>
-                                <th>PRICEAVG50</th>
-                                <th>PRICEAVG200</th>
-                                <th>BOOKVALUEPERSHARE</th>
-                                <th>CASHFLOWPERSHARE</th>
-                                <th>POSITIVEDIVIDENDRATIO</th>
-                                <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
-                            </tr>
-                            {tableOfData}
+                            <thead>
+                                <tr>
+                                    <th>TICKER</th>
+                                    <th>LABEL</th>
+                                    <th>PRICE</th>
+                                    <th>YEARLOW</th>
+                                    <th>PRICEAVG50</th>
+                                    <th>PRICEAVG200</th>
+                                    <th>BOOKVALUEPERSHARE</th>
+                                    <th>CASHFLOWPERSHARE</th>
+                                    <th>POSITIVEDIVIDENDRATIO</th>
+                                    <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableOfData}
+                            </tbody>
+                        </table>
                     </body>
                 </html>
 

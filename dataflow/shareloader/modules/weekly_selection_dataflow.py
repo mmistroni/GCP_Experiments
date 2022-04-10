@@ -34,7 +34,17 @@ from .mail_utils import STOCK_EMAIL_TEMPLATE
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
-ROW_TEMPLATE =  """<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>"""
+ROW_TEMPLATE =  """<tr><td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td></tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
   def create_accumulator(self):
