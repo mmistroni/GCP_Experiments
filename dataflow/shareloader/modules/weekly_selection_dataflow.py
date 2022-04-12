@@ -34,7 +34,16 @@ from .mail_utils import STOCK_EMAIL_TEMPLATE
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
-ROW_TEMPLATE =  """<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>"""
+ROW_TEMPLATE =  """<tr><td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td></tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
   def create_accumulator(self):
@@ -103,7 +112,7 @@ class EmailSender(beam.DoFn):
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
         template = STOCK_EMAIL_TEMPLATE
-        asOfDateStr = date.today().strftime('%d %b % %Y')
+        asOfDateStr = date.today().strftime('%d %b %Y')
         content = template.format(asOfDate=asOfDateStr, tableOfData=element)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
