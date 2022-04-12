@@ -95,7 +95,7 @@ def create_weekly_data_ppln(p):
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
-        self.recipients = recipients.split(',')
+        self.recipients = recipients.split(';')
         self.key = key
 
 
