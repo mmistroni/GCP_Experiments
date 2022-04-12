@@ -138,12 +138,13 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                 <th>TICKER</th>
                                 <th>LABEL</th>
                                 <th>PRICE</th>
+                                <th>YEARHIGH</th>
                                 <th>YEARLOW</th>
                                 <th>PRICEAVG50</th>
                                 <th>PRICEAVG200</th>
                                 <th>BOOKVALUEPERSHARE</th>
                                 <th>CASHFLOWPERSHARE</th>
-                                <th>POSITIVEDIVIDENDRATIO</th>
+                                <th>DIVIDEND PAID RATIO</th>
                                 <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
                             </tr>
                             {tableOfData}

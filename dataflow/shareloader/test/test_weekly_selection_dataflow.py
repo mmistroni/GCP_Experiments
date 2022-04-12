@@ -27,12 +27,12 @@ class WeeklySelectionTestCase(unittest.TestCase):
                    'LABEL' : 'MYLB', 'PRICE' : 1.0,
                     'YEARHIGH'  :1, 'YEARLOW' : 4, 'PRICEAVG50' : 5,
                      'PRICEAVG200' : 6, 'BOOKVALUEPERSHARE':7 , 'CASHFLOWPERSHARE' : 8,
-                      'POSITIVEDIVIDENDRATIO' : 0, 'COUNTER' : 1},
+                      'DIVIDENDRATIO' : 0, 'COUNTER' : 1},
                  {'TICKER': 'AMZN', 'PRICE': 2000, 'PRICEAVG20': 1500, 'DIVIDEND': 0
                     ,'LABEL' : 'MYLB1', 'PRICE' : 11.0,
                     'YEARHIGH'  :11, 'YEARLOW' : 41, 'PRICEAVG50' : 51,
                      'PRICEAVG200' : 61, 'BOOKVALUEPERSHARE':71 , 'CASHFLOWPERSHARE' : 81,
-                      'POSITIVEDIVIDENDRATIO' : 12, 'COUNTER': 10}
+                      'DIVIDENDRATIO' : 12, 'COUNTER': 10}
                  ])
 
             (kickoff_pipeline(pcoll1, pcoll2)

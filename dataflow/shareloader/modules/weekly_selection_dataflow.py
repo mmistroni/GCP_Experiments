@@ -171,10 +171,12 @@ def run(argv=None, save_main_session=True):
 
         bqSink = beam.Map(logging.info)
 
-        weeklySelectionPipeline = (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
-                                    | 'Mapping' >> beam.Map(
-                                    lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element)))
-        weeklySelectionPipeline | bqSink
+        weeklySelectionPipeline = (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn()))
+
+        (weeklySelectionPipeline | 'Mapping' >> beam.Map(
+                                    lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element))
+
+                                | bqSink)
 
         ## Send email now
         send_email(weeklySelectionPipeline, pipeline_options)
