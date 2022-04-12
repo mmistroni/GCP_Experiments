@@ -291,7 +291,7 @@ def map_to_bq_dict(input_dict, label):
                 CASHFLOWPERSHARE=input_dict.get('freeCashFlowPerShare',0.0), MARKETCAP=input_dict.get('marketCap', 0.0),
                 ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
                 EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
-                DIVIDENDRATIO=input_dict.get('dividendRatio', 0.0),
+                DIVIDENDRATIO=input_dict.get('dividendPaidRatio', 0.0),
                 PERATIO=input_dict.get('peRatio', 0.0)
                 )
 

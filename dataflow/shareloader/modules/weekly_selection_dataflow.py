@@ -43,7 +43,9 @@ ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
-                       <td>{}</td></tr>"""
+                       <td>{}</td>
+                       <td>{}</td>
+                       </tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
   def create_accumulator(self):
