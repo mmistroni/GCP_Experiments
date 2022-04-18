@@ -120,7 +120,7 @@ class EmailSender(beam.DoFn):
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             to_emails=self.recipients,
-            subject=f'Stock selection for {asOfDateStr}',
+            subject=f'Stock selection ideas for {asOfDateStr}',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
