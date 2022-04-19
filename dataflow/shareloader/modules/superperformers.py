@@ -292,7 +292,7 @@ def map_to_bq_dict(input_dict, label):
                 ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
                 EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
                 DIVIDENDRATIO=input_dict.get('dividendPaidRatio', 0.0),
-                PERATIO=input_dict.get('peRatio', 0.0)
+                PERATIO=input_dict.get('pe', 0.0)
                 )
 
 
@@ -314,15 +314,6 @@ def run(argv=None, save_main_session=True):
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
     pipeline_options = XyzOptions()
-
-    # TODO in thewrite to bq sink. Add the following
-    # Current Price
-    # year high
-    # year low
-    # priceAvg50
-    # priceAvg200
-    # bookValuePerShare
-    # tangibleBookValuePerShare
 
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)

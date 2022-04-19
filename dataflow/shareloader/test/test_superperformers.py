@@ -146,7 +146,7 @@ class TestSuperPerformers(unittest.TestCase):
              (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
-                         | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
                          #| 'Filtering' >> beam.Filter(asset_play_filter)
                          | printingSink
