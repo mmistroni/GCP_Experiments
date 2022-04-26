@@ -7,7 +7,7 @@ WORKDIR ${WORKDIR}
 COPY modules ${WORKDIR}/modules
 
 
-RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.34.0 sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0
+RUN pip install avro-python3 pyarrow==0.15.1 apache-beam[gcp]==2.38.0 sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0
 
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY setup.py ${WORKDIR}/setup.py

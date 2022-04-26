@@ -8,11 +8,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/samples/spark_sample.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/Dockerfile_Edgar_Daily_Form13" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/Dockerfile_Edgar_Daily_Form13" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/Dockerfile_Edgar_Quarterly_Form4" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/Dockerfile_Edgar_Quarterly_Form4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pipeline/Dockerfile_test" beforeDir="false" afterPath="$PROJECT_DIR$/pipeline/Dockerfile_test" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_adrs" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_adrs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_marketstats" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_marketstats" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_newsloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_newsloader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_sharedatasetloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_sharedatasetloader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_stock_picks" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stock_picks" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_superperformers" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_superperformers" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
