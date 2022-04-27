@@ -80,7 +80,7 @@ def create_monthly_data_ppln(p):
             )
 
 def create_weekly_data_ppln(p):
-    cutoff_date_str = (date.today() - BDay(3)).date().strftime('%Y-%m-%d')
+    cutoff_date_str = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
     bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO 
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
