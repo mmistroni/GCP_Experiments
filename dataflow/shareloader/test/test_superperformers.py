@@ -189,6 +189,25 @@ class TestSuperPerformers(unittest.TestCase):
                          | printingSink
              )
 
+    def test_defensiveAndEnterpriseStocks(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+
+        print('Key is:{}|'.format(key))
+        with TestPipeline() as p:
+             (p | 'Starting' >> beam.Create(['TX'])
+                         | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
+                         | 'Filtering' >> beam.Filter(benchmark_filter)
+                         | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                         | 'Printing out' >> beam.Map(print)
+                        #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+
+              | printingSink
+             )
+
+
 
 
 

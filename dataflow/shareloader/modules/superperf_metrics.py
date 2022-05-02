@@ -407,6 +407,7 @@ def get_financial_ratios_benchmark(ticker, key):
                 logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
                 return  None
             dataDict['pe'] = latest.get('priceEarningsRatioTTM') or 0
+            dataDict['peRatio'] = dataDict['pe']
             # price to book ratio no more than 1.5
             dataDict['currentRatio'] = latest.get('currentRatioTTM') or 0
             dataDict['priceToBookRatio'] = latest.get('priceToBookRatioTTM') or 0
