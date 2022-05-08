@@ -84,7 +84,7 @@ def create_weekly_data_ppln(p):
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
     bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO 
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
-        WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND
+        WHERE AS_OF_DATE >= PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
     
     
