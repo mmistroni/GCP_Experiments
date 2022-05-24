@@ -17,9 +17,10 @@ class WeeklySelectionTestCase(unittest.TestCase):
 
     def test_run(self):
         with TestPipeline() as p:
-            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'FDX', 'COUNT': 100},
-                                                        {'TICKER': 'AMZN', 'COUNT': 20},
-                                                        {'TICKER': 'MSFT', 'COUNT': 8}
+            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'FDX', 'LABEL': 'MYLB', 'COUNT': 100},
+                                                        {'TICKER': 'FDX', 'LABEL': 'abcd', 'COUNT': 100},
+                                                        {'TICKER': 'AMZN', 'LABEL': 'another', 'COUNT': 20},
+                                                        {'TICKER': 'MSFT', 'LABEL': 'MYLB1', 'COUNT': 8}
                                                         ])
 
             pcoll2 = p | 'Create coll2' >> beam.Create(

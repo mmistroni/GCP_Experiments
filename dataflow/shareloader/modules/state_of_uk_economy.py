@@ -47,31 +47,12 @@ ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                        </tr>"""
 
-class StockSelectionCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return []
-
-  def add_input(self, accumulator, input):
-    logging.info('Adding{}'.format(input))
-    logging.info('acc is:{}'.format(accumulator))
-    row_acc = accumulator
-    row_acc.append(ROW_TEMPLATE.format(*input))
-    return row_acc
-
-  def merge_accumulators(self, accumulators):
-    return list(itertools.chain(*accumulators))
-
-  def extract_output(self, sum_count):
-    return ''.join(sum_count)
-
-
-
 
 def create_monthly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(60)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT TICKER, LABEL, COUNT(*) as COUNTER FROM `datascience-projects.gcp_shareloader.stock_selection` 
-        WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND LABEL <> 'STOCK_UNIVERSE' GROUP BY TICKER,LABEL 
+    bq_sql = """SELECT TICKER, COUNT(*) as COUNTER FROM `datascience-projects.gcp_shareloader.stock_selection` 
+        WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND LABEL <> 'STOCK_UNIVERSE' GROUP BY TICKER 
   """.format(cutoff_date_str)
     logging.info('executing SQL :{}'.format(bq_sql))
     return (p | 'Reading-{}'.format(cutoff_date_str) >> beam.io.Read(
@@ -79,58 +60,6 @@ def create_monthly_data_ppln(p):
 
             )
 
-def create_weekly_data_ppln(p):
-    cutoff_date_str = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
-    logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO 
-        FROM `datascience-projects.gcp_shareloader.stock_selection` 
-        WHERE AS_OF_DATE >= PARSE_DATE("%F", "{}") AND
-        LABEL <> 'STOCK_UNIVERSE'
-    
-    
-    """.format(cutoff_date_str)
-    logging.info('executing SQL :{}'.format(bq_sql))
-    return (p | 'Reading-{}'.format(cutoff_date_str) >> beam.io.Read(
-        beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
-
-            )
-
-class EmailSender(beam.DoFn):
-    def __init__(self, recipients, key):
-        self.recipients = recipients.split(';')
-        self.key = key
-
-
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-
-    def process(self, element):
-        logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
-        template = STOCK_EMAIL_TEMPLATE
-        asOfDateStr = date.today().strftime('%d %b %Y')
-        content = template.format(asOfDate=asOfDateStr, tableOfData=element)
-        logging.info('Sending \n {}'.format(content))
-        message = Mail(
-            from_email='gcp_cloud@mmistroni.com',
-            to_emails=self.recipients,
-            subject=f'Stock selection ideas for {asOfDateStr}',
-            html_content=content)
-
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
-        sg = SendGridAPIClient(self.key)
-
-        response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
 
 
 class XyzOptions(PipelineOptions):
@@ -149,10 +78,10 @@ def send_email(pipeline, options):
 
 def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
 
-    wMapped = weeklyPipeline | 'MapWS' >> beam.Map(lambda dictionary: (f"{dictionary['TICKER']}-{dictionary['LABEL']}",
+    wMapped = weeklyPipeline | 'MapWS' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
                                                                                dictionary))
 
-    mMapped = monthlyPipeline | 'MapM' >> beam.Map(lambda dictionary: (f"{dictionary['TICKER']}-{dictionary['LABEL']}",
+    mMapped = monthlyPipeline | 'MapM' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
                                                                        dictionary))
 
     return (
