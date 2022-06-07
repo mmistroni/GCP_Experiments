@@ -147,6 +147,8 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <th>CASHFLOWPERSHARE</th>
                                     <th>DIVIDEND PAID RATIO</th>
                                     <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
+                                    <th>STOCK BUY PRICE</th>
+                                    <th>STOCK SELL PRICE</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -45,6 +45,8 @@ ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
+                       <td>{}</td>
+                       <td>{}</td>
                        </tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
@@ -163,7 +165,9 @@ def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
             | 'Map to tuple' >> beam.Map(lambda row:(row['TICKER'], row['LABEL'], row['PRICE'], row['YEARHIGH'],
                                                      row['YEARLOW'], row['PRICEAVG50'], row['PRICEAVG200'],
                                                      row['BOOKVALUEPERSHARE'] , row['CASHFLOWPERSHARE'],
-                                                     row['DIVIDENDRATIO'], row['COUNTER']))
+                                                     row['DIVIDENDRATIO'], row['COUNTER'],
+                                                     row['PRICEAVG200']*.8,
+                                                     row['PRICEAVG200'] * .7))
     )
 
 
