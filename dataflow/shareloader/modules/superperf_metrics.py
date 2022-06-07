@@ -357,6 +357,10 @@ def get_income_benchmark(ticker, key):
             positive_eps = [e > 0 for e in all_eps]
             dataDict['positiveEps'] = len(positive_eps)
             dataDict['positiveEpsLast5Yrs'] = len([e > 0 for e in all_eps[0:5]])
+
+            latest = income_statement[0]
+            dataDict['income_statement_date'] = latest['date']
+
             return dataDict
     except Exception as e:
         logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))

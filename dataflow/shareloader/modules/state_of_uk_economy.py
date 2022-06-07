@@ -38,12 +38,6 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
 
-
-
-
-
-
-
 class XyzOptions(PipelineOptions):
 
     @classmethod
