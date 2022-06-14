@@ -1,74 +1,35 @@
 from __future__ import absolute_import
 
-import argparse
 import logging
-import re
-from pandas.tseries.offsets import BDay
-from bs4 import BeautifulSoup# Move to aJob
-import requests
-import itertools
 from apache_beam.io.gcp.internal.clients import bigquery
 
-import requests
-from past.builtins import unicode
-from datetime import datetime
 import apache_beam as beam
-from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-import re, requests
-from datetime import datetime, date
-import pandas as pd
-from collections import OrderedDict
-import requests
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
-from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
-                            get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
-                            ParseManufacturingPMI,get_economic_calendar
 
-from .mail_utils import STOCK_EMAIL_TEMPLATE
 from .economic_utils import get_petrol_prices, get_latest_jobs_statistics, get_fruit_and_veg_prices
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
 
 
 
 class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--sendgridkey')
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    pass
 
 
-def send_email(pipeline, options):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(options.recipients, options.sendgridkey))
-             )
+def kickoff_pipeline(pipeline):
+    jobstats = (pipeline | 'Create jobs' >> beam.Create(get_latest_jobs_statistics())
+                )
 
+    fruitandveg = (pipeline | 'Create fandv' >> beam.Create(get_fruit_and_veg_prices())
+                   )
 
-
-def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
-
-    wMapped = weeklyPipeline | 'MapWS' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
-                                                                               dictionary))
-
-    mMapped = monthlyPipeline | 'MapM' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
-                                                                       dictionary))
+    pprices = (pipeline | 'Create pprices' >> beam.Create(get_petrol_prices())
+               )
 
     return (
-            wMapped
-            | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
-                                                      right_list=beam.pvalue.AsIter(mMapped))
-            | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-            | 'Map to tuple' >> beam.Map(lambda row:(row['TICKER'], row['LABEL'], row['PRICE'], row['YEARHIGH'],
-                                                     row['YEARLOW'], row['PRICEAVG50'], row['PRICEAVG200'],
-                                                     row['BOOKVALUEPERSHARE'] , row['CASHFLOWPERSHARE'],
-                                                     row['DIVIDENDRATIO'], row['COUNTER']))
+            (jobstats, fruitandveg, pprices)
+            | 'FlattenCombine all' >> beam.Flatten()
+            | 'MAP Values' >> beam.Map(lambda d: dict(AS_OF_DATE=d['asOfDate'], LABEL=d['label'], VALUE=d['value']))
+
     )
 
 
@@ -80,22 +41,21 @@ def run(argv=None, save_main_session=True):
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     with beam.Pipeline(options=pipeline_options) as p:
-        weeklyPipeline = create_weekly_data_ppln(p)
-        monthlyPipeline = create_monthly_data_ppln(p)
+        bqPipeline = kickoff_pipeline(p)
 
-        bqPipeline = kickoff_pipeline(weeklyPipeline, monthlyPipeline)
+        tableId = 'state_of_economy'
+        tableSchema = ('AS_OF_DATE:DATE, LABEL:STRING, VALUE:FLOAT')
+        bqSink = beam.io.WriteToBigQuery(
+            bigquery.TableReference(
+                projectId="datascience-projects",
+                datasetId='gcp_shareloader',
+                tableId=tableId,
+            schema=tableSchema,
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        )
 
-        bqSink = beam.Map(logging.info)
-
-        weeklySelectionPipeline = (bqPipeline | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn()))
-
-        (weeklySelectionPipeline | 'Mapping' >> beam.Map(
-                                    lambda element: STOCK_EMAIL_TEMPLATE.format(asOfDate=date.today(), tableOfData=element))
-
-                                | bqSink)
-
-        ## Send email now
-        send_email(weeklySelectionPipeline, pipeline_options)
+        (bqPipeline | bqSink)
 
 
 

@@ -23,22 +23,11 @@ class EconomicUtilsTestCase(unittest.TestCase):
         self.assertTrue(len(res) > 0)
 
     def test_create_pipeline(self):
+        from shareloader.modules.state_of_uk_economy import kickoff_pipeline
         with TestPipeline() as p:
-            jobstats = (p | 'Create jobs' >> beam.Create(get_latest_jobs_statistics())
-                    )
+            jobstats =  kickoff_pipeline(p)
+            jobstats | beam.Map(print)
 
-            fruitandveg = (p | 'Create fandv' >> beam.Create(get_fruit_and_veg_prices())
-                      )
-
-            pprices = (p | 'Create pprices' >> beam.Create(get_petrol_prices())
-                     )
-
-            final = (
-                    (jobstats, fruitandveg, pprices)
-                    | 'FlattenCombine all' >> beam.Flatten()
-                    | ' rint out' >> beam.Map(print)
-
-            )
 
 
 if __name__ == '__main__':

@@ -1,0 +1,5 @@
+{
+  "description": "An example pipeline that collect state of economy.",
+  "name": "State of Economy",
+  "parameters": []
+}
