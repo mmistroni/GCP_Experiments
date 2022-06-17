@@ -32,6 +32,22 @@ def kickoff_pipeline(pipeline):
 
     )
 
+def write(inputData):
+    bqSink2 = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='state_of_economy',
+            schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT',
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+    )
+    logSink = beam.Map(logging.info)
+
+    (inputData | 'Writing ' >> logSink)
+
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -43,19 +59,7 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         bqPipeline = kickoff_pipeline(p)
         logging.info('--------------------  writing to sink ----------')
-        tableId = 'state_of_economy'
-        bqSink = beam.io.WriteToBigQuery(
-            bigquery.TableReference(
-                projectId="datascience-projects",
-                datasetId='gcp_shareloader',
-                tableId=tableId,
-                schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT',
-            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-        )
-
-        (bqPipeline | bqSink)
-
+        write(bqPipeline)
 
 
 if __name__ == '__main__':
