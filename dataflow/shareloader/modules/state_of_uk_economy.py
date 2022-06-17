@@ -50,6 +50,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId=tableId,
+                schema='SCHEMA_AUTODETECT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
         )
