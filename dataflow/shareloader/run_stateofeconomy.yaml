@@ -10,6 +10,7 @@ steps:
           , '$_JOB_NAME'
           , '--template-file-gcs-location'
           , '$_ECONOMY_TEMPLATE_GCS_LOCATION'
+          , '--region=$_REGION'
           ]
     id: 'build-flex-template-via-cloudsdk'
 
@@ -17,6 +18,4 @@ substitutions:
   _JOB_NAME: 'stateofeconomycloudbuild'
   _ECONOMY_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/state_of_economy_flex_template.json
   _REGION: us-central1
-  _FMPREP_KEY: ''
-  _SENDGRID_KEY : ''
-
+  
