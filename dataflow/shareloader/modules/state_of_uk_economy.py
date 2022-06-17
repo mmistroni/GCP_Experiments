@@ -44,7 +44,7 @@ def write(inputData):
     )
     logSink = beam.Map(logging.info)
 
-    (inputData | 'Writing ' >> logSink)
+    return (inputData | 'Writing ' >> logSink)
 
 
 
