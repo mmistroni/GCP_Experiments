@@ -38,18 +38,19 @@ def write(inputData):
 
     (inputData | 'Writing ' >> logSink)
 
+    '''
     bqSink2 = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
             datasetId='gcp_shareloader',
-            tableId='tmpeconomy',
-            schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT'),
+            tableId='tmpeconomy'),
+            schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT',
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     
     (inputData | 'Writing ' >>  bqSink2)
 
-    
+    '''
     
 
 
