@@ -33,7 +33,11 @@ def kickoff_pipeline(pipeline):
     )
 
 def write(inputData):
-    '''
+    
+    logSink = beam.Map(logging.info)
+
+    (inputData | 'Writing ' >> logSink)
+
     bqSink2 = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
@@ -43,10 +47,9 @@ def write(inputData):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     )
-    '''
-    logSink = beam.Map(logging.info)
-
-    return (inputData | 'Writing ' >> logSink)
+    
+    
+    
 
 
 
