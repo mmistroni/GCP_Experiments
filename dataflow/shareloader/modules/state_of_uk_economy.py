@@ -38,7 +38,6 @@ def write(inputData):
 
     (inputData | 'Writing ' >> logSink)
 
-    '''
     bqSink2 = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
@@ -50,7 +49,7 @@ def write(inputData):
     
     (inputData | 'Writing ' >>  bqSink2)
 
-    '''
+    
     
 
 
