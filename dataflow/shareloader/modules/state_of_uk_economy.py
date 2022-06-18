@@ -43,11 +43,12 @@ def write(inputData):
             projectId="datascience-projects",
             datasetId='gcp_shareloader',
             tableId='tmpeconomy',
-            schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT',
+            schema='AS_OF_DATE:DATE,LABEL:STRING,VALUE:FLOAT'),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-    )
     
+    (inputData | 'Writing ' >>  bqSink2)
+
     
     
 
