@@ -47,7 +47,7 @@ def write(inputData):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
     
-    (inputData | 'Writing ' >>  bqSink2)
+    (inputData | 'Writing to bq' >>  bqSink2)
 
     
     
