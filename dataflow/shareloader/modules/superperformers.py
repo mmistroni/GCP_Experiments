@@ -294,8 +294,8 @@ def map_to_bq_dict(input_dict, label):
                 DIVIDENDRATIO=input_dict.get('dividendPaidRatio', 0.0),
                 PERATIO=input_dict.get('pe', 0.0),
                 INCOME_STMNT_DATE=input_dict['income_statement_date'],
-                INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_date_qtr'),
-                RSI=input_dict.get('rsi') 
+                INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_qtr_date'),
+                RSI=input_dict.get('rsi')
                 )
 
 
