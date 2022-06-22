@@ -295,7 +295,7 @@ def map_to_bq_dict(input_dict, label):
                 PERATIO=input_dict.get('pe', 0.0),
                 INCOME_STMNT_DATE=input_dict['income_statement_date'],
                 INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_date_qtr'),
-                RSI=input_dict.get('rsi')
+                RSI=input_dict.get('rsi') 
                 )
 
 
