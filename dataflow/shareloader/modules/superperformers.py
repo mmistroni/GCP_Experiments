@@ -365,7 +365,7 @@ def run(argv=None, save_main_session=True):
             destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
                                                     date.today().strftime('%Y-%m-%d %H:%M'))
 
-            #sink = beam.io.WriteToText(destination, num_shards=1)
+            sink = beam.io.WriteToText(destination, num_shards=1)
 
             fundamental_data | 'Sendig to sink' >> sink
 

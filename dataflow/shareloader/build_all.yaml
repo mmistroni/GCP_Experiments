@@ -65,12 +65,24 @@ steps:
           , 'debug'
           , '--config'
           , '$_SUPERPERFORMERS_BUILD_FILE']  
-    id: 'build-superperformers-template'    
-timeout: 30000s
+    id: 'build-superperformers-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_ECONOMY_BUILD_FILE']  
+    id: 'build-stateofeconomy-template'     
+timeout: 45000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
   _NEWSLOADER_BUILD_FILE: ./dataflow/shareloader/news_build.yaml
   _SHARESDATASETLOADER_BUILD_FILE: ./dataflow/shareloader/shares_datset_build.yaml
   _ADR_BUILD_FILE: ./dataflow/shareloader/build_adr.yaml
   _SUPERPERFORMERS_BUILD_FILE: ./dataflow/shareloader/superperformers_build.yaml
+  _ECONOMY_BUILD_FILE: ./dataflow/shareloader/build_stateofeconomy.yaml
   

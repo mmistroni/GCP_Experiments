@@ -9,8 +9,14 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataflow_build.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dataflow_build.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_all.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_all.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_stateofeconomy.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_stateofeconomy.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_staeofeconomy.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_stateofeconomy.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
