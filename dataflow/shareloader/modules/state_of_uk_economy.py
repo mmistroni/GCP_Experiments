@@ -44,13 +44,12 @@ def run(argv=None, save_main_session=True):
         bqPipeline = kickoff_pipeline(p)
 
         tableId = 'state_of_economy'
-        tableSchema = ('AS_OF_DATE:DATE, LABEL:STRING, VALUE:FLOAT')
         bqSink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId=tableId,
-            schema=tableSchema,
+            schema='SCHEMA_AUTODETECT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
         )
