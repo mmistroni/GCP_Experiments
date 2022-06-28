@@ -265,7 +265,8 @@ def enterprise_stock_filter(input_dict):
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
 
 
-
+def out_of_favour_filter(input_dict):
+    return (input_dict['price'] <=  input_dict['priceAvg200'])
 
 def find_leaf(p):
     pass
@@ -352,11 +353,27 @@ def run(argv=None, save_main_session=True):
              | 'Writing to sink ap' >> bq_sink)
 
             (benchmark_data | 'Filtering for all fields ENT ' >> beam.Filter(benchmark_filter)
-             | 'Filtering for ent ap' >> beam.Filter(defensive_stocks_filter)
+             | 'Filtering for ent ap' >> beam.Filter(enterprise_stock_filter)
              | 'Filtering for asset play enterprise' >> beam.Filter(asset_play_filter)
              | 'Mapping only Relevant fields ENT' >> beam.Map(lambda d:
                                                              map_to_bq_dict(d, 'ASSET_PLAY_ENTERPRISE'))
              | 'Writing to sink ENT' >> bq_sink)
+
+            (benchmark_data | 'Filtering for all fields AP2 ' >> beam.Filter(benchmark_filter)
+             | 'Filtering for defensive ap2' >> beam.Filter(defensive_stocks_filter)
+             | 'Filtering for out of favour ' >> beam.Filter(out_of_favour_filter)
+             | 'Mapping only Relevant fields AP2' >> beam.Map(lambda d:
+                                                             map_to_bq_dict(d, 'OUT_OF_FAVOUR_DEFENSIVE'))
+             | 'Writing to sink ap2' >> bq_sink)
+
+            (benchmark_data | 'Filtering for all fields ENT2 ' >> beam.Filter(benchmark_filter)
+             | 'Filtering for ent ap2' >> beam.Filter(enterprise_stock_filter)
+             | 'Filtering for out of favour enterprise2' >> beam.Filter(asset_play_filter)
+             | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
+                                                              map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
+             | 'Writing to sink ENT2' >> bq_sink)
+
+
 
         else:
 
