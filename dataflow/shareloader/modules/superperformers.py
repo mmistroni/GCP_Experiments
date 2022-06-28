@@ -368,7 +368,7 @@ def run(argv=None, save_main_session=True):
 
             (benchmark_data | 'Filtering for all fields ENT2 ' >> beam.Filter(benchmark_filter)
              | 'Filtering for ent ap2' >> beam.Filter(enterprise_stock_filter)
-             | 'Filtering for out of favour enterprise2' >> beam.Filter(asset_play_filter)
+             | 'Filtering for out of favour enterprise2' >> beam.Filter(out_of_favour_filter)
              | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
                                                               map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
              | 'Writing to sink ENT2' >> bq_sink)
