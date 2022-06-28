@@ -7,7 +7,7 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
-                get_balancesheet_benchmark
+                get_balancesheet_benchmark, compute_cagr
 
 
 import apache_beam as beam
@@ -207,7 +207,11 @@ class TestSuperPerformers(unittest.TestCase):
               | printingSink
              )
 
+    def test_compute_cagr(self):
+        inputs = [1299.8, 1411.3, 1872.9, 3080, 3777]
 
+        from pprint import pprint
+        pprint(compute_cagr(inputs))
 
 
 

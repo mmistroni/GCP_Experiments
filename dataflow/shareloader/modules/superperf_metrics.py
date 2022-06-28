@@ -149,6 +149,11 @@ def get_fundamental_parameters_qtr(ticker,key):
             qtr_fundamental_dict['eps_progression_last4_qtrs_detail'] = ','.join([str(s) for s in eps_qtr])
             qtr_fundamental_dict['researchAndDevelopmentProgression'] = evaluate_progression(randD)
             qtr_fundamental_dict['researchAndDevelopmentProgression_detail'] = ','.join([str(s) for s in randD])
+
+            op_incomes = [d['operatingIncome'] for d in income_stmnt]
+            op_income_cagr = compute_cagr(op_incomes)
+            qtr_fundamental_dict['OPERATING_INCOME_CAGR_QTR'] = op_income_cagr
+
             if eps_lastqtr != 0 and net_sales_lastqtr != 0:
                 qtr_fundamental_dict['eps_growth_qtr_over_qtr'] = (eps_thisqtr - eps_lastqtr) / eps_lastqtr
                 qtr_fundamental_dict['net_sales_qtr_over_qtr'] = (net_sales_thisqtr - net_sales_lastqtr) / net_sales_lastqtr
@@ -202,6 +207,13 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             earnings = [stmnt['eps'] for stmnt in income_statement[0:3][::-1]]
             fundamental_dict['eps_progression'] = evaluate_progression(earnings)
             fundamental_dict['eps_progression_detail'] = ','.join([str(e) for e in earnings])
+
+
+            ## Operating income CAGR ,annually and quarterly
+            op_incomes = [d['operatingIncome'] for d in income_statement]
+            op_income_cagr = compute_cagr(op_incomes)
+            fundamental_dict['OPERATING_INCOME_CAGR'] = op_income_cagr
+
 
             data_5yrs_ago = income_statement[-1]
             eps_thisyear = latest['eps']  # EPS Growth this year: 20%
@@ -333,6 +345,13 @@ def get_balancesheet_benchmark(ticker, key):
         logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
 
 
+def compute_cagr(input_list):
+    ''' CAGR = (Last amount / starting amo) ^ (1 / number of years) '''
+    starter = input_list[0]
+
+    return ','.join ([ "%.2f" %  ((current_amount / starter) ** (1 / (idx+1))) for idx, current_amount in enumerate(input_list[1:])])
+
+
 def get_income_benchmark(ticker, key):
     # some eps in last 10 yrs
     try:
@@ -355,6 +374,9 @@ def get_income_benchmark(ticker, key):
             if all_eps[4] > 0:
                 dataDict['epsGrowth5yrs'] = (all_eps[0] - all_eps[4]) / all_eps[4]
 
+            op_incomes = [d['operatingIncome'] for d in income_statement]
+            op_income_cagr = compute_cagr(op_incomes)
+            dataDict['OPERATING_INCOME_CAGR'] = op_income_cagr
 
             positive_eps = [e > 0 for e in all_eps]
             dataDict['positiveEps'] = len(positive_eps)
