@@ -12,13 +12,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-def main():
-    print('Starting.....')
-    spark = SparkSession \
+def getSparkSession():
+    return SparkSession \
         .builder \
+        .master('local')\
         .appName("Wrangling Data") \
         .getOrCreate()
 
+
+def main():
+    print('Starting.....')
+
+    '''
     # Replace Key with your AWS account key (You can find this on IAM
     spark._jsc.hadoopConfiguration().set("fs.s3a.access.key", "ASIAYZA6G7O6367YXACF")
     # Replace Key with your AWS secret key (You can find this on IAM
@@ -30,4 +35,4 @@ def main():
         .csv("s3://udacity-bucket-mm/cities.csv") \
         .count()
     print(f'We got back:{dataCount}')
-
+    '''
