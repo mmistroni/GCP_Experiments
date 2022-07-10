@@ -8,7 +8,7 @@ import statistics
 # Market Cap > 2bln (mid)
 import statistics
 
-
+### Add info in this https://medium.com/@oleg.kazanskyi/trading-analytics-with-financial-kpis-cb35fe5c020d
 def get_historical_ttm(ticker, key, asOfDate):
     all_incomes = requests.get(
         'https://financialmodelingprep.com/api/v3/income-statement/{}?period=quarter&limit=40&apikey={}'.format(ticker,
