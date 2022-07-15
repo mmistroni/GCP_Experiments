@@ -22,7 +22,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
-                                            get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters
+                                            get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
+                                            calculate_piotrosky_score
 from apache_beam.io.gcp.internal.clients import bigquery
 
 
@@ -120,6 +121,8 @@ class FundamentalLoader(beam.DoFn):
                 asset_play_dict = get_asset_play_parameters(ticker, self.key)
                 updated_dict.update(asset_play_dict)
 
+                piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                updated_dict['piotroskyScore'] = piotrosky_score
 
                 all_dt.append(updated_dict)
         return all_dt
@@ -160,7 +163,10 @@ class BenchmarkLoader(beam.DoFn):
                                                                         quotes_data['totalCurrentLiabilities'] - \
                                                                          quotes_data['inventory']) / quotes_data['sharesOutstanding']
 
-                                all_dt.append(quotes_data)
+                                piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                                quotes_data['piotroskyScore'] = piotrosky_score
+
+                            all_dt.append(quotes_data)
         return all_dt
 
 
@@ -296,7 +302,8 @@ def map_to_bq_dict(input_dict, label):
                 PERATIO=input_dict.get('pe', 0.0),
                 INCOME_STMNT_DATE=input_dict['income_statement_date'],
                 INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_qtr_date'),
-                RSI=input_dict.get('rsi')
+                RSI=input_dict.get('rsi'),
+                PIOTROSKY_SCORE=input_dict.get('piotroskyScore', -1)
                 )
 
 
@@ -313,7 +320,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='stock_selection'),
-            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 

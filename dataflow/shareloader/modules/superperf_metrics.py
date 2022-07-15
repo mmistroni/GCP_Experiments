@@ -32,6 +32,88 @@ def get_historical_ttm(ticker, key, asOfDate):
     # fundamental_dict['dividendYield']= latest.get('dividendYield', 0.0)    # (dividendPaid / shareNumber) / price
     # fundamental_dict['returnOnCapital'] = latest.get('returnOnCapitalEmployedTTM', 0) #ebit / (totalAsset - totalCurrentLiabilities)
 
+def calculate_piotrosky_score(key, ticker):
+    '''
+    Profitability Criteria Include
+       Positive net income (1 point)
+       Positive return on assets (ROA) in the current year (1 point)
+       Positive operating cash flow in the current year (1 point)
+       Cash flow from operations being greater than net Income (quality of earnings) (1 point)
+    Leverage, Liquidity, and Source of Funds Criteria Include:
+       Lower amount of long term debt in the current period, compared to the previous year (decreased leverage) (1 point)
+       Higher current ratio this year compared to the previous year (more liquidity) (1 point)
+       No new shares were issued in the last year (lack of dilution) (1 point).
+    Operating Efficiency Criteria Include:
+       A higher gross margin compared to the previous year (1 point)
+       A higher asset turnover ratio compared to the previous year (1 point)
+
+
+    :param input_dict:
+    :return:
+    '''
+
+    score = 0
+
+    try:
+        cashflow_statements = requests.get(
+            'https://financialmodelingprep.com/api/v3/cash-flow-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+
+        income_statements = requests.get(
+            'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+        balance_sheets = requests.get(
+            'https://financialmodelingprep.com/api/v3/balance-sheet-statement/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+                ticker=ticker, key=key)).json()
+        ratios = requests.get(
+            'https://financialmodelingprep.com/api/v3/ratios/{ticker}?period=quarter&limit=5&apikey={key}'.format(
+                ticker='MSFT', key=key)).json()
+        current_ratio_this_year = ratios[0]['currentRatio']
+        current_ratio_last_year = ratios[4]['currentRatio']
+        gross_margin_quarter = ratios[0]['grossProfitMargin']
+        gross_margin_last_year_quarter = ratios[4]['grossProfitMargin']
+        long_term_debt_this_year = balance_sheets[0]['longTermDebt']
+        long_term_debt_last_year = balance_sheets[4]['longTermDebt']
+        net_income = cashflow_statements[0]['netIncome']
+        operating_cashflow = cashflow_statements[0]['operatingCashFlow']
+        outstanding_shares_this_year = income_statements[0]['weightedAverageShsOutDil']
+        outstanding_shares_last_year = income_statements[4]['weightedAverageShsOutDil']
+        asset_turnover_ttm = ratios[0]['assetTurnover']
+        asset_turnover_last_year = ratios[4]['assetTurnover']
+        roa = ratios[0]['returnOnAssets']
+
+        if net_income > 0:
+            score += 1
+        if operating_cashflow > 0:
+            score += 1
+        if operating_cashflow > net_income:
+            score += 1
+        if roa > 0:
+            score += 1
+
+        if long_term_debt_this_year < long_term_debt_last_year:
+            score += 1
+        ###
+        if current_ratio_this_year > current_ratio_last_year:
+            score += 1
+        ### shares outstanding
+        if outstanding_shares_this_year < outstanding_shares_last_year:
+            score += 1
+        ##A higher gross margin compared to the previous year (1 point)
+        ##A higher asset turnover ratio compared to the previous year (1 point)
+
+        # assturnvr
+
+        if asset_turnover_ttm > asset_turnover_last_year:
+            score += 1
+
+        if gross_margin_quarter > gross_margin_last_year_quarter:
+            score += 1
+
+    except Exception as e:
+        logging.info('Exception in calculating piotroski score:' + str(e))
+
+    return score
 
 def evaluate_progression(input):
     if len(input) < 2:

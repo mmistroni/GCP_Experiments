@@ -7,7 +7,7 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
-                get_balancesheet_benchmark, compute_cagr
+                get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
 
 
 import apache_beam as beam
@@ -212,6 +212,11 @@ class TestSuperPerformers(unittest.TestCase):
 
         from pprint import pprint
         pprint(compute_cagr(inputs))
+
+    def test_piotrosky_scorer(self):
+        key = os.environ['FMPREPKEY']
+        for ticker in ['MSFT', 'MO', 'NKE', 'NXPI']:
+            print(f'{ticker}={calculate_piotrosky_score(key, ticker)}')
 
 
 
