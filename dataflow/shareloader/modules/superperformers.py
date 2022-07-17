@@ -419,6 +419,14 @@ def run(argv=None, save_main_session=True):
                                                                      map_to_bq_dict(d, 'ASSET_PLAY_WEEKLY'))
              | 'Writing to stock selection ap' >> bq_sink)
 
+            (fundamental_data | 'Filtering for all fields weekly ' >> beam.Filter(get_universe_filter)
+             | 'Filtering for out of favour weekly' >> beam.Filter(out_of_favour_filter)
+             | 'Mapping only Relevant fields weekly' >> beam.Map(lambda d:
+                                                               map_to_bq_dict(d, 'OUT_OF_FAVOUR_WEEKLY'))
+             | 'Writing to sink weekly' >> bq_sink)
+
+
+
 
 
 

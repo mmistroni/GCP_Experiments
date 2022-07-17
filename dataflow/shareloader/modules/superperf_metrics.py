@@ -173,6 +173,13 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
         logging.info('Failed to get descriptive for :{}:{}'.format(ticker, str(e)))
         return dict((k, -1) for k in keys)
 
+
+def compute_rsi(ticker, key):
+    #https://www.roelpeters.be/many-ways-to-calculate-the-rsi-in-python-pandas/
+    #https://tcoil.info/compute-rsi-for-stocks-with-python-relative-strength-index/#:~:text=Here%20we%20will%20describe%20how%20to%20calculate%20RSI,100%20%E2%88%92%20100%201%20%2B%20r%20s%20n
+    pass
+
+
 def get_asset_play_parameters(ticker, key):
     dataDict = {}
     try:
