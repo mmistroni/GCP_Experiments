@@ -2,6 +2,7 @@ from datetime import datetime, date
 import requests
 import logging
 import statistics
+import pandas as pd
 
 # Criteria #1
 # ==== WATCH LIST ===
@@ -177,8 +178,35 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
 def compute_rsi(ticker, key):
     #https://www.roelpeters.be/many-ways-to-calculate-the-rsi-in-python-pandas/
     #https://tcoil.info/compute-rsi-for-stocks-with-python-relative-strength-index/#:~:text=Here%20we%20will%20describe%20how%20to%20calculate%20RSI,100%20%E2%88%92%20100%201%20%2B%20r%20s%20n
-    pass
+    def _compute(data, time_window):
+        diff = data.diff(1).dropna()  # diff in one field(one day)
+        # this preservers dimensions off diff values
+        up_chg = 0 * diff
+        down_chg = 0 * diff
+        # up change is equal to the positive difference, otherwise equal to zero
+        up_chg[diff > 0] = diff[diff > 0]
+        # down change is equal to negative deifference, otherwise equal to zero
+        down_chg[diff < 0] = diff[diff < 0]
+        # check pandas documentation for ewm
+        # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.ewm.html
+        # values are related to exponential decay
+        # we set com=time_window-1 so we get decay alpha=1/time_window
+        up_chg_avg = up_chg.ewm(com=time_window - 1, min_periods=time_window).mean()
+        down_chg_avg = down_chg.ewm(com=time_window - 1, min_periods=time_window).mean()
 
+        rs = abs(up_chg_avg / down_chg_avg)
+        rsi = 100 - 100 / (1 + rs)
+        return rsi
+
+    url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from=2022-01-01&to=2022-07-15&apikey={key}'
+
+    historical = requests.get(url).json().get('historical')
+    if historical:
+        data = pd.DataFrame(data=historical[::-1])
+        data['asOfDate'] = pd.to_datetime(data['date'])
+        data['RSI'] = _compute(data['adjClose'], 20)
+        return data.tail(1).RSI.values[0]
+    return 0
 
 def get_asset_play_parameters(ticker, key):
     dataDict = {}
