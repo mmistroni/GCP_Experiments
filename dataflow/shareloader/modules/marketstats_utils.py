@@ -162,7 +162,7 @@ def get_economic_calendar(fmprepkey):
     eow = startDate + timedelta(days=toEowDays)
     economicCalendarUrl = f"https://financialmodelingprep.com/api/v3/economic_calendar?from={startDate.strftime('%Y-%m-%d')}&to={eow.strftime('%Y-%m-%d')}&apikey={fmprepkey}"
     data = requests.get(economicCalendarUrl).json()
-    return [d for d in data if (d['country'] == 'US' and d['impact'] in ['High','Medium']][::-1]
+    return [d for d in data if d['country'] == 'US' and d['impact'] in ['High','Medium']][::-1]
 
 
 
