@@ -9,12 +9,15 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
 
-
+from pandas.tseries.offsets import BDay
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
 import os
 import requests
+import pandas as pd
+from collections import OrderedDict
+from datetime import date
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -254,6 +257,41 @@ class TestSuperPerformers(unittest.TestCase):
         data['RSI'] = self.computeRSI(data['adjClose'], 20)
 
         print(f'Rsi: {data.tail(1).RSI.values[0]}')
+
+    def test_compute_etf_historical(self):
+
+        key = os.environ['FMPREPKEY']
+
+        sectorsETF = OrderedDict ({
+            'Technology' : 'XLK',
+            'Health Care': 'XLV',
+            'Financials' : 'XLF',
+            'Real Estate': 'SCHH',
+            'Energy'     : 'XLE',
+            'Materials'  : 'XLB',
+            'Consumer Discretionary' : 'XLY',
+            'Industrials': 'VIS',
+            'Utilities': 'VPU',
+            'Consumer Staples' : 'XLP',
+            'Telecommunications':'XLC'
+        })
+
+        ## check this to see economic cycle
+        ## https://medium.datadriveninvestor.com/these-three-indicators-will-tell-you-when-the-bear-market-ends-f86c16bc3fe1
+        endDate = date.today()
+        startDate = (endDate - BDay(60)).date()
+
+        for name, ticker in sectorsETF.items():
+            url = f"https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
+
+            historical = requests.get(url).json().get('historical')
+            df = pd.DataFrame(data=historical[::-1])
+            df['date'] = pd.to_datetime(df.date)
+            df = df.set_index('date')
+            resampled = df.resample('1M').mean()
+            resampled['returns'] = resampled.close / resampled.close.shift(1) - 1
+            print(f'{name}/{ticker}: Returns {resampled.returns.values}')
+
 
 
 
