@@ -130,6 +130,13 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     </li>
                                 </ul>
                             </li>
+                            <li>Out of Favour*: Criteria
+                                <ul>
+                                    <li>Base Criteria of Defensive / Enterprise Stocks</li>
+                                    <li>Price is below 200 days average</li>
+                                    <li>Idea is that these are strong companies who are out of favour with investors nowadays</li>
+                                </ul>
+                            </li>
                         </uls>
                         <br>
                         <br>

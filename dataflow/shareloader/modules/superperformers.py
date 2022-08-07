@@ -26,7 +26,10 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             calculate_piotrosky_score
 from apache_beam.io.gcp.internal.clients import bigquery
 
-
+'''
+Further source of infos
+https://medium.com/@mancuso34/building-all-in-one-stock-economic-data-repository-6246dde5ce02
+'''
 class XyzOptions(PipelineOptions):
 
     @classmethod
