@@ -7,9 +7,9 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
-                        ParseManufacturingPMI, get_economic_calendar
+                        ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
-                                            run_economic_calendar, run_exchange_pipeline
+                                            run_economic_calendar, run_exchange_pipeline, run_putcall_ratio
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -270,6 +270,12 @@ class TestShareLoader(unittest.TestCase):
                     | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                     | 'printing out all' >> beam.Map(print)
             )
+
+    def test_putcall_ratio(self):
+        with TestPipeline() as p:
+            p = run_putcall_ratio(p)
+            p | 'Printing Out' >> beam.Map(print)
+
 
 
 if __name__ == '__main__':

@@ -165,6 +165,34 @@ def get_economic_calendar(fmprepkey):
     return [d for d in data if d['country'] == 'US' and d['impact'] in ['High','Medium']][::-1]
 
 
+def get_equity_putcall_ratio():
+    r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')
+    bs = BeautifulSoup(r.content, 'html.parser')
+    div_item = bs.find_all('div', {"id" : "daily-market-stats-data"})[0]
+    table = div_item.find_all('table', {"class":"data-table--zebra"})[0]
+    data = [[item.text for item in row.find_all('td')] for row in table.find_all('tr')]
+    putcall_dict = dict([tuple(lst) for lst in data if lst])
+    return  putcall_dict['EQUITY PUT/CALL RATIO']
+
+def get_skew_index():
+    #https: // edition.cnn.com / markets / fear - and -greed
+    from datetime import date, datetime
+    from pandas.tseries.offsets import BDay
+    import pandas as pd
+    try:
+        prevBDay = date.today() - BDay(1)
+        prevTs = int(prevBDay.timestamp())
+        currentTs = int(datetime.now().timestamp())
+        skewUrl = f'https://query1.finance.yahoo.com/v7/finance/download/%5ESKEW?period1={prevTs}&period2={currentTs}&interval=1d&events=history&includeAdjustedClose=true'
+        print(skewUrl)
+        df = pd.read_csv(skewUrl)
+        return df['Close'].values[0]
+    except Exception as e:
+        logging.info(f'Excepiton in getting skew{str(e)}')
+
+
+
+
 
 
 def get_prices(ticker, iexapikey):

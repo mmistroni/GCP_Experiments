@@ -28,7 +28,7 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
                             combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
-                            ParseManufacturingPMI,get_economic_calendar
+                            ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -113,6 +113,14 @@ def run_pmi(p):
                     | 'pmi' >>   beam.ParDo(ParsePMI())
                     | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
             )
+
+def run_putcall_ratio(p):
+    return (p | 'start' >> beam.Create(['20210101'])
+            | 'putcall' >> beam.Map(lambda d: get_equity_putcall_ratio())
+            | 'remap vix' >> beam.Map(
+                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': 'EQUITY_PUTCALL_RATIO', 'VALUE': str(d)})
+            )
+
 
 def run_manufacturing_pmi(p):
     return (p | 'startstartnpmi' >> beam.Create(['20210101'])

@@ -292,6 +292,11 @@ class TestSuperPerformers(unittest.TestCase):
             resampled['returns'] = resampled.close / resampled.close.shift(1) - 1
             print(f'{name}/{ticker}: Returns {resampled.returns.values}')
 
+    def test_skew(self):
+        key = os.environ['FMPREPKEY']
+        base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
+        print(requests.get(base_url).json())
+
 
 
 
