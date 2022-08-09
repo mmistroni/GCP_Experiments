@@ -67,7 +67,8 @@ class TestShareLoader(unittest.TestCase):
                  (p | 'start' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
                     | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
-                    | 'out' >> sink
+                    | beam.Map(print)
+                    #| 'out' >> sink
                 )
 
     def test_run_manuf_pmi(self):
@@ -276,6 +277,19 @@ class TestShareLoader(unittest.TestCase):
             p = run_putcall_ratio(p)
             p | 'Printing Out' >> beam.Map(print)
 
+    def test_pmifetch(self):
+        r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi',
+                         headers={'user-agent': 'my-app/0.0.1'})
+        bs = BeautifulSoup(r.content, 'html.parser')
+        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl02_Panel1"})[0]  #
+        ratios_table = div_item.find_all('table', {"class": "table"})[0]
+
+        dt = [[item.text.strip() for item in row.find_all('th')] for row in ratios_table.find_all('thead')]
+        vals = [[item.text.strip() for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
+
+        keys = chain(*dt)
+        values = chain(*vals)
+        print( dict((k, v) for k, v in zip(keys, values)))
 
 
 if __name__ == '__main__':
