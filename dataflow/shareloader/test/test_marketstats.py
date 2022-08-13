@@ -9,7 +9,8 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
-                                            run_economic_calendar, run_exchange_pipeline, run_putcall_ratio
+                                            run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
+                                            run_cftc_spfutures
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -99,15 +100,19 @@ class TestShareLoader(unittest.TestCase):
 
             )
 
+    def test_runcftcspfutures(self):
 
-
-
+        key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            run_cftc_spfutures(p, key) | beam.Map(print)
 
     def test_getallpricesfordate(self):
         import pandas as pd
         key = os.environ['FMPREPKEY']
         asOfDate = date(2021, 9, 30).strftime('%Y-%m-%d')
         print(get_all_prices_for_date(key, asOfDate)[0:20])
+
+
 
     def test_nyse_tickers(self):
         from pandas.tseries.offsets import BDay
@@ -291,6 +296,8 @@ class TestShareLoader(unittest.TestCase):
         values = chain(*vals)
         print( dict((k, v) for k, v in zip(keys, values)))
 
+    def test_get_equity_putcall_ratio(self):
+        print(get_equity_putcall_ratio())
 
 if __name__ == '__main__':
     unittest.main()

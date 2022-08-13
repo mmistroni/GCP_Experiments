@@ -17,7 +17,7 @@ def create_bigquery_ppln(p, label):
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
 AND LABEL IN ('MANUFACTURING-PMI', 'PMI','NASDAQ GLOBAL SELECT_MARKET BREADTH',
-  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH' ) 
+  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH', 'CFTC-SPFUTURES', 'EQUITY_PUTCALL_RATIO' ) 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
@@ -108,6 +108,7 @@ class ParseManufacturingPMI(beam.DoFn):
             return []
 
 
+
 class ParsePMI(beam.DoFn):
     '''
     Parses non manufacturing PMI
@@ -122,7 +123,7 @@ class ParsePMI(beam.DoFn):
         pmiDict =  dict((k, v) for k, v in zip(keys, values))
         pmiDict['Last'] = pmiDict.get('Actual', -1)
         return pmiDict
-    
+
     def get_latest_pmi(self):
         r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi',
                             headers={'user-agent': 'my-app/0.0.1'})
@@ -138,6 +139,33 @@ class ParsePMI(beam.DoFn):
         except Exception as e:
             print('Failed to get PMI:{}'.format(str(e)))
             return [{'Last' : 'N/A'}]
+
+'''
+== FEAR AND GREED
+
+
+MARKET MOMENTUM  X( SP500 VS AVG)
+
+STOCK PRICE STRENGTH (52WK HIGH VS 52 WK LOW, we can get it)  X
+
+STOCK PRICE BREADTH (NYSE)  X
+
+PUT CALL RATIO X
+
+MARKET VOLATILITY (VIX)
+
+SAFE HEAVEN DEMAND   www.thebalance.com/stocks-vs-bonds-the-long-term-performance-data-416861
+
+JUNK BOND DEMAND = YIeld spread: junk bonds vs investment grade
+check investopedia.comm  high yield bond spread
+
+
+'''
+
+
+def get_cftc_spfutures(key):
+    base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
+    return float(requests.get(base_url).json()[0]['changeInNetPosition'])
 
 
 def get_vix(key):
