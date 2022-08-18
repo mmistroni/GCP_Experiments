@@ -1,4 +1,3 @@
-from mock import patch, Mock
 from apache_beam.testing.test_pipeline import TestPipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to

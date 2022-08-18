@@ -262,7 +262,7 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        equity_pcratio = run_putcall_ratio()
+        equity_pcratio = run_putcall_ratio(p)
         equity_pcratio | 'pcratio to sink' >> bq_sink
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
