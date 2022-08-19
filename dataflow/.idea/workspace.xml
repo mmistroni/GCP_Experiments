@@ -212,7 +212,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker">
+  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec">
     <configuration name="Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -292,8 +292,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_for_ticker" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_putcall_ratio" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio" />

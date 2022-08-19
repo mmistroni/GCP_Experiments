@@ -116,7 +116,7 @@ def run_pmi(p):
             )
 
 def run_putcall_ratio(p):
-    return (p | 'start' >> beam.Create(['20210101'])
+    return (p | 'start putcall ratio' >> beam.Create(['20210101'])
             | 'putcall' >> beam.Map(lambda d: get_equity_putcall_ratio())
             | 'remap vix' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': 'EQUITY_PUTCALL_RATIO', 'VALUE': str(d)})
@@ -142,13 +142,13 @@ def run_economic_calendar(p, key):
 
 
 def run_vix(p, key):
-    return (p | 'start' >> beam.Create(['20210101'])
+    return (p | 'start run_vix' >> beam.Create(['20210101'])
                     | 'vix' >>   beam.Map(lambda d:  get_vix(key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
 
 def run_cftc_spfutures(p, key):
-    return (p | 'start' >> beam.Create(['20210101'])
+    return (p | 'start_cftc' >> beam.Create(['20210101'])
                     | 'sptufutres' >>   beam.Map(lambda d:  get_cftc_spfutures(key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'CFTC-SPFUTURES', 'VALUE' : str(d)})
             )
@@ -286,9 +286,9 @@ def run(argv=None, save_main_session=True):
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
-        epcratio_key = equity_pcratio | 'Add 8' >> beam.Map(lambda d: (6, d))
-        static_key = static | 'Add 6' >> beam.Map(lambda d: (7, d))
-        stats_key = statistics | 'Add 7' >> beam.Map(lambda d: (8, d))
+        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
+        static_key = static | 'Add 7' >> beam.Map(lambda d: (7, d))
+        stats_key = statistics | 'Add 8' >> beam.Map(lambda d: (8, d))
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
