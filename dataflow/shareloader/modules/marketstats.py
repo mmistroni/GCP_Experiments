@@ -118,7 +118,7 @@ def run_pmi(p):
 def run_putcall_ratio(p):
     return (p | 'start putcall ratio' >> beam.Create(['20210101'])
             | 'putcall' >> beam.Map(lambda d: get_equity_putcall_ratio())
-            | 'remap vix' >> beam.Map(
+            | 'remap pcratio' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': 'EQUITY_PUTCALL_RATIO', 'VALUE': str(d)})
             )
 
@@ -150,7 +150,7 @@ def run_vix(p, key):
 def run_cftc_spfutures(p, key):
     return (p | 'start_cftc' >> beam.Create(['20210101'])
                     | 'sptufutres' >>   beam.Map(lambda d:  get_cftc_spfutures(key))
-                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'CFTC-SPFUTURES', 'VALUE' : str(d)})
+                    | 'remap cftcspfutures' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'CFTC-SPFUTURES', 'VALUE' : str(d)})
             )
 
 
