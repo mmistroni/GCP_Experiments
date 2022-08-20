@@ -9,9 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/news_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -213,7 +211,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test_marketstats">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio">
     <configuration name="test_marketstats" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -235,6 +233,20 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_get_equity_putcall_ratio&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -246,20 +258,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_df_to_dict&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_for_ticker" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_find_news_for_ticker&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -293,18 +291,18 @@
     </configuration>
     <list>
       <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_for_ticker" />
       <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
       <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
       <item itemvalue="Python.test_marketstats" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_equity_putcall_ratio" />
         <item itemvalue="Python.test_marketstats" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_for_ticker" />
       </list>
     </recent_temporary>
   </component>
@@ -447,6 +445,11 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/news_util.py</url>
           <line>67</line>
           <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>208</line>
+          <option name="timeStamp" value="70" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

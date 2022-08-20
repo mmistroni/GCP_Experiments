@@ -199,7 +199,8 @@ def get_economic_calendar(fmprepkey):
 
 
 def get_equity_putcall_ratio():
-    r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')
+    from .news_util import get_user_agent
+    r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/', headers={'User-Agent': get_user_agent()})
     bs = BeautifulSoup(r.content, 'html.parser')
     div_item = bs.find_all('div', {"id" : "daily-market-stats-data"})[0]
     table = div_item.find_all('table', {"class":"data-table--zebra"})[0]
