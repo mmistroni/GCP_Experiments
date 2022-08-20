@@ -10,23 +10,47 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 import apache_beam as beam
 from .utils import get_out_of_hour_info
+from itertools import chain
+import random
+
+from bs4 import BeautifulSoup# Move to aJob
+import requests
+
 
 ROW_TEMPLATE =  '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+
+
+def get_user_agent():
+    uastrings = [
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36", \
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.72 Safari/537.36", \
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10) AppleWebKit/600.1.25 (KHTML, like Gecko) Version/8.0 Safari/600.1.25", \
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0", \
+        "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36", \
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.111 Safari/537.36", \
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_5) AppleWebKit/600.1.17 (KHTML, like Gecko) Version/7.1 Safari/537.85.10", \
+        "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko", \
+        "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0", \
+        "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.104 Safari/537.36" \
+        ]
+
+    return random.choice(uastrings)
+
 
 def get_news_from_finviz(tickers):
     news_tables = {}
     for ticker in tickers:
-        url = 'https://finviz.com/quote.ashx?t={}'.format(ticker)
-        req = Request(url=url, headers={'user-agent': 'my-app/0.0.1'})
-        response = urlopen(req)
-        html = BeautifulSoup(response)
-        print('Now parsing...')
-        news_table = html.find(id='news-table')
-        news_tables[ticker] = news_table
+        headers = {'User-Agent': get_user_agent()}
+        url = f'https://finviz.com/quote.ashx?t={ticker}'
+        r = requests.get(url, headers=headers)
+        html = BeautifulSoup(r.content, 'html.parser')
+        news_table = html.find_all('table', {'id': 'news-table'})
+        if news_table:
+            news_tables[ticker] = news_table[0]
 
     parsed_news = []
-    for file_name, news_table in news_tables.items():
-        for x in news_table.findAll('tr'):
+    for file_name, table in news_tables.items():
+        for x in table.find_all('tr'):
 
             text = x.a.get_text()
             date_scrape = x.td.text.split()

@@ -36,7 +36,9 @@ class TestNewsPipeline(unittest.TestCase):
         with TestPipeline() as p:
             input = p | beam.Create(['AMZN,{}'.format(test_sector.split(',')[0])])
             res = run_my_pipeline(input, options)
-            assert_that(res, equal_to(['AMZN']))
+
+            res | 'printing out' >> beam.Map(print)
+
 
     @patch('shareloader.modules.news_util.find_news_scores_for_ticker')
     def test_find_news_for_ticker(self, find_scores_mock):
@@ -52,13 +54,12 @@ class TestNewsPipeline(unittest.TestCase):
         # Calling DataFrame constructor on list
         df = pd.DataFrame([lst], columns=['ticker','headline', 0])
 
-        res = df_to_dict(df)
-        print(res)
+
+        print(df)
 
     def test_find_news_scores_for_ticker(self):
         res = find_news_scores_for_ticker(['AMZN'], 1)
-        d = df_to_dict(res)
-        print(d)
+        self.assertTrue(res.shape[0] > 0)
 
 
     def prepare_for_big_query_tst(self, items):
