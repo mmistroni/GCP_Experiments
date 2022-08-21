@@ -262,8 +262,8 @@ def run(argv=None, save_main_session=True):
         nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
         nasdaq | 'nasdaq to sink' >> bq_sink
 
-        #equity_pcratio = run_putcall_ratio(p)
-        #equity_pcratio | 'pcratio to sink' >> bq_sink
+        equity_pcratio = run_putcall_ratio(p)
+        equity_pcratio | 'pcratio to sink' >> bq_sink
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
@@ -286,7 +286,7 @@ def run(argv=None, save_main_session=True):
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
-        #epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
+        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         static_key = static | 'Add 7' >> beam.Map(lambda d: (7, d))
         stats_key = statistics | 'Add 8' >> beam.Map(lambda d: (8, d))
 

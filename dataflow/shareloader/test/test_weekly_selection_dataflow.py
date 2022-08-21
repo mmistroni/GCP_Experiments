@@ -42,5 +42,8 @@ class WeeklySelectionTestCase(unittest.TestCase):
                             | 'Printing out' >> beam.Map(print))
 
 
+
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -200,13 +200,16 @@ def get_economic_calendar(fmprepkey):
 
 def get_equity_putcall_ratio():
     from .news_util import get_user_agent
-    r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/', headers={'User-Agent': get_user_agent()})
+    r = requests.get('https://ycharts.com/indicators/cboe_equity_put_call_ratio', headers={'User-Agent': get_user_agent()})
     bs = BeautifulSoup(r.content, 'html.parser')
-    div_item = bs.find_all('div', {"id" : "daily-market-stats-data"})[0]
-    table = div_item.find_all('table', {"class":"data-table--zebra"})[0]
-    data = [[item.text for item in row.find_all('td')] for row in table.find_all('tr')]
-    putcall_dict = dict([tuple(lst) for lst in data if lst])
-    return  putcall_dict['EQUITY PUT/CALL RATIO']
+    div_item = bs.find('div', {"class": "key-stat-title"})
+    import re
+    data = div_item.text
+    values = re.findall(r'\d+\.\d+', data)
+    if not values:
+        return 1
+    return float(values[0])
+
 
 def get_skew_index():
     #https: // edition.cnn.com / markets / fear - and -greed

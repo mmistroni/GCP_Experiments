@@ -302,3 +302,6 @@ class TestSuperPerformers(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
         print(requests.get(base_url).json()[0]['changeInNetPosition'])
+
+
+    ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
