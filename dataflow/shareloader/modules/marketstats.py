@@ -247,7 +247,7 @@ def run(argv=None, save_main_session=True):
         manuf_pmi_res = run_manufacturing_pmi(p)
         manuf_pmi_res | 'manuf pmi to sink' >> bq_sink
 
-        if run_weekday == 0:
+        if run_weekday == 2:
             logging.info(f'Weekday for rundate is {run_weekday}')
             cftc = run_cftc_spfutures(p, iexapi_key)
             cftc | 'cftc to sink' >> bq_sink
