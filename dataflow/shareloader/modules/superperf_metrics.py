@@ -559,7 +559,7 @@ def get_financial_ratios_benchmark(ticker, key):
             return dataDict
     except Exception as e:
         logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
-
+        return dataDict
 
 def get_quote_benchmark(ticker, key):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)

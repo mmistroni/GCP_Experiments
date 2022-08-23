@@ -16,6 +16,7 @@ import requests
 import pandas_datareader.data as dr
 import logging
 import apache_beam as beam
+import pandas as pd
 from datetime import date
 import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -129,6 +130,37 @@ class FundamentalLoader(beam.DoFn):
 
                 all_dt.append(updated_dict)
         return all_dt
+
+def load_bennchmark_data(ticker, key):
+    quotes_data = get_quote_benchmark(ticker, key)
+    if quotes_data:
+        income_data = get_income_benchmark(ticker, key)
+        if income_data:
+            quotes_data.update(income_data)
+            balance_sheet_data = get_balancesheet_benchmark(ticker, key)
+            if balance_sheet_data:
+                quotes_data.update(balance_sheet_data)
+                financial_ratios_data = get_financial_ratios_benchmark(ticker, key)
+                if financial_ratios_data:
+                    quotes_data.update(financial_ratios_data)
+                    key_metrics_dta = get_key_metrics_benchmark(ticker, key)
+                    if key_metrics_dta:
+                        quotes_data.update(key_metrics_dta)
+                        asset_play_dict = get_asset_play_parameters(ticker, key)
+                        quotes_data.update(asset_play_dict)
+                        # CHecking if assets > stocks outstanding
+                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                        # current assets
+                        quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
+                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] - \
+                                                                quotes_data['totalCurrentLiabilities'] - \
+                                                                quotes_data['inventory']) / quotes_data[
+                                                                   'sharesOutstanding']
+
+                        piotrosky_score = calculate_piotrosky_score(key, ticker)
+                        quotes_data['piotroskyScore'] = piotrosky_score
+    return quotes_data
+
 
 
 
@@ -263,6 +295,20 @@ def defensive_stocks_filter(input_dict):
                    and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
 
+
+def get_defensive_filter_df():
+    filters = { 'marketCap' : 'marketCap > 2000000000',
+                 'currentRatio' : 'currentRatio >= 2',
+                  'debtOverCapital' : 'debtOverCapital < 0',
+                  'dividendPaid' : 'dividendPaid == True',
+                  'epsGrowth' : 'epsGrowth >= 0.33',
+                   'positiveEps' : 'positiveEps > 0',
+                   'peRatio' : 'peRatio <= 15',
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
+    return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
+
+
 def enterprise_stock_filter(input_dict):
     return (input_dict['currentRatio'] >= 1.5) \
                    and (input_dict['enterpriseDebt'] <= 1.2) \
@@ -272,6 +318,19 @@ def enterprise_stock_filter(input_dict):
                    and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
                    and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
                    and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+
+def get_enterprise_filter_df():
+    filters = {  'currentRatio' : 'currentRatio >= 1.5',
+                  'enterpriseDebt' : 'enterpriseDebt <= 1.2',
+                  'dividendPaidEnterprise' : 'dividendPaidEnterprise == True',
+                  'epsGrowth5yrs' : 'epsGrowth5yrs  > 0',
+                   'positiveEpsLast5Yrs' : 'positiveEpsLast5Yrs == 5',
+                   'peRatio' : 'peRatio <= 10',
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
+    return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
+
+
 
 
 def out_of_favour_filter(input_dict):

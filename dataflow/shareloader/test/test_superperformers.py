@@ -3,7 +3,8 @@ import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
                                                 asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
-                                                get_universe_filter
+                                                get_universe_filter, get_defensive_filter_df,\
+                                                get_enterprise_filter_df, load_bennchmark_data
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -130,11 +131,11 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['TX'])
+             (p | 'Starting' >> beam.Create(['MO'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
-                         | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                         #| 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
@@ -147,7 +148,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['AAPL', 'IBM'])
+             (p | 'Starting' >> beam.Create(['MO'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
                          #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
@@ -199,7 +200,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['TX'])
+             (p | 'Starting' >> beam.Create(['MO'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
@@ -303,5 +304,31 @@ class TestSuperPerformers(unittest.TestCase):
         base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
         print(requests.get(base_url).json()[0]['changeInNetPosition'])
 
+    def test_defensive_filter_df(self):
+        key = os.environ['FMPREPKEY']
+        # Need to find currentRatio, dividendPaid, peRatio, priceToBookRatio
+        bmarkData = load_bennchmark_data('TX', key)
 
+        bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
+        defensive_df = get_defensive_filter_df()
+        merged = pd.merge(defensive_df, bmark_df, on='key', how='left')
+        with pd.option_context('display.max_rows', None,
+                               'display.max_columns', 5,
+                               'display.precision', 3,
+                               ):
+            print(merged.to_string(index=False))
+
+    def test_enterprisee_filter_df(self):
+        bmarkData = load_bennchmark_data('TX', key)
+
+        bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
+        enterprise_df = get_enterprise_filter_df()
+        merged = pd.merge(enterprise_df, bmark_df, on='key', how='left')
+        with pd.option_context('display.max_rows', None,
+                               'display.max_columns', 5,
+                               'display.precision', 3,
+                               ):
+            print(merged.to_string(index=False))
+
+        
     ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
