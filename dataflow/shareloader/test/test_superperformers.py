@@ -274,13 +274,14 @@ class TestSuperPerformers(unittest.TestCase):
             'Industrials': 'VIS',
             'Utilities': 'VPU',
             'Consumer Staples' : 'XLP',
-            'Telecommunications':'XLC'
+            'Telecommunications':'XLC',
+            'S&P 500' : 'GSPC'
         })
 
         ## check this to see economic cycle
         ## https://medium.datadriveninvestor.com/these-three-indicators-will-tell-you-when-the-bear-market-ends-f86c16bc3fe1
         endDate = date.today()
-        startDate = (endDate - BDay(60)).date()
+        startDate = (endDate - BDay(150)).date()
 
         for name, ticker in sectorsETF.items():
             url = f"https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
@@ -307,18 +308,23 @@ class TestSuperPerformers(unittest.TestCase):
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']
         # Need to find currentRatio, dividendPaid, peRatio, priceToBookRatio
-        bmarkData = load_bennchmark_data('TX', key)
-
-        bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
-        defensive_df = get_defensive_filter_df()
-        merged = pd.merge(defensive_df, bmark_df, on='key', how='left')
-        with pd.option_context('display.max_rows', None,
-                               'display.max_columns', 5,
-                               'display.precision', 3,
-                               ):
-            print(merged.to_string(index=False))
+        for ticker in ['TX', 'NOAH', 'IMOS', 'HBB', 'OPY']:
+            print(f'------------{ticker}----------------')
+            bmarkData = load_bennchmark_data(ticker, key)
+            bmarkData['stockBuyPrice'] = bmarkData['priceAvg200'] *.8
+            bmarkData['stockSellPrice'] = bmarkData['priceAvg200'] * .7
+            bmarkData['ACTION'] = 'BUY' if bmarkData['price'] <=  bmarkData['stockBuyPrice'] else ''
+            bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
+            defensive_df = get_defensive_filter_df()
+            merged = pd.merge(bmark_df, defensive_df, on='key', how='left')
+            with pd.option_context('display.max_rows', None,
+                                   'display.max_columns', 5,
+                                   'display.precision', 3,
+                                   ):
+                print(merged.to_string(index=False))
 
     def test_enterprisee_filter_df(self):
+        key = os.environ['FMPREPKEY']
         bmarkData = load_bennchmark_data('TX', key)
 
         bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
@@ -330,5 +336,5 @@ class TestSuperPerformers(unittest.TestCase):
                                ):
             print(merged.to_string(index=False))
 
-        
+
     ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
