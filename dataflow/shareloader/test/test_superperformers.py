@@ -303,7 +303,7 @@ class TestSuperPerformers(unittest.TestCase):
     def test_vix_cftc(self):
         key = os.environ['FMPREPKEY']
         base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
-        print(requests.get(base_url).json()[0]['changeInNetPosition'])
+        print(requests.get(base_url).json()[0])
 
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']

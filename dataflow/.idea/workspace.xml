@@ -215,8 +215,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df">
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures">
+    <configuration name="Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -226,7 +226,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_benchmarkLoader&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_runcftcspfutures&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -241,20 +241,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_compute_etf_historical&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_defensiveAndEnterpriseStocks" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_defensiveAndEnterpriseStocks&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -286,20 +272,34 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_vix_cftc" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_vix_cftc&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensiveAndEnterpriseStocks" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_vix_cftc" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_vix_cftc" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensiveAndEnterpriseStocks" />
       </list>
     </recent_temporary>
   </component>
@@ -437,6 +437,11 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
           <line>161</line>
           <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>305</line>
+          <option name="timeStamp" value="82" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
