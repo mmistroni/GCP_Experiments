@@ -325,11 +325,18 @@ class TestSuperPerformers(unittest.TestCase):
 
     def test_enterprisee_filter_df(self):
         key = os.environ['FMPREPKEY']
-        bmarkData = load_bennchmark_data('TX', key)
+        bmarkData = load_bennchmark_data('NOAH', key)
+        bmarkData['stock_buy_price'] = bmarkData['priceAvg200'] * .8
+        bmarkData['stock_sell_price'] = bmarkData['priceAvg200'] * .7
 
         bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
+
         enterprise_df = get_enterprise_filter_df()
-        merged = pd.merge(enterprise_df, bmark_df, on='key', how='left')
+        merged = pd.merge(bmark_df, enterprise_df, on='key', how='left')
+
+
+
+
         with pd.option_context('display.max_rows', None,
                                'display.max_columns', 5,
                                'display.precision', 3,
