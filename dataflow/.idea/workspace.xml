@@ -216,7 +216,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestShareLoader">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_market_momentum">
     <configuration name="Python tests for test_marketstats.TestShareLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -231,6 +231,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_marketstats.TestShareLoader.test_get_market_momentum" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_get_market_momentum&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -242,20 +256,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_runcftcspfutures&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_compute_etf_historical&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -289,18 +289,18 @@
     </configuration>
     <list>
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_vix_cftc" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_market_momentum" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_get_market_momentum" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_runcftcspfutures" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_vix_cftc" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
       </list>
     </recent_temporary>
   </component>

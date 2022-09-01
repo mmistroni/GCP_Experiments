@@ -8,6 +8,7 @@ from itertools import chain
 from io import StringIO
 from datetime import date, timedelta
 from pandas.tseries.offsets import BDay
+import statistics
 
 
 
@@ -17,7 +18,7 @@ def create_bigquery_ppln(p, label):
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
 AND LABEL IN ('MANUFACTURING-PMI', 'PMI','NASDAQ GLOBAL SELECT_MARKET BREADTH',
-  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' ) 
+  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' , 'MARKET_MOMENTUM) 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
@@ -176,6 +177,16 @@ check investopedia.comm  high yield bond spread
 
 '''
 
+def get_market_momentum(key):
+    hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/^GSPC?apikey={}'.format(key)
+    lastDays =  requests.get(hist_url).json().get('historical')[0:125]
+    close = [d['close'] for d in lastDays]
+    day125avg = statistics.mean(close)
+    latest = close[0]
+
+    status = 'FEAR' if latest < day125avg else 'GREED'
+
+    return f'S&PClose:{latest}|125MVGAVG:{day125avg}|STATUS:{status}'
 
 def get_cftc_spfutures(key):
     ''' wE NEED TO ADD THE following query to the marketstats

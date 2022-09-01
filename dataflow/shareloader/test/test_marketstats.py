@@ -7,7 +7,8 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
-                        ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio
+                        ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
+                        get_market_momentum
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures
@@ -298,6 +299,16 @@ class TestShareLoader(unittest.TestCase):
 
     def test_get_equity_putcall_ratio(self):
         print(get_equity_putcall_ratio())
+
+    def test_get_market_momentum(self):
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            (p
+             | 'Get List of Tickers' >> beam.Create([get_market_momentum(fmp_key)])
+             | 'Print out' >> beam.Map(print)
+             )
+
+
 
 if __name__ == '__main__':
     unittest.main()
