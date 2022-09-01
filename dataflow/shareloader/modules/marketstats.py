@@ -29,7 +29,8 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
-                            get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum
+                            get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
+                            get_senate_disclosures
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -147,6 +148,12 @@ def run_vix(p, key):
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
 
+def run_senate_disclosures(p, key):
+    return (p | 'start run_sd' >> beam.Create(get_senate_disclosures(key))
+            )
+
+
+
 def run_market_momentum(p, key):
     return (p | 'start run_mm' >> beam.Create(['20210101'])
                     | 'mm' >>   beam.Map(lambda d:  get_market_momentum(key))
@@ -262,7 +269,7 @@ def run(argv=None, save_main_session=True):
         manuf_pmi_res = run_manufacturing_pmi(p)
         manuf_pmi_res | 'manuf pmi to sink' >> bq_sink
 
-        if run_weekday == 2:
+        if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
             cftc = run_cftc_spfutures(p, iexapi_key)
             cftc | 'cftc to sink' >> bq_sink
@@ -272,6 +279,9 @@ def run(argv=None, save_main_session=True):
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
         mmomentum_res | 'mm to sink' >> bq_sink
+
+        senate_disc = run_senate_disclosures(p, iexapi_key)
+        senate_disc | 'sd to sink' >> bq_sink
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
@@ -308,9 +318,11 @@ def run(argv=None, save_main_session=True):
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
-        static_key = static | 'Add 7' >> beam.Map(lambda d: (10, d))
-        stats_key = statistics | 'Add 8' >> beam.Map(lambda d: (11, d))
-        cftc_key = cftc_historical | 'Add 9' >> beam.Map(lambda d: (12, d))
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
+
+        static_key = static | 'Add 10' >> beam.Map(lambda d: (10, d))
+        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
+        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
@@ -319,8 +331,8 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, static_key, stats_key,
-                        cftc_key)
+                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, sd_key, cftc_key, static_key, stats_key,
+                        )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 from itertools import chain
 from io import StringIO
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
@@ -206,37 +206,29 @@ def get_vix(key):
   return requests.get(base_url).json()[0]['price']
 
 
-def get_senate_disclosures():
-    ua = get_user_agent()
+def get_senate_disclosures(key):
+    url = f'https://financialmodelingprep.com/api/v4/senate-disclosure-rss-feed?page=0&apikey={key}'
 
-    url = 'https://sec.report/Senate-Stock-Disclosures'
-    data = requests.get(url, headers={'User-Agent': ua})  # 'https://www.cftc.gov/dea/futures/deacboesf.htm')
-    bs = BeautifulSoup(data.content, 'html.parser')
-    h4element = [el for el in bs.find_all('h4') if 'Senate Stock' in el.text][0]
-    candidateTable = None
+    data = requests.get(url).json()
+    yesterday = (date.today() - BDay(1)).date()
+    holder = []
 
-    pnt = h4element.parent
-
-    tbl = pnt.find_all('table')[0]
-    tbody = tbl.find_all('tbody')[0]
-    dd = None
-
-    #w WE got everything? so the disclosure are at odd index, and info at even index.we need to refine
-
-    for idx, row in enumerate(tbody.find_all('tr')):
-        divs = [d.text for d in row.find_all('div')]
-        anch = row.find_all('a')
-        print(f'{idx}:{divs}:{anch}')
-        if idx == 0:
-            dd = {'asOfDate': divs[0]}
-            dd['Ticker'] = anch[1].text
-            print(f'Divs:{divs}')
-            if anch:
-                dd['Company'] = anch[0].text
+    for dataDict in data:
+        asOfDate = datetime.strptime(dataDict['disclosureDate'], '%Y-%m-%d' ).date()
+        if asOfDate < yesterday:
+            break
         else:
-            dd['Action'] = divs[0]
+            value  = f"Ticker:{dataDict['ticker']}|Type:{dataDict['type']}|Representative : {dataDict.get('representative')}"
+            label = 'SENATE_DISCLOSURES'
+            holder.append({'AS_OF_DATE' : asOfDate.strftime('%Y-%m-%d'), 'LABEL' : label, 'VALUE' : value})
+    return holder
 
-    return dd
+
+
+
+
+
+
 
 
 def get_prices2(tpl, fmprepkey):

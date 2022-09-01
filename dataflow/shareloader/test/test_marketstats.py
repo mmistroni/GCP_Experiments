@@ -11,7 +11,7 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
                         get_market_momentum, get_senate_disclosures
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
-                                            run_cftc_spfutures
+                                            run_cftc_spfutures, run_senate_disclosures
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -308,10 +308,17 @@ class TestShareLoader(unittest.TestCase):
              | 'Print out' >> beam.Map(print)
              )
 
+    def test_get_market_momentum(self):
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            run_senate_disclosures(p, key)
+
+
     def test_get_senate_disclosures(self):
+        fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             (p
-             | 'Get List of Tickers' >> beam.Create([get_senate_disclosures()])
+             | 'Get List of Tickers' >> beam.Create(get_senate_disclosures(fmp_key))
              | 'Print out' >> beam.Map(print)
              )
 
