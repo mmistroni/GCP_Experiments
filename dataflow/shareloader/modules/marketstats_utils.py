@@ -220,6 +220,9 @@ def get_senate_disclosures():
     tbl = pnt.find_all('table')[0]
     tbody = tbl.find_all('tbody')[0]
     dd = None
+
+    #w WE got everything? so the disclosure are at odd index, and info at even index.we need to refine
+
     for idx, row in enumerate(tbody.find_all('tr')):
         divs = [d.text for d in row.find_all('div')]
         anch = row.find_all('a')
