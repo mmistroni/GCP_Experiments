@@ -17,13 +17,27 @@ def create_bigquery_ppln(p, label):
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
 AND LABEL IN ('MANUFACTURING-PMI', 'PMI','NASDAQ GLOBAL SELECT_MARKET BREADTH',
-  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH', 'CFTC-SPFUTURES', 'EQUITY_PUTCALL_RATIO' ) 
+  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' ) 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | 'Reading-{}'.format(label) >> beam.io.Read(beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
               
            )
+
+
+def create_bigquery_ppln_cftc(p):
+    logging.info('Querying CFTC HISTORIC')
+    edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
+WHERE LABEL LIKE '%CFTC%' ORDER BY PARSE_DATE("%F", AS_OF_DATE) ASC
+LIMIT 5 
+  """
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-CFTC historic' >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+
+            )
+
 
 class InnerJoinerFn(beam.DoFn):
     def __init__(self):

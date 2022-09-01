@@ -39,11 +39,11 @@ class FlattenDoFn(beam.DoFn):
 
 
 class TestShareLoader(unittest.TestCase):
-    def test_all_stocks(self):
+    def xtest_all_stocks(self):
         key = os.environ['FMPREPKEY']
         print(get_all_stocks(key))
 
-    def test_run_sample(self):
+    def xtest_run_sample(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
                  (p

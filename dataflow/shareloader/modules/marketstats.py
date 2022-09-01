@@ -29,7 +29,7 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
-                            get_cftc_spfutures
+                            get_cftc_spfutures, create_bigquery_ppln_cftc
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -205,7 +205,15 @@ def run_prev_dates_statistics(p) :
     )
     
     return nysebqp
-                
+
+
+def run_prev_dates_statistics_cftc(p):
+    # Need to amend the query to order by asofdate sc
+    cftc_ppln = (create_bigquery_ppln_cftc(p)
+               )
+
+    return cftc_ppln
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -278,6 +286,8 @@ def run(argv=None, save_main_session=True):
                  )
         statistics = run_prev_dates_statistics(p)
 
+        cftc_historical = run_prev_dates_statistics_cftc(p)
+
         staticStart_key = staticStart | 'Add -2' >> beam.Map(lambda d: (-2, d))
         econCalendarKey = econ_calendar | 'Add -1' >> beam.Map(lambda d: (-1, d))
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
@@ -289,6 +299,7 @@ def run(argv=None, save_main_session=True):
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         static_key = static | 'Add 7' >> beam.Map(lambda d: (7, d))
         stats_key = statistics | 'Add 8' >> beam.Map(lambda d: (8, d))
+        cftc_key = cftc_historical | 'Add 9' >> beam.Map(lambda d: (9, d))
 
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
@@ -297,7 +308,8 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, static_key, stats_key)
+                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, static_key, stats_key,
+                        cftc_key)
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)
