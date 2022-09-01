@@ -330,6 +330,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             op_incomes = [d['operatingIncome'] for d in income_statement]
             op_income_cagr = compute_cagr(op_incomes)
             fundamental_dict['OPERATING_INCOME_CAGR'] = op_income_cagr
+            fundamental_dict['netIncome'] = latest['netIncome']
 
 
             data_5yrs_ago = income_statement[-1]

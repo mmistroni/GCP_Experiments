@@ -311,6 +311,7 @@ class TestSuperPerformers(unittest.TestCase):
         for ticker in ['TX', 'NOAH', 'IMOS', 'HBB', 'OPY']:
             print(f'------------{ticker}----------------')
             bmarkData = load_bennchmark_data(ticker, key)
+            self.assertIsNotNone(bmarkData['netIncome'])
             bmarkData['stockBuyPrice'] = bmarkData['priceAvg200'] *.8
             bmarkData['stockSellPrice'] = bmarkData['priceAvg200'] * .7
             bmarkData['ACTION'] = 'BUY' if bmarkData['price'] <=  bmarkData['stockBuyPrice'] else ''
@@ -326,6 +327,10 @@ class TestSuperPerformers(unittest.TestCase):
     def test_enterprisee_filter_df(self):
         key = os.environ['FMPREPKEY']
         bmarkData = load_bennchmark_data('NOAH', key)
+
+        self.assertIsNotNone(bmarkData['netIncome'])
+
+
         bmarkData['stock_buy_price'] = bmarkData['priceAvg200'] * .8
         bmarkData['stock_sell_price'] = bmarkData['priceAvg200'] * .7
         bmarkData['earningYield'] = bmarkData.get('netIncome',0) / bmarkData['marketCap']
