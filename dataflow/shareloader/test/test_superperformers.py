@@ -328,7 +328,7 @@ class TestSuperPerformers(unittest.TestCase):
         bmarkData = load_bennchmark_data('NOAH', key)
         bmarkData['stock_buy_price'] = bmarkData['priceAvg200'] * .8
         bmarkData['stock_sell_price'] = bmarkData['priceAvg200'] * .7
-
+        bmarkData['earningYield'] = bmarkData.get('netIncome',0) / bmarkData['marketCap']
         bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
 
         enterprise_df = get_enterprise_filter_df()

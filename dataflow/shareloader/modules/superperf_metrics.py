@@ -376,7 +376,7 @@ def get_financial_ratios(ticker, key):
                     returnOnEquity= 0 if latest.get('returnOnEquityTTM') is None else latest.get('returnOnEquityTTM'),
                     dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
-                    returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('dividendYielTTM'))
+                    returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'))
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
@@ -498,8 +498,8 @@ def get_income_benchmark(ticker, key):
             positive_eps = [e > 0 for e in all_eps]
             dataDict['positiveEps'] = len(positive_eps)
             dataDict['positiveEpsLast5Yrs'] = len([e > 0 for e in all_eps[0:5]])
-
             latest = income_statement[0]
+            dataDict['netIncome'] = latest['netIncome']
             dataDict['income_statement_date'] = latest['date']
 
             return dataDict
@@ -548,6 +548,8 @@ def get_financial_ratios_benchmark(ticker, key):
                 dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
                 dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
                 dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis)
+                dataDict['returnOnCapital'] = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else \
+                    latest.get('returnOnCapitalEmployedTTM')
             except Exception as e:
                 logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
                 return  None
