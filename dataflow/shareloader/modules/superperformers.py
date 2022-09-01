@@ -24,7 +24,7 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
                                             get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
-                                            calculate_piotrosky_score
+                                            calculate_piotrosky_score, compute_rsi
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''
@@ -126,7 +126,9 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict.update(asset_play_dict)
 
                 piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                latest_rsi = compute_rsi(ticker, self.key)
                 updated_dict['piotroskyScore'] = piotrosky_score
+                updated_dict['rsi'] = latest_rsi
 
                 all_dt.append(updated_dict)
         return all_dt
@@ -158,6 +160,8 @@ def load_bennchmark_data(ticker, key):
                                                                    'sharesOutstanding']
 
                         piotrosky_score = calculate_piotrosky_score(key, ticker)
+                        latest_rsi = compute_rsi(ticker, key)
+                        quotes_data['rsi'] = latest_rsi
                         quotes_data['piotroskyScore'] = piotrosky_score
     return quotes_data
 
@@ -199,6 +203,8 @@ class BenchmarkLoader(beam.DoFn):
                                                                          quotes_data['inventory']) / quotes_data['sharesOutstanding']
 
                                 piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                                latest_rsi = compute_rsi(ticker, self.key)
+                                quotes_data['rsi'] = latest_rsi
                                 quotes_data['piotroskyScore'] = piotrosky_score
 
                             all_dt.append(quotes_data)
