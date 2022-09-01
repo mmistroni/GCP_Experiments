@@ -2,15 +2,14 @@ import requests
 import apache_beam as beam
 import logging
 from itertools import chain
-from bs4 import BeautifulSoup# Move to aJob
+from bs4 import BeautifulSoup
 import requests
 from itertools import chain
 from io import StringIO
 from datetime import date, timedelta
 from pandas.tseries.offsets import BDay
 import statistics
-
-
+from .news_util import get_user_agent
 
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
@@ -207,6 +206,34 @@ def get_vix(key):
   return requests.get(base_url).json()[0]['price']
 
 
+def get_senate_disclosures():
+    ua = get_user_agent()
+
+    url = 'https://sec.report/Senate-Stock-Disclosures'
+    data = requests.get(url, headers={'User-Agent': ua})  # 'https://www.cftc.gov/dea/futures/deacboesf.htm')
+    bs = BeautifulSoup(data.content, 'html.parser')
+    h4element = [el for el in bs.find_all('h4') if 'Senate Stock' in el.text][0]
+    candidateTable = None
+
+    pnt = h4element.parent
+
+    tbl = pnt.find_all('table')[0]
+    tbody = tbl.find_all('tbody')[0]
+    dd = None
+    for idx, row in enumerate(tbody.find_all('tr')):
+        divs = [d.text for d in row.find_all('div')]
+        anch = row.find_all('a')
+        print(f'{idx}:{divs}:{anch}')
+        if idx == 0:
+            dd = {'asOfDate': divs[0]}
+            dd['Ticker'] = anch[1].text
+            print(f'Divs:{divs}')
+            if anch:
+                dd['Company'] = anch[0].text
+        else:
+            dd['Action'] = divs[0]
+
+    return dd
 
 
 def get_prices2(tpl, fmprepkey):
