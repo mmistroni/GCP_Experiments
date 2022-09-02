@@ -263,6 +263,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
+        # check this article to build heatmaps https://wire.insiderfinance.io/applying-machine-learning-to-stock-investments-how-to-find-the-best-performing-stocks-8cbdcfc865eb
         sectorsETF = OrderedDict ({
             'Technology' : 'XLK',
             'Health Care': 'XLV',
@@ -312,6 +313,7 @@ class TestSuperPerformers(unittest.TestCase):
             print(f'------------{ticker}----------------')
             bmarkData = load_bennchmark_data(ticker, key)
             self.assertIsNotNone(bmarkData['netIncome'])
+            self.assertIsNotNone(bmarkData['rsi'])
             bmarkData['stockBuyPrice'] = bmarkData['priceAvg200'] *.8
             bmarkData['stockSellPrice'] = bmarkData['priceAvg200'] * .7
             bmarkData['ACTION'] = 'BUY' if bmarkData['price'] <=  bmarkData['stockBuyPrice'] else ''
@@ -329,6 +331,7 @@ class TestSuperPerformers(unittest.TestCase):
         bmarkData = load_bennchmark_data('NOAH', key)
 
         self.assertIsNotNone(bmarkData['netIncome'])
+        self.assertIsNotNone(bmarkData['rsi'])
 
 
         bmarkData['stock_buy_price'] = bmarkData['priceAvg200'] * .8

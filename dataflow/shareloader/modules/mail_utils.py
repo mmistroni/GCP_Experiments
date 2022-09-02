@@ -156,6 +156,9 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
                                     <th>STOCK BUY PRICE</th>
                                     <th>STOCK SELL PRICE</th>
+                                    <th>EARNING_YIELD</th>
+                                    <th>RETURN_ON_CAPITAL</th>
+                                    <th>RSI</th>
                                 </tr>
                             </thead>
                             <tbody>
