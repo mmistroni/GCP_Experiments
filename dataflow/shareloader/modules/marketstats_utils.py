@@ -16,7 +16,7 @@ def create_bigquery_ppln(p, label):
     logging.info('Cutoff is:{}'.format(cutoff_date))
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
-AND LABEL IN ('MANUFACTURING-PMI', 'PMI','NASDAQ GLOBAL SELECT_MARKET BREADTH',
+AND LABEL IN ('NASDAQ GLOBAL SELECT_MARKET BREADTH',
   'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' , 'MARKET_MOMENTUM') 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
@@ -37,6 +37,38 @@ LIMIT 5
         beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
 
             )
+
+def create_bigquery_manufpmi_bq(p):
+    edgar_sql = """SELECT DISTINCT LABEL,  VALUE, 
+                CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
+                  EXTRACT (MONTH FROM DATE(AS_OF_DATE))) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = 'MANUFACTURING-PMI' 
+                GROUP BY LABEL, VALUE, AS_OF_DATE
+                ORDER BY LABEL, AS_OF_DATE DESC
+                LIMIT 5
+      """
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-PMI historic' >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+
+            )
+
+def create_bigquery_nonmanuf_pmi_bq(p):
+    edgar_sql = """SELECT DISTINCT LABEL,  VALUE, 
+                CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
+                  EXTRACT (MONTH FROM DATE(AS_OF_DATE))) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = 'NON-MANUFACTURING-PMI' 
+                GROUP BY LABEL, VALUE, AS_OF_DATE
+                ORDER BY LABEL, AS_OF_DATE DESC
+                LIMIT 5
+      """
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-PMI historic' >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+
+            )
+
+
 
 
 class InnerJoinerFn(beam.DoFn):
@@ -198,7 +230,6 @@ def get_cftc_spfutures(key):
     base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
     data = requests.get(base_url).json()[0]
     return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
-
 
 def get_vix(key):
   base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)

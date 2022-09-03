@@ -11,7 +11,8 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
                         get_market_momentum, get_senate_disclosures
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
-                                            run_cftc_spfutures, run_senate_disclosures
+                                            run_cftc_spfutures, run_senate_disclosures,\
+                                            run_manufacturing_pmi, run_pmi
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -39,7 +40,7 @@ class FlattenDoFn(beam.DoFn):
 
 
 
-class TestShareLoader(unittest.TestCase):
+class TestMarketStats(unittest.TestCase):
     def xtest_all_stocks(self):
         key = os.environ['FMPREPKEY']
         print(get_all_stocks(key))
@@ -283,19 +284,13 @@ class TestShareLoader(unittest.TestCase):
             p = run_putcall_ratio(p)
             p | 'Printing Out' >> beam.Map(print)
 
-    def test_pmifetch(self):
-        r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi',
-                         headers={'user-agent': 'my-app/0.0.1'})
-        bs = BeautifulSoup(r.content, 'html.parser')
-        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl02_Panel1"})[0]  #
-        ratios_table = div_item.find_all('table', {"class": "table"})[0]
+    def test_manufpmifetch(self):
+        with TestPipeline() as p:
+            run_manufacturing_pmi(p) | beam.Map(print)
 
-        dt = [[item.text.strip() for item in row.find_all('th')] for row in ratios_table.find_all('thead')]
-        vals = [[item.text.strip() for item in row.find_all('td')] for row in ratios_table.find_all('tr')]
-
-        keys = chain(*dt)
-        values = chain(*vals)
-        print( dict((k, v) for k, v in zip(keys, values)))
+    def test_nonmanufpmi(self):
+        with TestPipeline() as p:
+            run_pmi(p) | beam.Map(print)
 
     def test_get_equity_putcall_ratio(self):
         print(get_equity_putcall_ratio())
@@ -311,7 +306,7 @@ class TestShareLoader(unittest.TestCase):
     def test_get_market_momentum(self):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            run_senate_disclosures(p, key)
+            run_senate_disclosures(p, fmp_key)
 
 
     def test_get_senate_disclosures(self):

@@ -30,7 +30,7 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
-                            get_senate_disclosures
+                            get_senate_disclosures, create_bigquery_nonmanuf_pmi_bq,create_bigquery_manufpmi_bq
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -113,7 +113,7 @@ class XyzOptions(PipelineOptions):
 def run_pmi(p):
     return (p | 'startstart' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParsePMI())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'NON-MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
 def run_putcall_ratio(p):
@@ -228,6 +228,16 @@ def run_prev_dates_statistics_cftc(p):
 
     return cftc_ppln
 
+def run_manufacturing_pmi_statistics_cftc(p):
+    pmi_ppln = (create_bigquery_manufpmi_bq(p)
+               )
+    return pmi_ppln
+
+def run_nonmanufacturing_pmi_statistics(p):
+    non_manuf_pmi_ppln = (create_bigquery_nonmanuf_pmi_bq(p)
+                )
+    return non_manuf_pmi_ppln
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -259,10 +269,8 @@ def run(argv=None, save_main_session=True):
 
         run_weekday = date.today().weekday()
 
-
-
         logging.info('Run pmi')
-        
+
         pmi_res = run_pmi(p)
         pmi_res | 'Writing to bq' >> bq_sink
 
@@ -308,6 +316,9 @@ def run(argv=None, save_main_session=True):
 
         cftc_historical = run_prev_dates_statistics_cftc(p)
 
+        mfpmi_historical = run_manufacturing_pmi_statistics_cftc(p)
+        nonmfpmi_historical = run_nonmanufacturing_pmi_statistics(p)
+
         staticStart_key = staticStart | 'Add -2' >> beam.Map(lambda d: (-2, d))
         econCalendarKey = econ_calendar | 'Add -1' >> beam.Map(lambda d: (-1, d))
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
@@ -324,6 +335,9 @@ def run(argv=None, save_main_session=True):
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
+        manufpmi_hist_key = mfpmi_historical | 'Add 13' >> beam.Map(lambda d: (13, d))
+        nonmanufpmi_hist_key = nonmfpmi_historical | 'Add 14' >> beam.Map(lambda d: (14, d))
+
         statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
 
         statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
@@ -332,6 +346,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, sd_key, cftc_key, static_key, stats_key,
+                        manufpmi_hist_key, nonmanufpmi_hist_key
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
