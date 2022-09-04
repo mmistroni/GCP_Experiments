@@ -87,7 +87,7 @@ def create_monthly_data_ppln(p):
 def create_weekly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT TICKER, LABEL, PRICE, MARKETCAP, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO, NET_INCOME, MARKETCAP, RSI, RETURN_ON_CAPITAL  
+    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO, NET_INCOME, MARKETCAP, RSI, RETURN_ON_CAPITAL  
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE >= PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
