@@ -171,7 +171,7 @@ def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
                                                      row['DIVIDENDRATIO'], row['COUNTER'],
                                                      row['PRICEAVG200']*.8,
                                                      row['PRICEAVG200'] * .7,
-                                                     row.get('NET_INCOME', 0) / row.get('MARKETCAP',1),
+                                                     (row.get('NET_INCOME',0) if row.get('NET_INCOME', 0) is not None else 0) / (row.get('MARKETCAP',1) if row.get('MARKETCAP') is not None else 1),
                                                      row.get('RETURN_ON_CAPITAL', 0),
                                                      row.get('RSI', 0)),
                                          )
