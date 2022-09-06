@@ -2,7 +2,7 @@ import apache_beam as beam
 import argparse
 import logging
 from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
 from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker,  \
             find_current_year, EdgarCombineFn, ParseForm4, cusip_to_ticker2
 from datetime import date, datetime
@@ -159,8 +159,13 @@ def find_current_day_url(sample):
 def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
     known_args, pipeline_args = parser.parse_known_args(argv)
+
+    timeout_secs = 14400
+    experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
+
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
+    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
     form13_dest = 'gs://mm_dataflow_bucket/outputs/edgar_form13_{}'.format(date.today().strftime('%Y-%m-%d'))
 
