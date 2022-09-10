@@ -63,7 +63,7 @@ def create_bigquery_nonmanuf_pmi_bq(p):
                 LIMIT 5
       """
     logging.info('executing SQL :{}'.format(edgar_sql))
-    return (p | 'Reading-PMI historic' >> beam.io.Read(
+    return (p | 'Reading-PMI historic-NONMANUF' >> beam.io.Read(
         beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
 
             )
