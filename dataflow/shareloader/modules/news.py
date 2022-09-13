@@ -45,10 +45,14 @@ def write_data(data, sink):
 def prepare_for_big_query(dframes, iexkey):
     return (dframes
             | 'Convert to Dictionary' >> beam.Map(df_to_dict)
-            | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0,-1) > 0.7)
-            | 'Add Currentlyquoted price' >> beam.Map(lambda d: enhance_with_price(d,iexkey=iexkey))
+
 
     )
+
+def filter_positive(p, iexkey):
+    return (p | 'Filter out Positive News' >> beam.Filter(lambda dct: dct.get(0, -1) > 0.4)
+            | 'Add Currentlyquoted price' >> beam.Map(lambda d: enhance_with_price(d, iexkey=iexkey))
+            )
 
 def send_notification(list_of_dicts, options):
     return (list_of_dicts
@@ -96,11 +100,20 @@ def run(argv=None, save_main_session=True):
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
+
+        news_dest = 'gs://mm_dataflow_bucket/outputs/news_{}'.format(date.today().strftime('%Y-%m-%d'))
+
+        bucket_sink = beam.io.WriteToText(news_dest, num_shards=1)
+
+
         tickers = run_my_pipeline(source, pipeline_options)
         news = find_news_for_ticker(tickers, pipeline_options.business_days)
         bq_data = prepare_for_big_query(news, pipeline_options.iexkey)
-        write_data(bq_data, sink)
-        send_notification(bq_data, pipeline_options)
+        bq_data | 'Writng to news sink' >> bucket_sink
+        positive_news = filter_positive(bq_data, pipeline_options.iexkey)
+
+        write_data(positive_news, sink)
+        send_notification(positive_news, pipeline_options)
 
 
 if __name__ == '__main__':
