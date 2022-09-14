@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/news.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/news_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news_util.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -411,11 +411,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>20</line>
           <option name="timeStamp" value="53" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/news_util.py</url>
-          <line>80</line>
-          <option name="timeStamp" value="58" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/news_util.py</url>
