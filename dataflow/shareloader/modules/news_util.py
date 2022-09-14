@@ -86,7 +86,7 @@ def find_news_scores_for_ticker(tickers,  bus_days):
     parsed_and_scored_news['date'] = pd.to_datetime(parsed_and_scored_news.date).dt.date
 
     logging.info('Finding last {} worth of news for {} = {}'.format(bus_days, tickers,
-                                                                    parsed_and_scored_news.shape))
+                                                                    parsed_and_scored_news))
 
     yday = date.today() - BDay(bus_days)
     filtered = parsed_and_scored_news[parsed_and_scored_news['date'] >= yday.date()]
