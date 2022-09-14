@@ -9,7 +9,7 @@ from hamcrest.core.core.allof import all_of
 from apache_beam.transforms import util
 from shareloader.modules.news import run_my_pipeline, XyzOptions, \
                                             prepare_for_big_query
-from shareloader.modules.news_util import df_to_dict, find_news_scores_for_ticker, combine_news
+from shareloader.modules.news_util import df_to_dict, find_news_scores_for_ticker, combine_news, df_to_dict
 from apache_beam.options.pipeline_options import PipelineOptions
 from datetime import date
 import pandas as pd
@@ -54,8 +54,7 @@ class TestNewsPipeline(unittest.TestCase):
         # Calling DataFrame constructor on list
         df = pd.DataFrame([lst], columns=['ticker','headline', 0])
 
-
-        print(df)
+        print(df_to_dict(df))
 
     def test_find_news_scores_for_ticker(self):
         res = find_news_scores_for_ticker(['AMZN'], 1)

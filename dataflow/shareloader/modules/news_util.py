@@ -98,7 +98,7 @@ def find_news_scores_for_ticker(tickers,  bus_days):
 
 def df_to_dict(df):
     df_dict = df.to_dict()
-    logging.info(f'Df to dict is:{df_to_dict()}')
+    logging.info(f'Df to dict is:{df_dict}')
     res = dict((k, df_dict[k].get(0, '{}_NA'.format(k))) for k in df_dict.keys())
     logging.info('DF TO DICT is:{}'.format(res))
     return res

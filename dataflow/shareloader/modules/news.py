@@ -109,7 +109,7 @@ def run(argv=None, save_main_session=True):
         tickers = run_my_pipeline(source, pipeline_options)
         news = find_news_for_ticker(tickers, pipeline_options.business_days)
         bq_data = prepare_for_big_query(news, pipeline_options.iexkey)
-        bq_data | 'Writng to news sink' >> bucket_sink
+        source | 'Writng to news sink' >> bucket_sink
         positive_news = filter_positive(bq_data, pipeline_options.iexkey)
 
         write_data(positive_news, sink)

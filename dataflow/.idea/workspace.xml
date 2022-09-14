@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/news.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/news_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news_util.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +216,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker">
+  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict">
     <configuration name="Python tests for test_marketstats.TestMarketStats" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -229,7 +231,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestShareLoader.test_manufpmifetch" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -239,7 +241,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestShareLoader.test_manufpmifetch&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_df_to_dict&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -287,18 +289,18 @@
     </configuration>
     <list>
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats" />
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_manufpmifetch" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
       <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
         <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestShareLoader.test_manufpmifetch" />
       </list>
     </recent_temporary>
   </component>
