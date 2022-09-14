@@ -58,6 +58,7 @@ class TestNewsPipeline(unittest.TestCase):
 
     def test_find_news_scores_for_ticker(self):
         res = find_news_scores_for_ticker(['AMZN'], 1)
+        print(res)
         self.assertTrue(res.shape[0] > 0)
 
 

@@ -63,8 +63,9 @@ def get_news_from_finviz(tickers):
                 date = date_scrape[0]
                 time = date_scrape[1]
             ticker = file_name.split('_')[0]
-
-            parsed_news.append([ticker, date, time, text, link])
+            news_data = [ticker, date, time, text, link]
+            parsed_news.append(news_data)
+            logging.info(f'Parsed news  for {ticker}=\n{news_data}')
     return parsed_news
 
 def get_sentiment_from_vader(sentence):
