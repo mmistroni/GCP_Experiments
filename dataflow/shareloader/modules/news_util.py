@@ -93,7 +93,9 @@ def find_news_scores_for_ticker(tickers,  bus_days):
     parsed_and_scored_news = filtered.groupby(['ticker'], as_index=False).agg({'headline': ''.join}, Inplace=True)
     scores = parsed_and_scored_news['headline'].apply(get_sentiment_from_vader).tolist()
     scores_df = pd.DataFrame(scores)
+    logging.info(f'SCoresDf  = {scores_df}')
     parsed_and_scored_news = parsed_and_scored_news.join(scores_df, rsuffix='_right')
+    logging.info(f'parsed_and_scored_news  = {parsed_and_scored_news}')
     return parsed_and_scored_news
 
 def df_to_dict(df):
