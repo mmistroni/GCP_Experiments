@@ -20,6 +20,27 @@ import pandas as pd
 from collections import OrderedDict
 from datetime import date
 
+
+def _fetch_performance(sector, ticker, key):
+    endDate = date.today()
+    startDate = (endDate - BDay(90)).date()
+    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
+    historical = requests.get(url).json().get('historical')
+    df = pd.DataFrame(data=historical[::-1])
+    df['date'] = pd.to_datetime(df.date)
+    df['ticker'] = ticker
+    df = df.set_index('date')
+    resampled = df.resample('1M').mean()
+    resampled[sector] = resampled.close / resampled.close.shift(1) - 1
+    records = resampled[[sector]].dropna().T.to_dict('records')
+
+    data = []
+    for k, v in records[0].items():
+        data.append((k.strftime('%Y-%m-%d'), v))
+
+    return (sector, data)
+
+
 class Check(beam.PTransform):
     def __init__(self, checker):
       self._checker = checker
@@ -259,6 +280,8 @@ class TestSuperPerformers(unittest.TestCase):
 
         print(f'Rsi: {data.tail(1).RSI.values[0]}')
 
+
+
     def test_compute_etf_historical(self):
 
         key = os.environ['FMPREPKEY']
@@ -276,24 +299,16 @@ class TestSuperPerformers(unittest.TestCase):
             'Utilities': 'VPU',
             'Consumer Staples' : 'XLP',
             'Telecommunications':'XLC',
-            'S&P 500' : 'GSPC'
+            'S&P 500' : '^GSPC'
         })
 
-        ## check this to see economic cycle
-        ## https://medium.datadriveninvestor.com/these-three-indicators-will-tell-you-when-the-bear-market-ends-f86c16bc3fe1
-        endDate = date.today()
-        startDate = (endDate - BDay(150)).date()
+        with TestPipeline() as p:
+            (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
+                | 'Fetch data' >> beam.Map(lambda tpl: _fetch_performance(tpl[0], tpl[1], key))
+                | 'Print out'  >> beam.Map(print)
+            )
 
-        for name, ticker in sectorsETF.items():
-            url = f"https://financialmodelingprep.com/api/v3/historical-price-full/AAPL?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
-
-            historical = requests.get(url).json().get('historical')
-            df = pd.DataFrame(data=historical[::-1])
-            df['date'] = pd.to_datetime(df.date)
-            df = df.set_index('date')
-            resampled = df.resample('1M').mean()
-            resampled['returns'] = resampled.close / resampled.close.shift(1) - 1
-            print(f'{name}/{ticker}: Returns {resampled.returns.values}')
+        
 
     def test_skew(self):
         key = os.environ['FMPREPKEY']
