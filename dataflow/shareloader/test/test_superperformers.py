@@ -1,4 +1,4 @@
-
+import math
 import unittest
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
@@ -9,7 +9,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
-
+from itertools import chain
 from pandas.tseries.offsets import BDay
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
@@ -19,6 +19,7 @@ import requests
 import pandas as pd
 from collections import OrderedDict
 from datetime import date
+import logging
 
 
 def generate_date_headers():
@@ -50,6 +51,23 @@ def _fetch_performance(sector, ticker, key):
 
     return (sector, data)
 
+class ETFHistoryCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, input):
+    logging.info('Adding{}'.format(input))
+    logging.info('acc is:{}'.format(accumulator))
+    accumulator.append(input)
+    return accumulator
+
+  def merge_accumulators(self, accumulators):
+
+    return list(chain(*accumulators))
+
+  def extract_output(self, sum_count):
+    return sum_count
+
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -58,6 +76,38 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients, key):
+        self.recipients = recipients.split(',')
+        self.key = key
+
+    def _build_html_message(self, rows):
+        html = '<table border="1">'
+        header_row = "<tr><th>Sector</th><th>{}</th><th>{}</th><th>{}</th><th>{}</th></tr>"
+        row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+
+        headers = rows[0][1]
+        dates = [tpl[0] for tpl in headers]
+        header_row = header_row.format(*dates)
+        html += header_row
+
+        for sector, dates in rows:
+            returns = ['%.3f'% val[1] for val in dates]
+            sector_data = [sector] + returns
+            html += row_template.format(*sector_data)
+        html += '</table>'
+        return html
+
+
+
+    def process(self, element):
+        sector_returns = element
+        logging.info('Processing returns')
+        data = self._build_html_message(element)
+        template = \
+            "<html><body>{}</body></html>".format(data)
+        return [template]
 
 
 class PercentagesFn(beam.CombineFn):
@@ -315,6 +365,8 @@ class TestSuperPerformers(unittest.TestCase):
         with TestPipeline() as p:
             (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
                 | 'Fetch data' >> beam.Map(lambda tpl: _fetch_performance(tpl[0], tpl[1], key))
+                | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
+                | 'Generate Msg' >> beam.ParDo(EmailSender('foo', 'bar'))
                 | 'Print out'  >> beam.Map(print)
             )
 
