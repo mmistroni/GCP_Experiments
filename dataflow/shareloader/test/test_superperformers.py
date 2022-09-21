@@ -21,8 +21,18 @@ from collections import OrderedDict
 from datetime import date
 
 
+def generate_date_headers():
+    today = date.today()
+    all_dates = [(today - BDay(idx)).month for idx in range(1, 90)]
+    sorted_months = sorted(all_dates, key=lambda x: x)
+    sorted_set = OrderedDict.fromkeys(sorted_months).keys()
+    return [date(today.year, month, 1).strftime('%b %y') for month in sorted_set][1:]
+
+
+
+
 def _fetch_performance(sector, ticker, key):
-    endDate = date.today()
+    endDate = date(2022,8,28)#.today()
     startDate = (endDate - BDay(90)).date()
     url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
     historical = requests.get(url).json().get('historical')

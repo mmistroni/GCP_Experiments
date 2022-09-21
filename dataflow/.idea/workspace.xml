@@ -8,7 +8,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/sector_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
@@ -287,11 +286,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_df_to_dict" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_defensive_filter_df" />
     </list>
     <recent_temporary>
       <list>
