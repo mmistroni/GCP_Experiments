@@ -8,9 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/shareloader/test/tester.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/Dockerfile_sectors" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/run_sectors_loader.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/sectors_main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,13 +200,13 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader/modules" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow\spec" />
@@ -296,11 +298,11 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.test_superperformers" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
       <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_etf_historical" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_fmprep_historical" />
-      <item itemvalue="Python.test_superperformers" />
     </list>
     <recent_temporary>
       <list>

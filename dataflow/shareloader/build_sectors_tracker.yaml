@@ -1,0 +1,39 @@
+ 
+# checkout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+
+steps:
+  # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/_SECTORS_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_sectors'
+      , './dataflow/shareloader/'
+      ]
+    id: 'build-marketstats-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'build'
+          , '$_SECTORS_TEMPLATE_GCS_LOCATION'
+          , '--image'
+          , 'gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME'
+          , '--sdk-language'
+          , 'PYTHON'
+          , '--metadata-file'
+          , '$_SECTORS_METADATA_FILE']
+    id: 'build-marketstats-flex-template'
+
+
+images: [ 'gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME' ]
+
+
+substitutions:
+  _PROJECT_ID: datascience-projects
+  _SECTORS_IMAGE_NAME: sectors:latest
+  _SECTORS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/sectors_flex_template.json
+  _SECTORS_METADATA_FILE: ./dataflow/shareloader/sectors_template_metadata
+
