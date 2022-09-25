@@ -9,9 +9,10 @@ from io import StringIO
 from datetime import date, timedelta, datetime
 from pandas.tseries.offsets import BDay
 import pandas as pd
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
 
-
-def _fetch_performance(sector, ticker, key):
+def fetch_performance(sector, ticker, key):
     endDate = date.today()
     startDate = (endDate - BDay(90)).date()
     url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
@@ -54,6 +55,15 @@ class SectorsEmailSender(beam.DoFn):
       self.recipients = recipients.split(',')
       self.key = key
 
+  def _build_personalization(self, recipients):
+      personalizations = []
+      for recipient in recipients:
+          logging.info('Adding personalization for {}'.format(recipient))
+          person1 = Personalization()
+          person1.add_to(Email(recipient))
+          personalizations.append(person1)
+      return personalizations
+
   def _build_html_message(self, rows):
       html = '<table border="1">'
       header_row = "<tr><th>Sector</th><th>{}</th><th>{}</th><th>{}</th><th>{}</th></tr>"
@@ -73,9 +83,22 @@ class SectorsEmailSender(beam.DoFn):
 
   def process(self, element):
       sector_returns = element
-      logging.info('Processing returns')
+      logging.info(f'Processing returns:\n{sector_returns}')
       data = self._build_html_message(element)
-      template = \
+      content = \
           "<html><body>{}</body></html>".format(data)
-      return [template]
 
+      message = Mail(
+          from_email='gcp_portfolio@mmistroni.com',
+          subject='Sectors Return for last 3 Months',
+          html_content=content)
+
+      personalizations = self._build_personalization(self.recipients)
+      for pers in personalizations:
+          message.add_personalization(pers)
+
+      sg = SendGridAPIClient(self.key)
+
+      response = sg.send(message)
+      logging.info('Mail Sent:{}'.format(response.status_code))
+      logging.info('Body:{}'.format(response.body))

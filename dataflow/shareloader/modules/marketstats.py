@@ -337,7 +337,7 @@ def run(argv=None, save_main_session=True):
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', pipeline_options.sendgridkey))
+                | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
 
         )
 

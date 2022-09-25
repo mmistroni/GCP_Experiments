@@ -25,7 +25,7 @@ steps:
           , 'PYTHON'
           , '--metadata-file'
           , '$_SECTORS_METADATA_FILE']
-    id: 'build-marketstats-flex-template'
+    id: 'build-sectors-flex-template'
 
 
 images: [ 'gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME' ]
