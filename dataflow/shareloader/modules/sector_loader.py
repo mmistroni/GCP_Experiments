@@ -62,7 +62,7 @@ def run(argv=None, save_main_session=True):
     logging.info(pipeline_options.get_all_options())
 
     with beam.Pipeline(options=pipeline_options) as p:
-        result = run_my_pipeline(input, pipeline_options.fmprepkey)
+        result = run_my_pipeline(p, pipeline_options.fmprepkey)
 
         result2 = run_senate_disclosures()
 
