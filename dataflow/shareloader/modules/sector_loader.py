@@ -66,6 +66,8 @@ def run(argv=None, save_main_session=True):
 
         result2 = run_senate_disclosures()
 
+        result2 | 'Mapping to String11' >> beam.Map(logging.info)
+
         result | 'Mapping to String' >> beam.Map(logging.info)
 
 
