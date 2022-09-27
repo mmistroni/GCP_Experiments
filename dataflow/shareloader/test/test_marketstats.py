@@ -317,8 +317,14 @@ class TestMarketStats(unittest.TestCase):
              | 'Print out' >> beam.Map(print)
              )
 
+    def test_compute_etf_historical(self):
+        key = os.environ['FMPREPKEY']
+        from shareloader.modules.sector_loader import run_my_pipeline, XyzOptions
 
-
+        with TestPipeline() as p:
+            (p |run_my_pipeline(p, key)
+               | 'map' >> beam.Map(print)
+             )
 
 if __name__ == '__main__':
     unittest.main()

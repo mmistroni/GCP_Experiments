@@ -9,6 +9,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
+
 from itertools import chain
 from pandas.tseries.offsets import BDay
 import apache_beam as beam
@@ -342,35 +343,6 @@ class TestSuperPerformers(unittest.TestCase):
 
 
 
-    def test_compute_etf_historical(self):
-
-        key = os.environ['FMPREPKEY']
-
-        # check this article to build heatmaps https://wire.insiderfinance.io/applying-machine-learning-to-stock-investments-how-to-find-the-best-performing-stocks-8cbdcfc865eb
-        sectorsETF = OrderedDict ({
-            'Technology' : 'XLK',
-            'Health Care': 'XLV',
-            'Financials' : 'XLF',
-            'Real Estate': 'SCHH',
-            'Energy'     : 'XLE',
-            'Materials'  : 'XLB',
-            'Consumer Discretionary' : 'XLY',
-            'Industrials': 'VIS',
-            'Utilities': 'VPU',
-            'Consumer Staples' : 'XLP',
-            'Telecommunications':'XLC',
-            'S&P 500' : '^GSPC'
-        })
-
-        with TestPipeline() as p:
-            (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
-                | 'Fetch data' >> beam.Map(lambda tpl: _fetch_performance(tpl[0], tpl[1], key))
-                | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
-                | 'Generate Msg' >> beam.ParDo(EmailSender('foo', 'bar'))
-                | 'Print out'  >> beam.Map(print)
-            )
-
-        
 
     def test_skew(self):
         key = os.environ['FMPREPKEY']

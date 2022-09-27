@@ -149,7 +149,8 @@ def run_vix(p, key):
             )
 
 def run_senate_disclosures(p, key):
-    return (p | 'start run_sd' >> beam.Create(get_senate_disclosures(key))
+    return (p | 'start run_sd' >> beam.Create(['20210101'])
+              | 'run sendisclos' >> beam.Map(lambda d : get_senate_disclosures(key))
             )
 
 

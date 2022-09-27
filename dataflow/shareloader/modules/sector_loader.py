@@ -34,11 +34,10 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-def run_my_pipeline(p, options):
+def run_my_pipeline(p, fmprepkey, sendgridkey):
     return (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
-     | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], options.fmprepkey))
+     | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], fmprepkey))
      | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
-     | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(options.recipients, options.sendgridkey))
      )
 
 
@@ -52,7 +51,13 @@ def run(argv=None, save_main_session=True):
     logging.info(pipeline_options.get_all_options())
 
     with beam.Pipeline(options=pipeline_options) as p:
-        run_my_pipeline(input, pipeline_options)
+        result = run_my_pipeline(input, pipeline_options.fmprepkey)
+
+        result | 'Mapping to String' >> beam.Map(logging.info)
+
+
+        result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(pipeline_options.recipients,
+                                                                 pipeline_options.sendgridkey))
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
