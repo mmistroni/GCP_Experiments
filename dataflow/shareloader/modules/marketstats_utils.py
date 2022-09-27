@@ -241,7 +241,7 @@ def get_senate_disclosures(key):
     url = f'https://financialmodelingprep.com/api/v4/senate-disclosure-rss-feed?page=0&apikey={key}'
 
     data = requests.get(url).json()
-    yesterday = (date.today() - BDay(1)).date()
+    yesterday = (date.today() - BDay(5)).date()
     holder = []
 
     for dataDict in data:

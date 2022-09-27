@@ -7,6 +7,7 @@ from apache_beam.options.pipeline_options import SetupOptions
 from collections import OrderedDict
 from datetime import datetime, date
 from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, fetch_performance
+from .marketstats_utils import get_senate_disclosures
 import requests
 
 sectorsETF = OrderedDict ({
@@ -40,6 +41,16 @@ def run_my_pipeline(p, fmprepkey, sendgridkey):
      | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
      )
 
+def run_senate_disclosures(p, key):
+    return (p | 'start run_sd' >> beam.Create(['20210101'])
+              | 'run sendisclos' >> beam.Map(lambda d : get_senate_disclosures(key))
+              | ' log out' >> beam.Map(logging.info)
+            )
+
+
+
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -52,6 +63,8 @@ def run(argv=None, save_main_session=True):
 
     with beam.Pipeline(options=pipeline_options) as p:
         result = run_my_pipeline(input, pipeline_options.fmprepkey)
+
+        result2 = run_senate_disclosures()
 
         result | 'Mapping to String' >> beam.Map(logging.info)
 

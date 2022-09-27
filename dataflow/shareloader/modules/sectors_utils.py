@@ -11,6 +11,7 @@ from pandas.tseries.offsets import BDay
 import pandas as pd
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+from .marketstats_utils import get_senate_disclosures
 
 def fetch_performance(sector, ticker, key):
     endDate = date.today()
@@ -30,6 +31,8 @@ def fetch_performance(sector, ticker, key):
         data.append((k.strftime('%Y-%m-%d'), v))
 
     return (sector, data)
+
+
 
 
 class ETFHistoryCombineFn(beam.CombineFn):
