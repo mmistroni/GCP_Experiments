@@ -39,7 +39,6 @@ def run_my_pipeline(p, options):
      | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], options.fmprepkey))
      | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
      | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(options.recipients, options.sendgridkey))
-     | 'Print out' >> beam.Map(print)
      )
 
 
