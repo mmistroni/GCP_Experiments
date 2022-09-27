@@ -246,6 +246,7 @@ def get_senate_disclosures(key):
 
     for dataDict in data:
         asOfDate = datetime.strptime(dataDict['disclosureDate'], '%Y-%m-%d' ).date()
+        logging.info(f'Processing senate disclosures....{dataDict}.')
         if asOfDate < yesterday:
             break
         else:
