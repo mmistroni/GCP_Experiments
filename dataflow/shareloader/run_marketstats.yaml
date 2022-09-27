@@ -13,6 +13,8 @@ steps:
           , '--parameters'
           , 'key=$_FMPREP_KEY'
           , '--parameters'
+          , 'sendgridkey=$_SENDGRID_KEY'
+          , '--parameters'
           , 'recipients=$_RECIPIENTS'
           , '--region=$_REGION'
           ]  
