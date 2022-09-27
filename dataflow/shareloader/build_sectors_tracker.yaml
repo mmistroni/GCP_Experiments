@@ -6,7 +6,7 @@ steps:
   - name: gcr.io/cloud-builders/docker
     args:
       [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/_SECTORS_IMAGE_NAME'
+      , '--tag=gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME'
       , '--file=./dataflow/shareloader/Dockerfile_sectors'
       , './dataflow/shareloader/'
       ]
