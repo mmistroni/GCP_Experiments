@@ -35,7 +35,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-def run_my_pipeline(p, fmprepkey, sendgridkey):
+def run_my_pipeline(p, fmprepkey):
     return (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
      | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], fmprepkey))
      | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
