@@ -11,6 +11,10 @@
       "name": "sendgridkey",
       "helpText": "SendGrid key",
       "label": "SendgRidKey"
+    },{
+      "name": "recipients",
+      "helpText": "recipients",
+      "label": "recipients"
     }
   ]
 }
