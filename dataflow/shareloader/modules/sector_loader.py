@@ -32,7 +32,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_argument('--key')
-        parser.add_argument('--fmprepkey')
+        parser.add_argument('--sendgridkey')
 
 
 def run_my_pipeline(p, fmprepkey):
@@ -64,7 +64,7 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         result = run_my_pipeline(p, pipeline_options.fmprepkey)
 
-        result2 = run_senate_disclosures()
+        result2 = run_senate_disclosures(p, pipeline_options.key)
 
         result2 | 'Mapping to String11' >> beam.Map(logging.info)
 
