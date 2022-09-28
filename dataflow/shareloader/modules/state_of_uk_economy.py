@@ -17,7 +17,8 @@ class XyzOptions(PipelineOptions):
 
 
 def kickoff_pipeline(pipeline):
-    jobstats = (pipeline | 'Create jobs' >> beam.Create(get_latest_jobs_statistics())
+    jobstats = (pipeline | 'start putcall ratio' >> beam.Create(['20210101'])
+                        | 'Create jobs' >> beam.Map(lambda item:  get_latest_jobs_statistics())
                 )
 
     fruitandveg = (pipeline | 'Create fandv' >> beam.Create(get_fruit_and_veg_prices())
