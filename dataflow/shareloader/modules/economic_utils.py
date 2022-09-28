@@ -8,6 +8,7 @@ import requests
 from urllib.request import Request, urlopen
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+import logging
 
 def get_fruit_and_veg_prices():
     baseUrl = 'https://www.gov.uk/government/statistical-data-sets/wholesale-fruit-and-vegetable-prices-weekly-average'
@@ -22,6 +23,7 @@ def get_fruit_and_veg_prices():
     latest = dt[dt.asOfDate == dt.asOfDate.max()][['asOfDate', 'category', 'item', 'variety', 'price', 'unit']]
     latest['label'] = latest.apply(lambda r: f"{r['category']}-{r['item']}-{r['variety']}({r['unit']})", axis=1)
     latest['value'] = latest.price.apply(lambda valstr: float(valstr))
+
     return latest[['asOfDate', 'label', 'value']].to_dict('records')
 
 def get_petrol_prices():
@@ -53,7 +55,7 @@ def get_latest_url():
 
 def get_latest_jobs_statistics():
     latestUrl = get_latest_url()
-    print(f'Latest URL from ONS is {latestUrl}')
+    logging.info(f'Latest URL from ONS is {latestUrl}')
     res = requests.get(latestUrl, headers={'User-Agent': 'Mozilla/5.0'})
     # 'https://download.ons.gov.uk/downloads/datasets/online-job-advert-estimates/editions/time-series/versions/20.csv'
     text = res.iter_lines()
@@ -67,6 +69,7 @@ def get_latest_jobs_statistics():
     filtered['wkint'] = filtered.wkno.apply(lambda v: int(v))
     filtered = filtered.rename(columns={'v4_1': 'jobs'})[['calendar-years', 'wkint', 'adzuna-jobs-category', 'jobs']]
     latest = filtered.sort_values(by=['wkint']).to_dict('records')[-1]
+    logging.info(f'Latest data obtained is:{latest}')
     year = int(latest['calendar-years'])
     asOfDate = date(year, 1, 1) + relativedelta(weeks =+ int(latest['wkint']))
     return [{'label' : latest['adzuna-jobs-category'],
