@@ -9,6 +9,8 @@ from urllib.request import Request, urlopen
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 import logging
+import xlrd
+from .news_util import get_user_agent
 
 def get_fruit_and_veg_prices():
     baseUrl = 'https://www.gov.uk/government/statistical-data-sets/wholesale-fruit-and-vegetable-prices-weekly-average'
@@ -48,35 +50,36 @@ def get_latest_url():
     url = "https://cy.ons.gov.uk/datasets/online-job-advert-estimates/editions"
     ## check this https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/bulletins/jobsandvacanciesintheuk/august2022
     ##  https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates
-
-
+    import requests
+    from shareloader.modules.news_util import get_user_agent
+    from bs4 import BeautifulSoup
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates'
     req = requests.get(url)
-    soup = BeautifulSoup(req.text, "html.parser")
-    anchor = soup.find_all('a', {"id": "edition-time-series"})[0]
-    suffix = anchor.get('href')
-    return f'https://download.ons.gov.uk/downloads{suffix}.csv'
+    soup = BeautifulSoup(req.text, 'html.parser')
+    anchor = soup.find_all('a')
+    links = [a for a in anchor if
+             'Download Online job advert estimates' in a.get('aria-label', '') and '2022' in a.get('aria-label', '')]
+    link = links[0].get('href')
+    full_url = f'https://www.ons.gov.uk/{link}'
+    return full_url
 
 
 def get_latest_jobs_statistics():
+    import datetime
     latestUrl = get_latest_url()
     logging.info(f'Latest URL from ONS is {latestUrl}')
-    res = requests.get(latestUrl, headers={'User-Agent': 'Mozilla/5.0'})
-    # 'https://download.ons.gov.uk/downloads/datasets/online-job-advert-estimates/editions/time-series/versions/20.csv'
-    text = res.iter_lines()
-    data = csv.reader(codecs.iterdecode(text, 'utf-8'), delimiter=',')
-    headers = ['v4_1',	'Data Marking', 	'calendar-years',	'Time',	'uk-only',	'Geography', 'adzuna-jobs-category',	'AdzunaJobsCategory',	'week-number',	'Week']
-    dataset = [d for d in data]
-    jobs_dataset = pd.DataFrame(dataset, columns=headers)
-    valid = jobs_dataset[(jobs_dataset.Time == str(date.today().year)) & (jobs_dataset.AdzunaJobsCategory.str.contains('Computing'))]
-    valid[['wk', 'wkno']] = valid['week-number'].str.split(pat = '-', expand = True)
-    filtered = valid[valid.v4_1.str.contains('.')]
-    filtered['wkint'] = filtered.wkno.apply(lambda v: int(v))
-    filtered = filtered.rename(columns={'v4_1': 'jobs'})[['calendar-years', 'wkint', 'adzuna-jobs-category', 'jobs']]
-    latest = filtered.sort_values(by=['wkint']).to_dict('records')[-1]
-    logging.info(f'Latest data obtained is:{latest}')
-    year = int(latest['calendar-years'])
-    asOfDate = date(year, 1, 1) + relativedelta(weeks =+ int(latest['wkint']))
-    return [{'label' : latest['adzuna-jobs-category'],
-            'asOfDate' : asOfDate,
-            'value' : float(latest['jobs'])}]
+    data = requests.get(latestUrl, headers={'User-Agent': get_user_agent()})
+    workbook = xlrd.open_workbook(file_contents=data.content)
+    sheet = workbook.sheet_by_name('Adverts by category YoY')
+    num_cells = sheet.ncols - 1
+    col_vals = [sheet.cell_value(r, 1) for r in range(2, sheet.nrows)]
+    it_row = col_vals.index('IT / Computing / Software') + 2
+
+    it_vacancies = sheet.cell_value(it_row + 2, num_cells)
+    a1 = sheet.cell_value(rowx=2, colx=num_cells)
+    a1_as_datetime = datetime.datetime(*xlrd.xldate_as_tuple(a1, workbook.datemode))
+
+    return [{'label' : 'IT-JOB-VACANCIES',
+            'asOfDate' : a1_as_datetime.strftime('%Y-%m-%d%')
+            'value' : float(it_vacancies)}]
 
