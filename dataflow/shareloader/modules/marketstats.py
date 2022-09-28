@@ -319,7 +319,6 @@ def run(argv=None, save_main_session=True):
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (10, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
@@ -332,7 +331,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, sd_key, cftc_key, static_key, stats_key,
+                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key, static_key, stats_key,
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
