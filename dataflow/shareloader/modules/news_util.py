@@ -39,6 +39,7 @@ def get_user_agent():
 
 def get_news_from_finviz(tickers):
     news_tables = {}
+    logging.info(f'Getting news from finvis for {tickers}')
     for ticker in tickers:
         headers = {'User-Agent': get_user_agent()}
         url = f'https://finviz.com/quote.ashx?t={ticker}'
@@ -47,6 +48,7 @@ def get_news_from_finviz(tickers):
         news_table = html.find_all('table', {'id': 'news-table'})
         if news_table:
             news_tables[ticker] = news_table[0]
+        logging.info(f'News TAble for {ticker}={news_table}')
 
     parsed_news = []
     for file_name, table in news_tables.items():
@@ -92,6 +94,7 @@ def find_news_scores_for_ticker(tickers,  bus_days):
     yday = date.today() - BDay(bus_days)
     filtered = parsed_and_scored_news[parsed_and_scored_news['date'] >= yday.date()]
     parsed_and_scored_news = filtered.groupby(['ticker'], as_index=False).agg({'headline': ''.join}, Inplace=True)
+    logging.info(f'parsed_and_scored news:{parsed_and_scored_news}')
     scores = parsed_and_scored_news['headline'].apply(get_sentiment_from_vader).tolist()
     scores_df = pd.DataFrame(scores)
     logging.info(f'SCoresDf  = {scores_df}')
