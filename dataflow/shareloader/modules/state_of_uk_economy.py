@@ -15,11 +15,12 @@ from .economic_utils import get_petrol_prices, get_latest_jobs_statistics, get_f
 class XyzOptions(PipelineOptions):
     pass
 
-
-def kickoff_pipeline(pipeline):
-    jobstats = (pipeline | 'start putcall ratio' >> beam.Create(['20210101'])
+def run_jobstats_pipeline(pipeline):
+    return (pipeline | 'start putcall ratio' >> beam.Create(['20210101'])
                         | 'Create jobs' >> beam.Map(lambda item:  get_latest_jobs_statistics())
                 )
+def kickoff_pipeline(pipeline):
+    jobstats = run_jobstats_pipeline(pipeline)
 
     fruitandveg = (pipeline | 'Create fandv' >> beam.Create(get_fruit_and_veg_prices())
                    )

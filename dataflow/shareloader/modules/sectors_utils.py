@@ -93,7 +93,7 @@ class SectorsEmailSender(beam.DoFn):
 
       message = Mail(
           from_email='gcp_portfolio@mmistroni.com',
-          subject='Sectors Return for last 3 Months',
+          subject='Sectors Return for last 4 Months',
           html_content=content)
 
       personalizations = self._build_personalization(self.recipients)

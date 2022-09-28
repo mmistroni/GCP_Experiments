@@ -46,6 +46,10 @@ def get_petrol_prices():
 
 def get_latest_url():
     url = "https://cy.ons.gov.uk/datasets/online-job-advert-estimates/editions"
+    ## check this https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/bulletins/jobsandvacanciesintheuk/august2022
+    ##  https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates
+
+
     req = requests.get(url)
     soup = BeautifulSoup(req.text, "html.parser")
     anchor = soup.find_all('a', {"id": "edition-time-series"})[0]
