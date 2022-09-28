@@ -89,7 +89,7 @@ class SectorsEmailSender(beam.DoFn):
       logging.info(f'Processing returns:\n{sector_returns}')
       data = self._build_html_message(element)
       content = \
-          "<html><body>{}</body></html>".format(data)
+          "<html><body><p> Compare Results against informations here https://www.investopedia.com/articles/trading/05/020305.asp</p><br><br>{}</body></html>".format(data)
 
       message = Mail(
           from_email='gcp_portfolio@mmistroni.com',
