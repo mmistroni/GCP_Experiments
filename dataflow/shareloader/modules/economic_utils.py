@@ -80,6 +80,6 @@ def get_latest_jobs_statistics():
     a1_as_datetime = datetime.datetime(*xlrd.xldate_as_tuple(a1, workbook.datemode))
 
     return [{'label' : 'IT-JOB-VACANCIES',
-            'asOfDate' : a1_as_datetime.strftime('%Y-%m-%d%')
+            'asOfDate' : a1_as_datetime.strftime('%Y-%m-%d'),
             'value' : float(it_vacancies)}]
 
