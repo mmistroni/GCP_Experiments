@@ -275,14 +275,14 @@ def run(argv=None, save_main_session=True):
             cftc = run_cftc_spfutures(p, iexapi_key)
             cftc | 'cftc to sink' >> bq_sink
 
-        vix_res = run_vix(p, iexapi_key)
-        vix_res | 'vix to sink' >> bq_sink
+        #vix_res = run_vix(p, iexapi_key)
+        #vix_res | 'vix to sink' >> bq_sink
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
         mmomentum_res | 'mm to sink' >> bq_sink
 
-        senate_disc = run_senate_disclosures(p, iexapi_key)
-        senate_disc | 'sd to sink' >> bq_sink
+        #senate_disc = run_senate_disclosures(p, iexapi_key)
+        #senate_disc | 'sd to sink' >> bq_sink
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
@@ -314,7 +314,8 @@ def run(argv=None, save_main_session=True):
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
         pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
-        vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
+
+        #vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
@@ -331,7 +332,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, vix_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key, static_key, stats_key,
+                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key, static_key, stats_key,
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
