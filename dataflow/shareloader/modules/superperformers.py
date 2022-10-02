@@ -24,7 +24,7 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
                                             get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
-                                            calculate_piotrosky_score, compute_rsi
+                                            calculate_piotrosky_score, compute_rsi, get_price_change
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''
@@ -130,6 +130,9 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict['piotroskyScore'] = piotrosky_score
                 updated_dict['rsi'] = latest_rsi
 
+                priceChangeDict = get_price_change(ticker, self.key)
+                updated_dict.update(priceChangeDict)
+
                 all_dt.append(updated_dict)
         return all_dt
 
@@ -163,10 +166,10 @@ def load_bennchmark_data(ticker, key):
                         latest_rsi = compute_rsi(ticker, key)
                         quotes_data['rsi'] = latest_rsi
                         quotes_data['piotroskyScore'] = piotrosky_score
+                    priceChangeDict = get_price_change(ticker, key)
+                    quotes_data.update(priceChangeDict)
+
     return quotes_data
-
-
-
 
 class BenchmarkLoader(beam.DoFn):
     def __init__(self, key):
@@ -207,7 +210,11 @@ class BenchmarkLoader(beam.DoFn):
                                 quotes_data['rsi'] = latest_rsi
                                 quotes_data['piotroskyScore'] = piotrosky_score
 
+                            priceChangeDict = get_price_change(ticker, self.key)
+                            quotes_data.update(priceChangeDict)
                             all_dt.append(quotes_data)
+
+
         return all_dt
 
 
@@ -278,6 +285,13 @@ def new_high_filter(input_dict):
                     and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
                     and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
+
+def microcap_filter(input_dict):
+    return (input_dict['marketCap'] <= 200000000) and (input_dict['dividendPaid'] == 0) and \
+           (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
+           (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
+           (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
+
 
 def benchmark_filter(input_dict):
     fields_to_check = ['debtOverCapital', 'enterpriseDebt', 'epsGrowth',

@@ -377,7 +377,8 @@ def get_financial_ratios(ticker, key):
                     returnOnEquity= 0 if latest.get('returnOnEquityTTM') is None else latest.get('returnOnEquityTTM'),
                     dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
-                    returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'))
+                    returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'),
+                    netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'))
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
@@ -551,19 +552,38 @@ def get_financial_ratios_benchmark(ticker, key):
                 dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis)
                 dataDict['returnOnCapital'] = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else \
                     latest.get('returnOnCapitalEmployedTTM')
+
             except Exception as e:
                 logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
                 return  None
             dataDict['pe'] = latest.get('priceEarningsRatioTTM') or 0
             dataDict['peRatio'] = dataDict['pe']
+            dataDict['netProfitMargin'] = 0 if latest.get('netProfitMarginTTM') is None else latest.get(
+                'netProfitMarginTTM')
             # price to book ratio no more than 1.5
             dataDict['currentRatio'] = latest.get('currentRatioTTM') or 0
             dataDict['priceToBookRatio'] = latest.get('priceToBookRatioTTM') or 0
+
+            dataDict['grossProfitMargin'] = latest.get('grossProfitMarginTTM') or 0
+            dataDict['returnOnEquity'] = latest.get('returnOnEquityTTM')  or 0
+            dataDict['dividendPayoutRatio'] = latest.get('payoutRatioTTM') or 0
+            dataDict['dividendYield'] = latest.get('dividendYielTTM') or 0
+            dataDict['returnOnCapital'] =  latest.get('returnOnCapitalEmployedTTM') or 0
             return dataDict
     except Exception as e:
         logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
         return dataDict
 
+def get_price_change(ticker, key):
+    resUrl = f'https://financialmodelingprep.com/api/v3/stock-price-change/{ticker}?apikey={key}'
+    try:
+        dataDict = {}
+        dataDict['ticker'] = ticker
+        res = requests.get(resUrl).json()[ 0]
+        dataDict['52weekChange'] = res.get('1Y') or 0
+    except Exception as e:
+        logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
+        return {}
 def get_quote_benchmark(ticker, key):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
     try:
