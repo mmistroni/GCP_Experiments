@@ -239,6 +239,12 @@ def load_fundamental_data(source,fmpkey):
             | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)
             | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
             )
+def load_microcap_data(source,fmpkey):
+    return (source
+            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
+            | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
+            )
 
 def load_benchmark_data(source,fmpkey):
     return (source
@@ -471,6 +477,10 @@ def run(argv=None, save_main_session=True):
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
 
+            microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
+
+
+
             destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
                                                     date.today().strftime('%Y-%m-%d %H:%M'))
 
@@ -511,6 +521,10 @@ def run(argv=None, save_main_session=True):
              | 'Writing to sink weekly' >> bq_sink)
 
 
+            (microcap_data | 'Filtering microcap' >> beam.Filter(microcap_filter)
+                            | 'Mapping only relevan microcap' >> beam.Map(lambda d:
+                                                               map_to_bq_dict(d, 'MICROCAPY'))
+                            | 'wRITING TO SINK microcap' >> bq_sink)
 
 
 
