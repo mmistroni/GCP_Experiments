@@ -4,7 +4,8 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
                                                 asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
                                                 get_universe_filter, get_defensive_filter_df,\
-                                                get_enterprise_filter_df, load_bennchmark_data
+                                                get_enterprise_filter_df, load_bennchmark_data, \
+                                                load_microcap_data
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -402,3 +403,15 @@ class TestSuperPerformers(unittest.TestCase):
 
 
     ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
+
+    def test_microcap_filter_df(self):
+        key = os.environ['FMPREPKEY']
+        bmarkData = load_microcap_data(['NEXE'], key)
+
+        #self.assertIsNotNone(bmarkData['netIncome'])
+        #self.assertIsNotNone(bmarkData['rsi'])
+
+
+        #bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
+
+        print(bmarkData)
