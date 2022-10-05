@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +216,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix">
+  <component name="RunManager" selected="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -273,34 +287,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_microcap_filter_df" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_microcap_filter_df&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_microcap_filter_df" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_microcap_filter_df" />
-        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
       </list>
     </recent_temporary>
   </component>
