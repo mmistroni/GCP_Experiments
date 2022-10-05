@@ -150,7 +150,7 @@ def run_vix(p, key):
 
 def run_senate_disclosures(p, key):
     return (p | 'start run_sd' >> beam.Create(['20210101'])
-              | 'run sendisclos' >> beam.Map(lambda d : get_senate_disclosures(key))
+              | 'run sendisclos' >> beam.FlatMap(lambda d : get_senate_disclosures(key))
             )
 
 
@@ -315,7 +315,7 @@ def run(argv=None, save_main_session=True):
         pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
 
-        #vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
+        vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
@@ -333,7 +333,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  static_key, stats_key,
+                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, static_key, stats_key,
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())

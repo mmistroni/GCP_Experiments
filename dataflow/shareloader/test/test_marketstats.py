@@ -12,7 +12,7 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
-                                            run_manufacturing_pmi, run_pmi
+                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -312,8 +312,19 @@ class TestMarketStats(unittest.TestCase):
     def test_get_vix(self):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            run_vix(p, fmp_key)
+            vix = run_vix(p, fmp_key)
+            sd = run_senate_disclosures(p, fmp_key)
+            vix_key = vix | 'Add 3' >> beam.Map(lambda d: (3, d))
+            sd_key = sd | 'Add sd' >> beam.Map(lambda d: (8, d))
 
+            final = (
+                    (vix_key, sd_key,
+                     )
+                    | 'FlattenCombine all' >> beam.Flatten()
+                    | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
+                    | ' FlatMapping' >> beam.FlatMap(lambda x: x)
+                    | beam.Map(print)
+            )
 
     def test_get_senate_disclosures(self):
         fmp_key = os.environ['FMPREPKEY']
