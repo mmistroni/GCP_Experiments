@@ -309,6 +309,12 @@ class TestMarketStats(unittest.TestCase):
             run_senate_disclosures(p, fmp_key)
 
 
+    def test_get_vix(self):
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            run_vix(p, fmp_key)
+
+
     def test_get_senate_disclosures(self):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
