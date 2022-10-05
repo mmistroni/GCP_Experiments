@@ -282,7 +282,7 @@ def run(argv=None, save_main_session=True):
         mmomentum_res | 'mm to sink' >> bq_sink
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
-        senate_disc | 'sd to sink' >> bq_sink
+        #senate_disc | 'sd to sink' >> bq_sink
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
