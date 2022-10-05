@@ -51,7 +51,6 @@ def get_latest_url():
     ## check this https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/bulletins/jobsandvacanciesintheuk/august2022
     ##  https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates
     import requests
-    from shareloader.modules.news_util import get_user_agent
     from bs4 import BeautifulSoup
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates'
     req = requests.get(url)
