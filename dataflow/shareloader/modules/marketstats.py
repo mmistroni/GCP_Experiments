@@ -276,7 +276,7 @@ def run(argv=None, save_main_session=True):
             cftc | 'cftc to sink' >> bq_sink
 
         vix_res = run_vix(p, iexapi_key)
-        vix_res | 'vix to sink' >> bq_sink
+        #vix_res | 'vix to sink' >> bq_sink
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
         mmomentum_res | 'mm to sink' >> bq_sink
