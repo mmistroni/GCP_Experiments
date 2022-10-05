@@ -254,7 +254,7 @@ def get_senate_disclosures(key):
         if asOfDate < yesterday:
             break
         else:
-            value  = f"Ticker:{dataDict['ticker']}|Type:{dataDict['type']}|Representative : {dataDict.get('representative')}"
+            value  = f"Ticker:{dataDict['ticker']}|Type:{dataDict['type']}"
             label = 'SENATE_DISCLOSURES'
             holder.append({'AS_OF_DATE' : asOfDate.strftime('%Y-%m-%d'), 'LABEL' : label, 'VALUE' : value})
     return holder
