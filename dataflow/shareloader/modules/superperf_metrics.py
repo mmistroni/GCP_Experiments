@@ -365,24 +365,48 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
         return fundamental_dict
 
 
+def get_dividend_paid(ticker, key):
+    dataDict = {}
+    try:
+        divis = requests.get(
+            'https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{}?apikey={}'.format(
+                ticker, key)).json()['historical']
+        currentDate = date.today()
+        hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
+        all_divis = [d.get('adjDividend', 0) for d in divis if
+                     datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
+        dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
+        dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
+        dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis)
+
+    except Exception as e:
+        logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
+    return dataDict
+
+
 def get_financial_ratios(ticker, key):
     financial_ratios = requests.get(
         'https://financialmodelingprep.com/api/v3/ratios-ttm/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
                                                                                                    key=key)).json()
+    ratioDict = {}
+
     if financial_ratios:
         try:
             latest = financial_ratios[0]
 
-            return dict(grossProfitMargin=0 if latest.get('grossProfitMarginTTM') is None else latest.get('grossProfitMarginTTM'),
+            dataDict = dict(grossProfitMargin=0 if latest.get('grossProfitMarginTTM') is None else latest.get('grossProfitMarginTTM'),
                     returnOnEquity= 0 if latest.get('returnOnEquityTTM') is None else latest.get('returnOnEquityTTM'),
                     dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
                     returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'),
                     netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'))
+            ratioDict.update(dataDict)
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
-    return {}
+        dividendDict = get_dividend_paid(ticker, key)
+        ratioDict.update(dividendDict)
+    return ratioDict
 
 
 
@@ -556,6 +580,7 @@ def get_financial_ratios_benchmark(ticker, key):
             except Exception as e:
                 logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
                 return  None
+
             dataDict['pe'] = latest.get('priceEarningsRatioTTM') or 0
             dataDict['peRatio'] = dataDict['pe']
             dataDict['netProfitMargin'] = 0 if latest.get('netProfitMarginTTM') is None else latest.get(
