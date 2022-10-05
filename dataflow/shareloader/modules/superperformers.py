@@ -131,7 +131,8 @@ class FundamentalLoader(beam.DoFn):
                 updated_dict['rsi'] = latest_rsi
 
                 priceChangeDict = get_price_change(ticker, self.key)
-                updated_dict.update(priceChangeDict)
+                if priceChangeDict:
+                    updated_dict.update(priceChangeDict)
 
                 all_dt.append(updated_dict)
         return all_dt
@@ -167,7 +168,8 @@ def load_bennchmark_data(ticker, key):
                         quotes_data['rsi'] = latest_rsi
                         quotes_data['piotroskyScore'] = piotrosky_score
                     priceChangeDict = get_price_change(ticker, key)
-                    quotes_data.update(priceChangeDict)
+                    if priceChangeDict:
+                        quotes_data.update(priceChangeDict)
 
     return quotes_data
 

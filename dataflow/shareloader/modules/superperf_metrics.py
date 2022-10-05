@@ -576,14 +576,17 @@ def get_financial_ratios_benchmark(ticker, key):
 
 def get_price_change(ticker, key):
     resUrl = f'https://financialmodelingprep.com/api/v3/stock-price-change/{ticker}?apikey={key}'
+    dataDict = {}
+    dataDict['ticker'] = ticker
+
     try:
-        dataDict = {}
-        dataDict['ticker'] = ticker
         res = requests.get(resUrl).json()[ 0]
         dataDict['52weekChange'] = res.get('1Y') or 0
     except Exception as e:
         logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
-        return {}
+        dataDict['52weekChange'] = -1
+    return dataDict
+
 def get_quote_benchmark(ticker, key):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
     try:
