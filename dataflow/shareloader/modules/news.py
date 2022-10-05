@@ -76,7 +76,7 @@ def run_my_pipeline(source, options):
                 | 'Map to Tpl' >> beam.Map(lambda ln: ln.split(','))
                 | 'Filter by Sector' >> beam.Filter(lambda tpl: sector.count(tpl[1]) > 0)
                 | 'Map to Ticker Only' >> beam.Map(lambda tpl: tpl[0])
-                | 'Filter , we dont want suffixes' >> beam.Map(lambda t: len(t.split('.')) < 2)
+                | 'Filter , we dont want suffixes' >> beam.Filter(lambda t: len(t.split('.')) < 2)
                 )
 
 def run(argv=None, save_main_session=True):
