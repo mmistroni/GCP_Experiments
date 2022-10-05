@@ -232,9 +232,13 @@ def get_cftc_spfutures(key):
     return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
 
 def get_vix(key):
-  base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
-  print('Url is:{}'.format(base_url))
-  return requests.get(base_url).json()[0]['price']
+    try:
+        base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
+        logging.info('Url is:{}'.format(base_url))
+        return requests.get(base_url).json()[0]['price']
+    except Exception as e:
+        logging.info(f'Exception in getting vix:{str(e)}')
+        return 0.0
 
 
 def get_senate_disclosures(key):
