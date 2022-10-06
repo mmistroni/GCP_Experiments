@@ -14,6 +14,8 @@ steps:
           , 'fmprepkey=$_FMPKEY'
           , '--parameters'
           , 'iistocks=$_IISTOCKS'
+          , '--parameters'
+          , 'microcap=$_MICROCAP'
           , '--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
@@ -24,3 +26,4 @@ substitutions:
   _REGION : 'us-central1'
   _FMPKEY : ''
   _IISTOCKS : ''
+  _MICROCAP: ''

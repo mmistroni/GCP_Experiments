@@ -11,6 +11,11 @@
       "name": "iistocks",
       "helpText": "Fla to indicate if we search for INtelligent investor stocks",
       "label": "iistocks"
+    },
+    {
+      "name": "microcap",
+      "helpText": "Flag to indicate if we search for Microcaps",
+      "label": "microcap"
     }
   ]
 }
