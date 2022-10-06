@@ -37,6 +37,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
         parser.add_argument('--iistocks')
+        parser.add_argument('--microcap')
 
 def asset_play_filter(input_dict):
     if not input_dict:
@@ -475,12 +476,19 @@ def run(argv=None, save_main_session=True):
 
 
 
+        elif (pipeline_options.microcap):
+            microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
+            (microcap_data | 'Filtering microcap' >> beam.Filter(microcap_filter)
+             | 'Mapping only relevan microcap' >> beam.Map(lambda d:
+                                                           map_to_bq_dict(d, 'MICROCAPY'))
+             | 'wRITING TO SINK microcap' >> bq_sink)
+
+
+
+
         else:
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
-
-            microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
-
 
 
             destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
@@ -523,10 +531,6 @@ def run(argv=None, save_main_session=True):
              | 'Writing to sink weekly' >> bq_sink)
 
 
-            (microcap_data | 'Filtering microcap' >> beam.Filter(microcap_filter)
-                            | 'Mapping only relevan microcap' >> beam.Map(lambda d:
-                                                               map_to_bq_dict(d, 'MICROCAPY'))
-                            | 'wRITING TO SINK microcap' >> bq_sink)
 
 
 
