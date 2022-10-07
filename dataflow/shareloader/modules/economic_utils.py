@@ -65,13 +65,21 @@ def get_latest_url():
 
 def get_latest_jobs_statistics():
     import datetime
+    import openpyxl
+    from io import BytesIO
     latestUrl = get_latest_url()
     logging.info(f'Latest URL from ONS is {latestUrl}')
     data = requests.get(latestUrl, headers={'User-Agent': get_user_agent()})
-    workbook = xlrd.open_workbook(file_contents=data.content)
-    sheet = workbook.sheet_by_name('Adverts by category YoY')
-    num_cells = sheet.ncols - 1
-    col_vals = [sheet.cell_value(r, 1) for r in range(2, sheet.nrows)]
+    workbook = openpyxl.load_workbook(BytesIO(data.content))
+
+
+    sheet = workbook.get_sheet_by_name('Adverts by category YoY')
+
+    from pprint import pprint
+    pprint(f'Sheet methods:{dir(sheet)}')
+
+    num_cells = sheet.max_column - 1
+    col_vals = [sheet.cell(row=r, column=1) for r in range(2, sheet.max_row)]
     it_row = col_vals.index('IT / Computing / Software') + 2
 
     it_vacancies = sheet.cell_value(it_row + 2, num_cells)

@@ -326,11 +326,6 @@ def run(argv=None, save_main_session=True):
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
-        statistics_dest = 'gs://mm_dataflow_bucket/outputs/market_stats_{}'.format(date.today().strftime('%Y-%m-%d'))
-
-        statistics_sink = beam.io.WriteToText(statistics_dest, header='date,label,value',
-                                              num_shards=1)
-
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, static_key, stats_key,
