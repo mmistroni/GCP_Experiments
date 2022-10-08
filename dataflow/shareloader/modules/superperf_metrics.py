@@ -375,12 +375,13 @@ def get_dividend_paid(ticker, key):
         hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
         all_divis = [d.get('adjDividend', 0) for d in divis if
                      datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
-        dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
+        dataDict['dividendPaid'] = len([d > 0 for d in all_divis])
         dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
-        dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis)
+        dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis) if len(all_divis) > 0 else 0
 
     except Exception as e:
         logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
+        dataDict['dividendPaid'] = 0
     return dataDict
 
 
@@ -399,7 +400,8 @@ def get_financial_ratios(ticker, key):
                     dividendPayoutRatio= 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM'),
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
                     returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'),
-                    netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'))
+                    netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'),
+                    currentRatio = 0 if latest.get('currentRatioTTM') is None else latest.get('currentRatioTTM'))
             ratioDict.update(dataDict)
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))

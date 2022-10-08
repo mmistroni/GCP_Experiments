@@ -247,6 +247,8 @@ def load_microcap_data(source,fmpkey):
             | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals microcap' >> beam.ParDo(FundamentalLoader(fmpkey))
             | 'Filtering out none fundamentals microcap' >> beam.Filter(lambda item: item is not None)
+            | 'MicroCap Sanity Check' >> beam.Filter(microcap_sanity_check)
+            | 'Filtering microcap' >> beam.Filter(microcap_filter)
             )
 
 def load_benchmark_data(source,fmpkey):
@@ -300,6 +302,13 @@ def microcap_filter(input_dict):
            (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
            (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
            (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
+
+def microcap_sanity_check(input_dict):
+    fields_to_check = ['marketCap', 'dividendPaid', 'grossProfitMargin',
+                       'netProfitMargin', 'currentRatio', 'avgVolume',
+                       '52weekChange']
+    result = [input_dict.get(field) is not None for field in fields_to_check]
+    return all(result)
 
 
 def benchmark_filter(input_dict):
@@ -478,9 +487,9 @@ def run(argv=None, save_main_session=True):
 
         elif (pipeline_options.microcap):
             microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
-            (microcap_data | 'Filtering microcap' >> beam.Filter(microcap_filter)
+            (microcap_data
              | 'Mapping only relevan microcap' >> beam.Map(lambda d:
-                                                           map_to_bq_dict(d, 'MICROCAPY'))
+                                                           map_to_bq_dict(d, 'MICROCAP'))
              | 'wRITING TO SINK microcap' >> bq_sink)
 
 

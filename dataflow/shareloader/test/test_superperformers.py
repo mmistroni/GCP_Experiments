@@ -5,7 +5,7 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
                                                 asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
                                                 get_universe_filter, get_defensive_filter_df,\
                                                 get_enterprise_filter_df, load_bennchmark_data, \
-                                                load_microcap_data
+                                                load_microcap_data, microcap_filter, microcap_sanity_check
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
@@ -52,6 +52,16 @@ def _fetch_performance(sector, ticker, key):
         data.append((k.strftime('%Y-%m-%d'), v))
 
     return (sector, data)
+
+
+def extract_test_data_pipeline(p,test_tickers):
+    return (p
+            | 'Reading Tickers' >> beam.Create(test_tickers)
+            | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
+            | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
+
+            )
+
 
 class ETFHistoryCombineFn(beam.CombineFn):
   def create_accumulator(self):
@@ -288,8 +298,8 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
                          | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
-                         | 'Printing out' >> beam.Map(print)
-                        #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Printing out' >> beam.Map(print)
+                         | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
               | printingSink
@@ -406,12 +416,17 @@ class TestSuperPerformers(unittest.TestCase):
 
     def test_microcap_filter_df(self):
         key = os.environ['FMPREPKEY']
-        bmarkData = load_microcap_data(['NEXE'], key)
+        with TestPipeline() as p:
+            tickers = extract_test_data_pipeline(p, ['META', 'AAPL', 'FB'])
 
-        #self.assertIsNotNone(bmarkData['netIncome'])
-        #self.assertIsNotNone(bmarkData['rsi'])
+            microcap = load_microcap_data(tickers, key)
 
-
-        #bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
-
-        print(bmarkData)
+            microcap | 'print sink' >> beam.Map(print)
+            '''
+            (tickers
+             | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
+             | 'Getting fundamentals microcap' >> beam.ParDo(FundamentalLoader(key))
+             | 'MicroCap Sanity Check' >> beam.Filter(microcap_sanity_check)
+             | 'wRITING TO SINK microcap' >> beam.Map(print)
+             )
+            '''
