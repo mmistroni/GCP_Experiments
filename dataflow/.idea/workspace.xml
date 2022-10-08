@@ -9,8 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -473,7 +474,7 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>75</line>
-          <option name="timeStamp" value="99" />
+          <option name="timeStamp" value="102" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

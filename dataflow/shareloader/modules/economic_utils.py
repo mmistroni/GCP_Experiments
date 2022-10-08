@@ -76,17 +76,15 @@ def get_latest_jobs_statistics():
     sheet = workbook.get_sheet_by_name('Adverts by category YoY')
 
     from pprint import pprint
-    pprint(f'Sheet methods:{dir(sheet)}')
 
     num_cells = sheet.max_column - 1
-    col_vals = [sheet.cell(row=r, column=1) for r in range(2, sheet.max_row)]
-    it_row = col_vals.index('IT / Computing / Software') + 2
+    col_vals = [(r, sheet.cell(row=r, column=2).value) for r in range(1, sheet.max_row) ]
+    it_row_idx = [tpl[0] for tpl in col_vals  if tpl[1] and  'Computing' in tpl[1]][0]
 
-    it_vacancies = sheet.cell_value(it_row + 2, num_cells)
-    a1 = sheet.cell_value(rowx=2, colx=num_cells)
-    a1_as_datetime = datetime.datetime(*xlrd.xldate_as_tuple(a1, workbook.datemode))
+    it_vacancies = sheet.cell(row=it_row_idx, column=sheet.max_column).value
+    asOfDate = sheet.cell(row=3, column=sheet.max_column).value
 
     return {'label' : 'IT-JOB-VACANCIES',
-            'asOfDate' : a1_as_datetime.strftime('%Y-%m-%d'),
+            'asOfDate' : asOfDate.strftime('%Y-%m-%d'),
             'value' : float(it_vacancies)}
 
