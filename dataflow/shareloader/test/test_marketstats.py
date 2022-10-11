@@ -343,5 +343,15 @@ class TestMarketStats(unittest.TestCase):
                | 'map' >> beam.Map(print)
              )
 
+    def test_get_raw_cftc(self):
+        key = os.environ['FMPREPKEY']
+        base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
+        data = requests.get(base_url).json()
+        print(data)
+        res = [dict(date=d['date'],changeInNetPosition=d['changeInNetPosition'],marketSentiment=d['marketSentiment'],
+                    marketSituation=d['marketSituation']) for d  in data]
+        from pprint import pprint
+        pprint(res[0:4])
+
 if __name__ == '__main__':
     unittest.main()
