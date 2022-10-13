@@ -28,9 +28,9 @@ ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC
 
 def create_bigquery_ppln_cftc(p):
     logging.info('Querying CFTC HISTORIC')
-    edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
-WHERE LABEL LIKE '%CFTC%' ORDER BY PARSE_DATE("%F", AS_OF_DATE) ASC
-LIMIT 5 
+    edgar_sql = """SELECT * FROM (SELECT AS_OF_DATE, LABEL, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
+WHERE LABEL LIKE '%CFTC%' ORDER BY PARSE_DATE("%F", AS_OF_DATE) DESC
+LIMIT 5 ) ORDER BY AS_OF_DATE ASC
   """
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | 'Reading-CFTC historic' >> beam.io.Read(

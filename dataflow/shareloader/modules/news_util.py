@@ -45,6 +45,7 @@ def get_news_from_finviz(tickers):
         url = f'https://finviz.com/quote.ashx?t={ticker}'
         r = requests.get(url, headers=headers)
         html = BeautifulSoup(r.content, 'html.parser')
+        logging.info(f'Html is:{html}')
         news_table = html.find_all('table', {'id': 'news-table'})
         if news_table:
             news_tables[ticker] = news_table[0]
