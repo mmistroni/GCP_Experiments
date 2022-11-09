@@ -30,7 +30,7 @@ class EmailSender(beam.DoFn):
 
 
     def process(self, element):
-        logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        logging.info('Attepmting to send emamil to:{} at {}'.format(self.recipients, datetime.now()))
         template = "<html><body><table border='1' cellspacing='0' cellpadding='0' align='center'>" + \
          "<th>Ticker</th><th>Counts</th><th>ShareIncrease</th><th>TransactionPrice</th><th>TotalVolume</th><th>FilingURL</th>{}</table></body></html>"
 

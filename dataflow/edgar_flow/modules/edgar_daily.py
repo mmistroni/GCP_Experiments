@@ -30,7 +30,8 @@ class EmailSender(beam.DoFn):
 
 
     def process(self, element):
-        logging.info('Attepmting to send emamil to:{}'.format(self.recipients))
+        logging.info('Attepmting to send emamil to:{} at {}'.format(self.recipients, datetime.now()))
+
         template = "<html><body><table><th>PeriodOfReport</th><th>Cusip</th><th>Ticker</th><th>Counts</th>{}</table></body></html>"
         content = template.format(element)
         print('Sending \n {}'.format(content))
@@ -44,11 +45,13 @@ class EmailSender(beam.DoFn):
         for pers in personalizations:
             message.add_personalization(pers)
 
+        return
+        '''
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
-
+        '''
 
 
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
@@ -160,7 +163,7 @@ def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
     known_args, pipeline_args = parser.parse_known_args(argv)
 
-    timeout_secs = 14400
+    timeout_secs = 18400
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
     pipeline_options = XyzOptions()
