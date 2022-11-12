@@ -40,8 +40,8 @@ LIMIT 5 ) ORDER BY AS_OF_DATE ASC
 
 def create_bigquery_manufpmi_bq(p):
     edgar_sql = """SELECT DISTINCT LABEL,  VALUE, 
-                CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
-                  EXTRACT (MONTH FROM DATE(AS_OF_DATE))) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+                DATE(CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
+                  EXTRACT (MONTH FROM DATE(AS_OF_DATE)), '-01')) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
                 WHERE LABEL = 'MANUFACTURING-PMI' 
                 GROUP BY LABEL, VALUE, AS_OF_DATE
                 ORDER BY LABEL, AS_OF_DATE DESC
@@ -155,7 +155,7 @@ class ParseManufacturingPMI(beam.DoFn):
 
 
 
-class ParsePMI(beam.DoFn):
+class ParseNonManufacturingPMI(beam.DoFn):
     '''
     Parses non manufacturing PMI
     '''

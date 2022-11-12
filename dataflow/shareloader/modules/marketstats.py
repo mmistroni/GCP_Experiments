@@ -26,7 +26,7 @@ import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2, get_vix, ParsePMI, get_all_us_stocks2,\
+                            combine_movers,get_prices2, get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
@@ -112,8 +112,8 @@ class XyzOptions(PipelineOptions):
 
 def run_pmi(p):
     return (p | 'startstart' >> beam.Create(['20210101'])
-                    | 'pmi' >>   beam.ParDo(ParsePMI())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
+                    | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'NON-MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
 def run_putcall_ratio(p):
@@ -260,8 +260,6 @@ def run(argv=None, save_main_session=True):
 
         run_weekday = date.today().weekday()
 
-
-
         logging.info('Run pmi')
         
         pmi_res = run_pmi(p)
@@ -282,7 +280,7 @@ def run(argv=None, save_main_session=True):
         mmomentum_res | 'mm to sink' >> bq_sink
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
-        #senate_disc | 'sd to sink' >> bq_sink
+        senate_disc | 'sd to sink' >> bq_sink
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")

@@ -5,7 +5,7 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
-from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParsePMI,PutCallRatio, get_vix,\
+from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParseNonManufacturingPMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum, get_senate_disclosures
@@ -68,7 +68,7 @@ class TestMarketStats(unittest.TestCase):
 
         with TestPipeline() as p:
                  (p | 'start' >> beam.Create(['20210101'])
-                    | 'pmi' >>   beam.ParDo(ParsePMI())
+                    | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
                     | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
                     | beam.Map(print)
                     #| 'out' >> sink
