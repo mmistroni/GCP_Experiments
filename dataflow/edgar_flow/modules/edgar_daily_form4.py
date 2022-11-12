@@ -191,7 +191,7 @@ def run(argv=None, save_main_session=True):
         form4 = filter_form_4(lines)
         enhanced_data = enhance_form_4(form4)
         logging.info('Now sendig meail....')
-        send_email(enhanced_data, pipeline_options)
+        #send_email(enhanced_data, pipeline_options)
         write_to_form4_bucket(enhanced_data, pipeline_options)
         write_to_form4_bq(enhanced_data)
 
