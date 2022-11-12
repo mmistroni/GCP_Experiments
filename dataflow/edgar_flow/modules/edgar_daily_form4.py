@@ -52,7 +52,7 @@ class EmailSender(beam.DoFn):
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
-        
+
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
 form_type = '4'
 
