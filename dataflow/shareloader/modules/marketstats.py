@@ -325,7 +325,7 @@ def run(argv=None, save_main_session=True):
 
         pmi_hist = run_prev_dates_statistics_manuf_pmi(p)
 
-        non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi()
+        non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
 
 
