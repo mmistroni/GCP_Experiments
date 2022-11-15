@@ -227,7 +227,7 @@ def run_prev_dates_statistics_manuf_pmi(p):
     pmi_ppln = (create_bigquery_manufpmi_bq(p)
                )
 
-    return pmi
+    return pmi_ppln
 
 def run_prev_dates_statistics_non_manuf_pmi(p):
     # Need to amend the query to order by asofdate sc
