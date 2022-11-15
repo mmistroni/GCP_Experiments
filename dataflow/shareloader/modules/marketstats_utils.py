@@ -55,12 +55,12 @@ def create_bigquery_manufpmi_bq(p):
 
 def create_bigquery_nonmanuf_pmi_bq(p):
     edgar_sql = """SELECT DISTINCT LABEL,  VALUE, 
-                CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
-                  EXTRACT (MONTH FROM DATE(AS_OF_DATE))) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+                 DATE(CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
+                  EXTRACT (MONTH FROM DATE(AS_OF_DATE)), '-01')) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
                 WHERE LABEL = 'NON-MANUFACTURING-PMI' 
                 GROUP BY LABEL, VALUE, AS_OF_DATE
                 ORDER BY LABEL, AS_OF_DATE DESC
-                LIMIT 5
+                LIMIT 7
       """
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | 'Reading-PMI historic-NONMANUF' >> beam.io.Read(
