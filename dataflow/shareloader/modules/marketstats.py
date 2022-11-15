@@ -30,7 +30,7 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
-                            get_senate_disclosures
+                            get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -168,9 +168,6 @@ def run_cftc_spfutures(p, key):
                     | 'remap cftcspfutures' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'CFTC-SPFUTURES', 'VALUE' : str(d)})
             )
 
-
-
-
 def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
     asOfDate = (date.today() - BDay(1)).date()
@@ -209,10 +206,6 @@ def run_exchange_pipeline(p, key, exchange):
             )
 
 
-def see_what_is_inside(input):
-    logging.info('---- we got:{}'.format(input))
-
-
 def run_prev_dates_statistics(p) :
     # Need to amend the query to order by asofdate sc
     nysebqp = ( create_bigquery_ppln(p, 'NEW YORK STOCK EXCHANGE_MARKET BREADTH')
@@ -220,6 +213,30 @@ def run_prev_dates_statistics(p) :
     )
     
     return nysebqp
+
+
+def run_prev_dates_statistics_cftc(p):
+    # Need to amend the query to order by asofdate sc
+    cftc_ppln = (create_bigquery_ppln_cftc(p)
+               )
+
+    return cftc_ppln
+
+def run_prev_dates_statistics_manuf_pmi(p):
+    # Need to amend the query to order by asofdate sc
+    pmi_ppln = (create_bigquery_manufpmi_bq(p)
+               )
+
+    return pmi
+
+def run_prev_dates_statistics_non_manuf_pmi(p):
+    # Need to amend the query to order by asofdate sc
+    npmi_ppln = (create_bigquery_nonmanuf_pmi_bq(p)
+               )
+
+    return npmi_ppln
+
+
 
 
 def run_prev_dates_statistics_cftc(p):
@@ -244,7 +261,6 @@ def run(argv=None, save_main_session=True):
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
         
         destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
-        donefile = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.done'
 
         logging.info('====== Destination is :{}'.format(destination))
         logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
@@ -307,6 +323,12 @@ def run(argv=None, save_main_session=True):
 
         cftc_historical = run_prev_dates_statistics_cftc(p)
 
+        pmi_hist = run_prev_dates_statistics_manuf_pmi(p)
+
+        non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi()
+
+
+
         staticStart_key = staticStart | 'Add -2' >> beam.Map(lambda d: (-2, d))
         econCalendarKey = econ_calendar | 'Add -1' >> beam.Map(lambda d: (-1, d))
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
@@ -324,9 +346,15 @@ def run(argv=None, save_main_session=True):
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
+        pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
+
+        non_manuf_pmi_hist_key = non_pmi_hist | 'Add 30' >> beam.Map(lambda d: (30, d))
+
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, static_key, stats_key,
+                        pmi_hist_key, non_manuf_pmi_hist_key
+
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
