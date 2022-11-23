@@ -369,7 +369,7 @@ class TestSuperPerformers(unittest.TestCase):
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']
         # Need to find currentRatio, dividendPaid, peRatio, priceToBookRatio
-        for ticker in ['TX', 'SU']:
+        for ticker in ['NOAH']:
             print(f'------------{ticker}----------------')
             bmarkData = load_bennchmark_data(ticker, key)
             self.assertIsNotNone(bmarkData['netIncome'])
@@ -386,9 +386,26 @@ class TestSuperPerformers(unittest.TestCase):
                                    ):
                 print(merged.to_string(index=False))
 
+    def get_universe_filter_df(self):
+
+        filters =  {'marketCap' : 'marketCap  > 300000000',
+            'avgVolume' :'avgVolume > 200000' ,
+            'price' :  'price > 10',
+            'eps_growth_this_year': 'eps_growth_this_year>  0.2',
+            'grossProfitMargin'  :'grossProfitMargin > 0' ,
+             'priceAvg20' : 'price > priceAvg20',
+             'priceAvg50' : 'price > priceAvg50',
+             'priceAvg200': 'price > priceAvg200',
+             'net_sales_qtr_over_qtr'  : 'net_sales_qtr_over_qtr > 0.2',
+             'returnOnEquity'  : 'returnOnEquity> 0',
+             'eps_growth_next_year' : 'eps_growth_next_year > 0',
+             'eps_growth_qtr_over_qtr' : 'eps_growth_qtr_over_qtr > 0.2'
+            }
+        return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
+
     def test_enterprisee_filter_df(self):
         key = os.environ['FMPREPKEY']
-        bmarkData = load_bennchmark_data('SU', key)
+        bmarkData = load_bennchmark_data('NOAH', key)
 
         #self.assertIsNotNone(bmarkData['netIncome'])
         #self.assertIsNotNone(bmarkData['rsi'])
@@ -410,6 +427,54 @@ class TestSuperPerformers(unittest.TestCase):
                                'display.precision', 3,
                                ):
             print(merged.to_string(index=False))
+
+
+    def test_stock_universe__filter_df(self):
+        from shareloader.modules.superperf_metrics import get_fundamental_parameters, get_fundamental_parameters_qtr, \
+            get_financial_ratios, get_analyst_estimates, get_asset_play_parameters, \
+            compute_rsi, get_price_change, get_income_benchmark, \
+            get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
+
+        ## TODO
+        key = os.environ['FMPREPKEY']
+        ticker = 'NKE'
+        fundamental_data = get_fundamental_parameters(ticker, key)
+        fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
+        fundamental_data.update(fundamental_qtr)
+        financial_ratios = get_financial_ratios(ticker, key)
+        fundamental_data.update(financial_ratios)
+
+        updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
+        descr_and_tech = get_descriptive_and_technical(ticker, key)
+        updated_dict.update(descr_and_tech)
+        asset_play_dict = get_asset_play_parameters(ticker, key)
+        updated_dict.update(asset_play_dict)
+
+        piotrosky_score = calculate_piotrosky_score(key, ticker)
+        latest_rsi = compute_rsi(ticker, key)
+        updated_dict['piotroskyScore'] = piotrosky_score
+        updated_dict['rsi'] = latest_rsi
+
+        priceChangeDict = get_price_change(ticker, key)
+        updated_dict.update(priceChangeDict)
+        updated_dict['stock_buy_price'] = updated_dict['priceAvg200'] * .8
+        updated_dict['stock_sell_price'] = updated_dict['priceAvg200'] * .7
+        updated_dict['earningYield'] = updated_dict.get('netIncome',0) / updated_dict['marketCap']
+        updated_dict_df = pd.DataFrame(list(updated_dict.items()), columns=['key', 'value'])
+
+        universe_filter_df = self.get_universe_filter_df()
+        merged = pd.merge(universe_filter_df, updated_dict_df, on='key', how='left')
+
+
+
+
+        with pd.option_context('display.max_rows', None,
+                               'display.max_columns', 5,
+                               'display.precision', 3,
+                               ):
+            print(merged.to_string(index=False))
+
+
 
 
     ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
