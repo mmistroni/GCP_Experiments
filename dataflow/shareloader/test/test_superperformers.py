@@ -9,7 +9,8 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
-                get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
+                get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
+                get_institutional_holders_quote
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -495,3 +496,20 @@ class TestSuperPerformers(unittest.TestCase):
              | 'wRITING TO SINK microcap' >> beam.Map(print)
              )
             '''
+
+    def test_institutional_investor_ownership(self):
+        from datetime import date
+        key = os.environ['FMPREPKEY']
+        symbol = 'NOAH'
+        url = f'https://financialmodelingprep.com/api/v4/institutional-ownership/symbol-ownership?symbol={symbol}&includeCurrentQuarter=false&apikey={key}'
+        result = requests.get(url).json()
+        from pprint import pprint
+        pprint(result)
+
+        quote_bench = get_quote_benchmark(symbol, key)
+        print(f'from quote bench we got:{quote_bench}')
+
+        inst_quote = get_institutional_holders_quote(symbol, key)
+        print(f'From ist holders we got:{inst_quote}')
+
+

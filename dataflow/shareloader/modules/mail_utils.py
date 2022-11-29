@@ -137,6 +137,18 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <li>Idea is that these are strong companies who are out of favour with investors nowadays</li>
                                 </ul>
                             </li>
+                            <li>MICROCAP: Criteria
+                                <ul>
+                                    <li>Base Criteria of Microcap Stocks</li>
+                                    <li>marketCap <= 200M</li>
+                                    <li>No Dividend Paid</li>
+                                    <li>Gross Proft Margin > 50%</li>
+                                    <li>Net Proft Margin > 10%</li>
+                                    <li>Current Ratio > 2</li>
+                                    <li>Avg Volume > 10000</li>
+                                    <li>52 Week Change between 0 and 0.5</li>
+                                </ul>
+                            </li>
                         </uls>
                         <br>
                         <br>
