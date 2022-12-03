@@ -231,9 +231,15 @@ def get_yearly_financial_ratios(ticker, key):
 
 
 def filter_historical(statements, asOfDate):
-    print('Filtering for date <= {}'.format(asOfDate))
-    res = [stmnt for stmnt in statements if datetime.strptime(stmnt['date'], '%Y-%m-%d').date() <= asOfDate]
-    return res
+    checkDate = asOfDate or date.today()
+    res = [stmnt for stmnt in statements if datetime.strptime(stmnt['dateReported'], '%Y-%m-%d').date() <= checkDate]
+    ## massaging data
+    mapped_data = map(lambda d: (datetime.strptime(d['dateReported'], '%Y-%m-%d').date(), d['shares']), res)
+    from collections import defaultdict
+    holdersDict = defaultdict(list)
+    for asOfDate, shares in mapped_data:
+        holdersDict[asOfDate].append(shares)
+    return holdersDict
 
 def get_fundamental_parameters_qtr(ticker,key):
     try :
@@ -419,15 +425,17 @@ def get_shares_float(ticker, key):
     return res[0]['floatShares'] if res else 0
 
 
+
+
+
 def get_institutional_holders_quote(ticker, key, asOfDate=None):
     # we need to be smarter here. only filter for results whose date is lessorequal the current date.
     res = requests.get(
         'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
-    if asOfDate:
-        iholders = filter_historical(res, asOfDate)
-    else:
-        iholders = res
-    return {'institutionalHoldings': sum(d['shares'] for d in iholders)}
+    holdersDict = filter_historical(res, asOfDate)
+    sortedItems = sorted(holdersDict.items(), key=lambda tpl: tpl[0], reverse=True)
+    newest = sum(sortedItems[0][1])
+    return {'institutionalHoldings': newest}
 
 
 def get_institutional_holders_percentage(ticker, exchange):

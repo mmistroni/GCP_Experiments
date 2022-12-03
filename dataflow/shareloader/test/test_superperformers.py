@@ -10,7 +10,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
-                get_institutional_holders_quote
+                get_institutional_holders_quote, filter_historical
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -23,7 +23,6 @@ import pandas as pd
 from collections import OrderedDict
 from datetime import date
 import logging
-
 
 def generate_date_headers():
     today = date.today()
@@ -497,19 +496,28 @@ class TestSuperPerformers(unittest.TestCase):
              )
             '''
 
-    def test_institutional_investor_ownership(self):
-        from datetime import date
-        key = os.environ['FMPREPKEY']
-        symbol = 'NOAH'
-        url = f'https://financialmodelingprep.com/api/v4/institutional-ownership/symbol-ownership?symbol={symbol}&includeCurrentQuarter=false&apikey={key}'
-        result = requests.get(url).json()
-        from pprint import pprint
-        pprint(result)
 
-        quote_bench = get_quote_benchmark(symbol, key)
-        print(f'from quote bench we got:{quote_bench}')
+    def test_filter_historical(self):
+        from datetime import date, datetime
+        from collections import defaultdict
+        testData = [ {  "holder" : "FIL LTD",
+                      "shares" : 4336424,
+                      "dateReported" : "2022-09-30",
+                      "change" : -12387
+                    }, {
+                      "holder" : "DAVIS SELECTED ADVISERS",
+                      "shares" : 830319,
+                      "dateReported" : "2022-06-30",
+                      "change" : -29778
+                    } ]
 
-        inst_quote = get_institutional_holders_quote(symbol, key)
-        print(f'From ist holders we got:{inst_quote}')
 
+
+        result = filter_historical(testData, None)
+
+        expectedResult = defaultdict(list)
+        expectedResult[datetime.strptime("2022-09-30", '%Y-%m-%d').date()].append(4336424)
+        expectedResult[datetime.strptime("2022-06-30", '%Y-%m-%d').date()].append(830319)
+
+        self.assertEquals(expectedResult, result)
 
