@@ -155,12 +155,20 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             logging.info('Getting historicla prices')
             hist_prices = get_fmprep_historical(ticker, key)
             priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
-
             descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
             descriptive_dict['priceAvg20'] = priceAvg20
             descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
             descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
             descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
+
+            logging.info('Getting Institutional Holdings Data')
+            descriptive_dict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
+
+            if descriptive_dict.get('sharesOutstanding') is not None and descriptive_dict.get('sharesOutstanding') > 0:
+                if descriptive_dict['instOwnership'] > 0 and descriptive_dict['sharesOutstanding'] > 0:
+                    pcnt = descriptive_dict['instOwnership'] / descriptive_dict['sharesOutstanding']
+                    descriptive_dict['institutionalOwnershipPercentage'] = pcnt
+
             return descriptive_dict
         else:
             d=  dict((k, -1) for k in keys )
@@ -441,7 +449,7 @@ def get_institutional_holders_quote(ticker, key, asOfDate=None):
 def get_institutional_holders_percentage(ticker, exchange):
     import requests
     import re
-    print('GEttign ihp for exchange:{}'.format(exchange))
+    logging.info('GEttign ihp for exchange:{}'.format(exchange))
 
     str1 = requests.get(
         'https://www.marketbeat.com/stocks/{}/{}/institutional-ownership/'.format(exchange, ticker.upper())).text

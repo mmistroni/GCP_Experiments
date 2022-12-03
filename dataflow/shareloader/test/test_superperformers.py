@@ -521,3 +521,28 @@ class TestSuperPerformers(unittest.TestCase):
 
         self.assertEquals(expectedResult, result)
 
+    def test_get_quote_benchmark(self):
+        key = os.environ['FMPREPKEY']
+
+        from datetime import date, datetime
+        from collections import defaultdict
+        testData = [ {  "holder" : "FIL LTD",
+                      "shares" : 4336424,
+                      "dateReported" : "2022-09-30",
+                      "change" : -12387
+                    }, {
+                      "holder" : "DAVIS SELECTED ADVISERS",
+                      "shares" : 830319,
+                      "dateReported" : "2022-06-30",
+                      "change" : -29778
+                    } ]
+
+
+
+        result = filter_historical(testData, None)
+
+        expectedResult = defaultdict(list)
+        expectedResult[datetime.strptime("2022-09-30", '%Y-%m-%d').date()].append(4336424)
+        expectedResult[datetime.strptime("2022-06-30", '%Y-%m-%d').date()].append(830319)
+
+        self.assertEquals(expectedResult, result)

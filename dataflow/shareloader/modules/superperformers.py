@@ -277,7 +277,7 @@ def canslim_filter(input_dict):
          and (input_dict.get('eps_growth_next_year', 0) > 0.2) \
     and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict.get('net_sales_qtr_over_qtr',0) > 0.2) \
     and (input_dict.get('eps_growth_past_5yrs',0) > 0.2) and (input_dict.get('returnOnEquity',0) > 0) \
-    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalHoldingsPercentage', 0) > 0.3) \
+    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3) \
     and (input_dict.get('price',0) > input_dict.get('priceAvg20', 0)) and (input_dict.get('price',0) > input_dict.get('priceAvg50',0)) \
     and (input_dict.get('price', 0) > input_dict.get('priceAvg200',0)) and (input_dict.get('sharesOutstanding',0) > 50000000)
 
@@ -367,9 +367,6 @@ def get_enterprise_filter_df():
                    'priceToBookRatio' : 'priceToBookRatio < 1.5',
                    'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
     return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
-
-
-
 
 def out_of_favour_filter(input_dict):
     return (input_dict['price'] <=  input_dict['priceAvg200'])
