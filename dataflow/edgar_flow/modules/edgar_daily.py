@@ -46,9 +46,9 @@ class EmailSender(beam.DoFn):
             message.add_personalization(pers)
 
         sg = SendGridAPIClient(self.key)
-
+        logging.info('Sending message,..,,.')
         response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        logging.info(f'Message sent {response.status_code}, {response.body}, {response.headers}')
 
 
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
