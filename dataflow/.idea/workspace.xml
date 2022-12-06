@@ -9,7 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/sector_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sector_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -478,6 +479,16 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
           <line>440</line>
           <option name="timeStamp" value="128" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>333</line>
+          <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>330</line>
+          <option name="timeStamp" value="133" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

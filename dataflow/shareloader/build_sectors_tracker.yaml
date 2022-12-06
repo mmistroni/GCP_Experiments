@@ -10,7 +10,7 @@ steps:
       , '--file=./dataflow/shareloader/Dockerfile_sectors'
       , './dataflow/shareloader/'
       ]
-    id: 'build-marketstats-image'
+    id: 'build-sectors-image'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 

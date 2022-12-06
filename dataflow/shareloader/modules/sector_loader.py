@@ -34,7 +34,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--key')
         parser.add_argument('--sendgridkey')
 
-
+#https://www.tradingview.com/chart/AAPL/pmHMR643-Investors-Holy-Grail-The-Business-Economic-Cycle/?utm_source=Weekly&utm_medium=email&utm_campaign=TradingView+Weekly+188+%28EN%29
 def run_my_pipeline(p, fmprepkey):
     return (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
      | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], fmprepkey))
