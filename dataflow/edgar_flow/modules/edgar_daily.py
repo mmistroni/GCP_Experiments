@@ -45,13 +45,10 @@ class EmailSender(beam.DoFn):
         for pers in personalizations:
             message.add_personalization(pers)
 
-        return
-        '''
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
         print(response.status_code, response.body, response.headers)
-        '''
 
 
 bucket_destination = 'gs://mm_dataflow_bucket/outputs/daily/edgar_{}.csv'
