@@ -1,36 +1,21 @@
 from __future__ import absolute_import
 
-import argparse
 import logging
-import re
 from pandas.tseries.offsets import BDay
-from bs4 import BeautifulSoup# Move to aJob
-import requests
 from itertools import chain
 from apache_beam.io.gcp.internal.clients import bigquery
 
-import requests
-from past.builtins import unicode
-from datetime import datetime
 import apache_beam as beam
-from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-import re, requests
 from datetime import datetime, date
-from collections import OrderedDict
-import requests
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
 from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
                             combine_movers,get_prices2, get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
-                            get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq
+                            get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
+                            get_sector_rotation_indicator
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -157,10 +142,15 @@ def run_senate_disclosures(p, key):
 
 def run_market_momentum(p, key):
     return (p | 'start run_mm' >> beam.Create(['20210101'])
-                    | 'mm' >>   beam.Map(lambda d:  get_market_momentum(key))
+                    | 'mm' >>   beam.Map(lambda d:  get_sector_rotation_indicator(key))
                     | 'remap mm' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
             )
 
+def run_growth_vs_value(p, key):
+    return (p | 'start run_mm' >> beam.Create(['20210101'])
+                    | 'gv' >>   beam.Map(lambda d:  get_market_momentum(key))
+                    | 'remap mm' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
+            )
 
 def run_cftc_spfutures(p, key):
     return (p | 'start_cftc' >> beam.Create(['20210101'])
@@ -295,6 +285,9 @@ def run(argv=None, save_main_session=True):
         mmomentum_res = run_market_momentum(p, iexapi_key)
         mmomentum_res | 'mm to sink' >> bq_sink
 
+        growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
+        growth_vs_val_res | 'gv to sink' >> bq_sink
+
         senate_disc = run_senate_disclosures(p, iexapi_key)
 
         logging.info('Run NYSE..')
@@ -345,6 +338,9 @@ def run(argv=None, save_main_session=True):
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
+        growth_vs_val_key = growth_vs_val_res | 'Add 14'>> beam.Map(lambda d: (14, d))
+
+
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
 
         non_manuf_pmi_hist_key = non_pmi_hist | 'Add 30' >> beam.Map(lambda d: (30, d))
@@ -352,8 +348,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, static_key, stats_key,
-                        pmi_hist_key, non_manuf_pmi_hist_key
-
+                        pmi_hist_key, non_manuf_pmi_hist_key, growth_vs_val_key
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())

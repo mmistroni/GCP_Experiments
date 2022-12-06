@@ -17,7 +17,7 @@ def create_bigquery_ppln(p, label):
     edgar_sql = """SELECT AS_OF_DATE, LABEL, VALUE  FROM `datascience-projects.gcp_shareloader.market_stats` 
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
 AND LABEL IN ('NASDAQ GLOBAL SELECT_MARKET BREADTH',
-  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' , 'MARKET_MOMENTUM') 
+  'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' , 'MARKET_MOMENTUM', 'SECTOR ROTATION(GROWTH/VALUE)') 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
@@ -318,9 +318,20 @@ def get_skew_index():
     except Exception as e:
         logging.info(f'Excepiton in getting skew{str(e)}')
 
+def get_sector_rotation_indicator(key):
+    growth = 'IVW'
+    value = 'IVE'
+    hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'
+    lastDaysGrowth = requests.get(hist_url.format(growth, key)).json().get('historical')[0:125]
+    growthClose = [d['close'] for d in lastDaysGrowth]
+    lastDaysValue = requests.get(hist_url.format(value, key)).json().get('historical')[0:125]
+    valueClose = [d['close'] for d in lastDaysValue]
+    ratios = [growth/value for growth, value in zip(growthClose, valueClose)]
 
+    dayavg = statistics.mean(ratios)
+    latest = ratios[0]
 
-
+    return f'|125MVGAVG:{dayavg}|LATEST:{latest}'
 
 
 def get_prices(ticker, iexapikey):

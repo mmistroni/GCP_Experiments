@@ -9,8 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,7 +218,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_sector_rotation_indicator">
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_sector_rotation_indicator" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_sector_rotation_indicator&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_superperformers.TestSuperPerformers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -229,20 +244,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_enterprisee_filter_df&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -289,19 +290,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_universe__filter_df" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_investor_ownership" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_filter_historical" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_sector_rotation_indicator" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_sector_rotation_indicator" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_filter_historical" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_investor_ownership" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_universe__filter_df" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_enterprisee_filter_df" />
       </list>
     </recent_temporary>
   </component>
@@ -462,7 +463,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats.py</url>
-          <line>46</line>
+          <line>31</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

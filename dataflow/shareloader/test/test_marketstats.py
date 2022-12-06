@@ -8,7 +8,7 @@ from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParseNonManufacturingPMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
-                        get_market_momentum, get_senate_disclosures
+                        get_market_momentum, get_senate_disclosures, get_sector_rotation_indicator
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
@@ -352,6 +352,11 @@ class TestMarketStats(unittest.TestCase):
                     marketSituation=d['marketSituation']) for d  in data]
         from pprint import pprint
         pprint(res[0:4])
+
+    def test_get_sector_rotation_indicator(self):
+        key = os.environ['FMPREPKEY']
+
+        print(get_sector_rotation_indicator(key))
 
 if __name__ == '__main__':
     unittest.main()
