@@ -147,9 +147,9 @@ def run_market_momentum(p, key):
             )
 
 def run_growth_vs_value(p, key):
-    return (p | 'start run_mm' >> beam.Create(['20210101'])
+    return (p | 'start run_gv' >> beam.Create(['20210101'])
                     | 'gv' >>   beam.Map(lambda d:  get_market_momentum(key))
-                    | 'remap mm' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
+                    | 'remap mmgv' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
             )
 
 def run_cftc_spfutures(p, key):
