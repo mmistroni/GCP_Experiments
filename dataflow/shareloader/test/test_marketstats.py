@@ -361,7 +361,6 @@ class TestMarketStats(unittest.TestCase):
 
         with TestPipeline() as p:
             (p | 'start run_mm' >> beam.Create(['20210101'])
-             | 'mm' >> beam.Map(lambda d: get_market_momentum(key))
              | 'prnt' >> beam.Map(print)
              )
 
