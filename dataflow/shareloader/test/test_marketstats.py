@@ -12,7 +12,10 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
-                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn
+                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
+                                            run_growth_vs_value,run_market_momentum
+from shareloader.modules.sector_loader import run_my_pipeline, XyzOptions
+
 from itertools import chain
 from bs4 import  BeautifulSoup
 import requests
@@ -336,7 +339,6 @@ class TestMarketStats(unittest.TestCase):
 
     def test_compute_etf_historical(self):
         key = os.environ['FMPREPKEY']
-        from shareloader.modules.sector_loader import run_my_pipeline, XyzOptions
 
         with TestPipeline() as p:
             (p |run_my_pipeline(p, key)
@@ -355,8 +357,13 @@ class TestMarketStats(unittest.TestCase):
 
     def test_get_sector_rotation_indicator(self):
         key = os.environ['FMPREPKEY']
+        sink = beam.Map(print)
 
-        print(get_sector_rotation_indicator(key))
+        with TestPipeline() as p:
+            (p | 'start run_mm' >> beam.Create(['20210101'])
+             | 'mm' >> beam.Map(lambda d: get_market_momentum(key))
+             | 'prnt' >> beam.Map(print)
+             )
 
 if __name__ == '__main__':
     unittest.main()

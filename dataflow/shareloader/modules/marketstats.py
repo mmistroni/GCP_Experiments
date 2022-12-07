@@ -142,13 +142,13 @@ def run_senate_disclosures(p, key):
 
 def run_market_momentum(p, key):
     return (p | 'start run_mm' >> beam.Create(['20210101'])
-                    | 'mm' >>   beam.Map(lambda d:  get_sector_rotation_indicator(key))
+                    | 'mm' >>   beam.Map(lambda d:  get_market_momentum(key))
                     | 'remap mm' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
             )
 
 def run_growth_vs_value(p, key):
     return (p | 'start run_gv' >> beam.Create(['20210101'])
-                    | 'gv' >>   beam.Map(lambda d:  get_market_momentum(key))
+                    | 'gv' >>   beam.Map(lambda d: get_sector_rotation_indicator (key))
                     | 'remap mmgv' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
             )
 
@@ -286,7 +286,7 @@ def run(argv=None, save_main_session=True):
         mmomentum_res | 'mm to sink' >> bq_sink
 
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
-        growth_vs_val_res | 'gv to sink' >> bq_sink
+        #growth_vs_val_res | 'gv to sink' >> bq_sink
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
 
