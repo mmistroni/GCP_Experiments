@@ -1,6 +1,5 @@
 import os
 import unittest
-from shareloader.modules.marketstats_utils import get_all_stocks
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
@@ -12,9 +11,8 @@ from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, P
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
-                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
-                                            run_growth_vs_value,run_market_momentum
-from shareloader.modules.sector_loader import run_my_pipeline, XyzOptions
+                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn
+from shareloader.modules.sector_loader import run_my_pipeline
 
 from itertools import chain
 from bs4 import  BeautifulSoup
