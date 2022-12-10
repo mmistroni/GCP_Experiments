@@ -78,8 +78,9 @@ class TestMarketStats(unittest.TestCase):
     def test_run_manuf_pmi(self):
         key = os.environ['FMPREPKEY']
         sink = Check(is_not_empty())
+        from apache_beam.options.pipeline_options import PipelineOptions
 
-        with TestPipeline() as p:
+        with TestPipeline(options=PipelineOptions()) as p:
                  (p | 'start' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParseManufacturingPMI())
                     | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})

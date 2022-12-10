@@ -286,7 +286,7 @@ def run(argv=None, save_main_session=True):
         mmomentum_res | 'mm to sink' >> bq_sink
 
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
-        #growth_vs_val_res | 'gv to sink' >> bq_sink
+        growth_vs_val_res | 'gv to sink' >> bq_sink
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
 

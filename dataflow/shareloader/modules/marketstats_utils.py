@@ -217,7 +217,7 @@ def get_market_momentum(key):
 
     status = 'FEAR' if latest < day125avg else 'GREED'
 
-    return [f'S&PClose:{latest}|125MVGAVG:{day125avg}|STATUS:{status}']
+    return [f'S&PClose:(125MVGAVG:{day125avg})|{latest}|STATUS:{status}']
 
 def get_cftc_spfutures(key):
     ''' wE NEED TO ADD THE following query to the marketstats
