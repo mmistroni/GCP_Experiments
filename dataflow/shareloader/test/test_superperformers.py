@@ -403,6 +403,24 @@ class TestSuperPerformers(unittest.TestCase):
             }
         return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
 
+    def get_canslim_filter_df(self):
+        filters =  {
+            'avgVolume' :'avgVolume > 200000' ,
+            'eps_growth_this_year': 'eps_growth_this_year>  0.2',
+            'eps_growth_next_year': 'eps_growth_next_year>  0.2',
+            'eps_growth_qtr_over_qtr': 'eps_growth_qtr_over_qtr > 0.2',
+            'net_sales_qtr_over_qtr': 'net_sales_qtr_over_qtr > 0.2',
+            'eps_growth_past_5yrs': 'eps_growth_past_5yrs > 0.2',
+            'returnOnEquity'  : 'returnOnEquity > 0' ,
+            'grossProfitMargin': 'grossProfitMargin > 0',
+            'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage > 0.3',
+             'priceAvg20' : 'price > priceAvg20',
+             'priceAvg50' : 'price > priceAvg50',
+             'priceAvg200': 'price > priceAvg200',
+             'sharesOutstanding'  : 'sharesOutstanding > 50000000'
+            }
+        return pd.DataFrame(list(filters.items()), columns=['key', 'function'])
+
     def test_enterprisee_filter_df(self):
         key = os.environ['FMPREPKEY']
         bmarkData = load_bennchmark_data('NOAH', key)
@@ -546,3 +564,46 @@ class TestSuperPerformers(unittest.TestCase):
         expectedResult[datetime.strptime("2022-06-30", '%Y-%m-%d').date()].append(830319)
 
         self.assertEquals(expectedResult, result)
+
+    def test_canslim_filter_df(self):
+        from shareloader.modules.superperf_metrics import get_fundamental_parameters, get_fundamental_parameters_qtr, \
+            get_financial_ratios, get_analyst_estimates, get_asset_play_parameters, \
+            compute_rsi, get_price_change, get_income_benchmark, \
+            get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
+
+        key = os.environ['FMPREPKEY']
+        ticker = 'COLM'
+        fundamental_data = get_fundamental_parameters(ticker, key)
+        fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
+        fundamental_data.update(fundamental_qtr)
+        financial_ratios = get_financial_ratios(ticker, key)
+        fundamental_data.update(financial_ratios)
+
+        updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
+        descr_and_tech = get_descriptive_and_technical(ticker, key)
+        updated_dict.update(descr_and_tech)
+        asset_play_dict = get_asset_play_parameters(ticker, key)
+        updated_dict.update(asset_play_dict)
+
+        piotrosky_score = calculate_piotrosky_score(key, ticker)
+        latest_rsi = compute_rsi(ticker, key)
+        updated_dict['piotroskyScore'] = piotrosky_score
+        updated_dict['rsi'] = latest_rsi
+
+        priceChangeDict = get_price_change(ticker, key)
+        updated_dict.update(priceChangeDict)
+        updated_dict['stock_buy_price'] = updated_dict['priceAvg200'] * .8
+        updated_dict['stock_sell_price'] = updated_dict['priceAvg200'] * .7
+        updated_dict['earningYield'] = updated_dict.get('netIncome', 0) / updated_dict['marketCap']
+        updated_dict_df = pd.DataFrame(list(updated_dict.items()), columns=['key', 'value'])
+
+        canslim_filter_df = self.get_canslim_filter_df()
+        merged = pd.merge(canslim_filter_df, updated_dict_df, on='key', how='left')
+
+        with pd.option_context('display.max_rows', None,
+                               'display.max_columns', 5,
+                               'display.precision', 3,
+                               ):
+            print(merged.to_string(index=False))
+
+

@@ -333,12 +333,12 @@ def run(argv=None, save_main_session=True):
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (9, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (10, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
 
-        growth_vs_val_key = growth_vs_val_res | 'Add 14'>> beam.Map(lambda d: (14, d))
 
 
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
