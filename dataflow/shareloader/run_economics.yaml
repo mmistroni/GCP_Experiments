@@ -1,0 +1,27 @@
+steps:
+# Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_ECONOMICS_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'sendgridkey=$_SENDGRID_KEY'
+          , '--parameters'
+          , 'recipients=$_RECIPIENTS'
+          , '--region=$_REGION'
+          ]  
+    id: 'build-flex-template-economic'
+
+substitutions:
+  _JOB_NAME: 'ukeconomicscloudbuild'
+  _ECONOMICS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/ukeconomics_flex_template.json
+  _REGION: us-central1
+  _FMPREP_KEY: ''
+  _SENDGRID_KEY : ''
+  _RECIPIENTS : 'mmistroni@gmail.com'

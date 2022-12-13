@@ -1,0 +1,37 @@
+
+steps:
+  # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_ECONOMICS_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_economics'
+      , './dataflow/shareloader/'
+      ]
+    id: 'build-economics-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'build'
+          , '$_ECONOMICS_TEMPLATE_GCS_LOCATION'
+          , '--image'
+          , 'gcr.io/$_PROJECT_ID/$_ECONOMICS_IMAGE_NAME'
+          , '--sdk-language'
+          , 'PYTHON'
+          , '--metadata-file'
+          , '$_ECONOMICS_METADATA_FILE']
+    id: 'build-economics-flex-template'
+
+
+images: [ 'gcr.io/$_PROJECT_ID/$_ECONOMICS_IMAGE_NAME' ]
+
+
+substitutions:
+  _PROJECT_ID: datascience-projects
+  _ECONOMICS_IMAGE_NAME: economics:latest
+  _ECONOMICS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/economics_flex_template.json
+  _ECONOMICS_METADATA_FILE: ./dataflow/shareloader/economics_template_metadata
+

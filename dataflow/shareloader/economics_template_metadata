@@ -1,0 +1,16 @@
+{
+  "description": "An example pipeline that collect market stats.",
+  "name": "Economics Stats",
+  "parameters": [
+    {
+      "name": "sendgridkey",
+      "helpText": "SendGrid key",
+      "label": "SendgRidKey"
+    },
+    {
+      "name": "recipients",
+      "helpText": "recipients",
+      "label": "recipients"
+    }
+  ]
+}
