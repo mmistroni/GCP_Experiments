@@ -78,16 +78,16 @@ steps:
           , '$_ECONOMY_BUILD_FILE']  
     id: 'build-stateofeconomy-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-      entrypoint: 'gcloud'
-      args:
-        [
-            'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '_ECONOMY_EMAIL_BUILD_FILE' ]
-      id: 'build-economy_email-template'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '_ECONOMY_EMAIL_BUILD_FILE' ]
+    id: 'build-economy_email-template'
 timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
