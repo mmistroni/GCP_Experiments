@@ -20,7 +20,7 @@ steps:
 
 substitutions:
   _JOB_NAME: 'ukeconomicscloudbuild'
-  _ECONOMICS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/economics_email_flex_template.json.json
+  _ECONOMICS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/economics_email_flex_template.json
   _REGION: us-central1
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
