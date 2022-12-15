@@ -81,7 +81,7 @@ class EconomicDataCombineFn(beam.CombineFn):
     logging.info('Adding{}'.format(input))
     logging.info('acc is:{}'.format(accumulator))
     row_acc = accumulator
-    row_acc.append(ROW_TEMPLATE.format(*input))
+    row_acc.append(ROW_TEMPLATE.format(input['AS_OF_DATE'], input['LABEL'], input['VALUE']))
     return row_acc
 
   def merge_accumulators(self, accumulators):
@@ -115,7 +115,7 @@ class EmailSender(beam.DoFn):
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             to_emails=self.recipients,
-            subject=f'Stock selection ideas for {asOfDateStr}',
+            subject=f'UK Economy Good Prices for {asOfDateStr}',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)

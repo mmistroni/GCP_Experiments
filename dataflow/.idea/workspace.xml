@@ -296,9 +296,9 @@
     </configuration>
     <list>
       <item itemvalue="Python.test_marketstats" />
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_putcall_ratio" />
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_run_manuf_pmi" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_run_manuf_pmi" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_putcall_ratio" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df" />
     </list>
     <recent_temporary>
