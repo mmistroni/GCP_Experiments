@@ -101,6 +101,13 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <li>Price > PriceAvg20  and PriceAvg200</li>
                                 </ul>
                             </li>
+                            <li>CANSLIM-POTENTIAL: Criteria
+                                <ul>
+                                    <li>Same as CANSLIM, minus price checks</li>
+                                    <li>These stocks should be monitored until price requirement satisfied</li>
+                                    <li>Once price criteria satisfied, they might start to take off</li>
+                                </ul>
+                            </li>
                             <li>Below 10M stocks: Criteria
                                 <ul>
                                     <li>Mid Cap</li>

@@ -414,6 +414,7 @@ class TestSuperPerformers(unittest.TestCase):
             'returnOnEquity'  : 'returnOnEquity > 0' ,
             'grossProfitMargin': 'grossProfitMargin > 0',
             'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage > 0.3',
+             'price'      : 'price > price20/50/200',
              'priceAvg20' : 'price > priceAvg20',
              'priceAvg50' : 'price > priceAvg50',
              'priceAvg200': 'price > priceAvg200',
@@ -572,7 +573,7 @@ class TestSuperPerformers(unittest.TestCase):
             get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
 
         key = os.environ['FMPREPKEY']
-        ticker = 'COLM'
+        ticker = 'TREX'
         fundamental_data = get_fundamental_parameters(ticker, key)
         fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
         fundamental_data.update(fundamental_qtr)

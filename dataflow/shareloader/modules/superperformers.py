@@ -49,6 +49,47 @@ def asset_play_filter(input_dict):
 
     return assetValue > marketCap
 
+def canslim_filter(input_dict):
+    return (input_dict.get('avgVolume',0) > 200000) and (input_dict.get('eps_growth_this_year',0) > 0.2)\
+         and (input_dict.get('eps_growth_next_year', 0) > 0.2) \
+    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict.get('net_sales_qtr_over_qtr',0) > 0.2) \
+    and (input_dict.get('eps_growth_past_5yrs',0) > 0.2) and (input_dict.get('returnOnEquity',0) > 0) \
+    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3) \
+    and (input_dict.get('price',0) > input_dict.get('priceAvg20', 0)) and (input_dict.get('price',0) > input_dict.get('priceAvg50',0)) \
+    and (input_dict.get('price', 0) > input_dict.get('priceAvg200',0)) and (input_dict.get('sharesOutstanding',0) > 50000000)
+
+def canslim_potential_filter(input_dict):
+    return (input_dict.get('avgVolume',0) > 200000) and (input_dict.get('eps_growth_this_year',0) > 0.2)\
+         and (input_dict.get('eps_growth_next_year', 0) > 0.2) \
+    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict.get('net_sales_qtr_over_qtr',0) > 0.2) \
+    and (input_dict.get('eps_growth_past_5yrs',0) > 0.2) and (input_dict.get('returnOnEquity',0) > 0) \
+    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3) \
+    and (input_dict.get('sharesOutstanding',0) > 50000000)
+
+
+def stocks_under_10m_filter(input_dict):
+    return (input_dict['marketCap'] < 10000000000) and (input_dict['avgVolume'] > 100000) \
+                            and (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0.25) \
+                            and (input_dict['eps_growth_qtr_over_qtr'] > 0.2) and  (input_dict['net_sales_qtr_over_qtr'] > 0.25) \
+                            and (input_dict['returnOnEquity'] > 0.15) and (input_dict['price'] > input_dict['priceAvg200'])
+
+def new_high_filter(input_dict):
+    return (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0) \
+                    and (input_dict['eps_growth_qtr_over_qtr'] > 0) and  (input_dict['net_sales_qtr_over_qtr'] > 0) \
+                    and (input_dict.get('price') is not None) \
+                    and (input_dict['returnOnEquity'] > 0) and (input_dict['price'] > input_dict['priceAvg20']) \
+                    and (input_dict['price'] > input_dict['priceAvg50']) \
+                    and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
+                    and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
+                    and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
+
+def microcap_filter(input_dict):
+    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('dividendPaid', 0) == 0) and \
+           (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
+           (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
+           (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
+
+
 
 
 def get_descriptive_and_techincal_filter(input_dict):
@@ -272,36 +313,6 @@ def extract_data_pipeline(p, input_file):
             
     )
 
-def canslim_filter(input_dict):
-    return (input_dict.get('avgVolume',0) > 200000) and (input_dict.get('eps_growth_this_year',0) > 0.2)\
-         and (input_dict.get('eps_growth_next_year', 0) > 0.2) \
-    and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2) and (input_dict.get('net_sales_qtr_over_qtr',0) > 0.2) \
-    and (input_dict.get('eps_growth_past_5yrs',0) > 0.2) and (input_dict.get('returnOnEquity',0) > 0) \
-    and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3) \
-    and (input_dict.get('price',0) > input_dict.get('priceAvg20', 0)) and (input_dict.get('price',0) > input_dict.get('priceAvg50',0)) \
-    and (input_dict.get('price', 0) > input_dict.get('priceAvg200',0)) and (input_dict.get('sharesOutstanding',0) > 50000000)
-
-def stocks_under_10m_filter(input_dict):
-    return (input_dict['marketCap'] < 10000000000) and (input_dict['avgVolume'] > 100000) \
-                            and (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0.25) \
-                            and (input_dict['eps_growth_qtr_over_qtr'] > 0.2) and  (input_dict['net_sales_qtr_over_qtr'] > 0.25) \
-                            and (input_dict['returnOnEquity'] > 0.15) and (input_dict['price'] > input_dict['priceAvg200'])
-
-def new_high_filter(input_dict):
-    return (input_dict['eps_growth_this_year'] > 0) and (input_dict['eps_growth_next_year'] > 0) \
-                    and (input_dict['eps_growth_qtr_over_qtr'] > 0) and  (input_dict['net_sales_qtr_over_qtr'] > 0) \
-                    and (input_dict.get('price') is not None) \
-                    and (input_dict['returnOnEquity'] > 0) and (input_dict['price'] > input_dict['priceAvg20']) \
-                    and (input_dict['price'] > input_dict['priceAvg50']) \
-                    and (input_dict['price'] > input_dict['priceAvg200']) and (input_dict['change'] > 0) \
-                    and (input_dict.get('changeFromOpen') is not None and  input_dict.get('changeFromOpen') > 0) \
-                    and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
-
-def microcap_filter(input_dict):
-    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('dividendPaid', 0) == 0) and \
-           (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
-           (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
-           (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
 
 def microcap_sanity_check(input_dict):
     fields_to_check = ['marketCap', 'dividendPaid', 'grossProfitMargin',
@@ -513,6 +524,11 @@ def run(argv=None, save_main_session=True):
                               |'Mapping only Relevant canslim fields' >> beam.Map(lambda d:
                                                                                   map_to_bq_dict(d, 'CANSLIM'))
                                 | 'Writing to stock selection C' >> bq_sink)
+
+            (fundamental_data | 'Canslimm potential filter' >> beam.Filter(canslim_potential_filter)
+             | 'Mapping only Relevant canslim potential fields' >> beam.Map(lambda d:
+                                                                  map_to_bq_dict(d, 'CANSLIM-POTENTIAL'))
+             | 'Writing to stock selection Cp' >> bq_sink)
 
             (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
              | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: map_to_bq_dict(d, 'UNDER10M'))
