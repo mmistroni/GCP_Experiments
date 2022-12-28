@@ -293,7 +293,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['MO'])
+             (p | 'Starting' >> beam.Create(['WOR'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
@@ -369,7 +369,7 @@ class TestSuperPerformers(unittest.TestCase):
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']
         # Need to find currentRatio, dividendPaid, peRatio, priceToBookRatio
-        for ticker in ['NOAH']:
+        for ticker in ['WOR']:
             print(f'------------{ticker}----------------')
             bmarkData = load_bennchmark_data(ticker, key)
             self.assertIsNotNone(bmarkData['netIncome'])
