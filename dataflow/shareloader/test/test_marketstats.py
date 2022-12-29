@@ -7,11 +7,15 @@ from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParseNonManufacturingPMI,PutCallRatio, get_vix,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
-                        get_market_momentum, get_senate_disclosures, get_sector_rotation_indicator
+                        get_market_momentum, get_senate_disclosures, get_sector_rotation_indicator,\
+                        get_latest_fed_fund_rates
+
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
-                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn
+                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
+                                            run_fed_fund_rates
+
 from shareloader.modules.sector_loader import run_my_pipeline
 
 from itertools import chain
@@ -19,6 +23,7 @@ from bs4 import  BeautifulSoup
 import requests
 from io import StringIO
 from itertools import chain
+from unittest.mock import patch
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -39,9 +44,15 @@ class FlattenDoFn(beam.DoFn):
             return [{'Last' : 'N/A'}]
 
 
-
-
 class TestMarketStats(unittest.TestCase):
+
+    def setUp(self):
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+
+    def tearDown(self):
+        self.patcher.stop()
+
     def xtest_all_stocks(self):
         key = os.environ['FMPREPKEY']
         print(get_all_stocks(key))
@@ -362,6 +373,19 @@ class TestMarketStats(unittest.TestCase):
             (p | 'start run_mm' >> beam.Create(['20210101'])
              | 'prnt' >> beam.Map(print)
              )
+    def test_get_latest_fed_fund_rates(self):
+        frates = get_latest_fed_fund_rates()
+        print(frates)
+        self.assertTrue(frates > 0)
+
+    def test_run_fed_funds_rates(self):
+        key = os.environ['FMPREPKEY']
+        sink = beam.Map(print)
+
+        with TestPipeline() as p:
+            run_fed_fund_rates(p)  | sink
+
+
 
 if __name__ == '__main__':
     unittest.main()

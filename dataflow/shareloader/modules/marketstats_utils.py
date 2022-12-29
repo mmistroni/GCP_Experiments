@@ -115,6 +115,22 @@ def get_all_prices_for_date(apikey, asOfDate):
     bulkRequest = pd.read_csv(StringIO(s.decode('utf-8')), header=0)
     return bulkRequest.to_dict('records')
 
+def get_latest_fed_fund_rates():
+    import requests
+    from bs4 import BeautifulSoup
+    link = 'https://finance.yahoo.com/quote/ZQ%3DF/history?p=ZQ%3DF'
+    r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
+    bs = BeautifulSoup(r.content, 'html.parser')
+    t = bs.find_all('table', {"class": "W(100%) M(0)"})[0]
+
+    rows = t.find_all('tr')
+    row = rows[1]
+    try:
+        return float(row.find_all('td')[5].text)
+    except Exception as e:
+        return 0.0
+
+
 class PutCallRatio(beam.DoFn):
     def get_putcall_ratios(self):
         r = requests.get('https://markets.cboe.com/us/options/market_statistics/daily/')

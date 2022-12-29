@@ -15,7 +15,7 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
-                            get_sector_rotation_indicator
+                            get_sector_rotation_indicator, get_latest_fed_fund_rates
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -138,6 +138,11 @@ def run_senate_disclosures(p, key):
               | 'run sendisclos' >> beam.FlatMap(lambda d : get_senate_disclosures(key))
             )
 
+def run_fed_fund_rates(p):
+    return (p | 'start run_sd' >> beam.Create(['20210101'])
+              | 'run ffrates' >> beam.Map(lambda d : get_latest_fed_fund_rates())
+              | 'remap fr' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'FED_FUND_RATES', 'VALUE' : d})
+            )
 
 
 def run_market_momentum(p, key):
