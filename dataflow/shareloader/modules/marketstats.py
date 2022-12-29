@@ -141,7 +141,7 @@ def run_senate_disclosures(p, key):
 def run_fed_fund_rates(p):
     return (p | 'start run_sd' >> beam.Create(['20210101'])
               | 'run ffrates' >> beam.Map(lambda d : get_latest_fed_fund_rates())
-              | 'remap fr' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'FED_FUND_RATES', 'VALUE' : d})
+              | 'remap fr' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'FED_FUND_RATES', 'VALUE' : str(d)})
             )
 
 

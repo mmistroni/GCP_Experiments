@@ -126,9 +126,9 @@ def get_latest_fed_fund_rates():
     rows = t.find_all('tr')
     row = rows[1]
     try:
-        return float(row.find_all('td')[5].text)
+        return row.find_all('td')[5].text
     except Exception as e:
-        return 0.0
+        return 'N/A'
 
 
 class PutCallRatio(beam.DoFn):
