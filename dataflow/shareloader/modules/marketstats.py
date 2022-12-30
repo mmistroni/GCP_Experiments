@@ -139,7 +139,7 @@ def run_senate_disclosures(p, key):
             )
 
 def run_fed_fund_rates(p):
-    return (p | 'start run_sd' >> beam.Create(['20210101'])
+    return (p | 'start run_ffr' >> beam.Create(['20210101'])
               | 'run ffrates' >> beam.Map(lambda d : get_latest_fed_fund_rates())
               | 'remap fr' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'FED_FUND_RATES', 'VALUE' : str(d)})
             )
@@ -305,6 +305,9 @@ def run(argv=None, save_main_session=True):
         equity_pcratio = run_putcall_ratio(p)
         equity_pcratio | 'pcratio to sink' >> bq_sink
 
+        fed_funds = run_fed_fund_rates(p)
+        fed_funds | 'ffrates to sink' >> bq_sink
+
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
         staticStart = (p | 'Create static start' >> beam.Create(
@@ -339,10 +342,11 @@ def run(argv=None, save_main_session=True):
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (9, d))
+        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (10, d))
 
-        static_key = static | 'Add 10' >> beam.Map(lambda d: (10, d))
-        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (11, d))
-        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (12, d))
+        static_key = static | 'Add 10' >> beam.Map(lambda d: (15, d))
+        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (16, d))
+        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (17, d))
 
 
 
@@ -353,6 +357,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, growth_vs_val_key,
+                        fed_funds_key,
                         static_key, stats_key,
                         pmi_hist_key, non_manuf_pmi_hist_key,
                         )
