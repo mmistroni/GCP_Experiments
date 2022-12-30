@@ -593,7 +593,7 @@ def get_financial_ratios_benchmark(ticker, key):
                 dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
 
                 divisPaid = len([d > 0 for d in all_divis])
-
+                dataDict['dividendPayoutRatio'] = 0 if latest.get('payoutRatioTTM') is None else latest.get('payoutRatioTTM')
                 dataDict['dividendPaidRatio'] = divisPaid / len(all_divis)
                 dataDict['returnOnCapital'] = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else \
                     latest.get('returnOnCapitalEmployedTTM')
