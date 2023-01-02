@@ -38,6 +38,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
         parser.add_argument('--iistocks')
         parser.add_argument('--microcap')
+        parser.add_argument('--probe')
 
 def asset_play_filter(input_dict):
     if not input_dict:
@@ -275,7 +276,6 @@ def combine_tickers(input):
 
 
 def combine_dict(input):
-    print('Combining {}'.format(input))
     return [d for d in input]
 
 def load_fundamental_data(source,fmpkey):
@@ -515,12 +515,14 @@ def run(argv=None, save_main_session=True):
         else:
 
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
-
-
             destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
                                                     date.today().strftime('%Y-%m-%d %H:%M'))
 
-            sink = beam.io.WriteToText(destination, num_shards=1)
+            if (pipeline_options.probe):
+                logging.info('Returning')
+                sink = beam.io.WriteToText(destination, num_shards=1)
+                return
+
 
             fundamental_data | 'Sendig to sink' >> sink
 

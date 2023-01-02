@@ -16,6 +16,11 @@
       "name": "microcap",
       "helpText": "Flag to indicate if we search for Microcaps",
       "label": "microcap"
+    },
+    {
+      "name": "probe",
+      "helpText": "Flag for test runs",
+      "label": "probe"
     }
   ]
 }

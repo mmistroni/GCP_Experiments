@@ -152,7 +152,6 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
                                                                                           key=key)).json()
         if res:
-            logging.info('Getting historicla prices')
             hist_prices = get_fmprep_historical(ticker, key)
             priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
             descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
@@ -161,7 +160,6 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
             descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
 
-            logging.info('Getting Institutional Holdings Data')
             descriptive_dict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
 
             if descriptive_dict.get('sharesOutstanding') is not None and descriptive_dict.get('sharesOutstanding') > 0:
@@ -303,9 +301,6 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
         # achievable. we just need to sort the date
         income_statement_date = fundamental_dict.get('income_statement_date', date.today())
         year = datetime.strptime(income_statement_date, '%Y-%m-%d').date().year
-        logging.info('getting estimates for {}@{}'.format(ticker, income_statement_date))
-
-
         if analyst_estimates:
             estimateeps_next = [data for data in analyst_estimates if str(year+1) in data['date']]
             if estimateeps_next:
@@ -449,8 +444,6 @@ def get_institutional_holders_quote(ticker, key, asOfDate=None):
 def get_institutional_holders_percentage(ticker, exchange):
     import requests
     import re
-    logging.info('GEttign ihp for exchange:{}'.format(exchange))
-
     str1 = requests.get(
         'https://www.marketbeat.com/stocks/{}/{}/institutional-ownership/'.format(exchange, ticker.upper())).text
     string_pattern = r"Institutional Ownership Percentage.*[\d]+\.[\d]+%<\/div>"
@@ -462,7 +455,6 @@ def get_institutional_holders_percentage(ticker, exchange):
 
 def get_all_data(ticker, key):
   try:
-    logging.info('Get al data.t icker is:{}'.format(ticker))
     desc_tech_dict = get_descriptive_and_technical(ticker, key)
     return desc_tech_dict
   except Exception as e:
