@@ -521,8 +521,7 @@ def run(argv=None, save_main_session=True):
             if (pipeline_options.probe):
                 logging.info('Returning')
                 sink = beam.io.WriteToText(destination, num_shards=1)
-                return
-
+                (fundamental_data | 'Writing to text sink' >> sink)
 
             fundamental_data | 'Sendig to sink' >> sink
 

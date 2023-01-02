@@ -28,28 +28,7 @@ steps:
           , '--config'
           , '$_EDGAR_FORM13_BUILD_FILE']  
     id: 'build-edgarform13-templates'
-  
-  - name: gcr.io/cloud-builders/docker
-    args:
-      [ 'build'
-      , '--tag=gcr.io/$_PROJECT_ID/$_EDGAR_QUARTERLY_FORM4_IMAGE_NAME'
-      , '--file=./dataflow/edgar_flow/Dockerfile_Edgar_Quarterly_Form4'
-      , './dataflow/edgar_flow/'
-      ]
-    id: 'build-quarterly_form4-image'
-  # Kick off pipeline build
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_PIPELINE_BUILD_FILE']  
-    id: 'build-pipeline-template'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
       [ 

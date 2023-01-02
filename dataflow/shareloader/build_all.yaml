@@ -28,42 +28,6 @@ steps:
           , '--verbosity'
           , 'debug'
           , '--config'
-          , '$_NEWSLOADER_BUILD_FILE']  
-    id: 'build-newsloader-template'
-  # Kick off shares dataset
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_SHARESDATASETLOADER_BUILD_FILE']  
-    id: 'build-datasetloader-template'
-  # Kick off adr build dataset
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_ADR_BUILD_FILE']  
-    id: 'build-adr-template'
-  # Kick off superperformers
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
           , '$_SUPERPERFORMERS_BUILD_FILE']  
     id: 'build-superperformers-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
