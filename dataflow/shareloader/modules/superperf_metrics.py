@@ -510,8 +510,9 @@ def compute_cagr(input_list):
     ''' CAGR = (Last amount / starting amo) ^ (1 / number of years) '''
     starter = input_list[0]
 
-    return ','.join ([ "%.2f" %  ((current_amount / starter) ** (1 / (idx+1))) for idx, current_amount in enumerate(input_list[1:])])
-
+    if all([item != 0 for item in input_list]):
+        return ','.join ([ "%.2f" %  ((current_amount / starter) ** (1 / (idx+1))) for idx, current_amount in enumerate(input_list[1:])])
+    return 'N/A'
 
 def get_income_benchmark(ticker, key):
     # some eps in last 10 yrs
@@ -600,7 +601,7 @@ def get_financial_ratios_benchmark(ticker, key):
 
             except Exception as e:
                 logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
-                return  None
+                return  dataDict
 
             dataDict['pe'] = latest.get('priceEarningsRatioTTM') or 0
             dataDict['peRatio'] = dataDict['pe']

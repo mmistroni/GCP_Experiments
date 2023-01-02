@@ -8,7 +8,7 @@ from datetime import datetime
 import apache_beam as beam
 from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
 import re, requests
 from datetime import datetime, date
 from collections import OrderedDict
@@ -148,35 +148,38 @@ class FundamentalLoader(beam.DoFn):
         self.key = key
 
     def process(self, elements):
-        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
-        logging.info('All data is\n{}'.format(elements))
         all_dt = []
         for ticker in elements.split(','):
-            fundamental_data = get_fundamental_parameters(ticker, self.key)
-            if fundamental_data:
-                fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
-                if fundamental_qtr:
-                    fundamental_data.update(fundamental_qtr)
-                    financial_ratios = get_financial_ratios(ticker, self.key)
-                    if financial_ratios:
-                        fundamental_data.update(financial_ratios)
 
-                updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
-                descr_and_tech = get_descriptive_and_technical(ticker, self.key)
-                updated_dict.update(descr_and_tech)
-                asset_play_dict = get_asset_play_parameters(ticker, self.key)
-                updated_dict.update(asset_play_dict)
+            try:
+                fundamental_data = get_fundamental_parameters(ticker, self.key)
+                if fundamental_data:
+                    fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
+                    if fundamental_qtr:
+                        fundamental_data.update(fundamental_qtr)
+                        financial_ratios = get_financial_ratios(ticker, self.key)
+                        if financial_ratios:
+                            fundamental_data.update(financial_ratios)
 
-                piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                latest_rsi = compute_rsi(ticker, self.key)
-                updated_dict['piotroskyScore'] = piotrosky_score
-                updated_dict['rsi'] = latest_rsi
+                    updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
+                    descr_and_tech = get_descriptive_and_technical(ticker, self.key)
+                    updated_dict.update(descr_and_tech)
+                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                    updated_dict.update(asset_play_dict)
 
-                priceChangeDict = get_price_change(ticker, self.key)
-                if priceChangeDict:
-                    updated_dict.update(priceChangeDict)
+                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                    latest_rsi = compute_rsi(ticker, self.key)
+                    updated_dict['piotroskyScore'] = piotrosky_score
+                    updated_dict['rsi'] = latest_rsi
 
-                all_dt.append(updated_dict)
+                    priceChangeDict = get_price_change(ticker, self.key)
+                    if priceChangeDict:
+                        updated_dict.update(priceChangeDict)
+
+                    all_dt.append(updated_dict)
+            except Exception as e:
+                logging.info(f"Failed to process fundamental loader:{str(e)}")
+                raise e
         return all_dt
 
 def load_bennchmark_data(ticker, key):
@@ -407,6 +410,7 @@ def map_to_bq_dict(input_dict, label):
                 ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
                 EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
                 DIVIDENDRATIO=input_dict.get('dividendPayoutRatio', 0.0),
+                POSITIVE_DIVIDENDS=input_dict.get('dividendPaid', 0.0),
                 PERATIO=input_dict.get('pe', 0.0),
                 INCOME_STMNT_DATE=input_dict['income_statement_date'],
                 INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_qtr_date'),
@@ -431,11 +435,16 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='stock_selection'),
-            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT,NET_INCOME:FLOAT,RETURN_ON_CAPITAL:FLOAT',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT,NET_INCOME:FLOAT,RETURN_ON_CAPITAL:FLOAT,POSITIVE_DIVIDENDS:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
     pipeline_options = XyzOptions()
+
+    timeout_secs = 18400
+    experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
+    pipeline_options.view_as(SetupOptions).save_main_session = True
+    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
@@ -524,11 +533,6 @@ def run(argv=None, save_main_session=True):
                               |'Mapping only Relevant canslim fields' >> beam.Map(lambda d:
                                                                                   map_to_bq_dict(d, 'CANSLIM'))
                                 | 'Writing to stock selection C' >> bq_sink)
-
-            (fundamental_data | 'Canslimm potential filter' >> beam.Filter(canslim_potential_filter)
-             | 'Mapping only Relevant canslim potential fields' >> beam.Map(lambda d:
-                                                                  map_to_bq_dict(d, 'CANSLIM-POTENTIAL'))
-             | 'Writing to stock selection Cp' >> bq_sink)
 
             (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
              | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: map_to_bq_dict(d, 'UNDER10M'))

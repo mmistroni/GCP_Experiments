@@ -241,7 +241,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['MO'])
+             (p | 'Starting' >> beam.Create(['KRNY'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
                          #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
@@ -250,9 +250,19 @@ class TestSuperPerformers(unittest.TestCase):
                          | printingSink
              )
 
+    def test_load_fundamental_data(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
 
-    # Need tow rite test also for fundamental
+        print('Key is:{}|'.format(key))
+        with TestPipeline() as p:
+            ticks = (p | 'Starting' >> beam.Create(['LPLA'])
+               | 'tstCombine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                   )
 
+            res = load_fundamental_data(ticks, key)
+
+            res | printingSink
 
     def test_get_financial_ratios_benchmark(self):
         import pandas as pd
