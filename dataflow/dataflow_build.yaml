@@ -28,7 +28,8 @@ steps:
           , '--config'
           , '$_EDGAR_FORM13_BUILD_FILE']  
     id: 'build-edgarform13-templates'
-    - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
       [ 
