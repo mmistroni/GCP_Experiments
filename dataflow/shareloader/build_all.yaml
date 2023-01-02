@@ -86,7 +86,7 @@ steps:
         , '--verbosity'
         , 'debug'
         , '--config'
-        , '_ECONOMY_EMAIL_BUILD_FILE' ]
+        , '$_ECONOMY_EMAIL_BUILD_FILE' ]
     id: 'build-economy_email-template'
 timeout: 50000s
 substitutions:
