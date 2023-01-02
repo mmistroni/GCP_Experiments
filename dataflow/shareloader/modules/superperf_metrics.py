@@ -502,9 +502,13 @@ def compute_cagr(input_list):
     ''' CAGR = (Last amount / starting amo) ^ (1 / number of years) '''
     starter = input_list[0]
 
+    if input_list[-1] < 0:
+        return '-0.0'
+    if any([item < 0 for item in input_list]):
+        return '-0.0'
     if all([item != 0 for item in input_list]):
         return ','.join ([ "%.2f" %  ((current_amount / starter) ** (1 / (idx+1))) for idx, current_amount in enumerate(input_list[1:])])
-    return 'N/A'
+    return '-0.0'
 
 def get_income_benchmark(ticker, key):
     # some eps in last 10 yrs
