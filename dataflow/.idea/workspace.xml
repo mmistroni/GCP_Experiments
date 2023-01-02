@@ -8,7 +8,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dataflow_build.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/dataflow_build.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
