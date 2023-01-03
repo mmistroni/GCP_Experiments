@@ -421,6 +421,55 @@ def map_to_bq_dict(input_dict, label):
 
                 )
 
+def run_probe(fund_data):
+    logging.info('Running probe..,')
+    logging.info('Returning')
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_probe_{}'.format(
+        date.today().strftime('%Y-%m-%d %H:%M'))
+    sink = beam.io.WriteToText(destination, num_shards=1)
+    (fund_data | 'Writing to text sink' >> sink)
+
+def store_microcap(data, sink):
+    (data
+     | 'Mapping only relevan microcap' >> beam.Map(lambda d:
+                                                   map_to_bq_dict(d, 'MICROCAP'))
+     | 'wRITING TO SINK microcap' >> sink)
+
+def store_superperformers(data, bq_sink, test_sink):
+    data | 'Sendig to sink' >> test_sink
+
+    (data | 'fund unvierse' >> beam.Filter(get_universe_filter)
+     | 'Mapping only Relevant fields' >> beam.Map(lambda d:
+                                                  map_to_bq_dict(d, 'STOCK_UNIVERSE'))
+     | 'Writing to stock selection' >> bq_sink)
+
+    (data | 'Canslimm filter' >> beam.Filter(canslim_filter)
+     | 'Mapping only Relevant canslim fields' >> beam.Map(lambda d:
+                                                          map_to_bq_dict(d, 'CANSLIM'))
+     | 'Writing to stock selection C' >> bq_sink)
+
+    (data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
+     | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: map_to_bq_dict(d, 'UNDER10M'))
+     | 'Writing to stock selection 10' >> bq_sink)
+
+    (data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
+     | 'Mapping only Relevant nh fields' >> beam.Map(lambda d:
+                                                     map_to_bq_dict(d, 'NEWHIGHS'))
+     | 'Writing to stock selection nh' >> bq_sink)
+
+    (data | 'asset universe filter' >> beam.Filter(get_universe_filter)
+     | 'Asset PLays' >> beam.Filter(asset_play_filter)
+     | 'Universe filter' >> beam.Filter(get_universe_filter)
+     | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d:
+                                                             map_to_bq_dict(d, 'ASSET_PLAY_WEEKLY'))
+     | 'Writing to stock selection ap' >> bq_sink)
+
+    (data | 'Filtering for all fields weekly ' >> beam.Filter(get_universe_filter)
+     | 'Filtering for out of favour weekly' >> beam.Filter(out_of_favour_filter)
+     | 'Mapping only Relevant fields weekly' >> beam.Map(lambda d:
+                                                         map_to_bq_dict(d, 'OUT_OF_FAVOUR_WEEKLY'))
+     | 'Writing to sink weekly' >> bq_sink)
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -445,6 +494,8 @@ def run(argv=None, save_main_session=True):
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
     pipeline_options.view_as(SetupOptions).save_main_session = True
     pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
+
+    test_sink =beam.io.WriteToText(destination, num_shards=1)
 
     with beam.Pipeline(options=pipeline_options) as p:
         tickers = extract_data_pipeline(p, input_file)
@@ -500,62 +551,16 @@ def run(argv=None, save_main_session=True):
                                                               map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
              | 'Writing to sink ENT2' >> bq_sink)
 
-
-
         elif (pipeline_options.microcap):
             microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
-            (microcap_data
-             | 'Mapping only relevan microcap' >> beam.Map(lambda d:
-                                                           map_to_bq_dict(d, 'MICROCAP'))
-             | 'wRITING TO SINK microcap' >> bq_sink)
-
-
-
-
+            store_microcap(microcap_data, bq_sink)
         else:
-
             fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
-            destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockuniverse_{}'.format(
-                                                    date.today().strftime('%Y-%m-%d %H:%M'))
-
             if (pipeline_options.probe):
-                logging.info('Returning')
-                sink = beam.io.WriteToText(destination, num_shards=1)
-                (fundamental_data | 'Writing to text sink' >> sink)
-
-            fundamental_data | 'Sendig to sink' >> sink
-
-            (fundamental_data | 'fund unvierse' >> beam.Filter(get_universe_filter)
-                            |'Mapping only Relevant fields' >> beam.Map(lambda d:
-                                                                             map_to_bq_dict(d, 'STOCK_UNIVERSE'))
-                             | 'Writing to stock selection' >> bq_sink)
-
-            (fundamental_data | 'Canslimm filter' >> beam.Filter(canslim_filter)
-                              |'Mapping only Relevant canslim fields' >> beam.Map(lambda d:
-                                                                                  map_to_bq_dict(d, 'CANSLIM'))
-                                | 'Writing to stock selection C' >> bq_sink)
-
-            (fundamental_data | 'stock under 10m filter' >> beam.Filter(stocks_under_10m_filter)
-             | 'Mapping only Relevant xm fields' >> beam.Map(lambda d: map_to_bq_dict(d, 'UNDER10M'))
-             | 'Writing to stock selection 10' >> bq_sink)
-
-            (fundamental_data | 'stock NEW HIGHGS' >> beam.Filter(new_high_filter)
-             | 'Mapping only Relevant nh fields' >> beam.Map(lambda d:
-                                                             map_to_bq_dict(d, 'NEWHIGHS'))
-             | 'Writing to stock selection nh' >> bq_sink)
-
-            (fundamental_data | 'asset universe filter' >> beam.Filter(get_universe_filter)
-             | 'Asset PLays' >> beam.Filter(asset_play_filter)
-             | 'Universe filter' >> beam.Filter(get_universe_filter)
-             | 'Mapping only Relevant ASSET play fields' >> beam.Map(lambda d:
-                                                                     map_to_bq_dict(d, 'ASSET_PLAY_WEEKLY'))
-             | 'Writing to stock selection ap' >> bq_sink)
-
-            (fundamental_data | 'Filtering for all fields weekly ' >> beam.Filter(get_universe_filter)
-             | 'Filtering for out of favour weekly' >> beam.Filter(out_of_favour_filter)
-             | 'Mapping only Relevant fields weekly' >> beam.Map(lambda d:
-                                                               map_to_bq_dict(d, 'OUT_OF_FAVOUR_WEEKLY'))
-             | 'Writing to sink weekly' >> bq_sink)
+                run_probe(fundamental_data)
+                return
+            else:
+                store_superperformers(fundamental_data, bq_sink, test_sink)
 
 
 
