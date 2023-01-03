@@ -1,24 +1,11 @@
 from __future__ import absolute_import
 
-import argparse
-import logging
-import re
-
-from datetime import datetime
-import apache_beam as beam
-from apache_beam.io import ReadFromText
-from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
-import re, requests
 from datetime import datetime, date
-from collections import OrderedDict
-import requests
-import pandas_datareader.data as dr
 import logging
 import apache_beam as beam
 import pandas as pd
 from datetime import date
-import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
@@ -410,7 +397,7 @@ def map_to_bq_dict(input_dict, label):
                 ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
                 EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
                 DIVIDENDRATIO=input_dict.get('dividendPayoutRatio', 0.0),
-                POSITIVE_DIVIDENDS=input_dict.get('dividendPaid', 0.0),
+                NUM_OF_DIVIDENDS=input_dict.get('numOfDividendsPaid', 0.0),
                 PERATIO=input_dict.get('pe', 0.0),
                 INCOME_STMNT_DATE=input_dict['income_statement_date'],
                 INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_qtr_date'),
@@ -484,7 +471,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='stock_selection'),
-            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT,NET_INCOME:FLOAT,RETURN_ON_CAPITAL:FLOAT,POSITIVE_DIVIDENDS:FLOAT',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT,NET_INCOME:FLOAT,RETURN_ON_CAPITAL:FLOAT,NUM_OF_DIVIDENDS:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
