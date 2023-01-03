@@ -72,7 +72,7 @@ def new_high_filter(input_dict):
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
 
 def microcap_filter(input_dict):
-    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('dividendPaid', 0) == 0) and \
+    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('dividendPaid', False) == False) and \
            (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
            (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
            (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
