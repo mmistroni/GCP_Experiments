@@ -415,7 +415,7 @@ def get_financial_ratios(ticker, key):
         except Exception as e:
             logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
-        dividendDict = get_dividend_paid(ticker, key)
+        dividendDict = {}
         ratioDict.update(dividendDict)
     return ratioDict
 
