@@ -11,7 +11,7 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
                                             get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
-                                            calculate_piotrosky_score, compute_rsi, get_price_change
+                                            calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''
@@ -72,7 +72,7 @@ def new_high_filter(input_dict):
                     and (input_dict.get('allTimeHigh') is not None) and (input_dict['price'] >= input_dict.get('allTimeHigh'))
 
 def microcap_filter(input_dict):
-    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('dividendPaid', False) == False) and \
+    return (input_dict['marketCap'] <= 200000000) and (input_dict.get('numOfDividendsPaid', 0) == 0) and \
            (input_dict.get('grossProfitMargin', 0) >= 0.5) and (input_dict['netProfitMargin'] >= 0.1)  and \
            (input_dict.get('currentRatio') >= 2) and (input_dict['avgVolume'] >= 10000) and \
            (input_dict.get('52weekChange') > 0) and  (input_dict.get('52weekChange') < 0.5)
@@ -132,8 +132,9 @@ class BaseLoader(beam.DoFn):
 
 
 class FundamentalLoader(beam.DoFn):
-    def __init__(self, key):
+    def __init__(self, key, microcap_flag=False):
         self.key = key
+        self.microcap_flag = microcap_flag
 
     def process(self, elements):
         all_dt = []
@@ -149,16 +150,23 @@ class FundamentalLoader(beam.DoFn):
                         if financial_ratios:
                             fundamental_data.update(financial_ratios)
 
+
                     updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                     descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                     updated_dict.update(descr_and_tech)
-                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
-                    updated_dict.update(asset_play_dict)
 
-                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                    latest_rsi = compute_rsi(ticker, self.key)
-                    updated_dict['piotroskyScore'] = piotrosky_score
-                    updated_dict['rsi'] = latest_rsi
+                    if self.microcap_flag:
+                        logging.info('Calculating divis..')
+                        dividendDict = get_dividend_paid(ticker, self.key)
+                        updated_dict.update(dividendDict)
+                    else:
+                        asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                        updated_dict.update(asset_play_dict)
+
+                        piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                        latest_rsi = compute_rsi(ticker, self.key)
+                        updated_dict['piotroskyScore'] = piotrosky_score
+                        updated_dict['rsi'] = latest_rsi
 
                     priceChangeDict = get_price_change(ticker, self.key)
                     if priceChangeDict:
@@ -276,7 +284,7 @@ def load_fundamental_data(source,fmpkey):
 def load_microcap_data(source,fmpkey):
     return (source
             | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals microcap' >> beam.ParDo(FundamentalLoader(fmpkey))
+            | 'Getting fundamentals microcap' >> beam.ParDo(FundamentalLoader(fmpkey, microcap_flag=True))
             | 'Filtering out none fundamentals microcap' >> beam.Filter(lambda item: item is not None)
             | 'MicroCap Sanity Check' >> beam.Filter(microcap_sanity_check)
             | 'Filtering microcap' >> beam.Filter(microcap_filter)
@@ -305,7 +313,7 @@ def extract_data_pipeline(p, input_file):
 
 
 def microcap_sanity_check(input_dict):
-    fields_to_check = ['marketCap', 'dividendPaid', 'grossProfitMargin',
+    fields_to_check = ['marketCap', 'numOfDividendsPaid', 'grossProfitMargin',
                        'netProfitMargin', 'currentRatio', 'avgVolume',
                        '52weekChange']
     result = [input_dict.get(field) is not None for field in fields_to_check]

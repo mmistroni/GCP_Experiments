@@ -387,6 +387,8 @@ def get_dividend_paid(ticker, key):
         dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
         dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
         dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis) if len(all_divis) > 0 else 0
+        dataDict['numOfDividendsPaid'] = len([d > 0 for d in all_divis])
+
 
     except Exception as e:
         logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
