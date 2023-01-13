@@ -265,7 +265,7 @@ def write_all_to_sink(results_to_write, sink):
             to_tpl
             | 'FlattenCombine all sink' >> beam.Flatten()
             | 'Combine sinks' >> beam.CombineGlobally(MarketStatsSinkCombineFn())
-            | 'write to sink' >> sink
+            | 'write all to sink' >> sink
 
     )
 
@@ -305,10 +305,8 @@ def run(argv=None, save_main_session=True):
         logging.info('Run pmi')
         
         pmi_res = run_pmi(p)
-        pmi_res | 'Writing to bq' >> bq_sink
 
         manuf_pmi_res = run_manufacturing_pmi(p)
-        manuf_pmi_res | 'manuf pmi to sink' >> bq_sink
 
         if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
@@ -316,28 +314,21 @@ def run(argv=None, save_main_session=True):
             cftc | 'cftc to sink' >> bq_sink
 
         vix_res = run_vix(p, iexapi_key)
-        #vix_res | 'vix to sink' >> bq_sink
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
-        mmomentum_res | 'mm to sink' >> bq_sink
 
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
-        growth_vs_val_res | 'gv to sink' >> bq_sink
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
-        nyse | 'nyse to sink' >> bq_sink
         logging.info('Run Nasdaq..')
         nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
-        nasdaq | 'nasdaq to sink' >> bq_sink
 
         equity_pcratio = run_putcall_ratio(p)
-        equity_pcratio | 'pcratio to sink' >> bq_sink
 
         fed_funds = run_fed_fund_rates(p)
-        fed_funds | 'ffrates to sink' >> bq_sink
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
@@ -403,20 +394,14 @@ def run(argv=None, save_main_session=True):
 
         )
 
-        final_sink = (
-                (
-                 )
-                | 'FlattenCombine all' >> beam.Flatten()
-                | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
-                | ' FlatMapping' >> beam.FlatMap(lambda x: x)
-                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
-
-        )
-
+        final_sink_results = [
+                pmi_res, manuf_pmi_res, vix_res, mmomentum_res, growth_vs_val_res, nyse,
+                 nasdaq, equity_pcratio, fed_funds
+                ]
 
         # Writing everything to sink
-
+        logging.info('Writing all to sink')
+        write_all_to_sink(final_sink_results)
 
 
 if __name__ == '__main__':
