@@ -14,7 +14,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
-                                            run_fed_fund_rates
+                                            run_fed_fund_rates, write_all_to_sink
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -384,6 +384,15 @@ class TestMarketStats(unittest.TestCase):
 
         with TestPipeline() as p:
             run_fed_fund_rates(p)  | sink
+
+    def test_write_all_to_sink(self):
+        fmp_key = os.environ['FMPREPKEY']
+        sink = beam.Map(print)
+        with TestPipeline() as p:
+            vix = run_vix(p, fmp_key)
+            sd = run_senate_disclosures(p, fmp_key)
+            write_all_to_sink([vix, sd], sink)
+
 
 
 

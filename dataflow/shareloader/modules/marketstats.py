@@ -19,6 +19,7 @@ from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn,
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
+from functools import reduce
 
 
 
@@ -48,6 +49,21 @@ class MarketStatsCombineFn(beam.CombineFn):
         logging.info('MAPPED IS :{}'.format(mapped))
         return stringified
 
+
+class MarketStatsSinkCombineFn(beam.CombineFn):
+    def create_accumulator(self):
+        return []
+
+    def add_input(self, sum_count, input_data):
+        holder = sum_count
+        holder.append(input_data)
+        return holder
+
+    def merge_accumulators(self, accumulators):
+        return chain(*accumulators)
+
+    def extract_output(self, all_data):
+        return [i for i in all_data]
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -242,6 +258,21 @@ def run_prev_dates_statistics_cftc(p):
     return cftc_ppln
 
 
+
+def write_all_to_sink(results_to_write, sink):
+    to_tpl = tuple(results_to_write)
+    final_sink = (
+            to_tpl
+            | 'FlattenCombine all sink' >> beam.Flatten()
+            | 'Combine sinks' >> beam.CombineGlobally(MarketStatsSinkCombineFn())
+            | 'write to sink' >> sink
+
+    )
+
+
+
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -349,6 +380,9 @@ def run(argv=None, save_main_session=True):
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (17, d))
 
 
+        # we need a global combiner to write to sink
+
+
 
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
 
@@ -368,7 +402,21 @@ def run(argv=None, save_main_session=True):
                 | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
 
         )
-        senate_disc | 'sd to sink' >> bq_sink
+
+        final_sink = (
+                (
+                 )
+                | 'FlattenCombine all' >> beam.Flatten()
+                | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
+                | ' FlatMapping' >> beam.FlatMap(lambda x: x)
+                | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
+                | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
+
+        )
+
+
+        # Writing everything to sink
+
 
 
 if __name__ == '__main__':
