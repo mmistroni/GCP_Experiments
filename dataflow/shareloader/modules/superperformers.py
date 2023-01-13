@@ -149,17 +149,16 @@ class FundamentalLoader(beam.DoFn):
                         financial_ratios = get_financial_ratios(ticker, self.key)
                         if financial_ratios:
                             fundamental_data.update(financial_ratios)
-
+                            if self.microcap_flag:
+                                logging.info('Calculating divis..')
+                                dividendDict = get_dividend_paid(ticker, self.key)
+                                fundamental_data.update(dividendDict)
 
                     updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                     descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                     updated_dict.update(descr_and_tech)
 
-                    if self.microcap_flag:
-                        logging.info('Calculating divis..')
-                        dividendDict = get_dividend_paid(ticker, self.key)
-                        updated_dict.update(dividendDict)
-                    else:
+                    if not self.microcap_flag:
                         asset_play_dict = get_asset_play_parameters(ticker, self.key)
                         updated_dict.update(asset_play_dict)
 
