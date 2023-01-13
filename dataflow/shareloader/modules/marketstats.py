@@ -401,7 +401,14 @@ def run(argv=None, save_main_session=True):
 
         # Writing everything to sink
         logging.info('Writing all to sink')
-        write_all_to_sink(final_sink_results, bq_sink)
+
+        destination = 'gs://mm_dataflow_bucket/outputs/marketstats_{}'.format(
+            date.today().strftime('%Y-%m-%d %H:%M'))
+
+        tmp_sink = beam.io.WriteToText(destination, num_shards=1)
+
+
+        write_all_to_sink(final_sink_results, tmp_sink)
 
 
 if __name__ == '__main__':
