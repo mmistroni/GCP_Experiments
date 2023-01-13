@@ -401,7 +401,7 @@ def run(argv=None, save_main_session=True):
 
         # Writing everything to sink
         logging.info('Writing all to sink')
-        write_all_to_sink(final_sink_results)
+        write_all_to_sink(final_sink_results, bq_sink)
 
 
 if __name__ == '__main__':
