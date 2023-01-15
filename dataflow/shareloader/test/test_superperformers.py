@@ -583,38 +583,74 @@ class TestSuperPerformers(unittest.TestCase):
             get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score
 
         key = os.environ['FMPREPKEY']
-        ticker = 'TREX'
-        fundamental_data = get_fundamental_parameters(ticker, key)
-        fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
-        fundamental_data.update(fundamental_qtr)
-        financial_ratios = get_financial_ratios(ticker, key)
-        fundamental_data.update(financial_ratios)
 
-        updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
-        descr_and_tech = get_descriptive_and_technical(ticker, key)
-        updated_dict.update(descr_and_tech)
-        asset_play_dict = get_asset_play_parameters(ticker, key)
-        updated_dict.update(asset_play_dict)
+        for ticker in ['COLM', 'HALO']:
+            print('--------' * 5)
+            fundamental_data = get_fundamental_parameters(ticker, key)
+            fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
+            fundamental_data.update(fundamental_qtr)
+            financial_ratios = get_financial_ratios(ticker, key)
+            fundamental_data.update(financial_ratios)
 
-        piotrosky_score = calculate_piotrosky_score(key, ticker)
-        latest_rsi = compute_rsi(ticker, key)
-        updated_dict['piotroskyScore'] = piotrosky_score
-        updated_dict['rsi'] = latest_rsi
+            updated_dict = get_analyst_estimates(ticker, key, fundamental_data)
+            descr_and_tech = get_descriptive_and_technical(ticker, key)
+            updated_dict.update(descr_and_tech)
+            asset_play_dict = get_asset_play_parameters(ticker, key)
+            updated_dict.update(asset_play_dict)
 
-        priceChangeDict = get_price_change(ticker, key)
-        updated_dict.update(priceChangeDict)
-        updated_dict['stock_buy_price'] = updated_dict['priceAvg200'] * .8
-        updated_dict['stock_sell_price'] = updated_dict['priceAvg200'] * .7
-        updated_dict['earningYield'] = updated_dict.get('netIncome', 0) / updated_dict['marketCap']
-        updated_dict_df = pd.DataFrame(list(updated_dict.items()), columns=['key', 'value'])
+            piotrosky_score = calculate_piotrosky_score(key, ticker)
+            latest_rsi = compute_rsi(ticker, key)
+            updated_dict['piotroskyScore'] = piotrosky_score
+            updated_dict['rsi'] = latest_rsi
 
-        canslim_filter_df = self.get_canslim_filter_df()
-        merged = pd.merge(canslim_filter_df, updated_dict_df, on='key', how='left')
+            priceChangeDict = get_price_change(ticker, key)
+            updated_dict.update(priceChangeDict)
+            updated_dict['stock_buy_price'] = updated_dict['priceAvg200'] * .8
+            updated_dict['stock_sell_price'] = updated_dict['priceAvg200'] * .7
+            updated_dict['earningYield'] = updated_dict.get('netIncome', 0) / updated_dict['marketCap']
+            updated_dict_df = pd.DataFrame(list(updated_dict.items()), columns=['key', 'value'])
 
-        with pd.option_context('display.max_rows', None,
-                               'display.max_columns', 5,
-                               'display.precision', 3,
-                               ):
-            print(merged.to_string(index=False))
+            canslim_filter_df = self.get_canslim_filter_df()
+            merged = pd.merge(canslim_filter_df, updated_dict_df, on='key', how='left')
+
+            with pd.option_context('display.max_rows', None,
+                                   'display.max_columns', 5,
+                                   'display.precision', 3,
+                                   ):
+                print(merged.to_string(index=False))
+
+    def test_institutional_holdings(self):
+        from shareloader.modules.superperf_metrics import get_fundamental_parameters, get_fundamental_parameters_qtr, \
+            get_financial_ratios, get_analyst_estimates, get_asset_play_parameters, \
+            compute_rsi, get_price_change, get_income_benchmark, \
+            get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, get_institutional_holders_quote, \
+            get_institutional_holders_percentage
+
+        key = os.environ['FMPREPKEY']
+
+        res = requests.get(
+            'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format('COLM', key)).json()
+
+        from collections import defaultdict
+
+        ddict = defaultdict(list)
+
+        for item in res:
+            holder = item['holder']
+            shares = item['shares']
+            ddict[holder].append(shares)
+
+        shares = [v[0] for k, v in ddict.items() ]
+
+        print(f'COLM HOLDING are:{sum(shares)}')
+
+
+
+
+        print(get_institutional_holders_quote('COLM', key))
+        #print(get_institutional_holders_percentage('COLM', 'NASDAQ'))
+
+
+
 
 

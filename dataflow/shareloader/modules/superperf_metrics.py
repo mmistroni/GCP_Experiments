@@ -431,7 +431,23 @@ def get_shares_float(ticker, key):
 
 
 
+def get_instutional_holders_percentage_yahoo(ticker):
+    from bs4 import BeautifulSoup  # Move to aJob
+    import requests
 
+    link = f'https://finance.yahoo.com/quote/{ticker}/holders?p=COLM'
+    r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
+    bs = BeautifulSoup(r.content, 'html.parser')
+    spans = bs.find_all('span')
+
+    inst_span = [s for s in spans if 'of Shares Held by Institutions' in s.text][0]
+    row = inst_span.parent.parent
+    try:
+        pcnt_text = row.find_all('td')[0].text
+        return float(pcnt_text[:-1]) / 100
+    except Exception as e:
+        logging.info(f'Failed to find holders percentager for:{ticker}:{str(e)}')
+        return 0.5  # returning an allowed value
 
 def get_institutional_holders_quote(ticker, key, asOfDate=None):
     # we need to be smarter here. only filter for results whose date is lessorequal the current date.
