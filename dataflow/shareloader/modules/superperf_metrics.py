@@ -160,12 +160,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             descriptive_dict['allTimeHigh'] = max(hist_prices) if hist_prices else 0
             descriptive_dict['allTimeLow'] = min(hist_prices) if hist_prices else 0
 
-            descriptive_dict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
-
-            if descriptive_dict.get('sharesOutstanding') is not None and descriptive_dict.get('sharesOutstanding') > 0:
-                if descriptive_dict['instOwnership'] > 0 and descriptive_dict['sharesOutstanding'] > 0:
-                    pcnt = descriptive_dict['instOwnership'] / descriptive_dict['sharesOutstanding']
-                    descriptive_dict['institutionalOwnershipPercentage'] = pcnt
+            descriptive_dict['institutionalOwnershipPercentage'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
 
             return descriptive_dict
         else:
@@ -435,14 +430,15 @@ def get_instutional_holders_percentage_yahoo(ticker):
     from bs4 import BeautifulSoup  # Move to aJob
     import requests
 
-    link = f'https://finance.yahoo.com/quote/{ticker}/holders?p=COLM'
-    r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
-    bs = BeautifulSoup(r.content, 'html.parser')
-    spans = bs.find_all('span')
-
-    inst_span = [s for s in spans if 'of Shares Held by Institutions' in s.text][0]
-    row = inst_span.parent.parent
     try:
+        link = f'https://finance.yahoo.com/quote/{ticker}/holders?p={ticker}'
+        r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
+        bs = BeautifulSoup(r.content, 'html.parser')
+        spans = bs.find_all('span')
+
+        inst_span = [s for s in spans if 'of Shares Held by Institutions' in s.text][0]
+        row = inst_span.parent.parent
+
         pcnt_text = row.find_all('td')[0].text
         return float(pcnt_text[:-1]) / 100
     except Exception as e:
@@ -451,6 +447,11 @@ def get_instutional_holders_percentage_yahoo(ticker):
 
 def get_institutional_holders_quote(ticker, key, asOfDate=None):
     # we need to be smarter here. only filter for results whose date is lessorequal the current date.
+
+    pcnt = get_instutional_holders_percentage_yahoo(ticker)
+    logging.info(f'Institutional holder percentage for {ticker}={pcnt} ')
+    return {'institutionalHoldings': pcnt}
+
     res = requests.get(
         'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
     holdersDict = filter_historical(res, asOfDate)
@@ -656,15 +657,9 @@ def get_quote_benchmark(ticker, key):
                 'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
         dataDict = dict((k,v) for k, v in res.items() if k in keys)
         # then check ownership < 60% fund ownership
-        dataDict['instOwnership'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
+        dataDict['institutionalOwnershipPercentage'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
 
-        if dataDict.get('sharesOutstanding') is not None and dataDict.get('sharesOutstanding') > 0:
-            if dataDict['instOwnership'] > 0 and dataDict['sharesOutstanding'] > 0:
-                pcnt = dataDict['instOwnership'] / dataDict['sharesOutstanding']
-                dataDict['institutionalOwnershipPercentage'] = pcnt
-            else:
-                dataDict['institutionalOwnershipPercentage'] = 100
-            return dataDict
+        return dataDict
     except Exception as e:
         logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
         return {}

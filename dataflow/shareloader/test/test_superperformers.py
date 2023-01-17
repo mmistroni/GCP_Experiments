@@ -624,10 +624,11 @@ class TestSuperPerformers(unittest.TestCase):
             get_financial_ratios, get_analyst_estimates, get_asset_play_parameters, \
             compute_rsi, get_price_change, get_income_benchmark, \
             get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, get_institutional_holders_quote, \
-            get_institutional_holders_percentage
+            get_institutional_holders_percentage, get_instutional_holders_percentage_yahoo
 
         key = os.environ['FMPREPKEY']
 
+        """
         res = requests.get(
             'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format('COLM', key)).json()
 
@@ -643,11 +644,13 @@ class TestSuperPerformers(unittest.TestCase):
         shares = [v[0] for k, v in ddict.items() ]
 
         print(f'COLM HOLDING are:{sum(shares)}')
+        """
 
 
 
-
-        print(get_institutional_holders_quote('COLM', key))
+        for ticker in ['COLM', 'AMZN', 'MSFT', 'GOOD', 'TREX', 'HALO'] * 10:
+            pcnt = get_instutional_holders_percentage_yahoo(ticker)
+            print(f'{ticker} has {pcnt}')
         #print(get_institutional_holders_percentage('COLM', 'NASDAQ'))
 
 
