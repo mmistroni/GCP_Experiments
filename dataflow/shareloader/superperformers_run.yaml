@@ -18,7 +18,9 @@ steps:
           , 'microcap=$_MICROCAP'
         , '--parameters'
         , 'probe=$_PROBE'
-          , '--region=$_REGION'
+        , '--parameters'
+        , 'split=$_SPLIT'
+        , '--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 
@@ -30,3 +32,4 @@ substitutions:
   _IISTOCKS : ''
   _MICROCAP: ''
   _PROBE: ''
+  _SPLIT: ''

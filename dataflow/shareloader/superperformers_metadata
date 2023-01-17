@@ -21,6 +21,11 @@
       "name": "probe",
       "helpText": "Flag for test runs",
       "label": "probe"
+    },
+    {
+      "name": "split",
+      "helpText": "Flag for splitting list of shares in half",
+      "label": "split"
     }
   ]
 }

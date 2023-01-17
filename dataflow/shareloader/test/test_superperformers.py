@@ -654,6 +654,27 @@ class TestSuperPerformers(unittest.TestCase):
         #print(get_institutional_holders_percentage('COLM', 'NASDAQ'))
 
 
+    def test_combine_tickers(self):
+        from shareloader.modules.superperformers import combine_tickers
+
+        class SplitWords(beam.DoFn):
+            def __init__(self, key, keyword):
+                self.d = key
+                self.keyword = keyword
+
+            def process(self, element):
+                tmp = element.split(self.d)
+                return tmp[0:len(tmp) //2] if 'FIRST' in self.keyword else tmp[len(tmp) //2:]
+
+
+        with TestPipeline() as p:
+            (p | 'START' >> beam.Create(['AMZN', 'GOOGL', 'AAPL', 'FOO', 'BAR'])
+               | 'COMBINE' >> beam.CombineGlobally(combine_tickers)
+               | 'prdo'   >> beam.ParDo(SplitWords(',', 'FIRST'))
+               | 'out' >> beam.Map(print)
+             )
+
+
 
 
 

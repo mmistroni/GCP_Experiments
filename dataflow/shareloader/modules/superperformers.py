@@ -26,6 +26,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--iistocks')
         parser.add_argument('--microcap')
         parser.add_argument('--probe')
+        parser.add_argument('--split')
 
 def asset_play_filter(input_dict):
     if not input_dict:
@@ -130,15 +131,17 @@ class BaseLoader(beam.DoFn):
             all_dt.append(ticker_data)
         return all_dt
 
-
-class FundamentalLoader(beam.DoFn):
-    def __init__(self, key, microcap_flag=False):
+class MicrocapLoader(beam.DoFn):
+    def __init__(self, key, microcap_flag=True):
         self.key = key
         self.microcap_flag = microcap_flag
 
+
     def process(self, elements):
         all_dt = []
-        for ticker in elements.split(','):
+
+        tickers_to_process = elements.split(',')
+        for ticker in tickers_to_process:
 
             try:
                 fundamental_data = get_fundamental_parameters(ticker, self.key)
@@ -149,23 +152,60 @@ class FundamentalLoader(beam.DoFn):
                         financial_ratios = get_financial_ratios(ticker, self.key)
                         if financial_ratios:
                             fundamental_data.update(financial_ratios)
-                            if self.microcap_flag:
-                                logging.info('Calculating divis..')
-                                dividendDict = get_dividend_paid(ticker, self.key)
-                                fundamental_data.update(dividendDict)
+                            logging.info('Calculating divis..')
+                            dividendDict = get_dividend_paid(ticker, self.key)
+                            fundamental_data.update(dividendDict)
+                    descr_and_tech = get_descriptive_and_technical(ticker, self.key)
+                    fundamental_data.update(descr_and_tech)
+                    priceChangeDict = get_price_change(ticker, self.key)
+                    if priceChangeDict:
+                        fundamental_data.update(priceChangeDict)
+                    all_dt.append(fundamental_data)
+            except Exception as e:
+                logging.info(f"Failed to process fundamental loader:{str(e)}")
+                raise e
+        return all_dt
+
+
+class FundamentalLoader(beam.DoFn):
+    def __init__(self, key, microcap_flag=False, split_flag=None):
+        self.key = key
+        self.microcap_flag = microcap_flag
+        self.split_flag = split_flag
+
+    def process(self, elements):
+        all_dt = []
+
+        tickers_to_process = elements.split(',')
+        if self.split_flag:
+            tickers_mid_length = len(tickers_to_process) // 2
+            if 'First' in self.split_flag:
+                tickers_to_process = tickers_to_process[0 : tickers_mid_length]
+            else:
+                tickers_to_process = tickers_to_process[tickers_mid_length:]
+
+
+        for ticker in tickers_to_process:
+
+            try:
+                fundamental_data = get_fundamental_parameters(ticker, self.key)
+                if fundamental_data:
+                    fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
+                    if fundamental_qtr:
+                        fundamental_data.update(fundamental_qtr)
+                        financial_ratios = get_financial_ratios(ticker, self.key)
+                        if financial_ratios:
+                            fundamental_data.update(financial_ratios)
 
                     updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                     descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                     updated_dict.update(descr_and_tech)
-
-                    if not self.microcap_flag:
-                        asset_play_dict = get_asset_play_parameters(ticker, self.key)
-                        updated_dict.update(asset_play_dict)
-
-                        piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                        latest_rsi = compute_rsi(ticker, self.key)
-                        updated_dict['piotroskyScore'] = piotrosky_score
-                        updated_dict['rsi'] = latest_rsi
+                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                    updated_dict.update(asset_play_dict)
+                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                    latest_rsi = compute_rsi(ticker, self.key)
+                    updated_dict['piotroskyScore'] = piotrosky_score
+                    updated_dict['rsi'] = latest_rsi
 
                     priceChangeDict = get_price_change(ticker, self.key)
                     if priceChangeDict:
@@ -268,14 +308,13 @@ def write_to_bucket(lines, sink):
 def combine_tickers(input):
     return ','.join(input)
 
-
 def combine_dict(input):
     return [d for d in input]
 
-def load_fundamental_data(source,fmpkey):
+def load_fundamental_data(source,fmpkey, split=''):
     return (source
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey))
+            | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey, split_flag=split))
             | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
             | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)
             | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
@@ -549,7 +588,8 @@ def run(argv=None, save_main_session=True):
             microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
             store_microcap(microcap_data, bq_sink)
         else:
-            fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey)
+            fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey,
+                                                    pipeline_options.split)
             if (pipeline_options.probe):
                 run_probe(fundamental_data)
                 return
