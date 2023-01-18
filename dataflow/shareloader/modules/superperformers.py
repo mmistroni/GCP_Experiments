@@ -203,7 +203,7 @@ class FundamentalLoader(beam.DoFn):
                     asset_play_dict = get_asset_play_parameters(ticker, self.key)
                     updated_dict.update(asset_play_dict)
                     piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                    latest_rsi = compute_rsi(ticker, self.key)
+                    latest_rsi = -1#compute_rsi(ticker, self.key)
                     updated_dict['piotroskyScore'] = piotrosky_score
                     updated_dict['rsi'] = latest_rsi
 
@@ -322,7 +322,7 @@ def load_fundamental_data(source,fmpkey, split=''):
 def load_microcap_data(source,fmpkey):
     return (source
             | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals microcap' >> beam.ParDo(FundamentalLoader(fmpkey, microcap_flag=True))
+            | 'Getting fundamentals microcap' >> beam.ParDo(MicrocapLoader(fmpkey, microcap_flag=True))
             | 'Filtering out none fundamentals microcap' >> beam.Filter(lambda item: item is not None)
             | 'MicroCap Sanity Check' >> beam.Filter(microcap_sanity_check)
             | 'Filtering microcap' >> beam.Filter(microcap_filter)
