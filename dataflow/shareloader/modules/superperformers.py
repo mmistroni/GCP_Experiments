@@ -142,25 +142,33 @@ class MicrocapLoader(beam.DoFn):
 
         tickers_to_process = elements.split(',')
         for ticker in tickers_to_process:
-
+            # Not good. filter out data at the beginning to reduce stress load for rest of data
             try:
-                fundamental_data = get_fundamental_parameters(ticker, self.key)
-                if fundamental_data:
-                    fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
-                    if fundamental_qtr:
-                        fundamental_data.update(fundamental_qtr)
-                        financial_ratios = get_financial_ratios(ticker, self.key)
-                        if financial_ratios:
-                            fundamental_data.update(financial_ratios)
-                            logging.info('Calculating divis..')
-                            dividendDict = get_dividend_paid(ticker, self.key)
-                            fundamental_data.update(dividendDict)
-                    descr_and_tech = get_descriptive_and_technical(ticker, self.key)
-                    fundamental_data.update(descr_and_tech)
+                descr_and_tech = get_descriptive_and_technical(ticker, self.key)
+                if descr_and_tech.get('marketCap', 0) <= 200000000 \
+                        and descr_and_tech.get('avgVolume', 0) >= 10000:
+                    logging.info(f'Checks proceed for {ticker}')
+                    # checking pct change
                     priceChangeDict = get_price_change(ticker, self.key)
                     if priceChangeDict:
-                        fundamental_data.update(priceChangeDict)
-                    all_dt.append(fundamental_data)
+                        chng = priceChangeDict.get('52weekChange', 0)
+                        if chng > 0 and chng < .5:
+                            descr_and_tech.update(priceChangeDict)
+                            logging.info(f'Change check green for {ticker}')
+                            fundamental_data = get_fundamental_parameters(ticker, self.key)
+                            if fundamental_data:
+                                descr_and_tech.update(fundamental_data)
+                                fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
+                                if fundamental_qtr:
+                                    descr_and_tech.update(fundamental_qtr)
+                                    financial_ratios = get_financial_ratios(ticker, self.key)
+                                    if financial_ratios:
+                                        descr_and_tech.update(financial_ratios)
+                                        logging.info('Calculating divis..')
+                                        dividendDict = get_dividend_paid(ticker, self.key)
+                                        descr_and_tech.update(dividendDict)
+
+                                all_dt.append(descr_and_tech)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader:{str(e)}")
                 raise e
