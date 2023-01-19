@@ -167,8 +167,7 @@ class MicrocapLoader(beam.DoFn):
                                         logging.info('Calculating divis..')
                                         dividendDict = get_dividend_paid(ticker, self.key)
                                         descr_and_tech.update(dividendDict)
-
-                                all_dt.append(descr_and_tech)
+                                        all_dt.append(descr_and_tech)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader:{str(e)}")
                 raise e
