@@ -304,13 +304,13 @@ class BenchmarkLoader(beam.DoFn):
                                     else:
                                         quotes_data['netQuickAssetPerShare'] = -1
 
-                                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                                    #piotrosky_score = calculate_piotrosky_score(self.key, ticker)
                                     latest_rsi = compute_rsi(ticker, self.key)
-                                    quotes_data['rsi'] = latest_rsi
-                                    quotes_data['piotroskyScore'] = piotrosky_score
+                                    quotes_data['rsi'] = 0
+                                    quotes_data['piotroskyScore'] = 0
 
-                                priceChangeDict = get_price_change(ticker, self.key)
-                                quotes_data.update(priceChangeDict)
+                                #priceChangeDict = get_price_change(ticker, self.key)
+                                #quotes_data.update(priceChangeDict)
                                 all_dt.append(quotes_data)
             except Exception as e:
                 logging.info(f'Unexpected exception in fundamental data for:{ticker}')
