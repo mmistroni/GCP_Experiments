@@ -450,7 +450,6 @@ def get_institutional_holders_quote(ticker, key, asOfDate=None):
     # we need to be smarter here. only filter for results whose date is lessorequal the current date.
 
     pcnt = get_instutional_holders_percentage_yahoo(ticker)
-    logging.info(f'Institutional holder percentage for {ticker}={pcnt} ')
     return {'institutionalHoldings': pcnt}
 
     res = requests.get(
