@@ -211,14 +211,9 @@ class FundamentalLoader(beam.DoFn):
                     asset_play_dict = get_asset_play_parameters(ticker, self.key)
                     updated_dict.update(asset_play_dict)
                     piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                    latest_rsi = -1#compute_rsi(ticker, self.key)
+                    latest_rsi = compute_rsi(ticker, self.key)
                     updated_dict['piotroskyScore'] = piotrosky_score
                     updated_dict['rsi'] = latest_rsi
-
-                    priceChangeDict = get_price_change(ticker, self.key)
-                    if priceChangeDict:
-                        updated_dict.update(priceChangeDict)
-
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader:{str(e)}")
