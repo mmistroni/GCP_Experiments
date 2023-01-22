@@ -651,8 +651,9 @@ def get_quote_benchmark(ticker, key):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
+    dataDict = {}
+
     try:
-        dataDict = {}
         dataDict['ticker'] = ticker
         res = requests.get(resUrl).json()[ 0]
         dataDict = dict((k,v) for k, v in res.items() if k in keys)
@@ -662,6 +663,8 @@ def get_quote_benchmark(ticker, key):
         return dataDict
     except Exception as e:
         logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
-        d = dict((k, -1) for k in keys)
-        return d
+        dataDict = dict((k, -1) for k in keys)
+        return dataDict
+
+
 

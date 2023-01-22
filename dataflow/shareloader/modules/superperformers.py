@@ -288,7 +288,11 @@ class BenchmarkLoader(beam.DoFn):
                                 asset_play_dict = get_asset_play_parameters(ticker, self.key)
                                 quotes_data.update(asset_play_dict)
                                 # CHecking if assets > stocks outstanding
-                                currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                                if quotes_data.get('sharesOutstanding',1) is not None \
+                                    and quotes_data.get('price',1) is not None:
+                                    currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                                else:
+                                    currentCompanyValue = 1
                                 # current assets
                                 quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
                                 quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
