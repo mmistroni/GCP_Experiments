@@ -264,53 +264,58 @@ class BenchmarkLoader(beam.DoFn):
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
         logging.info('All data is\n{}'.format(elements))
         all_dt = []
-        for ticker in elements.split(','):
-            quotes_data = get_quote_benchmark(ticker, self.key)
-            if quotes_data:
-                income_data = get_income_benchmark(ticker, self.key)
-                if income_data:
-                    quotes_data.update(income_data)
-                    balance_sheet_data = get_balancesheet_benchmark(ticker, self.key)
-                    if balance_sheet_data:
-                        quotes_data.update(balance_sheet_data)
-                        financial_ratios_data = get_financial_ratios_benchmark(ticker, self.key)
+        tickers = elements.split(',')
+        exceptionCount = 0
+        for ticker in tickers:
+            try:
+                quotes_data = get_quote_benchmark(ticker, self.key)
+                if quotes_data:
+                    income_data = get_income_benchmark(ticker, self.key)
+                    if income_data:
+                        quotes_data.update(income_data)
+                        balance_sheet_data = get_balancesheet_benchmark(ticker, self.key)
+                        if balance_sheet_data:
+                            quotes_data.update(balance_sheet_data)
+                            financial_ratios_data = get_financial_ratios_benchmark(ticker, self.key)
 
-                        if financial_ratios_data:
-                            quotes_data.update(financial_ratios_data)
-                            key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
-                            if key_metrics_dta:
-                                quotes_data.update(key_metrics_dta)
-                                asset_play_dict = get_asset_play_parameters(ticker, self.key)
-                                quotes_data.update(asset_play_dict)
-                                # CHecking if assets > stocks outstanding
-                                if quotes_data.get('sharesOutstanding',1) is not None \
-                                    and quotes_data.get('price',1) is not None:
-                                    currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
-                                else:
-                                    currentCompanyValue = 1
-                                # current assets
-                                quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
+                            if financial_ratios_data:
+                                quotes_data.update(financial_ratios_data)
+                                key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
+                                if key_metrics_dta:
+                                    quotes_data.update(key_metrics_dta)
+                                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                                    quotes_data.update(asset_play_dict)
+                                    # CHecking if assets > stocks outstanding
+                                    if quotes_data.get('sharesOutstanding',1) is not None \
+                                        and quotes_data.get('price',1) is not None:
+                                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                                    else:
+                                        currentCompanyValue = 1
+                                    # current assets
+                                    quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
 
-                                if quotes_data.get('totalCurrentAssets') is not None and \
-                                        quotes_data.get('totalCurrentLiabilities') is not None and \
-                                        quotes_data.get('inventory') is not None and \
-                                        quotes_data.get('sharesOutstanding') is not None:
-                                    quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
-                                                                                quotes_data['totalCurrentLiabilities'] - \
-                                                                                 quotes_data['inventory']) / quotes_data['sharesOutstanding']
-                                else:
-                                    quotes_data['netQuickAssetPerShare'] = -1
+                                    if quotes_data.get('totalCurrentAssets') is not None and \
+                                            quotes_data.get('totalCurrentLiabilities') is not None and \
+                                            quotes_data.get('inventory') is not None and \
+                                            quotes_data.get('sharesOutstanding') is not None:
+                                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
+                                                                                    quotes_data['totalCurrentLiabilities'] - \
+                                                                                     quotes_data['inventory']) / quotes_data['sharesOutstanding']
+                                    else:
+                                        quotes_data['netQuickAssetPerShare'] = -1
 
-                                piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                                latest_rsi = compute_rsi(ticker, self.key)
-                                quotes_data['rsi'] = latest_rsi
-                                quotes_data['piotroskyScore'] = piotrosky_score
+                                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                                    latest_rsi = compute_rsi(ticker, self.key)
+                                    quotes_data['rsi'] = latest_rsi
+                                    quotes_data['piotroskyScore'] = piotrosky_score
 
-                            priceChangeDict = get_price_change(ticker, self.key)
-                            quotes_data.update(priceChangeDict)
-                            all_dt.append(quotes_data)
-
-
+                                priceChangeDict = get_price_change(ticker, self.key)
+                                quotes_data.update(priceChangeDict)
+                                all_dt.append(quotes_data)
+            except Exception as e:
+                logging.info(f'Unexpected exception in fundamental data for:{ticker}')
+                exceptionCount +=1
+                
         return all_dt
 
 
@@ -598,7 +603,7 @@ def run(argv=None, save_main_session=True):
                 run_probe(benchmark_data)
                 return
             else:
-                store_superperformers_benchmark(benchmark_data, bq_sink, test_sink)
+                store_superperformers_benchmark(benchmark_data, bq_sink)
 
         elif (pipeline_options.microcap):
             microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)

@@ -169,6 +169,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             d['changeFromOpen'] = 0
             d['allTimeHigh'] =  0
             d['allTimeLow'] =  0
+            descriptive_dict['institutionalOwnershipPercentage'] = 1
 
             return d
     except Exception as e:
@@ -662,9 +663,6 @@ def get_quote_benchmark(ticker, key):
 
         return dataDict
     except Exception as e:
-        logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
-        dataDict = dict((k, -1) for k in keys)
-        return dataDict
-
+        logging.info(f'Exception in getting quote daqta for :{ticker}')
 
 
