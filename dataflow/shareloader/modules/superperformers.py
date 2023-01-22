@@ -290,9 +290,16 @@ class BenchmarkLoader(beam.DoFn):
                                     currentCompanyValue = 1
                                 # current assets
                                 quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
-                                quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
-                                                                        quotes_data['totalCurrentLiabilities'] - \
-                                                                         quotes_data['inventory']) / quotes_data['sharesOutstanding']
+
+                                if quotes_data.get('totalCurrentAssets') is not None and \
+                                        quotes_data.get('totalCurrentLiabilities') is not None and \
+                                        quotes_data.get('inventory') is not None and \
+                                        quotes_data.get('sharesOutstanding') is not None:
+                                    quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
+                                                                                quotes_data['totalCurrentLiabilities'] - \
+                                                                                 quotes_data['inventory']) / quotes_data['sharesOutstanding']
+                                else:
+                                    quotes_data['netQuickAssetPerShare'] = -1
 
                                 piotrosky_score = calculate_piotrosky_score(self.key, ticker)
                                 latest_rsi = compute_rsi(ticker, self.key)
@@ -476,7 +483,7 @@ def store_microcap(data, sink):
      | 'wRITING TO SINK microcap' >> sink)
 
 def store_superperformers(data, bq_sink, test_sink):
-    data | 'Sendig to sink' >> test_sink
+    #data | 'Sendig to sink' >> test_sink
 
     (data | 'fund unvierse' >> beam.Filter(get_universe_filter)
      | 'Mapping only Relevant fields' >> beam.Map(lambda d:
@@ -511,6 +518,50 @@ def store_superperformers(data, bq_sink, test_sink):
      | 'Writing to sink weekly' >> bq_sink)
 
 
+def store_superperformers_benchmark(benchmark_data, bq_sink):
+    (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
+
+                     | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                     | 'Mapping only Relevant fields d' >> beam.Map(lambda d:
+                                                                    map_to_bq_dict(d, 'DEFENSIVE'))
+                     | 'Writing to sink d' >> bq_sink)
+
+    (benchmark_data | 'Filtering for all fields e ' >> beam.Filter(benchmark_filter)
+
+                     | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
+                     | 'Mapping only Relevant fields ent' >> beam.Map(lambda d:
+                                                                      map_to_bq_dict(d, 'ENTERPRISE'))
+                     | 'Writing to sink e' >> bq_sink)
+
+    (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
+                     | 'Filtering for defensive ap' >> beam.Filter(defensive_stocks_filter)
+                     | 'Filtering for asset play defensive' >> beam.Filter(asset_play_filter)
+                     | 'Mapping only Relevant fields AP' >> beam.Map(lambda d:
+                                                                     map_to_bq_dict(d, 'ASSET_PLAY_DEFENSIVE'))
+                     | 'Writing to sink ap' >> bq_sink)
+
+    (benchmark_data | 'Filtering for all fields ENT ' >> beam.Filter(benchmark_filter)
+                     | 'Filtering for ent ap' >> beam.Filter(enterprise_stock_filter)
+                     | 'Filtering for asset play enterprise' >> beam.Filter(asset_play_filter)
+                     | 'Mapping only Relevant fields ENT' >> beam.Map(lambda d:
+                                                                      map_to_bq_dict(d, 'ASSET_PLAY_ENTERPRISE'))
+                     | 'Writing to sink ENT' >> bq_sink)
+
+    (benchmark_data | 'Filtering for all fields AP2 ' >> beam.Filter(benchmark_filter)
+                     | 'Filtering for defensive ap2' >> beam.Filter(defensive_stocks_filter)
+                     | 'Filtering for out of favour ' >> beam.Filter(out_of_favour_filter)
+                     | 'Mapping only Relevant fields AP2' >> beam.Map(lambda d:
+                                                                      map_to_bq_dict(d, 'OUT_OF_FAVOUR_DEFENSIVE'))
+                     | 'Writing to sink ap2' >> bq_sink)
+
+    (benchmark_data | 'Filtering for all fields ENT2 ' >> beam.Filter(benchmark_filter)
+                     | 'Filtering for ent ap2' >> beam.Filter(enterprise_stock_filter)
+                     | 'Filtering for out of favour enterprise2' >> beam.Filter(out_of_favour_filter)
+                     | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
+                                                                       map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
+                     | 'Writing to sink ENT2' >> bq_sink)
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -543,53 +594,11 @@ def run(argv=None, save_main_session=True):
         if (pipeline_options.iistocks):
             benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
 
-            destination = 'gs://mm_dataflow_bucket/outputs/superperformers_stockbenchmarks_{}'.format(
-                date.today().strftime('%Y-%m-%d %H:%M'))
-
-            sink = beam.io.WriteToText(destination, num_shards=1)
-            benchmark_data | 'Sendig to bqsink' >> sink
-
-            (benchmark_data | 'Filtering for all fields d ' >> beam.Filter(benchmark_filter)
-
-                            | 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
-                            | 'Mapping only Relevant fields d' >> beam.Map(lambda d:
-                                                                           map_to_bq_dict(d, 'DEFENSIVE'))
-                            | 'Writing to sink d' >> bq_sink)
-
-            (benchmark_data | 'Filtering for all fields e ' >> beam.Filter(benchmark_filter)
-            
-                            | 'Filtering for enterprise' >> beam.Filter(enterprise_stock_filter)
-                            | 'Mapping only Relevant fields ent' >> beam.Map(lambda d:
-                                                                             map_to_bq_dict(d, 'ENTERPRISE'))
-                            | 'Writing to sink e' >> bq_sink)
-
-            (benchmark_data | 'Filtering for all fields AP ' >> beam.Filter(benchmark_filter)
-             | 'Filtering for defensive ap' >> beam.Filter(defensive_stocks_filter)
-             | 'Filtering for asset play defensive' >> beam.Filter(asset_play_filter)
-             | 'Mapping only Relevant fields AP' >> beam.Map(lambda d:
-                                                                map_to_bq_dict(d, 'ASSET_PLAY_DEFENSIVE'))
-             | 'Writing to sink ap' >> bq_sink)
-
-            (benchmark_data | 'Filtering for all fields ENT ' >> beam.Filter(benchmark_filter)
-             | 'Filtering for ent ap' >> beam.Filter(enterprise_stock_filter)
-             | 'Filtering for asset play enterprise' >> beam.Filter(asset_play_filter)
-             | 'Mapping only Relevant fields ENT' >> beam.Map(lambda d:
-                                                             map_to_bq_dict(d, 'ASSET_PLAY_ENTERPRISE'))
-             | 'Writing to sink ENT' >> bq_sink)
-
-            (benchmark_data | 'Filtering for all fields AP2 ' >> beam.Filter(benchmark_filter)
-             | 'Filtering for defensive ap2' >> beam.Filter(defensive_stocks_filter)
-             | 'Filtering for out of favour ' >> beam.Filter(out_of_favour_filter)
-             | 'Mapping only Relevant fields AP2' >> beam.Map(lambda d:
-                                                             map_to_bq_dict(d, 'OUT_OF_FAVOUR_DEFENSIVE'))
-             | 'Writing to sink ap2' >> bq_sink)
-
-            (benchmark_data | 'Filtering for all fields ENT2 ' >> beam.Filter(benchmark_filter)
-             | 'Filtering for ent ap2' >> beam.Filter(enterprise_stock_filter)
-             | 'Filtering for out of favour enterprise2' >> beam.Filter(out_of_favour_filter)
-             | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
-                                                              map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
-             | 'Writing to sink ENT2' >> bq_sink)
+            if (pipeline_options.probe):
+                run_probe(benchmark_data)
+                return
+            else:
+                store_superperformers_benchmark(benchmark_data, bq_sink, test_sink)
 
         elif (pipeline_options.microcap):
             microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
