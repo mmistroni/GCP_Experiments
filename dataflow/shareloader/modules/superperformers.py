@@ -145,7 +145,9 @@ class MicrocapLoader(beam.DoFn):
             # Not good. filter out data at the beginning to reduce stress load for rest of data
             try:
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
-                if descr_and_tech.get('marketCap', 0) <= 200000000 \
+                if descr_and_tech.get('marketCap', 0) is not None \
+                        and descr_and_tech.get('marketCap', 0) <= 200000000 \
+                        and descr_and_tech.get('avgVolume', 0) is not None \
                         and descr_and_tech.get('avgVolume', 0) >= 10000:
                     logging.info(f'Checks proceed for {ticker}')
                     # checking pct change
@@ -169,7 +171,6 @@ class MicrocapLoader(beam.DoFn):
                                         descr_and_tech.update(dividendDict)
                                         all_dt.append(descr_and_tech)
             except Exception as e:
-                logging.info(f"Failed to process fundamental loader:{str(e)}")
                 raise e
         return all_dt
 

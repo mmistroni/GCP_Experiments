@@ -443,7 +443,7 @@ def get_instutional_holders_percentage_yahoo(ticker):
         return float(pcnt_text[:-1]) / 100
     except Exception as e:
         logging.info(f'Failed to find holders percentager for:{ticker}:{str(e)}')
-        return 0.5  # returning an allowed value
+        return 0.55555  # returning an allowed value
 
 def get_institutional_holders_quote(ticker, key, asOfDate=None):
     # we need to be smarter here. only filter for results whose date is lessorequal the current date.
@@ -649,12 +649,12 @@ def get_price_change(ticker, key):
 
 def get_quote_benchmark(ticker, key):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
+    keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
+            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
     try:
         dataDict = {}
         dataDict['ticker'] = ticker
         res = requests.get(resUrl).json()[ 0]
-        keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
-                'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
         dataDict = dict((k,v) for k, v in res.items() if k in keys)
         # then check ownership < 60% fund ownership
         dataDict['institutionalOwnershipPercentage'] = get_institutional_holders_quote(ticker, key)['institutionalHoldings']
@@ -662,5 +662,6 @@ def get_quote_benchmark(ticker, key):
         return dataDict
     except Exception as e:
         logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
-        return {}
+        d = dict((k, -1) for k in keys)
+        return d
 
