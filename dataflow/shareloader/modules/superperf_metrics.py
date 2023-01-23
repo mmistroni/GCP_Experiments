@@ -112,7 +112,7 @@ def calculate_piotrosky_score(key, ticker):
             score += 1
 
     except Exception as e:
-        logging.info('Exception in calculating piotroski score:' + str(e))
+        logging.debug('Exception in calculating piotroski score:' + str(e))
 
     return score
 
@@ -173,7 +173,6 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
 
             return d
     except Exception as e:
-        logging.info('Failed to get descriptive for :{}:{}'.format(ticker, str(e)))
         return dict((k, -1) for k in keys)
 
 
@@ -221,8 +220,7 @@ def get_asset_play_parameters(ticker, key):
             dataDict['freeCashFlowPerShare'] = current.get('freeCashFlowPerShareTTM') or 0
 
     except Exception as e:
-        logging.info('Error in finding asset play params for :{}:{}'.format(ticker, str(e)))
-
+        pass
     return dataDict
 
 
@@ -287,7 +285,6 @@ def get_fundamental_parameters_qtr(ticker,key):
                 qtr_fundamental_dict['net_sales_qtr_over_qtr'] = 0
         return qtr_fundamental_dict
     except Exception as e:
-        logging.info('FAiled to get fundamelta qtr data for:{}:{}'.format(ticker, str(e)))
         return {}
 
 
@@ -306,7 +303,6 @@ def get_analyst_estimates(ticker, key,  fundamental_dict):
         else:
             fundamental_dict['eps_growth_next_year'] = 0
     except Exception as e:
-        logging.info('Failed to find analyst estimates for:{}:{}'.format(ticker, str(e)))
         fundamental_dict['eps_growth_next_year'] = 0
     return fundamental_dict
 
@@ -356,7 +352,6 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             fundamental_dict.update(qtrly_fundamental_dict)
             return fundamental_dict
     except Exception as e:
-        logging.info('Exception in fetching income stmnt for {}:{}'.format(ticker, str(e)))
         fundamental_dict['cost_of_research_and_dev'] = 0
         fundamental_dict['income_statement_prev_date'] = 0
         fundamental_dict['eps_progression'] = []
@@ -387,7 +382,6 @@ def get_dividend_paid(ticker, key):
 
 
     except Exception as e:
-        logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
         dataDict['dividendPaid'] = False
     return dataDict
 
@@ -411,7 +405,6 @@ def get_financial_ratios(ticker, key):
                     currentRatio = 0 if latest.get('currentRatioTTM') is None else latest.get('currentRatioTTM'))
             ratioDict.update(dataDict)
         except Exception as e:
-            logging.info('Could not find ratios for {}:{}={}'.format(ticker, financial_ratios, str(e)))
             return {}
         dividendDict = {}
         ratioDict.update(dividendDict)
@@ -443,7 +436,6 @@ def get_instutional_holders_percentage_yahoo(ticker):
         pcnt_text = row.find_all('td')[0].text
         return float(pcnt_text[:-1]) / 100
     except Exception as e:
-        logging.info(f'Failed to find holders percentager for:{ticker}:{str(e)}')
         return 0.55555  # returning an allowed value
 
 def get_institutional_holders_quote(ticker, key, asOfDate=None):
@@ -489,7 +481,7 @@ def get_fundamentals(input_dict, key):
         newd.update(fund_dict)
         return newd
     except Exception as e:
-        logging.info('Failed to retrieve data for {}:{}'.format(ticker, str(e)))
+        return None
 
 
 def get_balancesheet_benchmark(ticker, key):
@@ -514,7 +506,7 @@ def get_balancesheet_benchmark(ticker, key):
 
             return dataDict
     except Exception as e:
-        logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
+        return None
 
 
 def compute_cagr(input_list):
@@ -564,7 +556,7 @@ def get_income_benchmark(ticker, key):
 
             return dataDict
     except Exception as e:
-        logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
+        return None
 
 def get_key_metrics_benchmark(ticker, key):
     # some eps in last 10 yrs
@@ -581,7 +573,7 @@ def get_key_metrics_benchmark(ticker, key):
 
             return dataDict
     except Exception as e:
-        logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
+        return None
 
 def get_financial_ratios_benchmark(ticker, key):
     # some eps in last 10 yrs
@@ -594,7 +586,6 @@ def get_financial_ratios_benchmark(ticker, key):
             try:
                 latest = financial_ratios[0]
             except Exception as e:
-                logging.info(f'Exception in getting ratios for:{ticker}:{str(e)}')
                 return None
 
             try:
@@ -614,7 +605,7 @@ def get_financial_ratios_benchmark(ticker, key):
                     latest.get('returnOnCapitalEmployedTTM')
 
             except Exception as e:
-                logging.info(f'Exception in getting divis for:{ticker}:{str(e)}')
+                pass
 
             dataDict['pe'] = latest.get('priceEarningsRatioTTM') or 0
             dataDict['peRatio'] = dataDict['pe']
@@ -631,7 +622,6 @@ def get_financial_ratios_benchmark(ticker, key):
             dataDict['returnOnCapital'] =  latest.get('returnOnCapitalEmployedTTM') or 0
             return dataDict
     except Exception as e:
-        logging.info('Exception when getting balancehseet for {}:{}'.format(ticker, str(e)))
         return dataDict
 
 def get_price_change(ticker, key):
@@ -643,7 +633,6 @@ def get_price_change(ticker, key):
         res = requests.get(resUrl).json()[ 0]
         dataDict['52weekChange'] = res.get('1Y') or 0
     except Exception as e:
-        logging.info('Exception in getting quote benchmark for {}:{}'.format(resUrl, str(e)))
         dataDict['52weekChange'] = -1
     return dataDict
 

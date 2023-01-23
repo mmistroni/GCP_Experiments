@@ -57,8 +57,6 @@ class StockSelectionCombineFn(beam.CombineFn):
     return []
 
   def add_input(self, accumulator, input):
-    logging.info('Adding{}'.format(input))
-    logging.info('acc is:{}'.format(accumulator))
     row_acc = accumulator
     row_acc.append(ROW_TEMPLATE.format(*input))
     return row_acc
@@ -74,11 +72,9 @@ class StockSelectionCombineFn(beam.CombineFn):
 
 def create_monthly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(60)).date().strftime('%Y-%m-%d')
-    logging.info('Cutoff is:{}'.format(cutoff_date_str))
     bq_sql = """SELECT TICKER, LABEL, COUNT(*) as COUNTER FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND LABEL <> 'STOCK_UNIVERSE' GROUP BY TICKER,LABEL 
   """.format(cutoff_date_str)
-    logging.info('executing SQL :{}'.format(bq_sql))
     return (p | 'Reading-{}'.format(cutoff_date_str) >> beam.io.Read(
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
 
