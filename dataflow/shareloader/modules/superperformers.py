@@ -171,7 +171,8 @@ class MicrocapLoader(beam.DoFn):
                                         descr_and_tech.update(dividendDict)
                                         all_dt.append(descr_and_tech)
             except Exception as e:
-                raise e
+                logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
+                break
         return all_dt
 
 
@@ -216,8 +217,8 @@ class FundamentalLoader(beam.DoFn):
                     updated_dict['rsi'] = latest_rsi
                     all_dt.append(updated_dict)
             except Exception as e:
-                logging.info(f"Failed to process fundamental loader:{str(e)}")
-                raise e
+                logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
+                break
         return all_dt
 
 def load_bennchmark_data(ticker, key):

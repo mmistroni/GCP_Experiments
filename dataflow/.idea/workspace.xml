@@ -9,9 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -454,7 +452,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>378</line>
+          <line>379</line>
           <option name="timeStamp" value="115" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -494,7 +492,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>317</line>
+          <line>318</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -509,17 +507,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>310</line>
+          <line>311</line>
           <option name="timeStamp" value="182" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>301</line>
+          <line>302</line>
           <option name="timeStamp" value="183" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>288</line>
+          <line>289</line>
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
