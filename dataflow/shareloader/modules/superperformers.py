@@ -268,13 +268,21 @@ def load_bennchmark_data(ticker, key):
     return quotes_data
 
 class BenchmarkLoader(beam.DoFn):
-    def __init__(self, key):
+    def __init__(self, key, split=None):
         self.key = key
+        self.split = split
 
     def process(self, elements):
         logging.info('All data is\n{}'.format(elements))
         all_dt = []
         tickers = elements.split(',')
+
+        if self.split:
+            if 'first' in self.split.lower():
+                tickers = tickers[0: len(tickers) //2]
+            else:
+                tickers = tickers[len(tickers) //2:]
+
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(tickers)))
 
         isException = False
@@ -370,10 +378,10 @@ def load_microcap_data(source,fmpkey):
             | 'Filtering microcap' >> beam.Filter(microcap_filter)
             )
 
-def load_benchmark_data(source,fmpkey):
+def load_benchmark_data(source,fmpkey, split=None):
     return (source
             | 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey))
+            | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey, split))
             | 'Filtering  benchmark by price' >>  beam.Filter(lambda d: d.get('price', 0) > 10)
             )
 
@@ -620,7 +628,8 @@ def run(argv=None, save_main_session=True):
         tickers = extract_data_pipeline(p, input_file)
 
         if (pipeline_options.iistocks):
-            benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey)
+            benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey,
+                                                 pipeline_options.split)
 
             if (pipeline_options.probe):
                 run_probe(benchmark_data)
