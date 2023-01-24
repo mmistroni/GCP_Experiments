@@ -141,7 +141,9 @@ class MicrocapLoader(beam.DoFn):
         all_dt = []
 
         tickers_to_process = elements.split(',')
-        for ticker in tickers_to_process:
+        excMsg = ''
+        isException = False
+        for idx, ticker in enumerate(tickers_to_process):
             # Not good. filter out data at the beginning to reduce stress load for rest of data
             try:
                 descr_and_tech = get_descriptive_and_technical(ticker, self.key)
@@ -171,8 +173,11 @@ class MicrocapLoader(beam.DoFn):
                                         descr_and_tech.update(dividendDict)
                                         all_dt.append(descr_and_tech)
             except Exception as e:
-                logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
+                excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
+                isException = True
                 break
+        if isException:
+            raise Exception(excMsg)
         return all_dt
 
 
@@ -184,7 +189,8 @@ class FundamentalLoader(beam.DoFn):
 
     def process(self, elements):
         all_dt = []
-
+        isException = False
+        excMsg = ''
         tickers_to_process = elements.split(',')
         if self.split_flag:
             tickers_mid_length = len(tickers_to_process) // 2
@@ -194,7 +200,7 @@ class FundamentalLoader(beam.DoFn):
                 tickers_to_process = tickers_to_process[tickers_mid_length:]
 
 
-        for ticker in tickers_to_process:
+        for idx, ticker in enumerate(tickers_to_process):
 
             try:
                 fundamental_data = get_fundamental_parameters(ticker, self.key)
@@ -218,7 +224,11 @@ class FundamentalLoader(beam.DoFn):
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
+                isException = True
+                excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 break
+        if isException:
+            raise Exception(excMsg)
         return all_dt
 
 def load_bennchmark_data(ticker, key):
@@ -267,8 +277,12 @@ class BenchmarkLoader(beam.DoFn):
         tickers = elements.split(',')
         logging.info('Attepmting to get fundamental data for all elements {}'.format(len(tickers)))
 
+        isException = False
+        excMsg = ''
+
+
         exceptionCount = 0
-        for ticker in tickers:
+        for idx, ticker in enumerate(tickers):
             try:
                 quotes_data = get_quote_benchmark(ticker, self.key)
                 if quotes_data:
@@ -317,9 +331,12 @@ class BenchmarkLoader(beam.DoFn):
                                 all_dt.append(quotes_data)
             except Exception as e:
                 logging.info(f'Unexpected exception in fundamental data for:{ticker}:{str(e)}')
-                exceptionCount +=1
+                excMsg = f'{idx/len(tickers)}Unexpected exception in fundamental data for:{ticker}:{str(e)}'
+                isException = True
                 break
-                
+
+        if isException:
+            raise Exception(excMsg)
         return all_dt
 
 
