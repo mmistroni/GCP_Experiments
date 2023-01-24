@@ -262,10 +262,11 @@ class BenchmarkLoader(beam.DoFn):
         self.key = key
 
     def process(self, elements):
-        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(elements)))
         logging.info('All data is\n{}'.format(elements))
         all_dt = []
         tickers = elements.split(',')
+        logging.info('Attepmting to get fundamental data for all elements {}'.format(len(tickers)))
+
         exceptionCount = 0
         for ticker in tickers:
             try:
