@@ -294,7 +294,8 @@ class BenchmarkLoader(beam.DoFn):
             try:
                 quotes_data = get_quote_benchmark(ticker, self.key)
                 if quotes_data:
-                    if quotes_data['institutionalOwnershipPercentage'] > 0.6:
+                    if quotes_data['institutionalOwnershipPercentage'] > 0.6 or \
+                        quotes_data['institutionalOwnershipPercentage'] ==  0.55555:
                         continue
                     income_data = get_income_benchmark(ticker, self.key)
                     if income_data:

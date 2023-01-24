@@ -444,14 +444,6 @@ def get_institutional_holders_quote(ticker, key, asOfDate=None):
     pcnt = get_instutional_holders_percentage_yahoo(ticker)
     return {'institutionalHoldings': pcnt}
 
-    res = requests.get(
-        'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format(ticker, key)).json()
-    holdersDict = filter_historical(res, asOfDate)
-    sortedItems = sorted(holdersDict.items(), key=lambda tpl: tpl[0], reverse=True)
-    newest = sum(sortedItems[0][1])
-    return {'institutionalHoldings': newest}
-
-
 def get_institutional_holders_percentage(ticker, exchange):
     import requests
     import re
