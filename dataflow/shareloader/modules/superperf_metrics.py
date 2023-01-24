@@ -651,6 +651,6 @@ def get_quote_benchmark(ticker, key):
 
         return dataDict
     except Exception as e:
-        logging.info(f'Exception in getting quote daqta for :{ticker}')
+        logging.info(f'Exception in getting quote daqta for :{ticker}:{str(e)}')
 
 

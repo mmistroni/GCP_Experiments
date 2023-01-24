@@ -297,7 +297,8 @@ class BenchmarkLoader(beam.DoFn):
                                     if quotes_data.get('totalCurrentAssets') is not None and \
                                             quotes_data.get('totalCurrentLiabilities') is not None and \
                                             quotes_data.get('inventory') is not None and \
-                                            quotes_data.get('sharesOutstanding') is not None:
+                                            quotes_data.get('sharesOutstanding') is not None and \
+                                            quotes_data.get('sharesOutstanding') > 0:
                                         quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
                                                                                     quotes_data['totalCurrentLiabilities'] - \
                                                                                      quotes_data['inventory']) / quotes_data['sharesOutstanding']
@@ -305,7 +306,7 @@ class BenchmarkLoader(beam.DoFn):
                                         quotes_data['netQuickAssetPerShare'] = -1
 
                                     #piotrosky_score = calculate_piotrosky_score(self.key, ticker)
-                                    latest_rsi = compute_rsi(ticker, self.key)
+                                    #latest_rsi = compute_rsi(ticker, self.key)
                                     quotes_data['rsi'] = 0
                                     quotes_data['piotroskyScore'] = 0
 
@@ -313,8 +314,9 @@ class BenchmarkLoader(beam.DoFn):
                                 #quotes_data.update(priceChangeDict)
                                 all_dt.append(quotes_data)
             except Exception as e:
-                logging.info(f'Unexpected exception in fundamental data for:{ticker}')
+                logging.info(f'Unexpected exception in fundamental data for:{ticker}:{str(e)}')
                 exceptionCount +=1
+                break
                 
         return all_dt
 
