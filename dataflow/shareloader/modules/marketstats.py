@@ -300,8 +300,13 @@ def run(argv=None, save_main_session=True):
         logging.info('Run pmi')
         
         pmi_res = run_pmi(p)
-
         manuf_pmi_res = run_manufacturing_pmi(p)
+
+        if date.today().day == 5:
+            # We need to store it only once a month
+            pmi_res | bq_sink
+            manuf_pmi_res | bq_sink
+
 
         if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
@@ -390,7 +395,7 @@ def run(argv=None, save_main_session=True):
         )
 
         final_sink_results = [
-                pmi_res, manuf_pmi_res, vix_res, mmomentum_res, growth_vs_val_res, nyse,
+                 vix_res, mmomentum_res, growth_vs_val_res, nyse,
                  nasdaq, equity_pcratio, fed_funds,
                 ]
 

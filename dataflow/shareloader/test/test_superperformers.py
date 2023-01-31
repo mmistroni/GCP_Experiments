@@ -683,6 +683,22 @@ class TestSuperPerformers(unittest.TestCase):
         print(news)
 
 
+    def test_readsp500(self):
+        tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+        sp500_df = tables[0]
+        second_table = tables[1]
+        print(sp500_df.shape)
+
+        # rename symbol to escape symbol error
+        sp500_df["Symbol"] = sp500_df["Symbol"].map(lambda x: x.replace(".", "-"))
+
+
+        sp500_df = sp500_df[['Symbol', 'Security', 'GICS Sector', 'GICS Sub-Industry']]
+        print(sp500_df.head())
+
+        records = sp500_df.to_dict('records')
+
+        self.assertTrue(len(records) > 0)
 
 
 

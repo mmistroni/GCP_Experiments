@@ -393,6 +393,18 @@ class TestMarketStats(unittest.TestCase):
             sd = run_senate_disclosures(p, fmp_key)
             write_all_to_sink([vix, sd], sink)
 
+    def test_get_all_us_stocks(self):
+        fmp_key = os.environ['FMPREPKEY']
+        get_all_us_stocks(fmp_key)
+
+    def test_premarket_loader(self):
+        from shareloader.modules.premarket_loader import extract_data_pipeline
+        fmp_key = os.environ['FMPREPKEY']
+        sink = beam.Map(print)
+        with TestPipeline() as p:
+            result = extract_data_pipeline(p, fmp_key)
+            result | sink
+
 
 
 

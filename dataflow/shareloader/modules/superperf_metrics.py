@@ -158,7 +158,7 @@ def get_latest_stock_news(ticker, key):
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
-            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
+            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol', 'volume', 'previousClose']
 
     try:
         res = requests.get(

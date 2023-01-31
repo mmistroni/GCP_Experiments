@@ -1,7 +1,6 @@
-import requests
 import apache_beam as beam
 import logging
-from itertools import chain
+import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 from itertools import chain
@@ -247,6 +246,15 @@ def get_cftc_spfutures(key):
     base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
     data = requests.get(base_url).json()[0]
     return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
+
+def get_sp500():
+    tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
+    sp500_df = tables[0]
+    sp500_df["Symbol"] = sp500_df["Symbol"].map(lambda x: x.replace(".", "-"))
+
+    sp500_df = sp500_df[['Symbol', 'Security', 'GICS Sector', 'GICS Sub-Industry']]
+    return sp500_df.to_dict('records')
+
 
 def get_vix(key):
     try:
