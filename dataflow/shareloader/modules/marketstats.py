@@ -261,17 +261,12 @@ def run_prev_dates_statistics_cftc(p):
 
 def write_all_to_sink(results_to_write, sink):
     to_tpl = tuple(results_to_write)
-    final_sink = (
+    return (
             to_tpl
             | 'FlattenCombine all sink' >> beam.Flatten()
-            | 'Combine sinks' >> beam.CombineGlobally(MarketStatsSinkCombineFn())
             | 'write all to sink' >> sink
 
     )
-
-
-
-
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -396,7 +391,7 @@ def run(argv=None, save_main_session=True):
 
         final_sink_results = [
                 pmi_res, manuf_pmi_res, vix_res, mmomentum_res, growth_vs_val_res, nyse,
-                 nasdaq, equity_pcratio, fed_funds
+                 nasdaq, equity_pcratio, fed_funds,
                 ]
 
         # Writing everything to sink
@@ -408,7 +403,7 @@ def run(argv=None, save_main_session=True):
         tmp_sink = beam.io.WriteToText(destination, num_shards=1)
 
 
-        write_all_to_sink(final_sink_results, tmp_sink)
+        write_all_to_sink(final_sink_results, bq_sink)
 
 
 if __name__ == '__main__':
