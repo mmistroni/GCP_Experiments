@@ -10,7 +10,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
-                get_institutional_holders_quote, filter_historical
+                get_institutional_holders_quote, filter_historical, get_latest_stock_news
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -21,7 +21,7 @@ import os
 import requests
 import pandas as pd
 from collections import OrderedDict
-from datetime import date
+from datetime import date, datetime
 import logging
 
 def generate_date_headers():
@@ -673,6 +673,18 @@ class TestSuperPerformers(unittest.TestCase):
                | 'prdo'   >> beam.ParDo(SplitWords(',', 'FIRST'))
                | 'out' >> beam.Map(print)
              )
+
+    def test_stock_news(self):
+        key = os.environ['FMPREPKEY']
+
+
+        news = get_latest_stock_news('AAPL', key)
+
+        print(news)
+
+
+
+
 
 
 

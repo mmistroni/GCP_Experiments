@@ -3,7 +3,7 @@ import requests
 import logging
 import statistics
 import pandas as pd
-
+from pandas.tseries.offsets import BDay
 # Criteria #1
 # ==== WATCH LIST ===
 # Market Cap > 2bln (mid)
@@ -141,6 +141,19 @@ def get_common_shares_outstanding(ticker, key):
         'https://financialmodelingprep.com/api/v3/balance-sheet-statement-as-reported/{}?limit=10&apikey={}'.format(
             ticker, key)).json()
     return [(d['date'], d['commonstocksharesoutstanding']) for d in res2]
+
+
+def get_latest_stock_news(ticker, key):
+    try:
+        all_data = requests.get(f'https://financialmodelingprep.com/api/v3/stock_news?tickers={ticker}&limit=50&apikey={key}').json()
+        yesterday = (date.today() - BDay(2)).date()
+        filtered = [news for news in all_data if news['publishedDate'] is not None and \
+                    datetime.strptime(news['publishedDate'], '%Y-%m-%d %H:%M:%S').date() > yesterday]
+        return filtered
+    except Exception as e:
+        logging.info(f'Exception in finding news for {ticker}:{str(e)}')
+        return []
+
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
