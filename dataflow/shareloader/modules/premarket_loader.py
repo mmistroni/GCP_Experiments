@@ -70,11 +70,11 @@ class PremarketLoader(beam.DoFn):
 
                     if rVol >=2 and change >=0.05 \
                         and 1.5 < price <= 10:
-                        print(f'Adding:{descr_and_tech}')
+                        logging.info(f'Adding:{descr_and_tech}')
 
-                        stock_news = get_latest_stock_news(ticker, self.key)
+                        #stock_news = get_latest_stock_news(ticker, self.key)
 
-                        descr_and_tech.update(stock_news)
+                        #descr_and_tech.update(stock_news)
                         descr_and_tech['rVolume'] = rVol
                         all_dt.append(descr_and_tech)
             except Exception as e:
