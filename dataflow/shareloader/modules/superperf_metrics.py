@@ -144,16 +144,17 @@ def get_common_shares_outstanding(ticker, key):
 
 
 def get_latest_stock_news(ticker, key):
+    stock_news = []
     try:
         all_data = requests.get(f'https://financialmodelingprep.com/api/v3/stock_news?tickers={ticker}&limit=50&apikey={key}').json()
         yesterday = (date.today() - BDay(2)).date()
-        filtered = [news for news in all_data if news['publishedDate'] is not None and \
+        stock_news = [news for news in all_data if news['publishedDate'] is not None and \
                     datetime.strptime(news['publishedDate'], '%Y-%m-%d %H:%M:%S').date() > yesterday]
-        return filtered
+
     except Exception as e:
         logging.info(f'Exception in finding news for {ticker}:{str(e)}')
-        return []
-
+        stock_news =  []
+    return {f"NumberOfNewsSince{yesterday.strftime('%Y%m%d')}" : len(stock_news)}
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):

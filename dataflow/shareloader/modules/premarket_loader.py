@@ -7,7 +7,7 @@ import apache_beam as beam
 import pandas as pd
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
-from .superperf_metrics import get_descriptive_and_technical
+from .superperf_metrics import get_descriptive_and_technical, get_latest_stock_news
 from .marketstats_utils import get_all_stocks
 from apache_beam.io.gcp.internal.clients import bigquery
 
@@ -71,9 +71,14 @@ class PremarketLoader(beam.DoFn):
                     if rVol >=2 and change >=0.05 \
                         and 1.5 < price <= 10:
                         print(f'Adding:{descr_and_tech}')
+
+                        stock_news = get_latest_stock_news(ticker, self.key)
+
+                        descr_and_tech.update(stock_news)
+                        descr_and_tech['rVolume'] = rVol
                         all_dt.append(descr_and_tech)
             except Exception as e:
-                excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
+                excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
                 break
         if isException:
