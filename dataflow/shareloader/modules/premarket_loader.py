@@ -20,10 +20,6 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
-        parser.add_argument('--iistocks')
-        parser.add_argument('--microcap')
-        parser.add_argument('--probe')
-        parser.add_argument('--split')
 
 
 class PremarketLoader(beam.DoFn):

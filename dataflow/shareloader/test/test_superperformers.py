@@ -1,5 +1,6 @@
 import math
 import unittest
+import numpy as np
 from shareloader.modules.superperformers import filter_universe, load_fundamental_data, BenchmarkLoader, \
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
                                                 asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
@@ -10,7 +11,8 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
-                get_institutional_holders_quote, filter_historical, get_latest_stock_news
+                get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
+                get_mm_trend_template
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -699,6 +701,96 @@ class TestSuperPerformers(unittest.TestCase):
         records = sp500_df.to_dict('records')
 
         self.assertTrue(len(records) > 0)
+
+    def best_fit_slope(y: np.array) -> float:
+        '''
+        Determine the slope for the linear regression line
+
+        Parameters
+        ----------
+        y : TYPE
+            The time-series to find the linear regression line for
+
+        Returns
+        -------
+        m : float
+            The gradient (slope) of the linear regression line
+        '''
+
+        x = np.arange(0, y.shape[0])
+
+        x_bar = np.mean(x)
+        y_bar = np.mean(y)
+
+        return np.sum((x - x_bar) * (y - y_bar)) / np.sum((x - x_bar) ** 2)
+
+    def best_fit_slope(self, y: np.array) -> float:
+        '''
+        Determine the slope for the linear regression line
+
+        Parameters
+        ----------
+        y : TYPE
+            The time-series to find the linear regression line for
+
+        Returns
+        -------
+        m : float
+            The gradient (slope) of the linear regression line
+        '''
+
+        x = np.arange(0, y.shape[0])
+
+        x_bar = np.mean(x)
+        y_bar = np.mean(y)
+
+        return np.sum((x - x_bar) * (y - y_bar)) / np.sum((x - x_bar) ** 2)
+
+
+    def test_get_mm_trendtemplate(self):
+
+        key = os.environ['FMPREPKEY']
+
+        res = get_mm_trend_template('MO', key)
+
+        df = pd.DataFrame(data=res, columns=['Close'])
+
+        '''
+        The current stock price is above both the 150-day (30-week) and the 200-day (40-week) moving average price lines.
+        The 150-day moving average is above the 200-day moving average.
+        The 200-day moving average line is trending up for at least 1 month (preferably 4–5 months minimum in most cases).
+        The 50-day (10-week) moving average is above both the 150-day and 200-day moving averages.
+        The current stock price is trading above the 50-day moving average.
+        The current stock price is at least 30 percent above its 52-week low. (Many of the best selections will be 100 percent, 300 percent, or greater above their 52-week low before they emerge from a solid consolidation period and mount a large scale advance.)
+        The current stock price is within at least 25 percent of its 52-week high (the closer to a new high the better).
+        The relative strength ranking (as reported in Investor’s Business Daily) is no less than 70, and preferably in the 80s or 90s, which will generally be the case with the better selections.
+        '''
+        #mvg a
+        df['200_ma'] = df['Close'].rolling(200).mean()
+        df['52_week_high'] = df['Close'].rolling(52 * 5).max()
+        df['52_week_low'] = df['Close'].rolling(52 * 5).max()
+        df['150_ma'] = df['Close'].rolling(150).mean()
+        df['50_ma'] = df['Close'].rolling(150).mean()
+        df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
+        df['trend_template'] = (
+                (df['Close'] > df['200_ma'])
+                & (df['Close'] > df['150_ma'])
+                & (df['150_ma'] > df['200_ma'])
+                & (df['slope'] > 0)
+                & (df['50_ma'] > df['150_ma'])
+                & (df['50_ma'] > df['200_ma'])
+                & (df['Close'] > df['50_ma'])
+                & (df['Close'] / df['52_week_low'] > 1.3)
+                & (df['Close'] / df['52_week_high'] > 0.8)
+        )
+
+        print(df[df['trend_template'] is True])
+
+
+
+
+
+
 
 
 

@@ -64,6 +64,17 @@ steps:
         , '--config'
         , '$_ECONOMY_EMAIL_BUILD_FILE' ]
     id: 'build-economy_email-template'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '$_PREMARKETLOADER_BUILD_FILE' ]
+    id: 'build-premarketloader-template'
 timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
@@ -71,4 +82,5 @@ substitutions:
   _SUPERPERFORMERS_BUILD_FILE: ./dataflow/shareloader/superperformers_build.yaml
   _ECONOMY_BUILD_FILE: ./dataflow/shareloader/build_stateofeconomy.yaml
   _ECONOMY_EMAIL_BUILD_FILE: ./dataflow/shareloader/build_economics_email.yaml
+  _PREMARKETLOADER_BUILD_FILE: ./dataflow/shareloader/premarketloader_build.yaml
   

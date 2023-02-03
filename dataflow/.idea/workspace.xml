@@ -8,9 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/shareloader/Dockerfile_premarketloader" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/premarketloader_build.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/premarketloader_main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/premarketloader_metadata" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/premarketloader_run.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_all.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_all.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -198,13 +205,13 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader/modules" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\edgar_flow\spec" />
@@ -246,7 +253,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_write_all_to_sink" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -256,7 +263,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_write_all_to_sink&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -289,19 +296,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_write_all_to_sink" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_write_all_to_sink" />
       </list>
     </recent_temporary>
   </component>
@@ -473,12 +480,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>304</line>
+          <line>305</line>
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>371</line>
+          <line>372</line>
           <option name="timeStamp" value="161" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -488,7 +495,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>662</line>
+          <line>663</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -512,9 +519,9 @@
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
-          <line>39</line>
-          <option name="timeStamp" value="191" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>786</line>
+          <option name="timeStamp" value="193" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
