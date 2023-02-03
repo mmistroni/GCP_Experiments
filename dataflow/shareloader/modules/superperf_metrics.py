@@ -156,6 +156,9 @@ def get_latest_stock_news(ticker, key):
         stock_news =  []
     return {f"NumberOfNewsSince{yesterday.strftime('%Y%m%d')}" : len(stock_news)}
 
+def get_mm_trend_template(ticker, key):
+    #https: // medium.datadriveninvestor.com / how - to - easily - code - the - mark - minervini - trend - template - in -python - d1f40647fdbc
+    hist_prices = get_fmprep_historical(ticker, key)
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
@@ -183,7 +186,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             d['changeFromOpen'] = 0
             d['allTimeHigh'] =  0
             d['allTimeLow'] =  0
-            descriptive_dict['institutionalOwnershipPercentage'] = 1
+            d['institutionalOwnershipPercentage'] = 1
 
             return d
     except Exception as e:

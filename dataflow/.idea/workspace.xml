@@ -9,7 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -288,11 +289,11 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_write_all_to_sink" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_write_all_to_sink" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
     </list>
     <recent_temporary>
       <list>
@@ -472,18 +473,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>301</line>
+          <line>304</line>
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>368</line>
+          <line>371</line>
           <option name="timeStamp" value="161" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>452</line>
-          <option name="timeStamp" value="177" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
@@ -492,12 +488,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>176</line>
-          <option name="timeStamp" value="180" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>659</line>
+          <line>662</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -516,14 +507,14 @@
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>458</line>
-          <option name="timeStamp" value="185" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
           <line>145</line>
           <option name="timeStamp" value="190" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="191" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
