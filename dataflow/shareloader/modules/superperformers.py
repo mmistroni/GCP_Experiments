@@ -142,7 +142,7 @@ class MicrocapLoader(beam.DoFn):
         all_dt = []
         logging.info('fRunning with split of:{split}')
         tickers_to_process = elements.split(',')
-        num_to_process = tickers_to_process // 3
+        num_to_process = len(tickers_to_process) // 3
 
         if 'first' in self.split.lower():
             tickers_to_process = tickers_to_process[0:num_to_process]
