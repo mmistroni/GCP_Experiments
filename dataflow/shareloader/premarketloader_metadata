@@ -6,6 +6,11 @@
       "name": "fmprepkey",
       "helpText": "FMPREP  key",
       "label": "fmprepkey"
+    },
+    {
+      "name": "mmrun",
+      "helpText": "Mark Minervini Trend Template",
+      "label": "mmrun"
     }
   ]
 }

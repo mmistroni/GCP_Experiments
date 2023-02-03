@@ -128,11 +128,14 @@ def evaluate_progression(input):
 
 
 
-def get_fmprep_historical(ticker, key, numdays=20):
+def get_fmprep_historical(ticker, key, numdays=20, colname='adjClose'):
     hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
     data = requests.get(hist_url).json().get('historical')
     if data:
-        return [d['adjClose'] for d in data[numdays:]]
+        if colname:
+            return [d[colname] for d in data[:numdays]]
+        else:
+            return [d for d in data[:numdays]]
     return [100000] * numdays
 
 
@@ -158,7 +161,7 @@ def get_latest_stock_news(ticker, key):
 
 def get_mm_trend_template(ticker, key):
     #https: // medium.datadriveninvestor.com / how - to - easily - code - the - mark - minervini - trend - template - in -python - d1f40647fdbc
-    return get_fmprep_historical(ticker, key, numdays=55*5)
+    return get_fmprep_historical(ticker, key, numdays=55*5, colname=[])[::-1]
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):

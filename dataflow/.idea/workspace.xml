@@ -9,7 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_all.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_all.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/premarketloader_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/premarketloader_metadata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/premarketloader_run.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/premarketloader_run.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,7 +220,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader">
+  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate">
     <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -242,6 +246,20 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_premarket_loader&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_fmprep_historical" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_fmprep_historical&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -273,34 +291,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_stock_news" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_stock_news&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_fmprep_historical" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_fmprep_historical" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_premarket_loader" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
       </list>
     </recent_temporary>
   </component>
@@ -472,12 +476,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>305</line>
+          <line>308</line>
           <option name="timeStamp" value="151" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>372</line>
+          <line>375</line>
           <option name="timeStamp" value="161" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -487,7 +491,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>663</line>
+          <line>666</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -512,8 +516,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>786</line>
-          <option name="timeStamp" value="193" />
+          <line>188</line>
+          <option name="timeStamp" value="198" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>749</line>
+          <option name="timeStamp" value="205" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

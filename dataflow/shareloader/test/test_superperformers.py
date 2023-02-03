@@ -185,7 +185,7 @@ class TestSuperPerformers(unittest.TestCase):
 
     def test_get_fmprep_historical(self):
         key = os.environ['FMPREPKEY']
-        res = get_fmprep_historical('AAPL', key)
+        res = get_fmprep_historical('AAPL', key, numdays=40,  colname=[])
         self.assertTrue(res)
         print(res)
 
@@ -702,28 +702,6 @@ class TestSuperPerformers(unittest.TestCase):
 
         self.assertTrue(len(records) > 0)
 
-    def best_fit_slope(y: np.array) -> float:
-        '''
-        Determine the slope for the linear regression line
-
-        Parameters
-        ----------
-        y : TYPE
-            The time-series to find the linear regression line for
-
-        Returns
-        -------
-        m : float
-            The gradient (slope) of the linear regression line
-        '''
-
-        x = np.arange(0, y.shape[0])
-
-        x_bar = np.mean(x)
-        y_bar = np.mean(y)
-
-        return np.sum((x - x_bar) * (y - y_bar)) / np.sum((x - x_bar) ** 2)
-
     def best_fit_slope(self, y: np.array) -> float:
         '''
         Determine the slope for the linear regression line
@@ -751,9 +729,9 @@ class TestSuperPerformers(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
-        res = get_mm_trend_template('MO', key)
+        res = get_mm_trend_template('TX', key)
 
-        df = pd.DataFrame(data=res, columns=['Close'])
+        df = pd.DataFrame(data=res, columns=list(res[0].keys()))
 
         '''
         The current stock price is above both the 150-day (30-week) and the 200-day (40-week) moving average price lines.
@@ -766,25 +744,32 @@ class TestSuperPerformers(unittest.TestCase):
         The relative strength ranking (as reported in Investor’s Business Daily) is no less than 70, and preferably in the 80s or 90s, which will generally be the case with the better selections.
         '''
         #mvg a
-        df['200_ma'] = df['Close'].rolling(200).mean()
-        df['52_week_high'] = df['Close'].rolling(52 * 5).max()
-        df['52_week_low'] = df['Close'].rolling(52 * 5).max()
-        df['150_ma'] = df['Close'].rolling(150).mean()
-        df['50_ma'] = df['Close'].rolling(150).mean()
+        df['200_ma'] = df['close'].rolling(200).mean()
+        df['52_week_high'] = df['close'].rolling(52 * 5).max()
+        df['52_week_low'] = df['close'].rolling(52 * 5).min()
+        df['150_ma'] = df['close'].rolling(150).mean()
+        df['50_ma'] = df['close'].rolling(150).mean()
         df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
+        df['pricegt50avg'] = df['close'] > df['50_ma']
+        df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
+        df['priceWithin25pc52wkhigh'] = df['close'] / df['52_week_high'] > 0.8
         df['trend_template'] = (
-                (df['Close'] > df['200_ma'])
-                & (df['Close'] > df['150_ma'])
+                (df['close'] > df['200_ma'])
+                & (df['close'] > df['150_ma'])
                 & (df['150_ma'] > df['200_ma'])
                 & (df['slope'] > 0)
                 & (df['50_ma'] > df['150_ma'])
                 & (df['50_ma'] > df['200_ma'])
-                & (df['Close'] > df['50_ma'])
-                & (df['Close'] / df['52_week_low'] > 1.3)
-                & (df['Close'] / df['52_week_high'] > 0.8)
+                & (df['pricegt50avg'] == True)
+                & (df['priceWithin25pc52wkhigh'] == True)
+                & (df['priceWithin25pc52wkhigh'] == True)
         )
 
-        print(df[df['trend_template'] is True])
+        subset = df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template'  ]]
+        print(subset)
+
+        subset.to_csv('c:/Users/Marco/mminervini_sample.csv', index=False)
+
 
 
 

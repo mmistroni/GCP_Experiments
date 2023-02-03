@@ -12,6 +12,8 @@ steps:
           , '$_TEMPLATE_GCS_LOCATION'
           , '--parameters'
           , 'fmprepkey=$_FMPKEY'
+          , '--parameters'
+          , 'mmrun=$_MMRUN'
           ,'--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
@@ -21,3 +23,4 @@ substitutions:
   _JOB_NAME: cloudbuildpremarketloader
   _REGION : 'us-central1'
   _FMPKEY : ''
+  _MMRUN : ''
