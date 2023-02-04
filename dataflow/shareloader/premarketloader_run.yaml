@@ -23,4 +23,4 @@ substitutions:
   _JOB_NAME: cloudbuildpremarketloader
   _REGION : 'us-central1'
   _FMPKEY : ''
-  _MMRUN : ''
+  _MMRUN : 'Tr'
