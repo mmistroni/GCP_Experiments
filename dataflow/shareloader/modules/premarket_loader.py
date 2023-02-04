@@ -226,7 +226,7 @@ def run(argv=None, save_main_session=True):
 
         if pipeline_options.mmrun:
             logging.info('Extracting trend pipeline')
-            data = extract_trend_pipeline()
+            data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
         else:
             data = extract_data_pipeline(p, pipeline_options.fmprepkey)
 
