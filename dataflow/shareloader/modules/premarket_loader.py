@@ -109,8 +109,11 @@ class TrendTemplateLoader(beam.DoFn):
                 The stocks should be a Gapper and the percentage of change should be greater than %5 if it’s a bear market and %10 if it’s a bull market. A Gapper means there is a gap between yesterday’s close and today’s open.
                 The stock should have news or a catalyst for that high relative volume and gap.
                 Volume ≥ 100K'''
-                mmdata = self.get_mm_trendtemplate(ticker)[-1]
-                all_dt.append(mmdata.to_dict('records'))
+                mmdata = self.get_mm_trendtemplate(ticker)
+                trending = mmdata[mmdata['trend_template'] == True]
+
+                if trending.shape[0] > 0:
+                    all_dt.append(trending.to_dict('records'))
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
