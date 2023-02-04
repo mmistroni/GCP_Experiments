@@ -65,31 +65,34 @@ class TrendTemplateLoader(beam.DoFn):
 
         res = get_mm_trend_template(ticker, self.key)
 
-        df = pd.DataFrame(data=res, columns=list(res[0].keys()))
 
-        # mvg a
-        df['200_ma'] = df['close'].rolling(200).mean()
-        df['52_week_high'] = df['close'].rolling(52 * 5).max()
-        df['52_week_low'] = df['close'].rolling(52 * 5).min()
-        df['150_ma'] = df['close'].rolling(150).mean()
-        df['50_ma'] = df['close'].rolling(150).mean()
-        df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
-        df['pricegt50avg'] = df['close'] > df['50_ma']
-        df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
-        df['priceWithin25pc52wkhigh'] = df['close'] / df['52_week_high'] > 0.8
-        df['trend_template'] = (
-                (df['close'] > df['200_ma'])
-                & (df['close'] > df['150_ma'])
-                & (df['150_ma'] > df['200_ma'])
-                & (df['slope'] > 0)
-                & (df['50_ma'] > df['150_ma'])
-                & (df['50_ma'] > df['200_ma'])
-                & (df['pricegt50avg'] == True)
-                & (df['priceWithin25pc52wkhigh'] == True)
-                & (df['priceWithin25pc52wkhigh'] == True)
-        )
+        if res:
 
-        return df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+            df = pd.DataFrame(data=res, columns=list(res[0].keys()))
+
+            # mvg a
+            df['200_ma'] = df['close'].rolling(200).mean()
+            df['52_week_high'] = df['close'].rolling(52 * 5).max()
+            df['52_week_low'] = df['close'].rolling(52 * 5).min()
+            df['150_ma'] = df['close'].rolling(150).mean()
+            df['50_ma'] = df['close'].rolling(150).mean()
+            df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
+            df['pricegt50avg'] = df['close'] > df['50_ma']
+            df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
+            df['priceWithin25pc52wkhigh'] = df['close'] / df['52_week_high'] > 0.8
+            df['trend_template'] = (
+                    (df['close'] > df['200_ma'])
+                    & (df['close'] > df['150_ma'])
+                    & (df['150_ma'] > df['200_ma'])
+                    & (df['slope'] > 0)
+                    & (df['50_ma'] > df['150_ma'])
+                    & (df['50_ma'] > df['200_ma'])
+                    & (df['pricegt50avg'] == True)
+                    & (df['priceWithin25pc52wkhigh'] == True)
+                    & (df['priceWithin25pc52wkhigh'] == True)
+            )
+
+            return df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
 
     def process(self, elements):
         all_dt = []
@@ -110,10 +113,11 @@ class TrendTemplateLoader(beam.DoFn):
                 The stock should have news or a catalyst for that high relative volume and gap.
                 Volume ≥ 100K'''
                 mmdata = self.get_mm_trendtemplate(ticker)
-                trending = mmdata[mmdata['trend_template'] == True]
+                if mmdata:
+                    trending = mmdata[mmdata['trend_template'] == True]
 
-                if trending.shape[0] > 0:
-                    all_dt.append(trending.to_dict('records'))
+                    if trending.shape[0] > 0:
+                        all_dt.append(trending.to_dict('records'))
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
