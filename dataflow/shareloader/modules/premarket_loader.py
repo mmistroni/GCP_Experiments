@@ -114,7 +114,8 @@ class TrendTemplateLoader(beam.DoFn):
                 Volume ≥ 100K'''
                 mmdata = self.get_mm_trendtemplate(ticker)
                 if mmdata:
-                    trending = mmdata[mmdata['trend_template'] == True]
+                    tt_filter = (mmdata['trend_template'] == True)
+                    trending = mmdata[tt_filter]
 
                     if trending.shape[0] > 0:
                         all_dt.append(trending.to_dict('records'))
