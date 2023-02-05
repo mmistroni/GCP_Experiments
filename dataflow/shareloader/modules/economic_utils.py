@@ -70,12 +70,15 @@ def get_latest_url():
     ##  https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates
     import requests
     from bs4 import BeautifulSoup
+
+    current_year = date.today().year
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates'
     req = requests.get(url)
     soup = BeautifulSoup(req.text, 'html.parser')
     anchor = soup.find_all('a')
     links = [a for a in anchor if
-             'Download Online job advert estimates' in a.get('aria-label', '') and '2022' in a.get('aria-label', '')]
+             'Download Online job advert estimates' in a.get('aria-label', '') and str(current_year) in a.get('aria-label', '')]
     link = links[0].get('href')
     full_url = f'https://www.ons.gov.uk/{link}'
     return full_url
@@ -93,14 +96,14 @@ def get_latest_jobs_statistics():
 
     sheet = workbook.get_sheet_by_name('Adverts by category YoY')
 
-    from pprint import pprint
+    vacancies_names = [(sheet.cell(row=8, column=c).value) for c in range(1, sheet.max_column - 1)]
 
-    num_cells = sheet.max_column - 1
-    col_vals = [(r, sheet.cell(row=r, column=2).value) for r in range(1, sheet.max_row) ]
-    it_row_idx = [tpl[0] for tpl in col_vals  if tpl[1] and  'Computing' in tpl[1]][0]
 
-    it_vacancies = sheet.cell(row=it_row_idx, column=sheet.max_column).value
-    asOfDate = sheet.cell(row=3, column=sheet.max_column).value
+    it_row, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
+    logging.info(f'IT ROWS:{it_row}')
+
+    it_vacancies = sheet.cell(row=sheet.max_row, column=it_row+1).value
+    asOfDate = sheet.cell(row=sheet.max_row, column=1).value
 
     return {'label' : 'IT-JOB-VACANCIES',
             'asOfDate' : asOfDate.strftime('%Y-%m-%d'),
