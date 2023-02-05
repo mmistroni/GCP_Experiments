@@ -63,36 +63,38 @@ class TrendTemplateLoader(beam.DoFn):
 
     def get_mm_trendtemplate(self, ticker):
 
-        res = get_mm_trend_template(ticker, self.key)
+        try:
+            res = get_mm_trend_template(ticker, self.key)
+            if res:
+                df = pd.DataFrame(data=res, columns=list(res[0].keys()))
+                # mvg a
+                df['200_ma'] = df['close'].rolling(200).mean()
+                df['52_week_high'] = df['close'].rolling(52 * 5).max()
+                df['52_week_low'] = df['close'].rolling(52 * 5).min()
+                df['150_ma'] = df['close'].rolling(150).mean()
+                df['50_ma'] = df['close'].rolling(150).mean()
+                df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
+                df['pricegt50avg'] = df['close'] > df['50_ma']
+                df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
+                df['priceWithin25pc52wkhigh'] = df['close'] / df['52_week_high'] > 0.8
 
-
-        if res:
-
-            df = pd.DataFrame(data=res, columns=list(res[0].keys()))
-
-            # mvg a
-            df['200_ma'] = df['close'].rolling(200).mean()
-            df['52_week_high'] = df['close'].rolling(52 * 5).max()
-            df['52_week_low'] = df['close'].rolling(52 * 5).min()
-            df['150_ma'] = df['close'].rolling(150).mean()
-            df['50_ma'] = df['close'].rolling(150).mean()
-            df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
-            df['pricegt50avg'] = df['close'] > df['50_ma']
-            df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
-            df['priceWithin25pc52wkhigh'] = df['close'] / df['52_week_high'] > 0.8
-            df['trend_template'] = (
-                    (df['close'] > df['200_ma'])
-                    & (df['close'] > df['150_ma'])
-                    & (df['150_ma'] > df['200_ma'])
-                    & (df['slope'] > 0)
-                    & (df['50_ma'] > df['150_ma'])
-                    & (df['50_ma'] > df['200_ma'])
-                    & (df['pricegt50avg'] == True)
-                    & (df['priceWithin25pc52wkhigh'] == True)
-                    & (df['priceWithin25pc52wkhigh'] == True)
-            )
-
-            return df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+                df['trend_template'] = (
+                        (df['close'] > df['200_ma'])
+                        & (df['close'] > df['150_ma'])
+                        & (df['150_ma'] > df['200_ma'])
+                        & (df['slope'] > 0)
+                        & (df['50_ma'] > df['150_ma'])
+                        & (df['50_ma'] > df['200_ma'])
+                        & (df['pricegt50avg'] == True)
+                        & (df['priceWithin25pc52wkhigh'] == True)
+                        & (df['priceWithin25pc52wkhigh'] == True)
+                )
+                return df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+            else:
+                return None
+        except Exception as e:
+            logging.info(f'exception in getting trendtemplatedata for {ticker}:{str(e)}')
+            return None
 
     def process(self, elements):
         all_dt = []
@@ -105,15 +107,8 @@ class TrendTemplateLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             # Not good. filter out data at the beginning to reduce stress load for rest of data
             try:
-                '''
-                Float ≤ 20M.
-                The Relative Volume (RVOL) should be equal to or greater than 2. RVOL is the average volume (over 15 or 60 days) divided by the day volume.
-                $1.5 ≤ price ≤ $10
-                The stocks should be a Gapper and the percentage of change should be greater than %5 if it’s a bear market and %10 if it’s a bull market. A Gapper means there is a gap between yesterday’s close and today’s open.
-                The stock should have news or a catalyst for that high relative volume and gap.
-                Volume ≥ 100K'''
                 mmdata = self.get_mm_trendtemplate(ticker)
-                if mmdata:
+                if mmdata is not None:
                     tt_filter = (mmdata['trend_template'] == True)
                     trending = mmdata[tt_filter]
 

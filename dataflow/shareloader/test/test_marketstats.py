@@ -398,11 +398,11 @@ class TestMarketStats(unittest.TestCase):
         get_all_us_stocks(fmp_key)
 
     def test_premarket_loader(self):
-        from shareloader.modules.premarket_loader import extract_data_pipeline
+        from shareloader.modules.premarket_loader import extract_data_pipeline, extract_trend_pipeline
         fmp_key = os.environ['FMPREPKEY']
         sink = beam.Map(print)
         with TestPipeline() as p:
-            result = extract_data_pipeline(p, fmp_key)
+            result = extract_trend_pipeline(p, fmp_key)
             result | sink
 
 
