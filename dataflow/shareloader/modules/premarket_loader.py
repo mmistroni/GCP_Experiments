@@ -64,7 +64,7 @@ class TrendTemplateLoader(beam.DoFn):
     def get_mm_trendtemplate(self, ticker):
 
         try:
-            res = get_mm_trend_template(ticker, self.key)
+            res = get_mm_trend_template(ticker, self.key, numdays=1500)
             if res:
                 df = pd.DataFrame(data=res, columns=list(res[0].keys()))
                 # mvg a
@@ -275,7 +275,7 @@ def run(argv=None, save_main_session=True):
                 destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
                                         date.today().strftime('%Y-%m-%d %H:%M'))
                 test_sink = beam.io.WriteToText(destination, num_shards=1)
-                
+
             else:
                 logging.info('Extracting trend pipeline')
                 data = extract_trend_pipeline(p, pipeline_options.fmprepkey)

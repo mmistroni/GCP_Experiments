@@ -159,9 +159,9 @@ def get_latest_stock_news(ticker, key):
         stock_news =  []
     return {f"NumberOfNewsSince{yesterday.strftime('%Y%m%d')}" : len(stock_news)}
 
-def get_mm_trend_template(ticker, key):
+def get_mm_trend_template(ticker, key, numdays=55*5):
     #https: // medium.datadriveninvestor.com / how - to - easily - code - the - mark - minervini - trend - template - in -python - d1f40647fdbc
-    return get_fmprep_historical(ticker, key, numdays=55*5, colname=[])[::-1]
+    return get_fmprep_historical(ticker, key, numdays=numdays, colname=[])[::-1]
 
 
 def get_descriptive_and_technical(ticker, key, asOfDate=None):
