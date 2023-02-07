@@ -7,7 +7,7 @@ import apache_beam as beam
 import pandas as pd
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
-from .superperf_metrics import get_descriptive_and_technical, get_latest_stock_news, get_mm_trend_template
+from .superperf_metrics import get_descriptive_and_technical, get_latest_stock_news, get_mm_trend_template, get_fmprep_historical
 from .marketstats_utils import get_all_stocks
 from apache_beam.io.gcp.internal.clients import bigquery
 
@@ -180,6 +180,42 @@ class PremarketLoader(beam.DoFn):
             raise Exception(excMsg)
         return all_dt
 
+class HistoricalMarketLoader(beam.DoFn):
+    def __init__(self, key):
+        self.key = key
+
+    def process(self, elements):
+        all_dt = []
+        tickers_to_process = elements.split(',')
+        logging.info('Ticker to process:{len(tickers_to_process}')
+
+        excMsg = ''
+        isException = False
+
+        for idx, ticker in enumerate(tickers_to_process):
+            # Not good. filter out data at the beginning to reduce stress load for rest of data
+            try:
+                res = get_fmprep_historical(ticker, self.key, numdays=1600, colname=None)
+                data = [dict((k, v) for k, v in d.items() if k in ['date', 'symbol', 'open', 'adjClose', 'volume']) for
+                        d in res]
+
+                df = pd.DataFrame(data=data)
+                df['symbol'] = ticker
+
+                recs = df.to_dict('records')
+
+                all_dt += recs
+            except Exception as e:
+                excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
+                isException = True
+                break
+        if isException:
+            raise Exception(excMsg)
+        return all_dt
+
+
+
+
 def combine_tickers(input):
     return ','.join(input)
 
@@ -196,6 +232,14 @@ def extract_trend_pipeline(p, fmpkey):
             | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey))
+    )
+
+
+def extract_historical_pipeline(p, fmpkey):
+    return (p
+            | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
+            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals' >> beam.ParDo(HistoricalMarketLoader(fmpkey))
     )
 
 
@@ -225,8 +269,16 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
 
         if pipeline_options.mmrun:
-            logging.info('Extracting trend pipeline')
-            data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
+            if 'historical' in pipeline_options.mmrun:
+                logging.info('Running historical ppln..')
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
+                destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
+                                        date.today().strftime('%Y-%m-%d %H:%M'))
+                test_sink = beam.io.WriteToText(destination, num_shards=1)
+                
+            else:
+                logging.info('Extracting trend pipeline')
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
         else:
             data = extract_data_pipeline(p, pipeline_options.fmprepkey)
 
