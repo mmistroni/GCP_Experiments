@@ -113,7 +113,8 @@ class TrendTemplateLoader(beam.DoFn):
                     trending = mmdata[tt_filter]
 
                     if trending.shape[0] > 0:
-                        all_dt.append(trending.to_dict('records'))
+                        data = trending.to_dict('records')
+                        all_dt += data
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
