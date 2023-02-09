@@ -64,10 +64,11 @@ class TrendTemplateLoader(beam.DoFn):
     def get_mm_trendtemplate(self, ticker):
 
         try:
-            res = get_mm_trend_template(ticker, self.key, numdays=1500)
+            res = get_mm_trend_template(ticker, self.key, numdays=2000)
             if res:
                 df = pd.DataFrame(data=res, columns=list(res[0].keys()))
                 # mvg a
+                df['ticker'] = ticker
                 df['200_ma'] = df['close'].rolling(200).mean()
                 df['52_week_high'] = df['close'].rolling(52 * 5).max()
                 df['52_week_low'] = df['close'].rolling(52 * 5).min()
@@ -89,7 +90,7 @@ class TrendTemplateLoader(beam.DoFn):
                         & (df['priceWithin25pc52wkhigh'] == True)
                         & (df['priceWithin25pc52wkhigh'] == True)
                 )
-                return df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+                return df[['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
             else:
                 return None
         except Exception as e:
@@ -116,7 +117,7 @@ class TrendTemplateLoader(beam.DoFn):
 
                     for row in csv_string.split('\n'):
                         all_dt.append(row)
-                    
+
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
