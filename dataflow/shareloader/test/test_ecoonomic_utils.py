@@ -28,6 +28,15 @@ class EconomicUtilsTestCase(unittest.TestCase):
             jobstats =  kickoff_pipeline(p)
             jobstats | beam.Map(print)
 
+    def test_tocsv(self):
+        import pandas as pd
+        df = pd.DataFrame({'name': ['Raphael', 'Donatello'],
+                           'mask': ['red', 'purple'],
+                           'weapon': ['sai', 'bo staff']})
+        res = df.to_csv(index=False, header=False)
+        print(res.split('\n'))
+
+
 
 
 if __name__ == '__main__':

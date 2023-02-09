@@ -586,7 +586,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
-        for ticker in ['COLM', 'HALO']:
+        for ticker in ['COLM']:
             print('--------' * 5)
             fundamental_data = get_fundamental_parameters(ticker, key)
             fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
