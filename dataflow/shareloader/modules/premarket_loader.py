@@ -282,7 +282,8 @@ def run(argv=None, save_main_session=True):
                                         date.today().strftime('%Y-%m-%d %H:%M'))
 
                 logging.info(f'Writing to {destination}')
-                test_sink = beam.io.WriteToText(destination, num_shards=1)
+                test_sink = beam.io.WriteToText(destination, num_shards=1,
+                                                header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
 
             else:
                 logging.info('Extracting trend pipeline')
