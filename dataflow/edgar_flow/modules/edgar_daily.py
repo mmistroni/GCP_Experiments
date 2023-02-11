@@ -189,8 +189,8 @@ def run(argv=None, save_main_session=True):
         enhanced_data = filter_form_13hf(lines)
         logging.info('Next step')
         form113 = combine_data(enhanced_data)
-        logging.info('Now sendig meail....')
-        send_email(form113, pipeline_options)
+        #logging.info('Now sendig meail....')
+        #send_email(form113, pipeline_options)
         with_extra_info = write_to_bigquery(form113)
         with_extra_info | 'WRite to BQ' >> sink
         sink_data = reformat_for_custom_bucket(enhanced_data)
