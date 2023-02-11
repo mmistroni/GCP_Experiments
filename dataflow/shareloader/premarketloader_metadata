@@ -11,6 +11,11 @@
       "name": "mmrun",
       "helpText": "Mark Minervini Trend Template",
       "label": "mmrun"
+    },
+    {
+      "name": "numdays",
+      "helpText": "HistoricalDays",
+      "label": "numdays"
     }
   ]
 }

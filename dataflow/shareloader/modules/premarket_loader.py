@@ -21,6 +21,7 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
         parser.add_argument('--mmrun')
+        parser.add_argument('--numdays')
 
 
 class TrendTemplateLoader(beam.DoFn):
@@ -36,8 +37,9 @@ class TrendTemplateLoader(beam.DoFn):
             The relative strength ranking (as reported in Investor’s Business Daily) is no less than 70, and preferably in the 80s or 90s, which will generally be the case with the better selections.
             '''
 
-    def __init__(self, key):
+    def __init__(self, key, numdays='10'):
         self.key = key
+        self.numdays = int(numdays)
 
     def best_fit_slope(self, y: np.array) -> float:
         '''
@@ -64,7 +66,7 @@ class TrendTemplateLoader(beam.DoFn):
     def get_mm_trendtemplate(self, ticker):
 
         try:
-            res = get_mm_trend_template(ticker, self.key, numdays=2000)
+            res = get_mm_trend_template(ticker, self.key, numdays=self.numdays)
             if res:
                 df = pd.DataFrame(data=res, columns=list(res[0].keys()))
                 # mvg a
@@ -231,11 +233,11 @@ def write_to_bucket(lines, sink):
     )
 
 
-def extract_trend_pipeline(p, fmpkey):
+def extract_trend_pipeline(p, fmpkey, numdays=10):
     return (p
             | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey))
+            | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays))
     )
 
 
@@ -275,7 +277,7 @@ def run(argv=None, save_main_session=True):
         if pipeline_options.mmrun:
             if 'historical' in pipeline_options.mmrun:
                 logging.info('Running historical ppln..')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays)
                 destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
                                         date.today().strftime('%Y-%m-%d %H:%M'))
                 test_sink = beam.io.WriteToText(destination, num_shards=1)
