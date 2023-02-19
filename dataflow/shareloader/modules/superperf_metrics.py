@@ -173,7 +173,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
             'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker,
                                                                                           key=key)).json()
         if res:
-            hist_prices = get_fmprep_historical(ticker, key)
+            hist_prices = get_fmprep_historical(ticker, key, numdays=1500)
             priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
             descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
             descriptive_dict['priceAvg20'] = priceAvg20
