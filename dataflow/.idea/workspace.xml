@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_datset_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,6 +199,8 @@
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="TODO_SCOPE" value="All Places" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader/test" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
@@ -217,8 +221,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate">
-    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -228,11 +232,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_tocsv" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -242,11 +246,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_tocsv&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_GetAllTickers&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -256,11 +260,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_get_fmprep_historical&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_get_industry&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -270,11 +274,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_canslim_filter_df&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -284,24 +288,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_write_to_sink&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df" />
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_tocsv" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
-        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_tocsv" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df" />
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
-        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
       </list>
     </recent_temporary>
   </component>
@@ -517,11 +521,6 @@
           <option name="timeStamp" value="198" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>749</line>
-          <option name="timeStamp" value="205" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
           <line>181</line>
           <option name="timeStamp" value="206" />
@@ -547,14 +546,29 @@
           <option name="timeStamp" value="220" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>733</line>
-          <option name="timeStamp" value="222" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
           <line>123</line>
           <option name="timeStamp" value="224" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>770</line>
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="229" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
+          <line>66</line>
+          <option name="timeStamp" value="230" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
+          <line>64</line>
+          <option name="timeStamp" value="231" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -4,7 +4,9 @@ from shareloader.modules.share_datset_loader import get_industry, GetAllTickers,
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
+from apache_beam.testing.util import assert_that, equal_to
 import os
+from unittest.mock import patch
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -18,40 +20,51 @@ class Check(beam.PTransform):
 
 class TestSharesDsetLoader(unittest.TestCase):
 
+    def setUp(self) -> None:
+        self.notEmptySink = Check(is_not_empty())
 
+
+    # https://beam.apache.org/documentation/pipelines/test-your-pipeline/
     def test_GetAllTickers(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             input = (p | 'Start' >> beam.Create(['starting'])
                        | 'Getting All Tickers' >> beam.ParDo(GetAllTickers(key))
                        | 'Sample N elements' >> beam.combiners.Sample.FixedSizeGlobally(20)
-                       | beam.Map(print))
+                       | self.notEmptySink
+                     )
 
     def test_get_industry(self):
         key = os.environ['FMPREPKEY']
+        expected = ['Consumer Electronics']
+        industrySink = Check(equal_to(expected))
+
         with TestPipeline() as p:
             input = (p | 'Start' >> beam.Create(['AAPL'])
                      | 'Get Industry' >> beam.Map(lambda t: get_industry(t, key))
-                     | beam.Map(print))
+                     | industrySink
+                     )
 
     def test_write_to_sink(self):
         key = os.environ['FMPREPKEY']
         expected = ['Consumer Electronics']
-        sink = Check(equal_to(expected))
-
+        industrySink = Check(equal_to(expected))
         with TestPipeline() as p:
             input = (p | 'Start' >> beam.Create(['AAPL'])
                      | 'Get Industry' >> beam.Map(lambda t: get_industry(t, key))
-                     | sink
+                     | industrySink
                      )
 
-
-    def test_run_my_pipeline(self):
+    @patch('shareloader.modules.share_datset_loader.get_industry')
+    @patch('shareloader.modules.share_datset_loader.GetAllTickers.process')
+    def test_run_my_pipeline(self, processMock, getIndustryMock):
         key = os.environ['FMPREPKEY']
-        sink = Check(is_not_empty())
+
+        processMock.return_value =  ['AMZN']
+        getIndustryMock.return_value = 'Consumer Durables'
         with TestPipeline() as p:
-            input = (p | 'Start' >> beam.Create(['FOO']))
+            input = (p | 'Start' >> beam.Create(['start']))
             res = run_my_pipeline(input, key)
-            final = res | sink
+            final = res | self.notEmptySink
 
 

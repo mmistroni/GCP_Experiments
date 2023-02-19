@@ -49,7 +49,8 @@ class GetAllTickers(beam.DoFn):
         return   [(d['symbol'], re.sub('[^\w\s]', '', d['name']), d['exchange']) for d in all_symbols if self._is_valid(d)]
 
     def process(self, item):
-        return self.get_all_tradables()
+        tradables = self.get_all_tradables()
+        return tradables
 
 
 def write_to_bucket(lines, sink):
@@ -61,7 +62,7 @@ def get_industry(ticker, key):
     try:
         profile = requests.get('https://financialmodelingprep.com/api/v3/profile/{}?apikey={}'.format(ticker.upper(), key)).json()
         ind = profile[0]['industry']
-        return re.sub('[^\w\s]', '', ind)
+        return re.sub('[^\w\s]', '', ind)  if ind else ''
     except Exception as e:
         print('Exceptoin:{}'.format(str(e)))
         return ''

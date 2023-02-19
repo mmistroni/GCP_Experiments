@@ -729,7 +729,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
-        res = get_mm_trend_template('TX', key)
+        res = get_mm_trend_template('AAPL', key, numdays=4500)
 
         df = pd.DataFrame(data=res, columns=list(res[0].keys()))
 
