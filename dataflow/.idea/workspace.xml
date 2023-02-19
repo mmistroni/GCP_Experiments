@@ -219,7 +219,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline">
+  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical">
     <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -231,20 +231,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_GetAllTickers&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -290,20 +276,34 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_get_fmprep_historical&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
+      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
         <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
         <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
         <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
         <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
       </list>
     </recent_temporary>
   </component>
@@ -527,16 +527,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>104</line>
           <option name="timeStamp" value="216" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>137</line>
-          <option name="timeStamp" value="217" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>133</line>
-          <option name="timeStamp" value="218" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_premarketloader.py</url>

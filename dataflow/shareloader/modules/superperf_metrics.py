@@ -174,7 +174,7 @@ def get_descriptive_and_technical(ticker, key, asOfDate=None):
                                                                                           key=key)).json()
         if res:
             hist_prices = get_fmprep_historical(ticker, key, numdays=1500)
-            priceAvg20 = statistics.mean(hist_prices) if len(hist_prices) > 0 else  0
+            priceAvg20 = statistics.mean(hist_prices[0:20]) if len(hist_prices) > 0 else  0
             descriptive_dict =  dict( (k,v) for k,v in res[0].items() if k in keys)
             descriptive_dict['priceAvg20'] = priceAvg20
             descriptive_dict['changeFromOpen'] = descriptive_dict['price'] - descriptive_dict['open']
