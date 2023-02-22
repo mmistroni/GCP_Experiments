@@ -187,11 +187,20 @@ class TestSuperPerformers(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         res = get_fmprep_historical('AAPL', key, numdays=40,  colname=[])
         self.assertTrue(res)
-        print(res)
+
 
     def test_get_descriptive_and_technical(self):
         key = os.environ['FMPREPKEY']
-        print(get_descriptive_and_technical('AAPL', key))
+        res = get_descriptive_and_technical('AAPL', key)
+
+        expectedKeys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
+            'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol', 'volume', 'previousClose',
+            'priceAvg20', 'changeFromOpen', 'allTimeHigh', 'allTimeLow', 'institutionalOwnershipPercentage']
+
+        checker = [k in res.keys() for k in expectedKeys]
+        self.assertTrue(all(checker))
+
+
 
 
 
@@ -682,7 +691,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         news = get_latest_stock_news('AAPL', key)
 
-        print(news)
+        self.assertTrue(news is not None)
 
 
     def test_readsp500(self):
@@ -768,7 +777,9 @@ class TestSuperPerformers(unittest.TestCase):
         subset = df[['date', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template'  ]]
         print(subset)
 
-        subset.to_csv('c:/Users/Marco/mminervini_sample.csv', index=False)
+        self.assertTrue(df.shape[0] > 0)
+
+        #subset.to_csv('c:/Users/Marco/mminervini_sample.csv', index=False)
 
 
 

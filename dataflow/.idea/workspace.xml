@@ -9,7 +9,16 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_sub_pipelines.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_form4_str_pipeline.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_market52week.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_market52week.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_monthly_data.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,8 +228,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical">
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -230,11 +239,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -244,11 +253,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_get_industry&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_combine_news&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -258,11 +267,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -272,11 +281,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_write_to_sink&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_pipeline_options&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -286,24 +295,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_get_fmprep_historical&quot;" />
+      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
+      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_run_my_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_write_to_sink" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_get_industry" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" />
+        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" />
       </list>
     </recent_temporary>
   </component>
@@ -418,11 +427,6 @@
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_monthly_data.py</url>
-          <line>79</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>41</line>
@@ -539,11 +543,6 @@
           <option name="timeStamp" value="224" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>770</line>
-          <option name="timeStamp" value="225" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
           <line>52</line>
           <option name="timeStamp" value="229" />
@@ -557,6 +556,31 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
           <line>64</line>
           <option name="timeStamp" value="231" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>693</line>
+          <option name="timeStamp" value="232" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="234" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/metrics.py</url>
+          <line>221</line>
+          <option name="timeStamp" value="235" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/metrics.py</url>
+          <line>219</line>
+          <option name="timeStamp" value="236" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="241" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

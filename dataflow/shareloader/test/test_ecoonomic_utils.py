@@ -6,6 +6,16 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 
+
+class Check(beam.PTransform):
+    def __init__(self, checker):
+      self._checker = checker
+
+    def expand(self ,pcoll):
+      print('Invoking sink....')
+      assert_that(pcoll, self._checker)
+
+
 class EconomicUtilsTestCase(unittest.TestCase):
     def test_latest_job_statistics(self):
         res = get_latest_jobs_statistics()
@@ -24,20 +34,12 @@ class EconomicUtilsTestCase(unittest.TestCase):
 
     def test_create_pipeline(self):
         from shareloader.modules.state_of_uk_economy import kickoff_pipeline
+
+        non_empty_sink = Check(is_not_empty())
+
         with TestPipeline() as p:
             jobstats =  kickoff_pipeline(p)
-            jobstats | beam.Map(print)
-
-    def test_tocsv(self):
-        import pandas as pd
-        df = pd.DataFrame({'name': ['Raphael', 'Donatello'],
-                           'mask': ['red', 'purple'],
-                           'weapon': ['sai', 'bo staff']})
-        res = df.to_csv(index=False, header=False)
-        print(res.split('\n'))
-
-
-
+            jobstats | non_empty_sink
 
 if __name__ == '__main__':
     unittest.main()

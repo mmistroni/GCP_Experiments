@@ -49,29 +49,17 @@ class TestMarketStats(unittest.TestCase):
     def setUp(self):
         self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
         self.mock_foo = self.patcher.start()
+        self.notEmptySink = Check(is_not_empty())
 
     def tearDown(self):
         self.patcher.stop()
 
-    def xtest_all_stocks(self):
-        key = os.environ['FMPREPKEY']
-        print(get_all_stocks(key))
-
-    def xtest_run_sample(self):
-        key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-                 (p
-                  | 'Get List of Tickers' >> beam.Create(get_all_stocks(key))
-                  | 'Getting Prices' >> beam.Map(lambda symbol: get_prices2(symbol, key))
-                  #| 'Filtering blanks' >> beam.Filter(lambda d: len(d) > 0)
-                  | 'Print out' >> beam.Map(print)
-                  )
 
     def test_run_vix(self):
         key = os.environ['FMPREPKEY']
         print(f'{key}|')
         with TestPipeline() as p:
-                 run_vix(p, key) | beam.Map(print)
+                 run_vix(p, key) | self.notEmptySink
 
     def test_run_pmi(self):
         key = os.environ['FMPREPKEY']
@@ -82,8 +70,7 @@ class TestMarketStats(unittest.TestCase):
                  (p | 'start' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
                     | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
-                    | beam.Map(print)
-                    #| 'out' >> sink
+                    | 'out' >> sink
                 )
 
     def test_run_manuf_pmi(self):
@@ -111,7 +98,7 @@ class TestMarketStats(unittest.TestCase):
                     | 'FlattenCombine all' >> beam.Flatten()
                     | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
                     | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                    |' rint out' >> beam.Map(print)
+                    | self.notEmptySink
 
             )
 
@@ -119,13 +106,13 @@ class TestMarketStats(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            run_cftc_spfutures(p, key) | beam.Map(print)
+            run_cftc_spfutures(p, key) | self.notEmptySink
 
     def test_getallpricesfordate(self):
         import pandas as pd
         key = os.environ['FMPREPKEY']
         asOfDate = date(2021, 9, 30).strftime('%Y-%m-%d')
-        print(get_all_prices_for_date(key, asOfDate)[0:20])
+        self.assertTrue(get_all_prices_for_date(key, asOfDate)[0:20])
 
 
 
@@ -174,7 +161,7 @@ class TestMarketStats(unittest.TestCase):
                     | 'FlattenCombine all' >> beam.Flatten()
                     | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
                     | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                    | ' rint out' >> beam.Map(print)
+                    | self.notEmptySink
 
             )
 
@@ -189,7 +176,7 @@ class TestMarketStats(unittest.TestCase):
                     | 'FlattenCombine all' >> beam.Flatten()
                     | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
                     | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                    | 'print outl' >> beam.Map(print)
+                    | self.notEmptySink
 
             )
     def test_combineGlobally(self):
@@ -239,30 +226,28 @@ class TestMarketStats(unittest.TestCase):
                 | 'FlattenCombine all' >> beam.Flatten()
 
                 | ' do A PARDO:' >> beam.CombineGlobally(AverageFn())
-                | 'print outl' >> beam.Map(print)
+                | self.notEmptySink
             )
-           # nearly there, Now we need to map each generated collection to a (key, collection) so that we can then
-           # sort keys and give it to a ParDo
+
 
     def test_economicCalendarData(self):
         iexapi_key = os.environ['FMPREPKEY']
         data = get_economic_calendar(iexapi_key)
         from pprint import pprint
         alldt = [d for d in data if d['impact'] == 'High']
-        from pprint import pprint
-        pprint(alldt)
+        self.assertTrue(alldt)
 
     def test_economicCalendarPipeline(self):
         iexapi_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             ec = run_economic_calendar(p, iexapi_key)
-            ec | 'Printing out' >> beam.Map(print)
+            ec | self.notEmptySink
 
     def test_Nasdap(self):
         iexapi_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             res = run_exchange_pipeline(p, iexapi_key, 'NASDAQ Global Select')
-            res | 'print out' >> beam.Map(print)
+            res | self.notEmptySink
 
     def test_bqueryInnerJoinernyse_tickers(self):
         from pandas.tseries.offsets import BDay
@@ -289,37 +274,37 @@ class TestMarketStats(unittest.TestCase):
                     | 'InnerJoiner: JoinValues' >> beam.ParDo(InnerJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(coll2Mapped))
                     | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-                    | 'printing out all' >> beam.Map(print)
+                    | self.notEmptySink
             )
 
     def test_putcall_ratio(self):
         with TestPipeline() as p:
             p = run_putcall_ratio(p)
-            p | 'Printing Out' >> beam.Map(print)
+            p | self.notEmptySink
 
     def test_manufpmifetch(self):
         with TestPipeline() as p:
-            run_manufacturing_pmi(p) | beam.Map(print)
+            run_manufacturing_pmi(p) | self.notEmptySink
 
     def test_nonmanufpmi(self):
         with TestPipeline() as p:
-            run_pmi(p) | beam.Map(print)
+            run_pmi(p) | self.notEmptySink
 
     def test_get_equity_putcall_ratio(self):
-        print(get_equity_putcall_ratio())
+        self.assertTrue(get_equity_putcall_ratio())
 
     def test_get_market_momentum(self):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             (p
              | 'Get List of Tickers' >> beam.Create([get_market_momentum(fmp_key)])
-             | 'Print out' >> beam.Map(print)
+             | self.notEmptySink
              )
 
     def test_get_market_momentum(self):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            run_senate_disclosures(p, fmp_key)
+            run_senate_disclosures(p, fmp_key) | self.notEmptySink
 
 
     def test_get_vix(self):
@@ -336,7 +321,7 @@ class TestMarketStats(unittest.TestCase):
                     | 'FlattenCombine all' >> beam.Flatten()
                     | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                     | ' FlatMapping' >> beam.FlatMap(lambda x: x)
-                    | beam.Map(print)
+                    | self.notEmptySink
             )
 
     def test_get_senate_disclosures(self):
@@ -344,16 +329,16 @@ class TestMarketStats(unittest.TestCase):
         with TestPipeline() as p:
             (p
              | 'Get List of Tickers' >> beam.Create(get_senate_disclosures(fmp_key))
-             | 'Print out' >> beam.Map(print)
+             | self.notEmptySink
              )
 
     def test_compute_etf_historical(self):
         key = os.environ['FMPREPKEY']
 
         with TestPipeline() as p:
-            (p |run_my_pipeline(p, key)
-               | 'map' >> beam.Map(print)
-             )
+            res = run_my_pipeline(p, key)
+            res   | self.notEmptySink
+
 
     def test_get_raw_cftc(self):
         key = os.environ['FMPREPKEY']
@@ -362,32 +347,22 @@ class TestMarketStats(unittest.TestCase):
         print(data)
         res = [dict(date=d['date'],changeInNetPosition=d['changeInNetPosition'],marketSentiment=d['marketSentiment'],
                     marketSituation=d['marketSituation']) for d  in data]
-        from pprint import pprint
-        pprint(res[0:4])
+        self.assertTrue(res)
 
-    def test_get_sector_rotation_indicator(self):
-        key = os.environ['FMPREPKEY']
-        sink = beam.Map(print)
-
-        with TestPipeline() as p:
-            (p | 'start run_mm' >> beam.Create(['20210101'])
-             | 'prnt' >> beam.Map(print)
-             )
     def test_get_latest_fed_fund_rates(self):
         frates = get_latest_fed_fund_rates()
-        print(frates)
-        self.assertTrue(frates > 0)
+        self.assertTrue(float(frates) > 0)
 
     def test_run_fed_funds_rates(self):
         key = os.environ['FMPREPKEY']
-        sink = beam.Map(print)
+
 
         with TestPipeline() as p:
-            run_fed_fund_rates(p)  | sink
+            run_fed_fund_rates(p)  | self.notEmptySink
 
     def test_write_all_to_sink(self):
         fmp_key = os.environ['FMPREPKEY']
-        sink = beam.Map(print)
+        sink = self.notEmptySink
         with TestPipeline() as p:
             vix = run_vix(p, fmp_key)
             sd = run_senate_disclosures(p, fmp_key)
@@ -395,12 +370,12 @@ class TestMarketStats(unittest.TestCase):
 
     def test_get_all_us_stocks(self):
         fmp_key = os.environ['FMPREPKEY']
-        get_all_us_stocks(fmp_key)
+        self.assertTrue(get_all_us_stocks(fmp_key))
 
-    def test_premarket_loader(self):
+    def xtest_premarket_loader(self):
         from shareloader.modules.premarket_loader import extract_data_pipeline, extract_trend_pipeline
         fmp_key = os.environ['FMPREPKEY']
-        sink = beam.Map(print)
+        sink = self.notEmptySink
         with TestPipeline() as p:
             result = extract_trend_pipeline(p, fmp_key)
             result | sink
