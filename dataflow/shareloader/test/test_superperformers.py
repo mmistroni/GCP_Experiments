@@ -17,7 +17,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
 from itertools import chain
 from pandas.tseries.offsets import BDay
 import apache_beam as beam
-from apache_beam.testing.util import assert_that, equal_to
+from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 import os
 import requests
@@ -163,6 +163,10 @@ def filter_basic_fields(input_dict):
 
 class TestSuperPerformers(unittest.TestCase):
 
+    def setUp(self):
+        self.notEmptySink = Check(is_not_empty())
+
+
     def all_in_one(self, input):
         from functools import reduce
 
@@ -200,15 +204,10 @@ class TestSuperPerformers(unittest.TestCase):
         checker = [k in res.keys() for k in expectedKeys]
         self.assertTrue(all(checker))
 
-
-
-
-
     def test_get_financial_ratios(self):
         key = os.environ['FMPREPKEY']
-        printingSink = beam.Map(print)
 
-        print(get_financial_ratios('AAPL', key))
+        self.assertTrue(get_financial_ratios('AAPL', key))
 
     def test_get_stock_dividends(self):
         import requests
@@ -222,12 +221,7 @@ class TestSuperPerformers(unittest.TestCase):
         all_divis = [(d.get('date'), d.get('adjDividend', 0)) for d in divis if
                      datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
         from pprint import pprint
-        print(len(all_divis))
-        pprint(all_divis)
-
-
-
-
+        self.assertTrue(all_divis)
 
     def test_benchmarkLoader(self):
         key = os.environ['FMPREPKEY']
@@ -243,7 +237,7 @@ class TestSuperPerformers(unittest.TestCase):
                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
-              | printingSink
+              | self.notEmptySink
              )
 
     def test_fundamentalLoader(self):
@@ -258,7 +252,7 @@ class TestSuperPerformers(unittest.TestCase):
                          #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
                          #| 'Filtering' >> beam.Filter(asset_play_filter)
-                         | printingSink
+                         | self.notEmptySink
              )
 
     def test_load_fundamental_data(self):
@@ -267,13 +261,13 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            ticks = (p | 'Starting' >> beam.Create(['WLL'])
+            ticks = (p | 'Starting' >> beam.Create(['AAPL'])
                | 'tstCombine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                    )
 
             res = load_fundamental_data(ticks, key)
 
-            res | printingSink
+            res | self.notEmptySink
 
     def test_get_financial_ratios_benchmark(self):
         import pandas as pd
@@ -305,7 +299,7 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Filtering' >> beam.Filter(asset_play_filter)
                          | 'Mapping'>> beam.Map(lambda d: dict(avps=d.get('sharesOutstanding', 0) * d.get('bookValuePerShare'),
                                                                     ticker=d['symbol'], marketCap=d['marketCap']))
-                         | printingSink
+                         | self.notEmptySink
              )
 
     def test_defensiveAndEnterpriseStocks(self):
@@ -323,19 +317,21 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
-              | printingSink
+              | self.notEmptySink
              )
 
     def test_compute_cagr(self):
         inputs = [1299.8, 1411.3, 1872.9, 3080, 3777]
 
         from pprint import pprint
-        pprint(compute_cagr(inputs))
+        self.assertTrue(compute_cagr(inputs) != 0)
 
     def test_piotrosky_scorer(self):
         key = os.environ['FMPREPKEY']
         for ticker in ['MSFT', 'MO', 'NKE', 'NXPI']:
-            print(f'{ticker}={calculate_piotrosky_score(key, ticker)}')
+            res = calculate_piotrosky_score(key, ticker)
+            self.assertTrue(res != 0)
+
 
     def computeRSI(self, data, time_window):
         diff = data.diff(1).dropna()  # diff in one field(one day)
@@ -371,21 +367,18 @@ class TestSuperPerformers(unittest.TestCase):
         data['asOfDate'] = pd.to_datetime(data['date'])
         data['RSI'] = self.computeRSI(data['adjClose'], 20)
 
-        print(f'Rsi: {data.tail(1).RSI.values[0]}')
-
-
-
+        self.assertTrue(data.tail(1).RSI.values[0])
 
     def test_skew(self):
         key = os.environ['FMPREPKEY']
         base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)
-        print(requests.get(base_url).json())
+        self.assertTrue(requests.get(base_url).json())
 
 
     def test_vix_cftc(self):
         key = os.environ['FMPREPKEY']
         base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
-        print(requests.get(base_url).json()[0])
+        self.assertTrue(requests.get(base_url).json()[0])
 
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']
@@ -401,6 +394,7 @@ class TestSuperPerformers(unittest.TestCase):
             bmark_df = pd.DataFrame(list(bmarkData.items()), columns=['key', 'value'])
             defensive_df = get_defensive_filter_df()
             merged = pd.merge(bmark_df, defensive_df, on='key', how='left')
+            self.assertTrue(merged.shape[0] > 0)
             with pd.option_context('display.max_rows', None,
                                    'display.max_columns', 5,
                                    'display.precision', 3,
@@ -460,7 +454,7 @@ class TestSuperPerformers(unittest.TestCase):
         merged = pd.merge(bmark_df, enterprise_df, on='key', how='left')
 
 
-
+        self.assertTrue(merged.shape[0] > 0)
 
         with pd.option_context('display.max_rows', None,
                                'display.max_columns', 5,
@@ -505,6 +499,7 @@ class TestSuperPerformers(unittest.TestCase):
         universe_filter_df = self.get_universe_filter_df()
         merged = pd.merge(universe_filter_df, updated_dict_df, on='key', how='left')
 
+        self.assertTrue(merged.shape[0] > 0)
 
 
 
@@ -513,9 +508,6 @@ class TestSuperPerformers(unittest.TestCase):
                                'display.precision', 3,
                                ):
             print(merged.to_string(index=False))
-
-
-
 
     ## Add a test so that we can run all selection criteria against a stock and see why it did not get selected
 
@@ -526,7 +518,7 @@ class TestSuperPerformers(unittest.TestCase):
 
             microcap = load_microcap_data(tickers, key)
 
-            microcap | 'print sink' >> beam.Map(print)
+            microcap | self.notEmptySink
             '''
             (tickers
              | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
@@ -624,6 +616,7 @@ class TestSuperPerformers(unittest.TestCase):
             canslim_filter_df = self.get_canslim_filter_df()
             merged = pd.merge(canslim_filter_df, updated_dict_df, on='key', how='left')
 
+            self.assertTrue(merged.shape[0] > 0)
             with pd.option_context('display.max_rows', None,
                                    'display.max_columns', 5,
                                    'display.precision', 3,
@@ -662,6 +655,7 @@ class TestSuperPerformers(unittest.TestCase):
         for ticker in ['COLM', 'AMZN', 'MSFT', 'GOOD', 'TREX', 'HALO'] * 10:
             pcnt = get_instutional_holders_percentage_yahoo(ticker)
             print(f'{ticker} has {pcnt}')
+            self.assertTrue(pcnt)
         #print(get_institutional_holders_percentage('COLM', 'NASDAQ'))
 
 
@@ -682,7 +676,7 @@ class TestSuperPerformers(unittest.TestCase):
             (p | 'START' >> beam.Create(['AMZN', 'GOOGL', 'AAPL', 'FOO', 'BAR'])
                | 'COMBINE' >> beam.CombineGlobally(combine_tickers)
                | 'prdo'   >> beam.ParDo(SplitWords(',', 'FIRST'))
-               | 'out' >> beam.Map(print)
+               | 'out' >> self.notEmptySink
              )
 
     def test_stock_news(self):

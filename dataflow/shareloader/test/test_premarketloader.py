@@ -29,9 +29,7 @@ class TestPremarketLoader(unittest.TestCase):
         df = pd.DataFrame(data=data)
         df['symbol'] = 'AAPL'
 
-        recs = df.to_dict('records')
-
-        print(recs)
+        self.assertTrue(df.shape[0] > 0)
 
 
 

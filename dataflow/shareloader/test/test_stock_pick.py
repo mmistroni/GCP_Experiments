@@ -5,7 +5,7 @@ from lxml import etree
 from io import StringIO, BytesIO
 from shareloader.modules.stock_picks import  map_to_bq_dict, run_my_pipeline
 import apache_beam as beam
-from apache_beam.testing.util import assert_that, equal_to
+from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 
@@ -21,6 +21,9 @@ class Check(beam.PTransform):
 
 
 class TestEdgarUtils(unittest.TestCase):
+
+    def setUp(self):
+        self.notEmptySink = Check(is_not_empty())
 
     def test_generate_initial_feeds(self):
         pass

@@ -33,7 +33,7 @@ class TestNewsPipeline(unittest.TestCase):
     def setUp(self):
         self.notEmptySink = Check(is_not_empty())
 
-    
+
     def test_run_my_pipelinec(self):
         test_sector = 'Consumer Cyclical,PincoPallino'
         options = XyzOptions.from_dictionary({'sector': test_sector, 'business_days': 1})

@@ -9,15 +9,12 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_data.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_sub_pipelines.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/monthly_superperformers.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_form4_str_pipeline.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_market52week.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_market52week.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_monthly_data.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -228,8 +225,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_news_pipeline.TestNewsPipeline">
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_combine_tickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -239,11 +236,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_combine_tickers&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -253,11 +250,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_combine_news&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -267,11 +264,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_institutional_holdings&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_readsp500" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -281,11 +278,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_pipeline_options&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_readsp500&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_stock_news" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -295,24 +292,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec&quot;" />
+      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_stock_news&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
-      <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_combine_tickers" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline" />
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_run_my_pipelinec" />
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_find_news_scores_for_ticker" />
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_combine_news" />
-        <item itemvalue="Python tests.Python tests for test_news_pipeline.TestNewsPipeline.test_pipeline_options" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_combine_tickers" />
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
       </list>
     </recent_temporary>
   </component>
@@ -449,7 +446,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>284</line>
+          <line>285</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -469,12 +466,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>358</line>
+          <line>359</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>355</line>
+          <line>356</line>
           <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -519,7 +516,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>188</line>
+          <line>192</line>
           <option name="timeStamp" value="198" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -559,7 +556,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>693</line>
+          <line>687</line>
           <option name="timeStamp" value="232" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -581,6 +578,16 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
           <line>52</line>
           <option name="timeStamp" value="241" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>350</line>
+          <option name="timeStamp" value="242" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>248</line>
+          <option name="timeStamp" value="243" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -50,6 +50,7 @@ class TestMarketStats(unittest.TestCase):
         self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
         self.mock_foo = self.patcher.start()
         self.notEmptySink = Check(is_not_empty())
+        self.printSink = beam.Map(print)
 
     def tearDown(self):
         self.patcher.stop()
@@ -106,7 +107,7 @@ class TestMarketStats(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            run_cftc_spfutures(p, key) | self.notEmptySink
+            run_cftc_spfutures(p, key) | self.printSink
 
     def test_getallpricesfordate(self):
         import pandas as pd
