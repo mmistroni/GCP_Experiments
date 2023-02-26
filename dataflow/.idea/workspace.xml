@@ -7,10 +7,8 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing mm">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -320,6 +318,21 @@
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
     </task>
+    <task id="LOCAL-00001" summary="fixing mm">
+      <created>1677408560408</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1677408560408</updated>
+    </task>
+    <task id="LOCAL-00002" summary="fixing mm">
+      <created>1677408574156</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1677408574156</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -415,6 +428,10 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="fixing mm" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing mm" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
