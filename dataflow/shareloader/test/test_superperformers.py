@@ -751,7 +751,7 @@ class TestSuperPerformers(unittest.TestCase):
         df['52_week_high'] = df['close'].rolling(52 * 5).max()
         df['52_week_low'] = df['close'].rolling(52 * 5).min()
         df['150_ma'] = df['close'].rolling(150).mean()
-        df['50_ma'] = df['close'].rolling(150).mean()
+        df['50_ma'] = df['close'].rolling(50).mean()
         df['slope'] = df['200_ma'].rolling(40).apply(self.best_fit_slope)
         df['pricegt50avg'] = df['close'] > df['50_ma']
         df['price30pctgt52wklow'] = df['close'] / df['52_week_low'] > 1.3
