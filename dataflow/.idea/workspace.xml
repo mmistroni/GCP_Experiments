@@ -9,12 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_news_pipeline.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_shares_to_sector_pick.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_stock_pick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -297,11 +292,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_combine_tickers" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_mm_trendtemplate" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_readsp500" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_stock_news" />
     </list>
     <recent_temporary>
       <list>
@@ -553,11 +548,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
           <line>64</line>
           <option name="timeStamp" value="231" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
-          <line>687</line>
-          <option name="timeStamp" value="232" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
