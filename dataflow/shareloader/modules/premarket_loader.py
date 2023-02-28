@@ -115,7 +115,7 @@ class TrendTemplateLoader(beam.DoFn):
                     tt_filter = (mmdata['trend_template'] == True)
                     trending = mmdata[tt_filter]
 
-                    csv_string = mmdata.to_csv(index=False, header=False)
+                    csv_string = trending.to_csv(index=False, header=False)
 
                     for row in csv_string.split('\n'):
                         all_dt.append(row)
@@ -282,9 +282,12 @@ def run(argv=None, save_main_session=True):
                                         date.today().strftime('%Y-%m-%d %H:%M'))
 
                 logging.info(f'Writing to {destination}')
-                test_sink = beam.io.WriteToText(destination, num_shards=1,
+                bucket_sink = beam.io.WriteToText(destination, num_shards=1,
                                                 header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
 
+                logging_sink = beam.Map(logging.info)
+
+                data | bucket_sink
             else:
                 logging.info('Extracting trend pipeline')
                 data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
