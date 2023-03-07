@@ -114,6 +114,7 @@ class TrendTemplateLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             # Not good. filter out data at the beginning to reduce stress load for rest of data
             # also need to use rsi
+            # https://medium.datadriveninvestor.com/find-the-next-bull-market-winners-using-mark-minervinis-advice-4f82133ba4b2
             try:
                 mmdata = self.get_mm_trendtemplate(ticker)
                 if mmdata is not None:
