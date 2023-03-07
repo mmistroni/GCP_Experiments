@@ -67,6 +67,10 @@ class TrendTemplateLoader(beam.DoFn):
 
         try:
             res = get_mm_trend_template(ticker, self.key, numdays=self.numdays)
+
+            #  need to find rank https://medium.datadriveninvestor.com/find-the-next-bull-market-winners-using-mark-minervinis-advice-4f82133ba4b2
+
+
             if res:
                 df = pd.DataFrame(data=res, columns=list(res[0].keys()))
                 # mvg a
@@ -109,16 +113,14 @@ class TrendTemplateLoader(beam.DoFn):
 
         for idx, ticker in enumerate(tickers_to_process):
             # Not good. filter out data at the beginning to reduce stress load for rest of data
+            # also need to use rsi
             try:
                 mmdata = self.get_mm_trendtemplate(ticker)
                 if mmdata is not None:
                     tt_filter = (mmdata['trend_template'] == True)
                     trending = mmdata[tt_filter]
-
-                    csv_string = trending.to_csv(index=False, header=False)
-
-                    for row in csv_string.split('\n'):
-                        all_dt.append(row)
+                    records_dicts = trending.to_dict('records')
+                    all_dt += records_dicts
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
@@ -218,8 +220,6 @@ class HistoricalMarketLoader(beam.DoFn):
         if isException:
             raise Exception(excMsg)
         return all_dt
-
-
 
 
 def combine_tickers(input):
