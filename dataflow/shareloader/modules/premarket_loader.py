@@ -5,16 +5,81 @@ from datetime import datetime, date
 import logging
 import apache_beam as beam
 import pandas as pd
+from itertools import chain
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_descriptive_and_technical, get_latest_stock_news, get_mm_trend_template, get_fmprep_historical
 from .marketstats_utils import get_all_stocks
 from apache_beam.io.gcp.internal.clients import bigquery
+import requests
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
 
 '''
 Further source of infos
 https://medium.com/@mancuso34/building-all-in-one-stock-economic-data-repository-6246dde5ce02
 '''
+
+HEADER_TEMPLATE = '<tr><th>AsOfDate</th><th>Ticker</th><th>Close</th><th>200D Mv Avg</th><th>150D Mv Avg</th><th>50D Mv Avg</th><th>52Wk Low</th><th>52Wk High</th><th>Trend Template</th></tr>'
+ROW_TEMPLATE =  '<tr><td>{date}</td><td>{ticker}</td><td>{close}</td><td>{200_ma}</td><td>{150_ma}</td><td>{50_ma}</td><td>{52_week_low}</td><td>{52_week_high}</td><td>{trend_template}</td></tr>'
+
+
+class PreMarketCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return [HEADER_TEMPLATE]
+
+  def add_input(self, accumulator, input):
+    logging.info('Adding{}'.format(input))
+    logging.info('acc is:{}'.format(accumulator))
+    formatted = ROW_TEMPLATE.format(input)
+    accumulator.append(formatted)
+    return accumulator
+
+  def merge_accumulators(self, accumulators):
+      return chain(*accumulators)
+
+  def extract_output(self, all_accumulators):
+    return ''.join(all_accumulators)
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients, key):
+        self.recipients = ['mmistroni@gmail.com']
+        self.key = key
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+
+    def process(self, element):
+        logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
+        template = "<html><body><table>{}</table></body></html>"
+        content = template.format(element)
+        print('Sending \n {}'.format(content))
+        message = Mail(
+            from_email='gcp_cloud@mmistroni.com',
+            to_emails=self.recipients,
+            subject='Market Stats',
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        #sg = SendGridAPIClient(self.key)
+
+        #response = sg.send(message)
+        logging.info(f'Message is {message}')
+
+
+
+
+
 class XyzOptions(PipelineOptions):
 
     @classmethod
@@ -291,7 +356,12 @@ def run(argv=None, save_main_session=True):
                 data | bucket_sink
             else:
                 logging.info('Extracting trend pipeline')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey)
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, 55*5)
+
+
+
+
+
         else:
             data = extract_data_pipeline(p, pipeline_options.fmprepkey)
 

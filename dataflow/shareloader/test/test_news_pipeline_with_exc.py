@@ -1,16 +1,6 @@
-from mock import patch, Mock
-from apache_beam.testing.test_pipeline import TestPipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
-from apache_beam.testing.pipeline_verifiers import PipelineStateMatcher
 from apache_beam.testing.test_pipeline import TestPipeline
-from samples.email_pipeline import run
-from hamcrest.core.core.allof import all_of
-from apache_beam.transforms import util
-from shareloader.modules.news import run_my_pipeline, XyzOptions, \
-                                            prepare_for_big_query
-from shareloader.modules.news_util import df_to_dict, find_news_scores_for_ticker, combine_news
-from apache_beam.options.pipeline_options import PipelineOptions
 from datetime import date
 import pandas as pd
 from shareloader.modules.metrics import get_historical_data_yahoo
