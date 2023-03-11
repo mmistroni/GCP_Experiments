@@ -31,7 +31,7 @@ class PreMarketCombineFn(beam.CombineFn):
   def add_input(self, accumulator, input):
     logging.info('Adding{}'.format(input))
     logging.info('acc is:{}'.format(accumulator))
-    formatted = ROW_TEMPLATE.format(input)
+    formatted = ROW_TEMPLATE.format(**input)
     accumulator.append(formatted)
     return accumulator
 
@@ -41,7 +41,7 @@ class PreMarketCombineFn(beam.CombineFn):
   def extract_output(self, all_accumulators):
     return ''.join(all_accumulators)
 
-class EmailSender(beam.DoFn):
+class PremarketEmailSender(beam.DoFn):
     def __init__(self, recipients, key):
         self.recipients = ['mmistroni@gmail.com']
         self.key = key
@@ -64,7 +64,7 @@ class EmailSender(beam.DoFn):
         message = Mail(
             from_email='gcp_cloud@mmistroni.com',
             to_emails=self.recipients,
-            subject='Market Stats',
+            subject='Mark Minervini Trend Template Selection',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -74,7 +74,7 @@ class EmailSender(beam.DoFn):
         #sg = SendGridAPIClient(self.key)
 
         #response = sg.send(message)
-        logging.info(f'Message is {message}')
+        print(f'Message is {message}')
 
 
 

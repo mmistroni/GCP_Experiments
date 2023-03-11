@@ -31,6 +31,99 @@ class TestPremarketLoader(unittest.TestCase):
 
         self.assertTrue(df.shape[0] > 0)
 
+        # cloud build test https://stackoverflow.com/questions/55022058/running-python-unit-test-in-google-cloud-build
+        def test_get_rank(self):
+            key = os.environ['FMPREPKEY']
+
+            GROUPBY_COL = 'GICS Sector'  # Use 'GICS Sector' or 'GICS Sub-Industry'
+            S_AND_P_URL = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
+            NUM_PER_GROUP = 3  # The top n winning stocks per group
+
+            ticker_info = pd.read_html(S_AND_P_URL)[0]
+
+            # Replace any dots with dashes in ticker names to prevent errors in
+            # downloading A and B stocks
+            tickers = [
+                ticker.replace('.', '-')
+                for ticker in ticker_info['Symbol'].unique().tolist()
+            ]
+
+            symbols = tickers[0:100]
+
+            start_date = date(2022, 1, 1).strftime('%Y-%m-%d')
+            end_date = date(2022, 12, 31).strftime('%Y-%m-%d')
+
+            ticker_data = []
+
+            for symbol in symbols:
+                result = self.get_historical(symbol, key, start_date, end_date)
+                ticker_data.append(result)
+            from functools import reduce
+
+            ticker_prices = reduce(lambda acc, item: acc.merge(item, on='date', how='left'), ticker_data[1:],
+                                   ticker_data[0])
+
+            ticker_prices = ticker_prices.dropna().reset_index().drop(columns='date')
+            growth = 100 * (ticker_prices.iloc[-1] / ticker_prices.iloc[0] - 1)
+            growth = (
+                growth
+                    .to_frame()
+                    .reset_index()
+                    # .drop(columns=['level_0'])
+                    .rename(columns={'index': 'Symbol', 0: 'Growth'})
+            )
+
+            growth = growth.merge(
+                ticker_info[['Symbol', GROUPBY_COL]],
+                on='Symbol',
+                how='left',
+            )
+
+            # Find the ranking of each stock per sector
+            growth['sector_rank'] = (
+                growth
+                    .groupby(GROUPBY_COL)
+                ['Growth']
+                    .rank(ascending=False)
+            )
+
+            # Filter to only the winning stocks, and sort the values
+            growth = (
+                growth[growth['sector_rank'] <= NUM_PER_GROUP]
+                    .sort_values(
+                    [GROUPBY_COL, 'Growth'],
+                    ascending=False,
+                )
+            )
+
+            print(growth)
+
+    def test_premarketcombiner(self):
+        import io
+        from shareloader.modules.premarket_loader import PreMarketCombineFn, PremarketEmailSender
+        TESTDATA = '''date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template
+                      20210101,AAPL, 50.0,48.1,49.1,49.5,1.0,44.1,40.1,true
+                      20210101,MSFT, 150.0,148.1,149.1,149.5,11.0,144.1,140.1,true'''
+
+        df = pd.read_csv(io.StringIO(TESTDATA), sep=",")
+
+        records = df.to_dict('records')
+
+        sink = beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', 'abc'))
+
+        with TestPipeline() as p:
+            (p | 'START' >> beam.Create(records)
+             | 'COMBINE' >> beam.CombineGlobally(PreMarketCombineFn())
+             | 'SEND EMAIL' >> sink)
+
+
+
+
+
+
+
+
+
 
 
 
