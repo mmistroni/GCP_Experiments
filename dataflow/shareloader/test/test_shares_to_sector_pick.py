@@ -24,6 +24,13 @@ class TestSharesToSector(unittest.TestCase):
 
     def setUp(self):
         self.notEmptySink = Check(is_not_empty())
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+
+
+    def tearDown(self):
+        self.patcher.stop()
+
 
 
     def test_get_all_sectors(self):

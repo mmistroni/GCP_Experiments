@@ -22,7 +22,6 @@ import re
 
 class XyzOptions(PipelineOptions):
 
-
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')

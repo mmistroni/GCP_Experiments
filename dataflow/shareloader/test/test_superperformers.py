@@ -167,6 +167,7 @@ class TestSuperPerformers(unittest.TestCase):
         self.notEmptySink = Check(is_not_empty())
 
 
+
     def all_in_one(self, input):
         from functools import reduce
 
@@ -775,14 +776,6 @@ class TestSuperPerformers(unittest.TestCase):
 
         #subset.to_csv('c:/Users/Marco/mminervini_sample.csv', index=False)
 
-    def get_historical(self, ticker, key, start_date, end_date):
-        hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
-        data = requests.get(hist_url).json().get('historical')
-        df=  pd.DataFrame(data=data)
-
-        df = df[['date', 'close']].rename(columns={'close' : ticker})
-
-        return df[ (df.date > start_date) & (df.date < end_date)][::-1]
 
 
 

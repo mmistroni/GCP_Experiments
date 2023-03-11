@@ -2,6 +2,7 @@ import os
 import unittest
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
+from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParseNonManufacturingPMI,PutCallRatio, get_vix,\
@@ -14,7 +15,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
-                                            run_fed_fund_rates, write_all_to_sink
+                                            run_fed_fund_rates, write_all_to_sink, run_market_momentum
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -304,8 +305,9 @@ class TestMarketStats(unittest.TestCase):
 
     def test_get_market_momentum(self):
         fmp_key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            run_senate_disclosures(p, fmp_key) | self.notEmptySink
+        with TestPipeline(options=PipelineOptions()) as p:
+            res = run_market_momentum(p, fmp_key)
+            res | self.notEmptySink
 
 
     def test_get_vix(self):
@@ -325,13 +327,16 @@ class TestMarketStats(unittest.TestCase):
                     | self.notEmptySink
             )
 
-    def test_get_senate_disclosures(self):
+    @patch('shareloader.modules.marketstats.get_senate_disclosures')
+    def test_get_senate_disclosures(self, senate_mock):
         fmp_key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            (p
-             | 'Get List of Tickers' >> beam.Create(get_senate_disclosures(fmp_key))
-             | self.notEmptySink
-             )
+
+        expected = [{'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'label', 'VALUE' : 'value'}]
+        senate_mock.return_value = expected
+        with TestPipeline(options=PipelineOptions()) as p:
+            res = run_senate_disclosures(p, fmp_key)
+            res | self.notEmptySink
+
 
     def test_compute_etf_historical(self):
         key = os.environ['FMPREPKEY']

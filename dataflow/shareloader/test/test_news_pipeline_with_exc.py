@@ -20,6 +20,15 @@ class Check(beam.PTransform):
 
 class TestNewsPipelineWithExc(unittest.TestCase):
 
+    def setUp(self):
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+
+
+    def tearDown(self):
+        self.patcher.stop()
+
+
     def prepare_for_big_query_tst(self, items):
         raise Exception('Raising an Exception')
 

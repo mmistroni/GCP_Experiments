@@ -15,6 +15,16 @@ from datetime import date
 
 class WeeklySelectionTestCase(unittest.TestCase):
 
+    def setUp(self):
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+
+
+    def tearDown(self):
+        self.patcher.stop()
+
+
+
     def test_run(self):
         with TestPipeline() as p:
             pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'FDX', 'LABEL': 'MYLB', 'COUNT': 100},

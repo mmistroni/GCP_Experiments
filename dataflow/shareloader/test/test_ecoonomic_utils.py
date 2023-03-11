@@ -5,6 +5,7 @@ from shareloader.modules.economic_utils import get_latest_jobs_statistics, get_f
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
+from apache_beam.options.pipeline_options import PipelineOptions
 
 
 class Check(beam.PTransform):
@@ -37,7 +38,7 @@ class EconomicUtilsTestCase(unittest.TestCase):
 
         non_empty_sink = Check(is_not_empty())
 
-        with TestPipeline() as p:
+        with TestPipeline(options=PipelineOptions()) as p:
             jobstats =  kickoff_pipeline(p)
             jobstats | non_empty_sink
 

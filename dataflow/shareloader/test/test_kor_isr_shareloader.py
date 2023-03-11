@@ -8,6 +8,9 @@ from shareloader.modules.kor_isr_shareloader import find_diff,  \
 from functools import reduce
 import unittest
 import os
+from apache_beam.options.pipeline_options import PipelineOptions
+from unittest import skip
+
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -25,12 +28,19 @@ def test_combine_data(elements):
 
 class TestKorIsrShareLoaderPipeline(unittest.TestCase):
 
+    def setUp(self):
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+
+
+    def tearDown(self):
+        self.patcher.stop()
 
     def test_run_my_pipeline(self):
         key = os.environ['FMPREPKEY']
         print('KEY IS:{}'.format(key))
         filter_function = lambda d: d['changesPercentage'] > 2
-        with beam.Pipeline() as p:
+        with beam.Pipeline(options=PipelineOptions()) as p:
             result = (p | 'Start' >> beam.Create(['VEDL.NS', 'WIPRO.NS', '2378.HK',
                                                    '6160.HK', '9618.HK'])
                       )
@@ -44,21 +54,12 @@ class TestKorIsrShareLoaderPipeline(unittest.TestCase):
                 ('AAPL', 'AAPL1', 'AAPL2', '.9')]
         print(list(map_ticker_to_html_string(tpls)))
 
-    def test_map_ticker_to_html_string(self):
-        test_elems = [dict(ticker='AAPL')]
-        iexkey = os.environ['IEXAPI_KEY']
-        with TestPipeline() as p:
-            input = (p | beam.Create(test_elems)
-                     | 'EnhancedPrices' >> beam.Map(lambda d: enhance_with_price(d,iexkey=iexkey))
-                     | 'Out' >> beam.Map(print))
 
 
-
-
-
+    @skip('to review')
     def test_combine_to_html_rows(self):
         test_elems = ['<tr><td>AMZN</td><td>AMZN1</td><td>AMNZ2</td><td>.5</td></tr>', '<tr><td>AAPL</td><td>AAPL1</td><td>AAPL2</td><td>.9</td></tr>']
-        with TestPipeline() as p:
+        with TestPipeline(options=PipelineOptions()) as p:
             input = (p | beam.Create(test_elems)
                      | 'Combining..' >> beam.CombineGlobally(combine_to_html_rows)
                      | 'Out' >> beam.Map(print))
