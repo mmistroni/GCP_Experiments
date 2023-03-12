@@ -118,24 +118,28 @@ class TestPremarketLoader(unittest.TestCase):
 
         print(growth)
 
-    def test_premarketcombiner(self):
+
+    @patch('shareloader.modules.premarket_loader.PremarketEmailSender.send')
+    def test_premarketcombiner(self, send_mock):
         import io
-        from shareloader.modules.premarket_loader import PreMarketCombineFn, PremarketEmailSender
+        from shareloader.modules.premarket_loader import PreMarketCombineFn, PremarketEmailSender, send_email_pipeline
         TESTDATA = '''date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template
                       20210101,AAPL, 50.0,48.1,49.1,49.5,1.0,44.1,40.1,true
                       20210101,MSFT, 150.0,148.1,149.1,149.5,11.0,144.1,140.1,true'''
+
+        send_mock.return_value = True
 
         df = pd.read_csv(io.StringIO(TESTDATA), sep=",")
 
         records = df.to_dict('records')
 
-        sink = beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', 'abc'))
+        key = os.environ['SENDGRIDKEY']
 
         with TestPipeline() as p:
-            (p | 'START' >> beam.Create(records)
-             | 'COMBINE' >> beam.CombineGlobally(PreMarketCombineFn())
-             | 'SEND EMAIL' >> sink)
+            res = (p | 'START' >> beam.Create(records))
+            send_email_pipeline(res, key)
 
+        self.assertEquals(1, send_mock.call_count)
 
 
 

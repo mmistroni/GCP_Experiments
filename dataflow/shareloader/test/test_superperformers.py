@@ -384,7 +384,7 @@ class TestSuperPerformers(unittest.TestCase):
     def test_defensive_filter_df(self):
         key = os.environ['FMPREPKEY']
         # Need to find currentRatio, dividendPaid, peRatio, priceToBookRatio
-        for ticker in ['WOR']:
+        for ticker in ['TX']:
             print(f'------------{ticker}----------------')
             bmarkData = load_bennchmark_data(ticker, key)
             self.assertIsNotNone(bmarkData['netIncome'])
@@ -472,7 +472,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         ## TODO
         key = os.environ['FMPREPKEY']
-        ticker = 'NKE'
+        ticker = 'TX'
         fundamental_data = get_fundamental_parameters(ticker, key)
         fundamental_qtr = get_fundamental_parameters_qtr(ticker, key)
         fundamental_data.update(fundamental_qtr)

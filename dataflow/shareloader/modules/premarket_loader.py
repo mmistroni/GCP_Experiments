@@ -29,17 +29,16 @@ class PreMarketCombineFn(beam.CombineFn):
     return [HEADER_TEMPLATE]
 
   def add_input(self, accumulator, input):
-    logging.info('Adding{}'.format(input))
-    logging.info('acc is:{}'.format(accumulator))
     formatted = ROW_TEMPLATE.format(**input)
     accumulator.append(formatted)
     return accumulator
 
   def merge_accumulators(self, accumulators):
-      return chain(*accumulators)
+    return chain(*accumulators)
 
   def extract_output(self, all_accumulators):
-    return ''.join(all_accumulators)
+    data = [d for d in all_accumulators]
+    return ''.join(data)
 
 class PremarketEmailSender(beam.DoFn):
     def __init__(self, recipients, key):
@@ -71,13 +70,14 @@ class PremarketEmailSender(beam.DoFn):
         for pers in personalizations:
             message.add_personalization(pers)
 
-        sg = SendGridAPIClient(self.key)
+        self.send(message)
 
+
+    def send(self, message):
+        sg = SendGridAPIClient(self.key)
         response = sg.send(message)
         logging.info(f'Message is {message}')
-
-
-
+        logging.info('Response is:{response}')
 
 
 class XyzOptions(PipelineOptions):
@@ -186,8 +186,10 @@ class TrendTemplateLoader(beam.DoFn):
                 if mmdata is not None:
                     tt_filter = (mmdata['trend_template'] == True)
                     trending = mmdata[tt_filter]
-                    records_dicts = trending.to_dict('records')
-                    all_dt += records_dicts
+                    if trending.shape[0] > 0:
+                        logging.info(f'Found {trending.shape} records for {ticker}')
+                        records_dicts = trending.to_dict('records')[-1]
+                        all_dt.append(records_dicts)
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
@@ -292,6 +294,10 @@ class HistoricalMarketLoader(beam.DoFn):
 def combine_tickers(input):
     return ','.join(input)
 
+def combine_result(input):
+
+    res = '<br>'.join(input)
+    return res
 
 
 def write_to_bucket(lines, sink):
@@ -317,6 +323,7 @@ def extract_data_pipeline(p, fmpkey):
 def send_email_pipeline(p, sendgridkey):
     return (p
                 | 'COMBINE everything' >> beam.CombineGlobally(PreMarketCombineFn())
+                | 'Combine to string' >> beam.CombineGlobally(combine_result)
                 | 'send pmk mail' >> beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', 'abc'))
             )
 
