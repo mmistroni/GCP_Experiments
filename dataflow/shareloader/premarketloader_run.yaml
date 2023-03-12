@@ -16,6 +16,8 @@ steps:
           , 'mmrun=$_MMRUN'
           , '--parameters'
           , 'numdays=$_NUMDAYS'
+          , '--parameters'
+          , 'sendgridkey=$_SENDGRIDKEY'
           ,'--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
@@ -27,3 +29,4 @@ substitutions:
   _FMPKEY : ''
   _MMRUN : ''
   _NUMDAYS: '10'
+  _SENDGRIDKEY : ''

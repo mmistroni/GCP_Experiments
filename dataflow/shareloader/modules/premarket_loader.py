@@ -71,10 +71,10 @@ class PremarketEmailSender(beam.DoFn):
         for pers in personalizations:
             message.add_personalization(pers)
 
-        #sg = SendGridAPIClient(self.key)
+        sg = SendGridAPIClient(self.key)
 
-        #response = sg.send(message)
-        print(f'Message is {message}')
+        response = sg.send(message)
+        logging.info(f'Message is {message}')
 
 
 
@@ -87,6 +87,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
         parser.add_argument('--mmrun')
         parser.add_argument('--numdays')
+        parser.add_argument('--sendgridkey')
 
 
 class TrendTemplateLoader(beam.DoFn):
@@ -306,22 +307,19 @@ def extract_trend_pipeline(p, fmpkey, numdays=10):
             | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays))
     )
 
-
-def extract_historical_pipeline(p, fmpkey):
-    return (p
-            | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
-            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals' >> beam.ParDo(HistoricalMarketLoader(fmpkey))
-    )
-
-
-
 def extract_data_pipeline(p, fmpkey):
     return (p
             | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(PremarketLoader(fmpkey))
     )
+
+def send_email_pipeline(p, sendgridkey):
+    return (p
+                | 'COMBINE everything' >> beam.CombineGlobally(PreMarketCombineFn())
+                | 'send pmk mail' >> beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', 'abc'))
+            )
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -336,7 +334,7 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = True
     pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
-    test_sink =beam.Map(logging.info)
+    test_sink = beam.Map(logging.info)
 
     with beam.Pipeline(options=pipeline_options) as p:
 
@@ -351,17 +349,12 @@ def run(argv=None, save_main_session=True):
                 bucket_sink = beam.io.WriteToText(destination, num_shards=1,
                                                 header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
 
-                logging_sink = beam.Map(logging.info)
-
                 data | bucket_sink
+
+                send_email_pipeline(data, pipeline_options.sendgridkey)
             else:
                 logging.info('Extracting trend pipeline')
                 data = extract_trend_pipeline(p, pipeline_options.fmprepkey, 55*5)
-
-
-
-
-
         else:
             data = extract_data_pipeline(p, pipeline_options.fmprepkey)
 

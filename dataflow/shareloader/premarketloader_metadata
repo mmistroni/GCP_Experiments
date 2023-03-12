@@ -16,6 +16,11 @@
       "name": "numdays",
       "helpText": "HistoricalDays",
       "label": "numdays"
+    },
+    {
+      "name": "sendgridkey",
+      "helpText": "SendGrid key",
+      "label": "SendgRidKey"
     }
   ]
 }
