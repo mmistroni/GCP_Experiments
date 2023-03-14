@@ -47,6 +47,9 @@ class TestPremarketLoader(unittest.TestCase):
         data = [dict( (k, v)  for k, v in d.items() if k in ['date', 'symbol', 'open', 'adjClose', 'volume']) for d in res]
 
         df = pd.DataFrame(data=data)
+
+        df['date'] = pd.to_datetime(df['date']).date()
+
         df['symbol'] = 'AAPL'
 
         self.assertTrue(df.shape[0] > 0)

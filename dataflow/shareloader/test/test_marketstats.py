@@ -25,6 +25,7 @@ import requests
 from io import StringIO
 from itertools import chain
 from unittest.mock import patch
+import argparse
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -52,6 +53,7 @@ class TestMarketStats(unittest.TestCase):
         self.mock_foo = self.patcher.start()
         self.notEmptySink = Check(is_not_empty())
         self.printSink = beam.Map(print)
+        parser = argparse.ArgumentParser(add_help=False)
 
     def tearDown(self):
         self.patcher.stop()

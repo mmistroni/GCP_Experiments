@@ -96,13 +96,13 @@ def get_latest_jobs_statistics():
 
     sheet = workbook.get_sheet_by_name('Adverts by category YoY')
 
-    vacancies_names = [(sheet.cell(row=8, column=c).value) for c in range(1, sheet.max_column - 1)]
+    vacancies_names = [(sheet.cell(row=7, column=c).value) for c in range(2, sheet.max_column - 1)]
 
 
-    it_row, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
-    logging.info(f'IT ROWS:{it_row}')
+    it_column, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
+    logging.info(f'IT ROWS:{it_column}')
 
-    it_vacancies = sheet.cell(row=sheet.max_row, column=it_row+1).value
+    it_vacancies = sheet.cell(row=sheet.max_row, column=it_column + 2).value
     asOfDate = sheet.cell(row=sheet.max_row, column=1).value
 
     return {'label' : 'IT-JOB-VACANCIES',

@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import numpy as np
 from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
+from pandas.tseries.offsets import BDay
 from datetime import datetime, date
 import logging
 import apache_beam as beam
@@ -188,7 +189,19 @@ class TrendTemplateLoader(beam.DoFn):
                     trending = mmdata[tt_filter]
                     if trending.shape[0] > 0:
                         logging.info(f'Found {trending.shape} records for {ticker}')
-                        records_dicts = trending.to_dict('records')[-1]
+                        trending['asOfDate'] = pd.to_datetime(trending['date'])
+
+                        max_tolerance = date.today() - BDay(4)
+
+                        logging.info(f'Max Lookback {tolerance}')
+
+                        date_filter = trending.asOfDate > max_tolerance
+
+                        filtered = trending[date_filter].drop('asOfDate', axis=1)
+                        logging.info(f' input:{trending.shape}, output:{filtered.shape}')
+
+
+                        records_dicts = filtered.to_dict('records')[-1]
                         all_dt.append(records_dicts)
 
             except Exception as e:

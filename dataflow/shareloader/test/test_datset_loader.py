@@ -1,5 +1,6 @@
 
 import unittest
+import argparse
 from shareloader.modules.share_datset_loader import get_industry, GetAllTickers, run_my_pipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
@@ -23,8 +24,9 @@ class TestSharesDsetLoader(unittest.TestCase):
 
     def setUp(self) -> None:
         self.notEmptySink = Check(is_not_empty())
-        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.patcher = patch('shareloader.modules.share_datset_loader.XyzOptions._add_argparse_args')
         self.mock_foo = self.patcher.start()
+        parser = argparse.ArgumentParser(add_help=False)
 
     def tearDown(self):
         self.patcher.stop()

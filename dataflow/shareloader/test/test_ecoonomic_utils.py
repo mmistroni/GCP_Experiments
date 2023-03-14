@@ -6,6 +6,7 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.options.pipeline_options import PipelineOptions
+import argparse
 
 
 class Check(beam.PTransform):
@@ -18,6 +19,11 @@ class Check(beam.PTransform):
 
 
 class EconomicUtilsTestCase(unittest.TestCase):
+
+    def setUp(self):
+        parser = argparse.ArgumentParser(add_help=False)
+
+
     def test_latest_job_statistics(self):
         res = get_latest_jobs_statistics()
         print(res)
