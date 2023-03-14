@@ -324,7 +324,7 @@ def send_email_pipeline(p, sendgridkey):
     return (p
                 | 'COMBINE everything' >> beam.CombineGlobally(PreMarketCombineFn())
                 | 'Combine to string' >> beam.CombineGlobally(combine_result)
-                | 'send pmk mail' >> beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', 'abc'))
+                | 'send pmk mail' >> beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', sendgridkey))
             )
 
 
