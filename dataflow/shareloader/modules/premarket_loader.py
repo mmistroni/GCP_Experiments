@@ -173,7 +173,7 @@ class TrendTemplateLoader(beam.DoFn):
     def process(self, elements):
         all_dt = []
         tickers_to_process = elements.split(',')
-        logging.info('Ticker to process:{len(tickers_to_process}')
+        logging.info(f'Ticker to process:{len(tickers_to_process)}')
 
         excMsg = ''
         isException = False
@@ -204,10 +204,11 @@ class TrendTemplateLoader(beam.DoFn):
                         records_dicts = filtered.to_dict('records')
 
                         if records_dicts:
-                            all_dt.append(records_dicts)[-1]
+                            all_dt.append(records_dicts[-1])
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
+                logging.info(excMsg)
                 isException = True
                 break
         if isException:
