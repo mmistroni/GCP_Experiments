@@ -201,8 +201,10 @@ class TrendTemplateLoader(beam.DoFn):
                         logging.info(f' input:{trending.shape}, output:{filtered.shape}')
 
 
-                        records_dicts = filtered.to_dict('records')[-1]
-                        all_dt.append(records_dicts)
+                        records_dicts = filtered.to_dict('records')
+
+                        if records_dicts:
+                            all_dt.append(records_dicts)[-1]
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
