@@ -58,7 +58,7 @@ class PremarketEmailSender(beam.DoFn):
 
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
-        template = "<html><body><table>{}</table></body></html>"
+        template = "<html><body><table border='1'>{}</table></body></html>"
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
