@@ -204,7 +204,7 @@ class TrendTemplateLoader(beam.DoFn):
                         records_dicts = filtered.to_dict('records')
 
                         if records_dicts:
-                            all_dt.append(records_dicts[-1])
+                            all_dt.append(records_dicts)
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
