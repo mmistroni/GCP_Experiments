@@ -1,25 +1,31 @@
-substitutions:
-  _IMAGE: edgar-quarterly-form4:latest
-  _JOB_NAME: 'edgardirectrunner'
-  _TEMP_LOCATION: ''
-  _REGION: us-central1
-  
 steps:
-- name: gcr.io/$PROJECT_ID/$_IMAGE
-  entrypoint: python
-  args:
-  - /dataflow/template/edgar_quarterly_form4_main.py
-  - --runner=DirectRunner
-  - --project=$PROJECT_ID
-  - --region=$_REGION
-  - --job_name=$_JOB_NAME
-  - --temp_location=$_TEMP_LOCATION
-  - --sdk_container_image=gcr.io/$PROJECT_ID/$_IMAGE
-  - --disk_size_gb=50
-  - --year=2019 
-  - --quarter=QTR1 
-  - --setup_file=/dataflow/template/setup.py  
-
-options:
-  logging: CLOUD_LOGGING_ONLY
+  # Build the container image with the Python version of our choice.
+  # Kick off edgar form4
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_EDGAR_FORM4_BUILD_FILE']
+    id: 'build-edgar-daily-form4-template'
+  # Kick off edgar form 13
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_EDGAR_FORM13_BUILD_FILE']
+    id: 'build-edgar-daily-form13-template'
+timeout: 50000s
+substitutions:
+  _EDGAR_FORM4_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form4.yaml
+  _EDGAR_FORM13_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form13.yaml
 
