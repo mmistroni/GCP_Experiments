@@ -7,7 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixed error in market loader">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="getting more reslts">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
     </list>
@@ -417,7 +417,21 @@
       <option name="project" value="LOCAL" />
       <updated>1678989280409</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="getting more reslts">
+      <created>1679079011793</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1679079011793</updated>
+    </task>
+    <task id="LOCAL-00016" summary="getting more reslts">
+      <created>1679080013673</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1679080013673</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -523,7 +537,8 @@
     <MESSAGE value="removed sending mail from edgar" />
     <MESSAGE value="fixed economic utils and filtered results in trendtemplate" />
     <MESSAGE value="fixed error in market loader" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed error in market loader" />
+    <MESSAGE value="getting more reslts" />
+    <option name="LAST_COMMIT_MESSAGE" value="getting more reslts" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
