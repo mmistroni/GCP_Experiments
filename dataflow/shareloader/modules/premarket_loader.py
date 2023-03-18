@@ -203,6 +203,7 @@ class TrendTemplateLoader(beam.DoFn):
 
                         records_dicts = filtered.to_dict('records')
 
+
                         if records_dicts:
                             all_dt += records_dicts
 
