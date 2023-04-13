@@ -1,7 +1,7 @@
 import apache_beam as beam
 import argparse
 import logging
-from apache_beam.options.pipeline_options import PipelineOptions
+from apache_beam.options.pipeline_options import PipelineOptions, DebugOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from .edgar_utils import ReadRemote, ParseForm13F, cusip_to_ticker, \
             find_current_year, EdgarCombineFnForm4, ParseForm4
@@ -178,8 +178,14 @@ def write_to_form4_bq(lines, form_name='form_4_daily_enhanced_test'):
 def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
     known_args, pipeline_args = parser.parse_known_args(argv)
+
+    timeout_secs = 10800
+    experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
+
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = True
+    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
+
     logging.info('starting pipeline..')
     with beam.Pipeline(options=pipeline_options) as p:
         source = (p  | 'Startup' >> beam.Create(['start_token'])
