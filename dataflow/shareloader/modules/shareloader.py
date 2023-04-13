@@ -59,7 +59,7 @@ class EmailSender(beam.DoFn):
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_portfolio@mmistroni.com',
+            from_email='mmistroni@gmail.com',
             subject='Portfolio change:{}'.format(ptf_diff),
             html_content=content)
 

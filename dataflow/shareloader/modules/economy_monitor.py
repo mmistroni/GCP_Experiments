@@ -113,7 +113,7 @@ class EmailSender(beam.DoFn):
         content = template.format(asOfDate=asOfDateStr, tableOfData=element)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_cloud@mmistroni.com',
+            from_email='mmistroni@gmail.com',
             to_emails=self.recipients,
             subject=f'UK Economy Good Prices for {asOfDateStr}',
             html_content=content)

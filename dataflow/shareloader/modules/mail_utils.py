@@ -31,7 +31,7 @@ class MonthlyEmailSender(beam.DoFn):
         content = template_start + element + template_end
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_cloud@mmistroni.com',
+            from_email='mmistroni@gmail.com',
             #to_emails=self.recipients,
             subject='Monthly Shares Run',
             html_content=content)

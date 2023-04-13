@@ -387,7 +387,7 @@ class EdgarEmailSender(beam.DoFn):
         content = template.format(self.content)
         print('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_cloud@mmistroni.com',
+            from_email='mmistroni@gmail.com',
             to_emails=self.recipients,
             subject='Edgar Monthly Filings',
             html_content=content)

@@ -144,7 +144,7 @@ class NewsEmailSender(beam.DoFn):
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_portfolio_news@mmistroni.com',
+            from_email='mmistroni@gmail.com',
             subject='News Sentiment analysis for {}'.format(date.today().strftime('%Y-%m-%d')),
             html_content=content)
 
