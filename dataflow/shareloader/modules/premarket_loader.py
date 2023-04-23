@@ -322,6 +322,13 @@ def write_to_bucket(lines, sink):
             lines | 'Writing to bucket' >> sink
     )
 
+def write_to_bigquery(p, bq_sink):
+    return (p | 'Mapping to BQ Dict ' >> beam.Map(lambda in_dict: map_to_bq_dict(in_dict))
+              | 'Writing to Sink ' >> bq_sink
+              )
+
+
+
 
 def extract_trend_pipeline(p, fmpkey, numdays=10):
     return (p
@@ -344,6 +351,20 @@ def send_email_pipeline(p, sendgridkey):
                 | 'send pmk mail' >> beam.ParDo(PremarketEmailSender('mmistroni@gmail.com', sendgridkey))
             )
 
+def map_to_bq_dict(input_dict):
+    return dict(AS_OF_DATE=datetime.strptime(input_dict['date'], '%Y-%m-%d'),
+                TICKER=input_dict['ticker'],
+                CLOSE=input_dict['close'],
+                MVG_AVG_200=input_dict['200_ma'],
+                MVG_AVG_150=input_dict['150_ma'],
+                MVG_AVG_50=input_dict['50_ma'],
+                SLOPE = input_dict['slope'],
+                WEEK_52_LOW = input_dict['52_week_low'],
+                WEEK_52_HIGH=input_dict['52_week_high'],
+                TREND_TEMPLATE = input_dict['trend_template']
+                )
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -359,6 +380,14 @@ def run(argv=None, save_main_session=True):
     pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
     test_sink = beam.Map(logging.info)
+    bq_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='mm_trendtemplate'),
+        schema='AS_OF_DATE:DATE,TICKER:STRING,CLOSE:FLOAT,MVG_AVG_200:FLOAT,MVG_AVG_150:FLOAT, MVG_AVG_50:FLOAT,SLOPE:FLOAT,WEEK_52_HIGH:FLOAT,WEEK_52_LOW:FLOAT,TREND_TEMPLATE:BOOLEAN',
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
     with beam.Pipeline(options=pipeline_options) as p:
 
@@ -376,6 +405,10 @@ def run(argv=None, save_main_session=True):
                 data | bucket_sink
 
                 send_email_pipeline(data, pipeline_options.sendgridkey)
+
+                write_to_bigquery(data, bq_sink)
+
+
             else:
                 logging.info('Extracting trend pipeline')
                 data = extract_trend_pipeline(p, pipeline_options.fmprepkey, 55*5)

@@ -74,4 +74,16 @@ class TestSharesDsetLoader(unittest.TestCase):
             res = run_my_pipeline(input, key)
             final = res | self.notEmptySink
 
+    def test_download_historic_sandp(self):
+        import pandas as pd
+        import requests
+
+        for exchange in ['sp500', 'nasdaq', 'dowjones']:
+            key = os.environ['FMPREPKEY']
+            url = f'https://financialmodelingprep.com/api/v3/historical/{exchange}_constituent?apikey={key}'
+            data = requests.get(url).json()
+            df = pd.DataFrame(data=data)
+            df.to_csv(f'c:/Users/Marco And Sofia/{exchange}_historical_constituents.csv', index=False, header=True)
+
+
 
