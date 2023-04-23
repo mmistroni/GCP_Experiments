@@ -7,19 +7,8 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding experiment value to form 4">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding big query sink">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/modules/edgar_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/economy_monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economy_monitor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/mail_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/mail_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/news_util.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/news_util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/shareloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/shareloader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/weekly_selection_dataflow.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/weekly_selection_dataflow.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,7 +218,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical">
+  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -286,34 +289,20 @@
       <option name="_new_targetType" value="&quot;PATH&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests in test_ecoonomic_utils.py" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py&quot;" />
-      <option name="_new_targetType" value="&quot;PATH&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
       <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
       <item itemvalue="Python tests.Python tests in test" />
-      <item itemvalue="Python tests.Python tests in test_ecoonomic_utils.py" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
         <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_fmprep_historical" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" />
         <item itemvalue="Python tests.Python tests in test" />
-        <item itemvalue="Python tests.Python tests in test_ecoonomic_utils.py" />
       </list>
     </recent_temporary>
   </component>
@@ -462,7 +451,21 @@
       <option name="project" value="LOCAL" />
       <updated>1681374827689</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="update sendgrid senders">
+      <created>1681383941443</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1681383941443</updated>
+    </task>
+    <task id="LOCAL-00021" summary="adding big query sink">
+      <created>1682244159896</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1682244159896</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -570,7 +573,9 @@
     <MESSAGE value="fixed error in market loader" />
     <MESSAGE value="getting more reslts" />
     <MESSAGE value="adding experiment value to form 4" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding experiment value to form 4" />
+    <MESSAGE value="update sendgrid senders" />
+    <MESSAGE value="adding big query sink" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding big query sink" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -739,11 +744,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>102</line>
           <option name="timeStamp" value="265" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
-          <line>203</line>
-          <option name="timeStamp" value="266" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_premarketloader.py</url>
