@@ -352,7 +352,7 @@ def send_email_pipeline(p, sendgridkey):
             )
 
 def map_to_bq_dict(input_dict):
-    return dict(AS_OF_DATE=datetime.strptime(input_dict['date'], '%Y-%m-%d'),
+    return dict(AS_OF_DATE=datetime.strptime(input_dict['date'], '%Y-%m-%d').date(),
                 TICKER=input_dict['ticker'],
                 CLOSE=input_dict['close'],
                 MVG_AVG_200=input_dict['200_ma'],
