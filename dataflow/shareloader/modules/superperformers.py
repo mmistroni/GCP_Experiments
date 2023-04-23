@@ -203,12 +203,13 @@ class FundamentalLoader(beam.DoFn):
         excMsg = ''
         tickers_to_process = elements.split(',')
         if self.split_flag:
-            tickers_mid_length = len(tickers_to_process) // 2
-            if 'First' in self.split_flag:
-                tickers_to_process = tickers_to_process[0 : tickers_mid_length]
+            num_to_process = len(tickers_to_process) // 3
+            if 'first' in self.split.lower():
+                tickers_to_process = tickers_to_process[0:num_to_process]
+            elif 'second' in self.split.lower():
+                tickers_to_process = tickers_to_process[num_to_process:num_to_process * 2]
             else:
-                tickers_to_process = tickers_to_process[tickers_mid_length:]
-
+                tickers_to_process = tickers_to_process[-num_to_process:]
 
         for idx, ticker in enumerate(tickers_to_process):
 
