@@ -62,7 +62,7 @@ class PremarketEmailSender(beam.DoFn):
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
-            from_email='mmistroni@gmail.com',
+            from_email='gcp_cloud_mm@outlook.com',
             to_emails=self.recipients,
             subject='Mark Minervini Trend Template Selection',
             html_content=content)
@@ -353,15 +353,15 @@ def send_email_pipeline(p, sendgridkey):
 
 def map_to_bq_dict(input_dict):
     return dict(AS_OF_DATE=datetime.strptime(input_dict['date'], '%Y-%m-%d').date(),
-                TICKER=input_dict['ticker'],
-                CLOSE=input_dict['close'],
-                MVG_AVG_200=input_dict['200_ma'],
-                MVG_AVG_150=input_dict['150_ma'],
-                MVG_AVG_50=input_dict['50_ma'],
-                SLOPE = input_dict['slope'],
-                WEEK_52_LOW = input_dict['52_week_low'],
-                WEEK_52_HIGH=input_dict['52_week_high'],
-                TREND_TEMPLATE = input_dict['trend_template']
+                TICKER=input_dict.get('ticker', 'notcke'),
+                CLOSE=input_dict.get('close', -1),
+                MVG_AVG_200=input_dict.get('200_ma', -2),
+                MVG_AVG_150=input_dict.get('150_ma', -3),
+                MVG_AVG_50=input_dict.get('50_ma', -4),
+                SLOPE = input_dict.get('slope', -5),
+                WEEK_52_LOW = input_dict.get('52_week_low', -6),
+                WEEK_52_HIGH=input_dict.get('52_week_high', -7),
+                TREND_TEMPLATE = input_dict.get('trend_template', False)
                 )
 
 

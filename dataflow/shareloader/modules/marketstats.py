@@ -87,7 +87,7 @@ class EmailSender(beam.DoFn):
         content = template.format(element)
         print('Sending \n {}'.format(content))
         message = Mail(
-            from_email='mmistroni@gmail.com',
+            from_email='gcp_cloud_mm@outlook.com',
             to_emails=self.recipients,
             subject='Market Stats',
             html_content=content)
