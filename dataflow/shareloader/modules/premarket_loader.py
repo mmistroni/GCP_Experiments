@@ -406,7 +406,7 @@ def run(argv=None, save_main_session=True):
 
                 send_email_pipeline(data, pipeline_options.sendgridkey)
 
-                write_to_bigquery(data, bq_sink)
+                write_to_bigquery(data, test_sink)
 
 
             else:
