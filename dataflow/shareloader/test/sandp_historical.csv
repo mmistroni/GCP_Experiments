@@ -1,0 +1,623 @@
+dateAdded,addedSecurity,removedTicker,removedSecurity,date,symbol,reason
+"March 20, 2023",,LUMN,Lumen Technologies,2023-03-20,LUMN,Market capitalization change.
+"March 20, 2023",Fair Isaac,,,2023-03-20,FICO,Market capitalization change.
+"March 15, 2023",,SBNY,Signature Bank,2023-03-15,SBNY,The Federal Deposit Insurance Corporation (FDIC) placed Signature Bank into FDIC Receivership.
+"March 15, 2023",Bunge Limited,,,2023-03-15,BG,The Federal Deposit Insurance Corporation (FDIC) placed Signature Bank into FDIC Receivership.
+"March 15, 2023",,SIVB,SVB Financial Group,2023-03-15,SIVB,"The FDIC placed SVB's main subsidiary, Silicon Valley Bank, into receivership."
+"March 15, 2023",Insulet,,,2023-03-15,PODD,"The FDIC placed SVB's main subsidiary, Silicon Valley Bank, into receivership."
+"January 5, 2023",,VNO,Vornado Realty Trust,2023-01-05,VNO,Market capitalization change.
+"January 4, 2023",GE HealthCare,,,2023-01-04,GEHC,S&P 500 constituent General Electric spun off GE HealthCare.
+"December 22, 2022",,ABMD,Abiomed,2022-12-22,ABMD,S&P 500 constituent Johnson & Johnson acquired Abiomed.
+"December 22, 2022",Steel Dynamics,,,2022-12-22,STLD,S&P 500 constituent Johnson & Johnson acquired Abiomed.
+"December 19, 2022",,FBHS,Fortune Brands Home & Security,2022-12-19,FBHS,Market capitalization change.
+"December 19, 2022",First Solar,,,2022-12-19,FSLR,Market capitalization change.
+"December 19, 2022",,MBC,MasterBrand,2022-12-19,MBC,Market capitalization change.
+"December 15, 2022",MasterBrand,,,2022-12-15,MBC,S&P 500 constituent Fortune Brands Home & Security spun off MasterBrand.
+"November 1, 2022",,TWTR,Twitter,2022-11-01,TWTR,Elon Musk acquired Twitter.
+"November 1, 2022",Arch Capital Group,,,2022-11-01,ACGL,Elon Musk acquired Twitter.
+"October 12, 2022",,NLSN,Nielsen Holdings,2022-10-12,NLSN,Elliot Management Corp acquired Nielsen Holdings.
+"October 12, 2022",Targa Resources,,,2022-10-12,TRGP,Elliot Management Corp acquired Nielsen Holdings.
+"October 3, 2022",,CTXS,Citrix Systems,2022-10-03,CTXS,Vista Equity Partners acquired Citrix Systems.
+"October 3, 2022",PG&E,,,2022-10-03,PCG,Vista Equity Partners acquired Citrix Systems.
+"October 3, 2022",,DRE,Duke Realty,2022-10-03,DRE,S&P 500 constituent Prologis Inc. acquired Duke Realty.
+"October 3, 2022",EQT,,,2022-10-03,EQT,S&P 500 constituent Prologis Inc. acquired Duke Realty.
+"September 19, 2022",,PVH,PVH,2022-09-19,PVH,Market capitalization change.
+"September 19, 2022",CoStar Group,,,2022-09-19,CSGP,Market capitalization change.
+"September 19, 2022",,PENN,Penn Entertainment,2022-09-19,PENN,Market capitalization change.
+"September 19, 2022",Invitation Homes,,,2022-09-19,INVH,Market capitalization change.
+"June 21, 2022",,UA,Under Armour,2022-06-21,UA,Market capitalization change.
+"June 21, 2022",,UAA,Under Armour,2022-06-21,UAA,Market capitalization change.
+"June 21, 2022",Keurig Dr Pepper,,,2022-06-21,KDP,Market capitalization change.
+"June 21, 2022",,IPGP,IPG Photonics,2022-06-21,IPGP,Market capitalization change.
+"June 21, 2022",ON Semiconductor,,,2022-06-21,ON,Market capitalization change.
+"June 8, 2022",,CERN,Cerner,2022-06-08,CERN,S&P 500 constituent Oracle Corp. acquired Cerner.
+"June 8, 2022",Vici Properties,,,2022-06-08,VICI,S&P 500 constituent Oracle Corp. acquired Cerner.
+"April 4, 2022",,PBCT,People's United Financial,2022-04-04,PBCT,S&P 500 constituent M&T Bank Corp. acquired People's United Financial.
+"April 4, 2022",Camden Property Trust,,,2022-04-04,CPT,S&P 500 constituent M&T Bank Corp. acquired People's United Financial.
+"March 2, 2022",,INFO,IHS Markit,2022-03-02,INFO,S&P 500 constituent S&P Global Inc. acquired IHS Markit.
+"March 2, 2022",Molina Healthcare,,,2022-03-02,MOH,S&P 500 constituent S&P Global Inc. acquired IHS Markit.
+"February 15, 2022",,XLNX,Xilinx,2022-02-15,XLNX,S&P 500 constituent Advanced Micro Devices acquired Xilinx.
+"February 15, 2022",Nordson Corporation,,,2022-02-15,NDSN,S&P 500 constituent Advanced Micro Devices acquired Xilinx.
+"February 3, 2022",,GPS,Gap Inc.,2022-02-03,GPS,Market capitalization change.
+"February 2, 2022",Constellation Energy,,,2022-02-02,CEG,S&P 500 and 100 constituent Exelon Corp. spun off Constellation Energy.
+"December 20, 2021",,LEG,Leggett & Platt,2021-12-20,LEG,Market capitalization change.
+"December 20, 2021",Signature Bank,,,2021-12-20,SBNY,Market capitalization change.
+"December 20, 2021",,HBI,Hanesbrands,2021-12-20,HBI,Market capitalization change.
+"December 20, 2021",SolarEdge,,,2021-12-20,SEDG,Market capitalization change.
+"December 20, 2021",,WU,Western Union,2021-12-20,WU,Market capitalization change.
+"December 20, 2021",FactSet,,,2021-12-20,FDS,Market capitalization change.
+"December 14, 2021",,KSU,Kansas City Southern,2021-12-14,KSU,Canadian Pacific acquired Kansas City Southern.
+"December 14, 2021",EPAM Systems,,,2021-12-14,EPAM,Canadian Pacific acquired Kansas City Southern.
+"September 20, 2021",,PRGO,Perrigo,2021-09-20,PRGO,Market capitalization change.
+"September 20, 2021",Match Group,,,2021-09-20,MTCH,Market capitalization change.
+"September 20, 2021",,UNM,Unum,2021-09-20,UNM,Market capitalization change.
+"September 20, 2021",Ceridian,,,2021-09-20,CDAY,Market capitalization change.
+"September 20, 2021",,NOV,Nov,2021-09-20,NOV,Market capitalization change.
+"September 20, 2021",Brown & Brown,,,2021-09-20,BRO,Market capitalization change.
+"August 30, 2021",,MXIM,Maxim Integrated,2021-08-30,MXIM,S&P 500 constituent Analog Devices acquired Maxim Integrated Products.
+"August 30, 2021",Bio-Techne,,,2021-08-30,TECH,S&P 500 constituent Analog Devices acquired Maxim Integrated Products.
+"July 21, 2021",,ALXN,Alexion Pharmaceuticals,2021-07-21,ALXN,AstraZeneca acquired Alexion Pharmaceuticals.
+"July 21, 2021",Moderna,,,2021-07-21,MRNA,AstraZeneca acquired Alexion Pharmaceuticals.
+"June 4, 2021",,HFC,HollyFrontier,2021-06-04,HFC,Market capitalization change.
+"June 3, 2021",Organon & Co.,,,2021-06-03,OGN,S&P 500/100 constituent Merck & Co. spun off Organon.
+"May 14, 2021",,FLIR,FLIR Systems,2021-05-14,FLIR,S&P 500 constituent Teledyne Technologies acquired FLIR Systems.
+"May 14, 2021",Charles River Laboratories,,,2021-05-14,CRL,S&P 500 constituent Teledyne Technologies acquired FLIR Systems.
+"April 20, 2021",,VAR,Varian Medical Systems,2021-04-20,VAR,Siemens Healthineers acquired Varian Medical Systems.
+"April 20, 2021",PTC,,,2021-04-20,PTC,Siemens Healthineers acquired Varian Medical Systems.
+"March 22, 2021",,FLS,Flowserve,2021-03-22,FLS,Market capitalization change.
+"March 22, 2021",NXP,,,2021-03-22,NXPI,Market capitalization change.
+"March 22, 2021",,SLG,SL Green Realty,2021-03-22,SLG,Market capitalization change.
+"March 22, 2021",Penn National Gaming,,,2021-03-22,PENN,Market capitalization change.
+"March 22, 2021",,XRX,Xerox,2021-03-22,XRX,Market capitalization change.
+"March 22, 2021",Generac Holdings,,,2021-03-22,GNRC,Market capitalization change.
+"March 22, 2021",,VNT,Vontier,2021-03-22,VNT,Market capitalization change.
+"March 22, 2021",Caesars Entertainment,,,2021-03-22,CZR,Market capitalization change.
+"February 12, 2021",,FTI,TechnipFMC,2021-02-12,FTI,TechnipFMC was removed from the S&P 500 in anticipation of its announced spin-off of Technip Energies.
+"February 12, 2021",Monolithic Power Systems,,,2021-02-12,MPWR,TechnipFMC was removed from the S&P 500 in anticipation of its announced spin-off of Technip Energies.
+"January 21, 2021",,CXO,Concho Resources,2021-01-21,CXO,S&P 500/100 constituent ConocoPhillips acquired Concho Resources.
+"January 21, 2021",Trimble Inc,,,2021-01-21,TRMB,S&P 500/100 constituent ConocoPhillips acquired Concho Resources.
+"January 7, 2021",,TIF,Tiffany & Co,2021-01-07,TIF,LVMH Moet Hennessy-Louis Vuitton SE acquired Tiffany & Co.
+"January 7, 2021",Enphase Energy,,,2021-01-07,ENPH,LVMH Moet Hennessy-Louis Vuitton SE acquired Tiffany & Co.
+"December 21, 2020",,AIV,Apartment Investment & Management,2020-12-21,AIV,Apartment Investment and Management (Aimco) spun off Apartment Income REIT.
+"December 21, 2020",Tesla Inc,,,2020-12-21,TSLA,Apartment Investment and Management (Aimco) spun off Apartment Income REIT.
+"October 12, 2020",,NBL,Noble Energy,2020-10-12,NBL,Chevron acquired Noble Energy.
+"October 9, 2020",Vontier,,,2020-10-09,VNT,S&P 500 constituent Fortive spun off Vontier.
+"October 7, 2020",,ETFC,E-Trade,2020-10-07,ETFC,Morgan Stanley acquired E*Trade.
+"October 7, 2020",Pool Corporation,,,2020-10-07,POOL,Morgan Stanley acquired E*Trade.
+"September 21, 2020",,HRB,H&R Block,2020-09-21,HRB,Market capitalization change.
+"September 21, 2020",Etsy,,,2020-09-21,ETSY,Market capitalization change.
+"September 21, 2020",,COTY,Coty,2020-09-21,COTY,Market capitalization change.
+"September 21, 2020",Teradyne,,,2020-09-21,TER,Market capitalization change.
+"September 21, 2020",,KSS,Kohl's,2020-09-21,KSS,Market capitalization change.
+"September 21, 2020",Catalent,,,2020-09-21,CTLT,Market capitalization change.
+"June 22, 2020",,ADS,Alliance Data Systems,2020-06-22,ADS,Market capitalization change.
+"June 22, 2020",Bio-Rad Laboratories,,,2020-06-22,BIO,Market capitalization change.
+"June 22, 2020",,HOG,Harley-Davidson,2020-06-22,HOG,Market capitalization change.
+"June 22, 2020",Teledyne,,,2020-06-22,TDY,Market capitalization change.
+"June 22, 2020",,JWN,Nordstrom,2020-06-22,JWN,Market capitalization change.
+"June 22, 2020",Tyler Technologies,,,2020-06-22,TYL,Market capitalization change.
+"May 22, 2020",,HP,Helmerich & Payne,2020-05-22,HP,Market capitalization change.
+"May 22, 2020",West Pharmaceutical Services,,,2020-05-22,WST,Market capitalization change.
+"May 12, 2020",,CPRI,Capri Holdings,2020-05-12,CPRI,Market capitalization change.
+"May 12, 2020",Domino's Pizza,,,2020-05-12,DPZ,Market capitalization change.
+"May 12, 2020",,AGN,Allergan,2020-05-12,AGN,Allergan acquired by AbbVie.
+"May 12, 2020",Dexcom,,,2020-05-12,DXCM,Allergan acquired by AbbVie.
+"April 6, 2020",,M,Macy's,2020-04-06,M,Market capitalization change.
+"April 6, 2020",,RTN,Raytheon Company,2020-04-06,RTN,United Technologies spun off Otis and Carrier and acquired Raytheon Company.
+"April 3, 2020",Otis Worldwide,,,2020-04-03,OTIS,United Technologies spun off Otis and Carrier and acquired Raytheon Company.
+"April 3, 2020",Carrier,,,2020-04-03,CARR,United Technologies spun off Otis and Carrier and acquired Raytheon Company.
+"April 1, 2020",,ARNC,Arconic,2020-04-01,ARNC,Arconic separated into 2 companies - Howmet remained on the index.
+"April 1, 2020",Howmet Aerospace,,,2020-04-01,HWM,Arconic separated into 2 companies - Howmet remained on the index.
+"March 2, 2020",,XEC,Cimarex Energy,2020-03-02,XEC,"Gardner Denver acquired Ingersoll Rand's industrial businesses then changed its name to the ""new"" Ingersoll Rand Inc."
+"March 2, 2020",Ingersoll Rand,,,2020-03-02,IR,"Gardner Denver acquired Ingersoll Rand's industrial businesses then changed its name to the ""new"" Ingersoll Rand Inc."
+"January 28, 2020",,WCG,WellCare,2020-01-28,WCG,S&P 500 constituent Centene Corp. (NYSE: CNC) acquired Wellcare Health Plans.
+"January 28, 2020",Paycom,,,2020-01-28,PAYC,S&P 500 constituent Centene Corp. (NYSE: CNC) acquired Wellcare Health Plans.
+"December 23, 2019",,AMG,Affiliated Managers Group,2019-12-23,AMG,Market capitalization change.
+"December 23, 2019",Live Nation Entertainment,,,2019-12-23,LYV,Market capitalization change.
+"December 23, 2019",,TRIP,TripAdvisor,2019-12-23,TRIP,Market capitalization change.
+"December 23, 2019",Zebra Technologies,,,2019-12-23,ZBRA,Market capitalization change.
+"December 23, 2019",,MAC,Macerich,2019-12-23,MAC,Market capitalization change.
+"December 23, 2019",Steris,,,2019-12-23,STE,Market capitalization change.
+"December 9, 2019",,STI,SunTrust Banks,2019-12-09,STI,BB&T acquired SunTrust to form Truist Financial.
+"December 9, 2019",Old Dominion Freight Line,,,2019-12-09,ODFL,BB&T acquired SunTrust to form Truist Financial.
+"December 5, 2019",,VIAB,Viacom,2019-12-05,VIAB,CBS acquired Viacom to form ViacomCBS.
+"December 5, 2019",W. R. Berkley Corporation,,,2019-12-05,WRB,CBS acquired Viacom to form ViacomCBS.
+"November 21, 2019",,CELG,Celgene,2019-11-21,CELG,Bristol-Myers Squibb (NYSE:BMY) acquired Celgene.
+"November 21, 2019",ServiceNow,,,2019-11-21,NOW,Bristol-Myers Squibb (NYSE:BMY) acquired Celgene.
+"October 3, 2019",,NKTR,Nektar Therapeutics,2019-10-03,NKTR,Market capitalization change.
+"October 3, 2019",Las Vegas Sands,,,2019-10-03,LVS,Market capitalization change.
+"September 26, 2019",,JEF,Jefferies Financial Group,2019-09-26,JEF,JEF spun off SPB.
+"September 26, 2019",NVR Inc,,,2019-09-26,NVR,JEF spun off SPB.
+"September 23, 2019",,TSS,TSYS,2019-09-23,TSS,S&P 500 constituent Global Payments (NYSE: GPN) acquired TSS.
+"September 23, 2019",CDW,,,2019-09-23,CDW,S&P 500 constituent Global Payments (NYSE: GPN) acquired TSS.
+"August 9, 2019",,APC,Anadarko Petroleum,2019-08-09,APC,S&P 500 & 100 constituent Occidental Petroleum Corp. (NYSE:OXY) acquired Anadarko Petroleum.
+"August 9, 2019",Leidos,,,2019-08-09,LDOS,S&P 500 & 100 constituent Occidental Petroleum Corp. (NYSE:OXY) acquired Anadarko Petroleum.
+"August 9, 2019",,FL,Foot Locker,2019-08-09,FL,Market capitalization change.
+"August 9, 2019",IDEX Corporation,,,2019-08-09,IEX,Market capitalization change.
+"July 15, 2019",,RHT,Red Hat,2019-07-15,RHT,S&P 500 & 100 constituent IBM acquired Red Hat.
+"July 15, 2019",T-Mobile US,,,2019-07-15,TMUS,S&P 500 & 100 constituent IBM acquired Red Hat.
+"July 1, 2019",,LLL,L3 Technologies,2019-07-01,LLL,L3 purchased by Harris Corporation
+"July 1, 2019",MarketAxess,,,2019-07-01,MKTX,L3 purchased by Harris Corporation
+"June 11, 2019",,BMS,Bemis,2019-06-11,BMS,BMS changed to AMCR post merger with Amcor;
+"June 11, 2019",Amcor,,,2019-06-11,AMCR,BMS changed to AMCR post merger with Amcor;
+"June 7, 2019",,MAT,Mattel,2019-06-07,MAT,Pending merger of Bemis and Amcor; Bemis treated as the surviving entity.
+"June 7, 2019",Bemis,,,2019-06-07,BMS,Pending merger of Bemis and Amcor; Bemis treated as the surviving entity.
+"June 3, 2019",,DWDP,DowDuPont Inc.,2019-06-03,DWDP,DWDP changed to DD after spinning off Corteva.
+"June 3, 2019",DuPont,,,2019-06-03,DD,DWDP changed to DD after spinning off Corteva.
+"June 3, 2019",,FLR,Fluor Corporation,2019-06-03,FLR,CTVA spun off from DWDP (which then changed symbol to DD)
+"June 3, 2019",Corteva,,,2019-06-03,CTVA,CTVA spun off from DWDP (which then changed symbol to DD)
+"April 2, 2019",,BHF,Brighthouse Financial,2019-04-02,BHF,DOW spun off from DWDP
+"April 2, 2019",Dow Inc.,,,2019-04-02,DOW,DOW spun off from DWDP
+"February 27, 2019",,GT,The Goodyear Tire & Rubber Company,2019-02-27,GT,WAB acquired GE transportation business
+"February 27, 2019",Wabtec,,,2019-02-27,WAB,WAB acquired GE transportation business
+"February 15, 2019",,NFX,Newfield Exploration,2019-02-15,NFX,ECA acquired NFX
+"February 15, 2019",Atmos Energy,,,2019-02-15,ATO,ECA acquired NFX
+"January 18, 2019",,PCG,Pacific Gas & Electric Company,2019-01-18,PCG,PCG filed for bankruptcy
+"January 18, 2019",Teleflex,,,2019-01-18,TFX,PCG filed for bankruptcy
+"January 2, 2019",,SCG,SCANA,2019-01-02,SCG,Dominion Energy acquired SCANA Corporation
+"January 2, 2019",First Republic Bank,,,2019-01-02,FRC,Dominion Energy acquired SCANA Corporation
+"December 24, 2018",,ESRX,Express Scripts,2018-12-24,ESRX,S&P 500 constituent Cigna (NYSE: CI) acquired ESRX
+"December 24, 2018",Celanese,,,2018-12-24,CE,S&P 500 constituent Cigna (NYSE: CI) acquired ESRX
+"December 3, 2018",,COL,Rockwell Collins,2018-12-03,COL,UTX acquired COL
+"December 3, 2018",Lamb Weston,,,2018-12-03,LW,UTX acquired COL
+"December 3, 2018",,AET,Aetna,2018-12-03,AET,CVS acquired Aetna
+"December 3, 2018",Maxim Integrated,,,2018-12-03,MXIM,CVS acquired Aetna
+"December 3, 2018",,SRCL,Stericycle,2018-12-03,SRCL,Market Capitalization change
+"December 3, 2018",Diamondback Energy,,,2018-12-03,FANG,Market Capitalization change
+"November 13, 2018",,EQT,EQT,2018-11-13,EQT,EQT spun off ETRN
+"November 13, 2018",Jack Henry & Associates,,,2018-11-13,JKHY,EQT spun off ETRN
+"November 6, 2018",,CA,CA Technologies,2018-11-06,CA,CA acquired by Broadcom.
+"November 6, 2018",Keysight,,,2018-11-06,KEYS,CA acquired by Broadcom.
+"October 11, 2018",,EVHC,Envision Healthcare,2018-10-11,EVHC,EVHC acquired by KKR.
+"October 11, 2018",Fortinet,,,2018-10-11,FTNT,EVHC acquired by KKR.
+"October 1, 2018",,ANDV,Andeavor,2018-10-01,ANDV,ANDV acquired by Marathon Petroleum.
+"October 1, 2018",Rollins Inc,,,2018-10-01,ROL,ANDV acquired by Marathon Petroleum.
+"September 14, 2018",,XL,XL Group,2018-09-14,XL,XL acquired by AXA.
+"September 14, 2018",WellCare,,,2018-09-14,WCG,XL acquired by AXA.
+"August 28, 2018",,GGP,GGP,2018-08-28,GGP,GGP acquired by Brookfield Property Partners.
+"August 28, 2018",Arista Networks,,,2018-08-28,ANET,GGP acquired by Brookfield Property Partners.
+"July 2, 2018",,DPS,Dr Pepper Snapple Group,2018-07-02,DPS,DPS acquired by Keurig Green Mountain.
+"July 2, 2018",Copart,,,2018-07-02,CPRT,DPS acquired by Keurig Green Mountain.
+"June 20, 2018",,TWX,Time Warner,2018-06-20,TWX,AT&T acquired Time Warner.
+"June 20, 2018",FleetCor Technologies,,,2018-06-20,FLT,AT&T acquired Time Warner.
+"June 18, 2018",,RRC,Range Resources,2018-06-18,RRC,Market capitalization change.
+"June 18, 2018",Broadridge Financial Solutions,,,2018-06-18,BR,Market capitalization change.
+"June 18, 2018",,AYI,Acuity Brands,2018-06-18,AYI,Market capitalization change.
+"June 18, 2018",HollyFrontier,,,2018-06-18,HFC,Market capitalization change.
+"June 7, 2018",,MON,Monsanto,2018-06-07,MON,Bayer acquired Monsanto.
+"June 7, 2018",Twitter,,,2018-06-07,TWTR,Bayer acquired Monsanto.
+"June 5, 2018",,NAVI,Navient,2018-06-05,NAVI,Westar Energy (NYSE: WR) acquired Great Plains Energy (NYSE: GXP) and changed name to Evergy.
+"June 5, 2018",Evergy,,,2018-06-05,EVRG,Westar Energy (NYSE: WR) acquired Great Plains Energy (NYSE: GXP) and changed name to Evergy.
+"May 31, 2018",,WYN,Wyndham Worldwide,2018-05-31,WYN,Wyndham Worldwide spun off Wyndham Hotels & Resorts (NYSE:WH).
+"May 31, 2018",Abiomed,,,2018-05-31,ABMD,Wyndham Worldwide spun off Wyndham Hotels & Resorts (NYSE:WH).
+"April 4, 2018",,CSRA,CSRA,2018-04-04,CSRA,S&P 500 constituent General Dynamics (NYSE: GD) acquired CSRA.
+"April 4, 2018",MSCI,,,2018-04-04,MSCI,S&P 500 constituent General Dynamics (NYSE: GD) acquired CSRA.
+"March 19, 2018",,SIG,Signet Jewelers,2018-03-19,SIG,Market capitalization change.
+"March 19, 2018",Take-Two Interactive,,,2018-03-19,TTWO,Market capitalization change.
+"March 19, 2018",,PDCO,Patterson Companies,2018-03-19,PDCO,Market capitalization change.
+"March 19, 2018",SVB Financial Group,,,2018-03-19,SIVB,Market capitalization change.
+"March 19, 2018",,CHK,Chesapeake Energy,2018-03-19,CHK,Market capitalization change.
+"March 19, 2018",Nektar Therapeutics,,,2018-03-19,NKTR,Market capitalization change.
+"March 7, 2018",,SNI,Scripps Networks Interactive,2018-03-07,SNI,Discovery Communications acquired SNI.
+"March 7, 2018",IPG Photonics,,,2018-03-07,IPGP,Discovery Communications acquired SNI.
+"January 3, 2018",,BCR,CR Bard,2018-01-03,BCR,Becton Dickinson acquired BCR.
+"January 3, 2018",Huntington Ingalls Industries,,,2018-01-03,HII,Becton Dickinson acquired BCR.
+"October 13, 2017",,LVLT,Level 3 Communications,2017-10-13,LVLT,CenturyLink acquired LVLT.
+"October 13, 2017",Norwegian Cruise Line Holdings,,,2017-10-13,NCLH,CenturyLink acquired LVLT.
+"September 18, 2017",,SPLS,Staples,2017-09-18,SPLS,Sycamore Partners acquired Staples.
+"September 18, 2017",Cadence Design Systems,,,2017-09-18,CDNS,Sycamore Partners acquired Staples.
+"September 1, 2017",,DOW,Dow Chemical Company,2017-09-01,DOW,The Dow Chemical Company renamed to DowDuPont Inc. and ticker changed from DOW to DWDP after acquiring DuPont.
+"September 1, 2017",DowDuPont Inc.,,,2017-09-01,DWDP,The Dow Chemical Company renamed to DowDuPont Inc. and ticker changed from DOW to DWDP after acquiring DuPont.
+"September 1, 2017",,DD,DuPont,2017-09-01,DD,The Dow Chemical Company acquired DuPont.
+"September 1, 2017",SBA Communications,,,2017-09-01,SBAC,The Dow Chemical Company acquired DuPont.
+"August 29, 2017",,WFM,Whole Foods Market,2017-08-29,WFM,Amazon acquired Whole Foods Market.
+"August 29, 2017",QuintilesIMS,,,2017-08-29,Q,Amazon acquired Whole Foods Market.
+"August 8, 2017",,AN,AutoNation,2017-08-08,AN,"BHF replaced AN,"
+"August 8, 2017",Brighthouse Financial,,,2017-08-08,BHF,"BHF replaced AN,"
+"July 26, 2017",,RIG,Transocean,2017-07-26,RIG,Market capitalization change.
+"July 26, 2017",Duke Realty Corp,,,2017-07-26,DRE,Market capitalization change.
+"July 26, 2017",,BBBY,Bed Bath & Beyond,2017-07-26,BBBY,Market capitalization change.
+"July 26, 2017",A. O. Smith,,,2017-07-26,AOS,Market capitalization change.
+"July 26, 2017",,MUR,Murphy Oil,2017-07-26,MUR,Market capitalization change.
+"July 26, 2017",Packaging Corporation of America,,,2017-07-26,PKG,Market capitalization change.
+"July 26, 2017",,MNK,Mallinckrodt,2017-07-26,MNK,Market capitalization change.
+"July 26, 2017",ResMed,,,2017-07-26,RMD,Market capitalization change.
+"July 26, 2017",,RAI,Reynolds American,2017-07-26,RAI,British American Tobacco (NYSE MKT:BTI) acquired Reynolds American.
+"July 26, 2017",MGM Resorts International,,,2017-07-26,MGM,British American Tobacco (NYSE MKT:BTI) acquired Reynolds American.
+"June 19, 2017",,YHOO,Yahoo!,2017-06-19,YHOO,VZ acquired YHOO operations; remainder of YHOO converted to closed-end company known as Altaba.
+"June 19, 2017",Hilton,,,2017-06-19,HLT,VZ acquired YHOO operations; remainder of YHOO converted to closed-end company known as Altaba.
+"June 19, 2017",,TDC,Teradata,2017-06-19,TDC,Market capitalization changes.
+"June 19, 2017",Align Technology,,,2017-06-19,ALGN,Market capitalization changes.
+"June 19, 2017",,R,Ryder System,2017-06-19,R,Market capitalization changes.
+"June 19, 2017",Ansys,,,2017-06-19,ANSS,Market capitalization changes.
+"June 19, 2017",,MJN,Mead Johnson,2017-06-19,MJN,Reckitt Benckiser acquired Mead Johnson Nutrition.
+"June 19, 2017",Everest Re,,,2017-06-19,RE,Reckitt Benckiser acquired Mead Johnson Nutrition.
+"June 2, 2017",,TGNA,Tegna,2017-06-02,TGNA,TGNA spins off Cars.com
+"June 2, 2017",IHS Markit,,,2017-06-02,INFO,TGNA spins off Cars.com
+"April 5, 2017",,DNB,Dun & Bradstreet,2017-04-05,DNB,IT acquiring CEB
+"April 5, 2017",Gartner,,,2017-04-05,IT,IT acquiring CEB
+"April 4, 2017",,SWN,Southwestern Energy,2017-04-04,SWN,"HPE spins off Everett, merged with CSC to form DXC"
+"April 4, 2017",DXC Technology,,,2017-04-04,DXC,"HPE spins off Everett, merged with CSC to form DXC"
+"March 20, 2017",,URBN,Urban Outfitters,2017-03-20,URBN,Market capitalization change.
+"March 20, 2017",Advanced Micro Devices,,,2017-03-20,AMD,Market capitalization change.
+"March 20, 2017",,FTR,Frontier Communications,2017-03-20,FTR,Market capitalization change.
+"March 20, 2017",Raymond James Financial,,,2017-03-20,RJF,Market capitalization change.
+"March 20, 2017",,FSLR,First Solar,2017-03-20,FSLR,Market capitalization change.
+"March 20, 2017",Alexandria Real Estate Equities,,,2017-03-20,ARE,Market capitalization change.
+"March 16, 2017",,HAR,Harman International,2017-03-16,HAR,Samsung Electronics acquired Harman International Industries.
+"March 16, 2017",Synopsys,,,2017-03-16,SNPS,Samsung Electronics acquired Harman International Industries.
+"March 13, 2017",,LLTC,Linear Technology,2017-03-13,LLTC,S&P 500 constituent Analog Devices (NASD:ADI) acquired Linear Technology.
+"March 13, 2017",Dish Network,,,2017-03-13,DISH,S&P 500 constituent Analog Devices (NASD:ADI) acquired Linear Technology.
+"March 2, 2017",,ENDP,Endo International,2017-03-02,ENDP,REG acquires EQY
+"March 2, 2017",Regency Centers,,,2017-03-02,REG,REG acquires EQY
+"March 1, 2017",,PBI,Pitney Bowes,2017-03-01,PBI,CBOE acquires BATS
+"March 1, 2017",Cboe Holdings,,,2017-03-01,CBOE,CBOE acquires BATS
+"February 28, 2017",,SE,Spectra Energy,2017-02-28,SE,SE acquired by ENB
+"February 28, 2017",Incyte,,,2017-02-28,INCY,SE acquired by ENB
+"January 5, 2017",,STJ,St Jude Medical,2017-01-05,STJ,S&P 100 & 500 constituent Abbott Laboratories (NYSE:ABT) acquired St. Jude Medical.
+"January 5, 2017",Idexx Laboratories,,,2017-01-05,IDXX,S&P 100 & 500 constituent Abbott Laboratories (NYSE:ABT) acquired St. Jude Medical.
+"December 2, 2016",,OI,Owens-Illinois,2016-12-02,OI,Market capitalization change.
+"December 2, 2016",Mid-America Apartments,,,2016-12-02,MAA,Market capitalization change.
+"December 2, 2016",,LM,Legg Mason,2016-12-02,LM,Market capitalization change.
+"December 2, 2016",Envision Healthcare,,,2016-12-02,EVHC,Market capitalization change.
+"November 1, 2016",,AA,Alcoa Inc,2016-11-01,AA,AA spins off ARNC
+"November 1, 2016",Arconic Inc,,,2016-11-01,ARNC,AA spins off ARNC
+"September 30, 2016",,DO,Diamond Offshore Drilling,2016-09-30,DO,COTY replaces DO
+"September 30, 2016",Coty Inc,,,2016-09-30,COTY,COTY replaces DO
+"September 22, 2016",,HOT,Starwood,2016-09-22,HOT,MAR acquires HOT
+"September 22, 2016",The Cooper Companies,,,2016-09-22,COO,MAR acquires HOT
+"September 8, 2016",,EMC,EMC Corporation,2016-09-08,EMC,Dell acquires EMC
+"September 8, 2016",Charter Communications,,,2016-09-08,CHTR,Dell acquires EMC
+"September 6, 2016",,TYC,Tyco International,2016-09-06,TYC,TYC acquires JCI (and retains JCI ticker).
+"September 6, 2016",Mettler Toledo,,,2016-09-06,MTD,TYC acquires JCI (and retains JCI ticker).
+"July 5, 2016",,CPGX,Columbia Pipeline Group,2016-07-05,CPGX,CPGX acquired by TRP
+"July 5, 2016",Fortive Corp,,,2016-07-05,FTV,CPGX acquired by TRP
+"July 1, 2016",,GAS,AGL Resources,2016-07-01,GAS,GAS acquired by SO
+"July 1, 2016",Alliant Energy Corp,,,2016-07-01,LNT,GAS acquired by SO
+"July 1, 2016",,TE,TECO Energy,2016-07-01,TE,TE acquired by EMA
+"July 1, 2016",Albemarle Corporation,,,2016-07-01,ALB,TE acquired by EMA
+"June 22, 2016",,CVC,Cablevision Systems,2016-06-22,CVC,CVC acquired by Altice NV
+"June 22, 2016",Fortune Brands Home & Security,,,2016-06-22,FBHS,CVC acquired by Altice NV
+"June 3, 2016",,BXLT,Baxalta,2016-06-03,BXLT,SHPG acquiring BXLT
+"June 3, 2016",TransDigm Group,,,2016-06-03,TDG,SHPG acquiring BXLT
+"May 31, 2016",,CCE,Coca-Cola Enterprises,2016-05-31,CCE,CCE merging with European bottlers
+"May 31, 2016",Arthur J. Gallagher & Co.,,,2016-05-31,AJG,CCE merging with European bottlers
+"May 23, 2016",,ARG,Airgas,2016-05-23,ARG,ARG acquired by Air Liquide
+"May 23, 2016",LKQ Corporation,,,2016-05-23,LKQ,ARG acquired by Air Liquide
+"May 18, 2016",,TWC,Time Warner Cable,2016-05-18,TWC,TWC acquired by CHTR
+"May 18, 2016",Digital Realty,,,2016-05-18,DLR,TWC acquired by CHTR
+"May 13, 2016",,SNDK,SanDisk,2016-05-13,SNDK,SNDK acquired by WDC
+"May 13, 2016",Alaska Air Group,,,2016-05-13,ALK,SNDK acquired by WDC
+"May 3, 2016",,ADT,ADT,2016-05-03,ADT,ADT acquired by APO
+"May 3, 2016",Acuity Brands,,,2016-05-03,AYI,ADT acquired by APO
+"April 25, 2016",,GME,GameStop,2016-04-25,GME,Global Payments is acquiring Heartland Payment Systems
+"April 25, 2016",Global Payments,,,2016-04-25,GPN,Global Payments is acquiring Heartland Payment Systems
+"April 18, 2016",,THC,Tenet Healthcare,2016-04-18,THC,Ulta replaces Tenet
+"April 18, 2016",Ulta Beauty,,,2016-04-18,ULTA,Ulta replaces Tenet
+"April 8, 2016",Under Armour (Class C),,,2016-04-08,UA,Under Armour distribution of second class of stock
+"April 4, 2016",,CAM,Cameron International,2016-04-04,CAM,Schlumberger acquired Cameron
+"April 4, 2016",Foot Locker,,,2016-04-04,FL,Schlumberger acquired Cameron
+"March 30, 2016",,POM,Pepco Holdings,2016-03-30,POM,Exelon acquired Pepco.
+"March 30, 2016",Hologic,,,2016-03-30,HOLX,Exelon acquired Pepco.
+"March 30, 2016",,ESV,Ensco,2016-03-30,ESV,Centene acquired Health Net.
+"March 30, 2016",Centene Corporation,,,2016-03-30,CNC,Centene acquired Health Net.
+"March 7, 2016",,GMCR,Keurig Green Mountain,2016-03-07,GMCR,JAB Holding Company acquired Keurig Green Mountain
+"March 7, 2016",UDR Inc,,,2016-03-07,UDR,JAB Holding Company acquired Keurig Green Mountain
+"March 4, 2016",,CNX,Consol Energy,2016-03-04,CNX,AWK replaces CNX
+"March 4, 2016",American Water Works,,,2016-03-04,AWK,AWK replaces CNX
+"February 22, 2016",,PCL,Plum Creek Timber,2016-02-22,PCL,PCL taken over by WY
+"February 22, 2016",Concho Resources,,,2016-02-22,CXO,PCL taken over by WY
+"February 1, 2016",,PCP,Precision Castparts Corporation,2016-02-01,PCP,CFG replaces PCP
+"February 1, 2016",Citizens,,,2016-02-01,CFG,CFG replaces PCP
+"February 1, 2016",,BRCM,Broadcom Corporation,2016-02-01,BRCM,FRT replaces BRCM
+"February 1, 2016",Federal Realty Investment Trust,,,2016-02-01,FRT,FRT replaces BRCM
+"January 19, 2016",,ACE,Chubb,2016-01-19,ACE,"EXR replaces ACE as ACE Ltd acquires Chubb and retains the CB ticker, giving up ACE"
+"January 19, 2016",Extra Space Storage,,,2016-01-19,EXR,"EXR replaces ACE as ACE Ltd acquires Chubb and retains the CB ticker, giving up ACE"
+"January 5, 2016",,FOSL,Fossil Group,2016-01-05,FOSL,WSH merges with TW (and renames to WLTW)
+"January 5, 2016",Willis Towers Watson,,,2016-01-05,WTW,WSH merges with TW (and renames to WLTW)
+"December 29, 2015",,ALTR,Altera,2015-12-29,ALTR,ALTR taken over by INTC
+"December 29, 2015",Church & Dwight,,,2015-12-29,CHD,ALTR taken over by INTC
+"December 15, 2015",,CMCSK,Comcast K Corp,2015-12-15,CMCSK,CMCSK shares no longer listed
+"December 1, 2015",,CSC,Computer Sciences Corporation,2015-12-01,CSC,CSC spins off CSRA
+"December 1, 2015",CSRA,,,2015-12-01,CSRA,CSC spins off CSRA
+"November 19, 2015",,SIAL,Sigma-Aldrich,2015-11-19,SIAL,Sigma-Aldrich acquired by Merck KGaA (MKGAY)
+"November 19, 2015",Illumina,,,2015-11-19,ILMN,Sigma-Aldrich acquired by Merck KGaA (MKGAY)
+"November 18, 2015",,GNW,Genworth Financial,2015-11-18,GNW,GE spinning off Synchrony Financial
+"November 18, 2015",Synchrony Financial,,,2015-11-18,SYF,GE spinning off Synchrony Financial
+"November 2, 2015",,HCBK,Hudson City Bancorp,2015-11-02,HCBK,HPQ spins off HPE
+"November 2, 2015",Hewlett Packard Enterprise,,,2015-11-02,HPE,HPQ spins off HPE
+"October 7, 2015",,JOY,Joy Global,2015-10-07,JOY,Market capitalization change.
+"October 7, 2015",Verisk Analytics,,,2015-10-07,VRSK,Market capitalization change.
+"September 18, 2015",Comcast Class K Special,,,2015-09-18,CMCSK,Share class methodology change
+"September 18, 2015",Twenty-First Century Fox Class B,,,2015-09-18,FOX,Share class methodology change
+"September 18, 2015",News Corporation Class B,,,2015-09-18,NWS,Share class methodology change
+"September 2, 2015",,HSP,Hospira,2015-09-02,HSP,Hospira taken over
+"September 2, 2015",United Continental Holdings,,,2015-09-02,UAL,Hospira taken over
+"August 28, 2015",,PLL,Pall Corporation,2015-08-28,PLL,Pall taken over
+"August 28, 2015",Activision Blizzard,,,2015-08-28,ATVI,Pall taken over
+"July 29, 2015",,DTV,DirecTV,2015-07-29,DTV,DirecTV acquired by AT&T.
+"July 29, 2015",Signet Jewelers,,,2015-07-29,SIG,DirecTV acquired by AT&T.
+"July 20, 2015",,NE,Noble Corporation,2015-07-20,NE,PayPal Spun off by eBay
+"July 20, 2015",PayPal,,,2015-07-20,PYPL,PayPal Spun off by eBay
+"July 8, 2015",,FDO,Family Dollar,2015-07-08,FDO,Family Dollar acquired.
+"July 8, 2015",Advance Auto Parts,,,2015-07-08,AAP,Family Dollar acquired.
+"July 6, 2015",,KRFT,Kraft Foods,2015-07-06,KRFT,Kraft merger with Heinz.
+"July 6, 2015",Kraft Heinz,,,2015-07-06,KHC,Kraft merger with Heinz.
+"July 2, 2015",,ATI,Allegheny Technologies,2015-07-02,ATI,Spin off of Columbia Pipeline.
+"July 2, 2015",Columbia Pipeline Group,,,2015-07-02,CPGX,Spin off of Columbia Pipeline.
+"July 1, 2015",,TEG,Integrys Energy Group,2015-07-01,TEG,Integrys taken over.
+"July 1, 2015",J.B. Hunt,,,2015-07-01,JBHT,Integrys taken over.
+"July 1, 2015",,QEP,QEP Resources,2015-07-01,QEP,Baxalta spun off by Baxter.
+"July 1, 2015",Baxalta,,,2015-07-01,BXLT,Baxalta spun off by Baxter.
+"June 11, 2015",,LO,Lorillard Tobacco Company,2015-06-11,LO,Lorillard gets acquired.
+"June 11, 2015",Qorvo,,,2015-06-11,QRVO,Lorillard gets acquired.
+"April 7, 2015",,WIN,Windstream Communications,2015-04-07,WIN,Market capitalization change.
+"April 7, 2015",Realty Income Corporation,,,2015-04-07,O,Market capitalization change.
+"March 23, 2015",,AGN,Allergan,2015-03-23,AGN,Allergan acquired by Actavis (and changed name to Allergan).
+"March 23, 2015",American Airlines Group,,,2015-03-23,AAL,Allergan acquired by Actavis (and changed name to Allergan).
+"March 23, 2015",,DNR,Denbury Resources,2015-03-23,DNR,Market Capitalization Changes.
+"March 23, 2015",Equinix,,,2015-03-23,EQIX,Market Capitalization Changes.
+"March 23, 2015",,NBR,Nabors Industries,2015-03-23,NBR,Market Capitalization Changes.
+"March 23, 2015",SL Green Realty,,,2015-03-23,SLG,Market Capitalization Changes.
+"March 23, 2015",,AVP,Avon Products,2015-03-23,AVP,Market Capitalization Changes.
+"March 23, 2015",Hanesbrands,,,2015-03-23,HBI,Market Capitalization Changes.
+"March 18, 2015",,CFN,Carefusion,2015-03-18,CFN,Carefusion acquired by Becton Dickinson
+"March 18, 2015",Henry Schein,,,2015-03-18,HSIC,Carefusion acquired by Becton Dickinson
+"March 12, 2015",,PETM,PetSmart,2015-03-12,PETM,PetSmart acquired by private equity consortium
+"March 12, 2015",Skyworks,,,2015-03-12,SWKS,PetSmart acquired by private equity consortium
+"January 27, 2015",,SWY,Safeway,2015-01-27,SWY,Safeway acquired by private equity consortium
+"January 27, 2015",HCA Holdings,,,2015-01-27,HCA,Safeway acquired by private equity consortium
+"January 27, 2015",,COV,Covidien,2015-01-27,COV,Covidien acquired by Medtronic
+"January 27, 2015",Endo International,,,2015-01-27,ENDP,Covidien acquired by Medtronic
+"December 5, 2014",,BMS,Bemis Company,2014-12-05,BMS,Market cap changes
+"December 5, 2014",Royal Caribbean Cruises,,,2014-12-05,RCL,Market cap changes
+"November 5, 2014",,JBL,Jabil Circuit,2014-11-05,JBL,Market cap changes
+"November 5, 2014",Level 3 Communications,,,2014-11-05,LVLT,Market cap changes
+"September 20, 2014",,BTU,Peabody Energy,2014-09-20,BTU,Market cap changes
+"September 20, 2014",United Rentals,,,2014-09-20,URI,Market cap changes
+"September 20, 2014",,GHC,Graham Holdings,2014-09-20,GHC,Market cap changes
+"September 20, 2014",Universal Health Services,,,2014-09-20,UHS,Market cap changes
+"August 18, 2014",,RDC,Rowan Companies,2014-08-18,RDC,Market cap changes
+"August 18, 2014",Mallinckrodt,,,2014-08-18,MNK,Market cap changes
+"August 6, 2014",Discovery Communications,,,2014-08-06,DISCK,Class C share distribution
+"July 2, 2014",,X,United States Steel,2014-07-02,X,Market capitalization changes
+"July 2, 2014",Martin Marietta,,,2014-07-02,MLM,Market capitalization changes
+"July 1, 2014",,FRX,Forest Laboratories,2014-07-01,FRX,Actavis acquires Forest Laboratories
+"July 1, 2014",Affiliated Managers Group,,,2014-07-01,AMG,Actavis acquires Forest Laboratories
+"June 20, 2014",,IGT,International Game Technology,2014-06-20,IGT,Market capitalization changes
+"June 20, 2014",Cimarex Energy,,,2014-06-20,XEC,Market capitalization changes
+"May 8, 2014",,LSI,LSI Corporation,2014-05-08,LSI,Avago acquires LSI
+"May 8, 2014",Avago Technologies,,,2014-05-08,AVGO,Avago acquires LSI
+"May 1, 2014",,BEAM,Beam Inc,2014-05-01,BEAM,Beam acquired by Suntory
+"May 1, 2014",Under Armour (Class A),,,2014-05-01,UA,Beam acquired by Suntory
+"May 1, 2014",,SLM,SLM Corporation,2014-05-01,SLM,Navient Spun off from SLM
+"May 1, 2014",Navient,,,2014-05-01,NAVI,Navient Spun off from SLM
+"April 3, 2014",Google,,,2014-04-03,GOOGL,Google Class C share distribution
+"April 2, 2014",,CLF,Cliffs Natural Resources,2014-04-02,CLF,Market capitalization changes
+"April 2, 2014",Essex Property Trust,,,2014-04-02,ESS,Market capitalization changes
+"March 21, 2014",,WPX,WPX Energy,2014-03-21,WPX,Market capitalization changes
+"March 21, 2014",Keurig Green Mountain,,,2014-03-21,GMCR,Market capitalization changes
+"January 24, 2014",,LIFE,Life Technologies,2014-01-24,LIFE,Life Technologies acquired by Thermo Fisher Scientific Inc
+"January 24, 2014",Tractor Supply,,,2014-01-24,TSCO,Life Technologies acquired by Thermo Fisher Scientific Inc
+"December 23, 2013",,ANF,Abercrombie & Fitch,2013-12-23,ANF,Market capitalization changes.
+"December 23, 2013",Alliance Data Systems,,,2013-12-23,ADS,Market capitalization changes.
+"December 23, 2013",,JDSU,JDS Uniphase,2013-12-23,JDSU,Market capitalization changes.
+"December 23, 2013",Mohawk Industries,,,2013-12-23,MHK,Market capitalization changes.
+"December 23, 2013",,TER,Teradyne,2013-12-23,TER,Market capitalization changes.
+"December 23, 2013",Facebook,,,2013-12-23,FB,Market capitalization changes.
+"December 10, 2013",,MOLX,Molex,2013-12-10,MOLX,MOLX acquired by Koch Industries.
+"December 10, 2013",General Growth Properties,,,2013-12-10,GGP,MOLX acquired by Koch Industries.
+"December 2, 2013",,JCP,JCPenney,2013-12-02,JCP,Allegion spun off by Ingersoll Rand.
+"December 2, 2013",Allegion,,,2013-12-02,ALLE,Allegion spun off by Ingersoll Rand.
+"November 13, 2013",,NYX,NYSE Euronext,2013-11-13,NYX,ICE Exchange acquired NYSE Euronext.
+"November 13, 2013",Michael Kors,,,2013-11-13,KORS,ICE Exchange acquired NYSE Euronext.
+"October 29, 2013",,DELL,Dell,2013-10-29,DELL,Founder Michael Dell and Silver Lake Partners acquired Dell.
+"October 29, 2013",Transocean,,,2013-10-29,RIG,Founder Michael Dell and Silver Lake Partners acquired Dell.
+"September 20, 2013",,AMD,Advanced Micro Devices,2013-09-20,AMD,Market capitalization change.
+"September 20, 2013",Vertex Pharmaceuticals,,,2013-09-20,VRTX,Market capitalization change.
+"September 20, 2013",,SAI,SAIC,2013-09-20,SAI,Market capitalization change.
+"September 20, 2013",Ametek,,,2013-09-20,AME,Market capitalization change.
+"September 10, 2013",,BMC,BMC Software,2013-09-10,BMC,BMC taken private by consortium
+"September 10, 2013",Delta Air Lines,,,2013-09-10,DAL,BMC taken private by consortium
+"July 8, 2013",,S,Sprint Nextel,2013-07-08,S,Softbank consortium purchase results in public float below 50%
+"July 8, 2013",Nielsen Holdings,,,2013-07-08,NLSN,Softbank consortium purchase results in public float below 50%
+"July 1, 2013",,APOL,Apollo Education Group,2013-07-01,APOL,Apollo Group's market cap more representative of a mid-cap
+"July 1, 2013",21st Century Fox,,,2013-07-01,NWSA,Apollo Group's market cap more representative of a mid-cap
+"June 21, 2013",,FHN,First Horizon,2013-06-21,FHN,Zoetis spun off by Pfizer
+"June 21, 2013",Zoetis,,,2013-06-21,ZTS,Zoetis spun off by Pfizer
+"June 6, 2013",,HNZ,Heinz,2013-06-06,HNZ,HNZ acquired by consortium
+"June 6, 2013",General Motors,,,2013-06-06,GM,HNZ acquired by consortium
+"May 23, 2013",,DF,Dean Foods,2013-05-23,DF,DF too small after spinoff of White Wave Foods
+"May 23, 2013",Kansas City Southern,,,2013-05-23,KSU,DF too small after spinoff of White Wave Foods
+"May 8, 2013",,CVH,Coventry Health Care,2013-05-08,CVH,Acquired by Aetna (AET)
+"May 8, 2013",Macerich,,,2013-05-08,MAC,Acquired by Aetna (AET)
+"April 30, 2013",,PCS,MetroPCS,2013-04-30,PCS,A majority of MetroPCS was acquired by T-Mobile
+"April 30, 2013",Regeneron Pharmaceuticals,,,2013-04-30,REGN,A majority of MetroPCS was acquired by T-Mobile
+"February 15, 2013",,BIG,Big Lots,2013-02-15,BIG,Market capitalization changes
+"February 15, 2013",PVH,,,2013-02-15,PVH,Market capitalization changes
+"January 2, 2013",,FII,Federated Investors,2013-01-02,FII,ABBV spun off from Abbott Labs (ABT)
+"January 2, 2013",AbbVie,,,2013-01-02,ABBV,ABBV spun off from Abbott Labs (ABT)
+"December 21, 2012",,TIE,Titanium Metals,2012-12-21,TIE,TIE acquired by Precision Cast Parts (PCP)
+"December 21, 2012",Delphi Automotive,,,2012-12-21,DLPH,TIE acquired by Precision Cast Parts (PCP)
+"December 11, 2012",,RRD,RR Donnelley,2012-12-11,RRD,Market capitalization changes
+"December 11, 2012",Garmin,,,2012-12-11,GRMN,Market capitalization changes
+"December 3, 2012",,CBE,Cooper Industries,2012-12-03,CBE,Acquired by Eaton Corp. (ETN)
+"December 3, 2012",Dollar General,,,2012-12-03,DG,Acquired by Eaton Corp. (ETN)
+"October 10, 2012",,SUN,Sunoco,2012-10-10,SUN,Acquired by Energy Transfer Partners (ETP)
+"October 10, 2012",PetSmart,,,2012-10-10,PETM,Acquired by Energy Transfer Partners (ETP)
+"October 2, 2012",,ANR,Alpha Natural Resources,2012-10-02,ANR,Kraft split into two companies
+"October 2, 2012",Kraft Foods,,,2012-10-02,KRFT,Kraft split into two companies
+"October 1, 2012",,LXK,Lexmark,2012-10-01,LXK,Tyco spun off ADT
+"October 1, 2012",ADT,,,2012-10-01,ADT,Tyco spun off ADT
+"October 1, 2012",,DV,DeVry,2012-10-01,DV,Tyco spin-off merged w/Pentair
+"October 1, 2012",Pentair,,,2012-10-01,PNR,Tyco spin-off merged w/Pentair
+"September 5, 2012",,SHLD,Sears Holdings,2012-09-05,SHLD,SHLD below public float threshold
+"September 5, 2012",LyondellBasell,,,2012-09-05,LYB,SHLD below public float threshold
+"July 31, 2012",,GR,Goodrich Corporation,2012-07-31,GR,Goodrich acquired by United Technologies (UTX).
+"July 31, 2012",Ensco,,,2012-07-31,ESV,Goodrich acquired by United Technologies (UTX).
+"July 2, 2012",,PGN,Progress Energy,2012-07-02,PGN,Acquired by Duke Energy (DUK)
+"July 2, 2012",Seagate Technology,,,2012-07-02,STX,Acquired by Duke Energy (DUK)
+"June 29, 2012",,SLE,Sara Lee Corporation,2012-06-29,SLE,Split up of Sara Lee
+"June 29, 2012",Monster Beverage,,,2012-06-29,MNST,Split up of Sara Lee
+"June 5, 2012",,NVLS,Novellus Systems,2012-06-05,NVLS,Acquired by Lam Research (LRCX)
+"June 5, 2012",Lam Research,,,2012-06-05,LRCX,Acquired by Lam Research (LRCX)
+"May 21, 2012",,MMI,Motorola Mobility,2012-05-21,MMI,Acquired by Google (GOOG)
+"May 21, 2012",Alexion Pharmaceuticals,,,2012-05-21,ALXN,Acquired by Google (GOOG)
+"May 17, 2012",,EP,El Paso Corporation,2012-05-17,EP,Acquired by Kinder Morgan (KMI)
+"May 17, 2012",Kinder Morgan,,,2012-05-17,KMI,Acquired by Kinder Morgan (KMI)
+"April 23, 2012",,SVU,Supervalu,2012-04-23,SVU,ConocoPhillips spun off Phillips 66
+"April 23, 2012",Phillips 66,,,2012-04-23,PSX,ConocoPhillips spun off Phillips 66
+"April 3, 2012",,MHS,Medco Health Solutions,2012-04-03,MHS,Acquired by Express Scripts (ESRX)
+"April 3, 2012",Fossil,,,2012-04-03,FOSL,Acquired by Express Scripts (ESRX)
+"March 13, 2012",,CEG,Constellation Energy Group,2012-03-13,CEG,Acquired by Exelon Corp. (EXC)
+"March 13, 2012",Crown Castle,,,2012-03-13,CCI,Acquired by Exelon Corp. (EXC)
+"December 31, 2011",,CPWR,Compuware,2011-12-31,CPWR,Market capitalization changes
+"December 31, 2011",WPX Energy,,,2011-12-31,WPX,Market capitalization changes
+"December 20, 2011",,TLAB,Tellabs,2011-12-20,TLAB,Expedia spun off TripAdvisor.
+"December 20, 2011",TripAdvisor,,,2011-12-20,TRIP,Expedia spun off TripAdvisor.
+"December 16, 2011",,AKS,AK Steel,2011-12-16,AKS,Market capitalization changes
+"December 16, 2011",BorgWarner,,,2011-12-16,BWA,Market capitalization changes
+"December 16, 2011",,MWW,Monster Worldwide,2011-12-16,MWW,Market capitalization changes
+"December 16, 2011",Perrigo,,,2011-12-16,PRGO,Market capitalization changes
+"December 16, 2011",,WFR,MEMC Electronic Materials,2011-12-16,WFR,Market capitalization changes
+"December 16, 2011",Dollar Tree,,,2011-12-16,DLTR,Market capitalization changes
+"December 12, 2011",AGL Resources.,,,2011-12-12,GAS,"Nicor acquired by AGL, which retained the GAS ticker."
+"November 18, 2011",,JNS,Janus Capital Group,2011-11-18,JNS,Janus Capital Group's market capitalization is less than $1.2 billion and is no longer representative of the large cap market space.
+"November 18, 2011",Cooper Industries,,,2011-11-18,CBE,Janus Capital Group's market capitalization is less than $1.2 billion and is no longer representative of the large cap market space.
+"October 31, 2011",,ITT,ITT,2011-10-31,ITT,Spun off from ITT Corp.
+"October 31, 2011",Xylem,,,2011-10-31,XYL,Spun off from ITT Corp.
+"October 14, 2011",,CEPH,Cephalon,2011-10-14,CEPH,Acquired by Teva Pharmaceutical Industries (TEVA).
+"October 14, 2011",TE Connectivity,,,2011-10-14,TEL,Acquired by Teva Pharmaceutical Industries (TEVA).
+"September 23, 2011",,NSM,National Semiconductor,2011-09-23,NSM,Acquired by Texas Instruments (TXN).
+"September 23, 2011",The Mosaic Company,,,2011-09-23,MOS,Acquired by Texas Instruments (TXN).
+"July 5, 2011",,MI,Marshall & Ilsley,2011-07-05,MI,Marshall & Iisley is being bought by Bank of Montreal
+"July 5, 2011",Accenture,,,2011-07-05,ACN,Marshall & Iisley is being bought by Bank of Montreal
+"June 30, 2011",,RSH,RadioShack,2011-06-30,RSH,Market capitalization adjustments.
+"June 30, 2011",Marathon Oil,,,2011-06-30,MPC,Market capitalization adjustments.
+"June 1, 2011",,MEE,Massey Energy,2011-06-01,MEE,Alpha Natural Resources acquired Massey Energy.
+"June 1, 2011",Alpha Natural Resources,,,2011-06-01,ANR,Alpha Natural Resources acquired Massey Energy.
+"April 27, 2011",,NOVL,Novell,2011-04-27,NOVL,Acquired by private equity firms.
+"April 27, 2011",Chipotle Mexican Grill,,,2011-04-27,CMG,Acquired by private equity firms.
+"April 1, 2011",,GENZ,Genzyme,2011-04-01,GENZ,Acquired by Sanofi Aventis (SNY)
+"April 1, 2011",BlackRock,,,2011-04-01,BLK,Acquired by Sanofi Aventis (SNY)
+"March 31, 2011",,Q,Qwest Communications,2011-03-31,Q,Acquired by CenturyLink
+"March 31, 2011",Edwards Lifesciences,,,2011-03-31,EW,Acquired by CenturyLink
+"February 28, 2011",,MFE,McAfee,2011-02-28,MFE,Acquired by Intel
+"February 28, 2011",Covidien,,,2011-02-28,COV,Acquired by Intel
+"February 25, 2011",,AYE,Allegheny Energy,2011-02-25,AYE,Acquired by First Energy (FE).
+"February 25, 2011",Joy Global,,,2011-02-25,JOYG,Acquired by First Energy (FE).
+"December 17, 2010",,KG,King Pharmaceuticals,2010-12-17,KG,Acquired by Pfizer.
+"December 17, 2010",Cablevision,,,2010-12-17,CVC,Acquired by Pfizer.
+"December 17, 2010",,EK,Eastman Kodak,2010-12-17,EK,Market Cap changes.
+"December 17, 2010",F5 Networks,,,2010-12-17,FFIV,Market Cap changes.
+"December 17, 2010",,ODP,Office Depot,2010-12-17,ODP,Market Cap changes.
+"December 17, 2010",Netflix,,,2010-12-17,NFLX,Market Cap changes.
+"December 17, 2010",,NYT,The New York Times Company,2010-12-17,NYT,Market Cap changes.
+"December 17, 2010",Newfield Exploration,,,2010-12-17,NFX,Market Cap changes.
+"November 17, 2010",,PTV,Pactiv,2010-11-17,PTV,Reynolds Group Holdings acquired Pactiv.
+"November 17, 2010",Ingersoll-Rand,,,2010-11-17,IR,Reynolds Group Holdings acquired Pactiv.
+"August 26, 2010",,SII,Smith International,2010-08-26,SII,Acquired by Schlumberger (SLB)
+"August 26, 2010",Tyco International,,,2010-08-26,TYC,Acquired by Schlumberger (SLB)
+"July 14, 2010",,MIL,Millipore,2010-07-14,MIL,Acquired by Merck KGaA (MKGAY)
+"July 14, 2010",Chubb,,,2010-07-14,CB,Acquired by Merck KGaA (MKGAY)
+"June 30, 2010",,STR,Questar,2010-06-30,STR,"Company split. QEP retained, but ticker changed."
+"June 30, 2010",QEP Resources,,,2010-06-30,QEP,"Company split. QEP retained, but ticker changed."
+"June 28, 2010",,XTO,XTO Energy,2010-06-28,XTO,Acquired by ExxonMobil
+"June 28, 2010",CarMax,,,2010-06-28,KMX,Acquired by ExxonMobil
+"April 29, 2010",,BJS,BJ Services,2010-04-29,BJS,Acquired by Baker Hughes
+"April 29, 2010",Cerner,,,2010-04-29,CERN,Acquired by Baker Hughes
+"February 26, 2010",,RX,IMS Health,2010-02-26,RX,Taken private
+"February 26, 2010",Helmerich & Payne,,,2010-02-26,HP,Taken private
+"December 18, 2009",,CIEN,Ciena,2009-12-18,CIEN,Market capitalization change.
+"December 18, 2009",Visa,,,2009-12-18,V,Market capitalization change.
+"December 18, 2009",,DYN,Dynegy,2009-12-18,DYN,Market capitalization change.
+"December 18, 2009",Mead Johnson Nutrition,,,2009-12-18,MJN,Market capitalization change.
+"December 18, 2009",,KBH,KB Home,2009-12-18,KBH,Market capitalization change.
+"December 18, 2009",Cliffs Natural Resources,,,2009-12-18,CLF,Market capitalization change.
+"December 18, 2009",,CVG,Convergys,2009-12-18,CVG,Market capitalization change.
+"December 18, 2009",SAIC,,,2009-12-18,SAI,Market capitalization change.
+"December 18, 2009",,MBI,MBIA,2009-12-18,MBI,Market capitalization change.
+"December 18, 2009",Ross Stores,,,2009-12-18,ROST,Market capitalization change.
+"November 3, 2009",,SGP,Schering-Plough,2009-11-03,SGP,Acquired by Merck & Co. (MRK)
+"November 3, 2009",Priceline.com,,,2009-11-03,PCLN,Acquired by Merck & Co. (MRK)
+"September 28, 2009",,CBE,Cooper Industries,2009-09-28,CBE,Redomesticated to Ireland
+"September 28, 2009",Airgas,,,2009-09-28,ARG,Redomesticated to Ireland
+"August 19, 2009",,CTX,Centex Corp.,2009-08-19,CTX,Centex acquired by Pulte Homes.
+"August 19, 2009",FMC Corporation,,,2009-08-19,FMC,Centex acquired by Pulte Homes.
+"June 5, 2009",,COV,Covidien,2009-06-05,COV,"Covidien moved its place of incorporation to Ireland, making it ineligible for inclusion in the index."
+"June 5, 2009",FMC Technologies,,,2009-06-05,FTI,"Covidien moved its place of incorporation to Ireland, making it ineligible for inclusion in the index."
+"March 3, 2009",,ACAS,American Capital,2009-03-03,ACAS,Capitalization rebalance.
+"March 3, 2009",Hormel Foods,,,2009-03-03,HRL,Capitalization rebalance.
+"March 3, 2009",,JNY,Jones Apparel Group,2009-03-03,JNY,Capitalization rebalance.
+"March 3, 2009",Ventas,,,2009-03-03,VTR,Capitalization rebalance.
+"December 31, 2008",,WB,Wachovia Bank,2008-12-31,WB,Wachovia Bank acquired by Wells Fargo.
+"December 31, 2008",Owens-Illinois,,,2008-12-31,OI,Wachovia Bank acquired by Wells Fargo.
+"September 16, 2008",,LEH,Lehman Brothers,2008-09-16,LEH,Lehman Brothers filed for bankruptcy.
+"September 16, 2008",Harris Corporation,,,2008-09-16,HRS,Lehman Brothers filed for bankruptcy.
+"September 12, 2008",,FRE,Freddie Mac,2008-09-12,FRE,Capitalization rebalance.
+"September 12, 2008",Salesforce,,,2008-09-12,CRM,Capitalization rebalance.
+"September 12, 2008",,FNM,Fannie Mae,2008-09-12,FNM,Capitalization rebalance.
+"September 12, 2008",Fastenal,,,2008-09-12,FAST,Capitalization rebalance.
+"July 1, 2008",,CFC,Countrywide Financial Corp,2008-07-01,CFC,Ak Steel replaced Countrywide Financial.
+"July 1, 2008",AK Steel,,,2008-07-01,AKS,Ak Steel replaced Countrywide Financial.
+"June 23, 2008",,BC,Brunswick,2008-06-23,BC,Market capitalization change.
+"June 23, 2008",Cabot Oil & Gas,,,2008-06-23,COG,Market capitalization change.
+"June 23, 2008",,OMX,OfficeMax,2008-06-23,OMX,Market capitalization change.
+"June 23, 2008",Massey Energy,,,2008-06-23,MEE,Market capitalization change.
+"June 10, 2008",,ABK,Ambac Financial,2008-06-10,ABK,Market Value Decline
+"June 10, 2008",Lorillard Tobacco Company,,,2008-06-10,LO,Market Value Decline
+"December 20, 2007",,TRB,Tribune Media,2007-12-20,TRB,Taken private
+"December 20, 2007",Range Resources,,,2007-12-20,RRC,Taken private
+"December 13, 2007",,DJ,Dow Jones,2007-12-13,DJ,Acquired by News Corporation
+"December 13, 2007",GameStop,,,2007-12-13,GME,Acquired by News Corporation
+"October 26, 2007",,AV,Avaya,2007-10-26,AV,Taken private
+"October 26, 2007",Jacobs Engineering Group,,,2007-10-26,JEC,Taken private
+"October 2, 2007",,SLR,Solectron,2007-10-02,SLR,Solectron acquired by Flextronics.
+"October 2, 2007",Expedia,,,2007-10-02,EXPE,Solectron acquired by Flextronics.
+"October 1, 2007",,NCR,NCR Corporation,2007-10-01,NCR,Teradata spun off by NCR Corporation.
+"October 1, 2007",Teradata,,,2007-10-01,TDC,Teradata spun off by NCR Corporation.
+"September 27, 2007",,MXIM,Maxim Integrated Products,2007-09-27,MXIM,MXIM delisted from NASDAQ exchange.
+"September 27, 2007",Tesoro Corporation,,,2007-09-27,TSO,MXIM delisted from NASDAQ exchange.
+"September 26, 2007",,FDC,First Data,2007-09-26,FDC,FDC acquired by KKR.
+"September 26, 2007",Intercontinental Exchange,,,2007-09-26,ICE,FDC acquired by KKR.
+"August 24, 2007",,KSE,KeySpan,2007-08-24,KSE,Acquired by National Grid plc
+"August 24, 2007",Leucadia National,,,2007-08-24,LUK,Acquired by National Grid plc
+"July 2, 2007",Discover Financial Services,,,2007-07-02,DFS,Discover Financial Services Debuts On New York Stock Exchange Under Ticker Symbol DFS
+"March 30, 2007",,TSG,Sabre Corporation,2007-03-30,TSG,Taken Private
+"March 30, 2007",Kraft Foods,,,2007-03-30,KFT,Taken Private
+"January 10, 2007",,SBL,Symbol Technologies,2007-01-10,SBL,Acquired by Motorola
+"January 10, 2007",AvalonBay Communities,,,2007-01-10,AVB,Acquired by Motorola
+"June 2, 2006",,ABS,Albertsons,2006-06-02,ABS,Albertsons acquired by SuperValu and CVS Corp.
+"June 2, 2006",Juniper Networks,,,2006-06-02,JNPR,Albertsons acquired by SuperValu and CVS Corp.
+"November 18, 2005",,T,AT&T Corporation,2005-11-18,T,AT&T Corp. acquired by SBC Communications
+"November 18, 2005",Amazon,,,2005-11-18,AMZN,AT&T Corp. acquired by SBC Communications
+"July 1, 2005",,GLK,Great Lakes Chemical,2005-07-01,GLK,Acquired by Crompton Corp.
+"July 1, 2005",Constellation Brands,,,2005-07-01,STZ,Acquired by Crompton Corp.
+"September 25, 2003",,QTRN,Quintiles Transnational,2003-09-25,QTRN,Taken private
+"September 25, 2003",Express Scripts,,,2003-09-25,ESRX,Taken private
+"December 5, 2000",,BS,Bethlehem Steel,2000-12-05,BS,Market Cap changes.
+"December 5, 2000",Intuit,,,2000-12-05,INTU,Market Cap changes.
+"December 5, 2000",,OI,Owens-Illinois,2000-12-05,OI,Market Cap changes.
+"December 5, 2000",Symbol Technologies,,,2000-12-05,SBL,Market Cap changes.
+"December 5, 2000",,GRA,WR Grace,2000-12-05,GRA,Market Cap changes.
+"December 5, 2000",Allegheny Energy,,,2000-12-05,AYE,Market Cap changes.
+"December 5, 2000",,CCK,Crown Holdings,2000-12-05,CCK,Market Cap changes.
+"December 5, 2000",Ambac Financial,,,2000-12-05,ABK,Market Cap changes.
+"July 27, 2000",,RAD,RiteAid,2000-07-27,RAD,Market Cap change.
+"July 27, 2000",JDS Uniphase,,,2000-07-27,JDSU,Market Cap change.
+"June 12, 2000",,TMC,Times Mirror,2000-06-12,TMC,Tribune Co. acquired Times Mirror.
+"June 12, 2000",Convergys,,,2000-06-12,CVG,Tribune Co. acquired Times Mirror.
+"June 7, 2000",,SMS,Shared Medical Systems,2000-06-07,SMS,Siemens AG acquired Shared Medical Systems.
+"June 7, 2000",Starbucks,,,2000-06-07,SBUX,Siemens AG acquired Shared Medical Systems.
+"December 7, 1999",,LDW,Laidlaw,1999-12-07,LDW,Market capitalization change.
+"December 7, 1999",Yahoo!,,,1999-12-07,YHOO,Market capitalization change.
+"June 9, 1999",,HPH,Harnischfeger Industries,1999-06-09,HPH,Harnischfeger filed for bankruptcy.
+"June 9, 1999",Wellpoint,,,1999-06-09,WLP,Harnischfeger filed for bankruptcy.
+"December 11, 1998",,LDW,Amoco,1998-12-11,LDW,British Petroleum purchased Amoco.
+"December 11, 1998",Firstar,,,1998-12-11,FSR,British Petroleum purchased Amoco.
+"December 11, 1998",,GRN,General Re,1998-12-11,GRN,Berkshire Hathaway purchased General Re.
+"December 11, 1998",Carnival Corp.,,,1998-12-11,CCL,Berkshire Hathaway purchased General Re.
+"December 11, 1998",,SUN,SunAmerica,1998-12-11,SUN,AIG purchased SunAmerica.
+"December 11, 1998",Compuware,,,1998-12-11,CPWR,AIG purchased SunAmerica.
+"June 17, 1997",,USL,USLife,1997-06-17,USL,AIG acquired USLife.
+"June 17, 1997",Countrywide Credit Industries,,,1997-06-17,CCI,AIG acquired USLife.
