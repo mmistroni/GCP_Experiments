@@ -195,7 +195,7 @@ class FundamentalLoader(beam.DoFn):
     def __init__(self, key, microcap_flag=False, split_flag=None):
         self.key = key
         self.microcap_flag = microcap_flag
-        self.split_flag = split_flag
+        self.split = split_flag
 
     def process(self, elements):
         all_dt = []
