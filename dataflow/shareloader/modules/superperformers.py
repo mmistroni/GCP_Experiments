@@ -202,7 +202,7 @@ class FundamentalLoader(beam.DoFn):
         isException = False
         excMsg = ''
         tickers_to_process = elements.split(',')
-        if self.split_flag:
+        if self.split:
             num_to_process = len(tickers_to_process) // 3
             if 'first' in self.split.lower():
                 tickers_to_process = tickers_to_process[0:num_to_process]
