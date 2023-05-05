@@ -191,7 +191,7 @@ class TrendTemplateLoader(beam.DoFn):
                         logging.info(f'Found {trending.shape} records for {ticker}')
                         trending['asOfDate'] = pd.to_datetime(trending['date'])
 
-                        max_tolerance = (date.today() - BDay(4))
+                        max_tolerance = (date.today() - BDay(2))
 
                         logging.info(f'Max Lookback {max_tolerance}')
 

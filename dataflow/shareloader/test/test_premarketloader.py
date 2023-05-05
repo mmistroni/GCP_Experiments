@@ -42,7 +42,7 @@ class TestPremarketLoader(unittest.TestCase):
 
     def test_get_fmprep_historical(self):
         key = os.environ['FMPREPKEY']
-        res = get_fmprep_historical('AAPL', key, numdays=40, colname=None)
+        res = get_fmprep_historical('AAPL', key, numdays=2, colname=None)
 
         data = [dict( (k, v)  for k, v in d.items() if k in ['date', 'symbol', 'open', 'adjClose', 'volume']) for d in res]
 
@@ -51,6 +51,8 @@ class TestPremarketLoader(unittest.TestCase):
         df['date'] = pd.to_datetime(df['date']).date()
 
         df['symbol'] = 'AAPL'
+
+        print(df)
 
         self.assertTrue(df.shape[0] > 0)
 
