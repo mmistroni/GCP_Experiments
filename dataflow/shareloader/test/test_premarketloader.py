@@ -4,6 +4,8 @@ import numpy as np
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical
 
+from shareloader.modules.premarket_loader import TrendTemplateLoader
+
 from itertools import chain
 from pandas.tseries.offsets import BDay
 import apache_beam as beam
@@ -145,6 +147,17 @@ class TestPremarketLoader(unittest.TestCase):
             send_email_pipeline(res, key)
 
         self.assertEquals(1, send_mock.call_count)
+
+    def test_gettrendtemplate(self):
+        key = os.environ['FMPREPKEY']
+
+        with TestPipeline() as p:
+            res = (p | 'START' >> beam.Create(['MCD'])
+                   | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(key, numdays='500'))
+
+                   )
+
+
 
 
 
