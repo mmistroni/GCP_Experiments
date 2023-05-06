@@ -56,7 +56,7 @@ ECONOMIC_TEMPLATE = """<html>
 
 
 def create_economic_data_ppln(p):
-    cutoff_date_str = (date.today() - BDay(25)).date().strftime('%Y-%m-%d')
+    cutoff_date_str = (date.today() - BDay(40)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
     bq_sql = ECONOMIC_QUERY.format(oneMonthAgo=cutoff_date_str)
     logging.info('executing SQL :{}'.format(bq_sql))
