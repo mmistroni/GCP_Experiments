@@ -60,6 +60,15 @@ class TestPremarketLoader(unittest.TestCase):
 
         # cloud build test https://stackoverflow.com/questions/55022058/running-python-unit-test-in-google-cloud-build
     def test_get_rank(self):
+
+        ## historical consituents from https://financialmodelingprep.com/api/v3/historical/sp500_constituent?apikey=79d4f398184fb636fa32ac1f95ed67e6
+
+        def get_latest_price(ticker, key):
+            stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
+                                                                                                               token=key)
+            res = requests.get(stat_url).json()[0]
+            return res['price']
+
         key = os.environ['FMPREPKEY']
 
         GROUPBY_COL = 'GICS Sector'  # Use 'GICS Sector' or 'GICS Sub-Industry'
@@ -124,6 +133,21 @@ class TestPremarketLoader(unittest.TestCase):
         )
 
         print(growth)
+
+        tickers = [v for v in growth.Symbol.values if 'index' not in v]
+        latest = map(lambda t: {'Symbol': t, 'Latest' : get_latest_price(t, key)}, tickers)
+
+        historical = map(lambda t: {'Symbol': t, 'Latest' : get_latest_price(t, key)}, tickers)
+
+        df = pd.DataFrame(data = latest)
+
+        res = pd.merge(growth, df, on='Symbol')
+
+        oldest = ticker_prices.tail(1).T.reset_index.rename(columns={"index": "Symbol"})
+
+        mgd = pd.merge(res, oldest, on='Symbol')
+        print(mgd)
+
 
 
     @patch('shareloader.modules.premarket_loader.PremarketEmailSender.send')
