@@ -94,9 +94,16 @@ def get_latest_jobs_statistics():
     workbook = openpyxl.load_workbook(BytesIO(data.content))
 
 
+
+
     sheet = workbook.get_sheet_by_name('Adverts by category YoY')
 
-    vacancies_names = [(sheet.cell(row=7, column=c).value) for c in range(2, sheet.max_column - 1)]
+    header_cellz = [sheet.cell(row=x, column=1).value for x in range(1, sheet.max_row)]
+
+    headers = header_cellz.index('Date') +1
+
+
+    vacancies_names = [(sheet.cell(row=headers, column=c).value) for c in range(2, sheet.max_column - 1)]
 
 
     it_column, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
