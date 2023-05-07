@@ -73,7 +73,7 @@ class TestPremarketLoader(unittest.TestCase):
 
         GROUPBY_COL = 'GICS Sector'  # Use 'GICS Sector' or 'GICS Sub-Industry'
         S_AND_P_URL = 'https://en.wikipedia.org/wiki/List_of_S%26P_500_companies'
-        NUM_PER_GROUP = 3  # The top n winning stocks per group
+        NUM_PER_GROUP = 10  # The top n winning stocks per group
 
         ticker_info = pd.read_html(S_AND_P_URL)[0]
 
@@ -132,21 +132,18 @@ class TestPremarketLoader(unittest.TestCase):
             )
         )
 
-        print(growth)
-
         tickers = [v for v in growth.Symbol.values if 'index' not in v]
         latest = map(lambda t: {'Symbol': t, 'Latest' : get_latest_price(t, key)}, tickers)
-
-        historical = map(lambda t: {'Symbol': t, 'Latest' : get_latest_price(t, key)}, tickers)
 
         df = pd.DataFrame(data = latest)
 
         res = pd.merge(growth, df, on='Symbol')
 
-        oldest = ticker_prices.tail(1).T.reset_index.rename(columns={"index": "Symbol"})
+        oldest = ticker_prices.tail(1).T.reset_index().rename(columns={"index": "Symbol"})
 
         mgd = pd.merge(res, oldest, on='Symbol')
-        print(mgd)
+
+        mgd.to_csv(f'C:/Users/Marco And Sofia/tmp/RankResults_{end_date.year}.csv', index=False)
 
 
 
