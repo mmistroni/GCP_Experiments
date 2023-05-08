@@ -75,6 +75,17 @@ steps:
         , '--config'
         , '$_PREMARKETLOADER_BUILD_FILE' ]
     id: 'build-premarketloader-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+      entrypoint: 'gcloud'
+      args:
+        [
+            'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_WEEKLYSELECTION_BUILD_FILE' ]
+      id: 'build-weeklyselection-template'
 timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
@@ -83,4 +94,5 @@ substitutions:
   _ECONOMY_BUILD_FILE: ./dataflow/shareloader/build_stateofeconomy.yaml
   _ECONOMY_EMAIL_BUILD_FILE: ./dataflow/shareloader/build_economics_email.yaml
   _PREMARKETLOADER_BUILD_FILE: ./dataflow/shareloader/premarketloader_build.yaml
+  _WEEKLYSELECTION_BUILD_FILE: ./dataflow/shareloader/build_weeklyselection.yaml
   
