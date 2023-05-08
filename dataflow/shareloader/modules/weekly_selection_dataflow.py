@@ -117,9 +117,11 @@ class EmailSender(beam.DoFn):
         template = STOCK_EMAIL_TEMPLATE
         asOfDateStr = date.today().strftime('%d %b %Y')
         content = template.format(asOfDate=asOfDateStr, tableOfData=element)
+        sender = 'gcp_cloud_mm@outlook.com'
+        logging.info(f'Sending mail from:{sender} ')
         logging.info('Sending \n {}'.format(content))
         message = Mail(
-            from_email='gcp_cloud_mm@outlook.com',
+            from_email=sender,
             to_emails=self.recipients,
             subject=f'Stock selection ideas for {asOfDateStr}',
             html_content=content)
