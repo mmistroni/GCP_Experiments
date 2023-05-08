@@ -7,19 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding logging">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding weekly selection">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_economics" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_economics" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_marketstats" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_marketstats" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_newsloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_newsloader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_premarketloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_premarketloader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_sectors" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_sectors" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_sharedatasetloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_sharedatasetloader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_shareloader" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stateofeconomy" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_stock_picks" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_stock_picks" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_superperformers" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_superperformers" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_all.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_all.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -588,7 +578,42 @@
       <option name="project" value="LOCAL" />
       <updated>1683534009570</updated>
     </task>
-    <option name="localTasksCounter" value="38" />
+    <task id="LOCAL-00038" summary="updating pyarrrow version">
+      <created>1683535754615</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1683535754615</updated>
+    </task>
+    <task id="LOCAL-00039" summary="updating pyarrrow version">
+      <created>1683535768918</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1683535768918</updated>
+    </task>
+    <task id="LOCAL-00040" summary="updating pyarrrow version">
+      <created>1683535811144</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1683535811144</updated>
+    </task>
+    <task id="LOCAL-00041" summary="updating pyarrrow version">
+      <created>1683536259772</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1683536259772</updated>
+    </task>
+    <task id="LOCAL-00042" summary="adding weekly selection">
+      <created>1683537654107</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1683537654107</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -706,7 +731,9 @@
     <MESSAGE value="amended sender email" />
     <MESSAGE value="added rank test" />
     <MESSAGE value="adding logging" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding logging" />
+    <MESSAGE value="updating pyarrrow version" />
+    <MESSAGE value="adding weekly selection" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding weekly selection" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

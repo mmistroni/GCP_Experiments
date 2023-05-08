@@ -76,16 +76,16 @@ steps:
         , '$_PREMARKETLOADER_BUILD_FILE' ]
     id: 'build-premarketloader-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-      entrypoint: 'gcloud'
-      args:
-        [
-            'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_WEEKLYSELECTION_BUILD_FILE' ]
-      id: 'build-weeklyselection-template'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '$_WEEKLYSELECTION_BUILD_FILE' ]
+    id: 'build-weeklyselection-template'
 timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
