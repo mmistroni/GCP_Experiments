@@ -160,7 +160,7 @@ def run(argv=None, save_main_session=True):
     parser = argparse.ArgumentParser()
     known_args, pipeline_args = parser.parse_known_args(argv)
 
-    timeout_secs = 18400
+    timeout_secs = 10800
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
     pipeline_options = XyzOptions()
