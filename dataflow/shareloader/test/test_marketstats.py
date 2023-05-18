@@ -45,6 +45,18 @@ class FlattenDoFn(beam.DoFn):
             print('Failed to get PMI:{}'.format(str(e)))
             return [{'Last' : 'N/A'}]
 
+class MissedJoinerFn(beam.DoFn):
+    def __init__(self):
+        super(MissedJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        if left_key not in  right_dict:
+            yield (left_key, left)
+
+
 
 class TestMarketStats(unittest.TestCase):
 
@@ -387,6 +399,34 @@ class TestMarketStats(unittest.TestCase):
         with TestPipeline() as p:
             result = extract_trend_pipeline(p, fmp_key)
             result | sink
+
+    def test_missed_joinis(self):
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'FDX'},
+                                                        {'TICKER': 'AMZN'},
+                                                        {'TICKER': 'MSFT'}
+                                                        ])
+
+            pcoll2 = p | 'Create coll2' >> beam.Create(
+                [{'TICKER': 'FDX', 'PRICE': 20, 'PRICEAVG20': 200, 'DIVIDEND': 1},
+                 {'TICKER': 'AMZN', 'PRICE': 2000, 'PRICEAVG20': 1500, 'DIVIDEND': 0}
+                 ])
+
+            coll1Mapped = pcoll1 | 'Mapping' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                             dictionary))
+
+            coll2Mapped = (pcoll2 | 'Mapping 2' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                                dictionary))
+                           )
+
+            left_joined = (
+                    coll1Mapped
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(MissedJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(coll2Mapped))
+                    | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                    | debugSink
+            )
 
 
 

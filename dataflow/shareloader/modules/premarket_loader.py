@@ -25,6 +25,19 @@ HEADER_TEMPLATE = '<tr><th>AsOfDate</th><th>Ticker</th><th>Close</th><th>200D Mv
 ROW_TEMPLATE =  '<tr><td>{date}</td><td>{ticker}</td><td>{close}</td><td>{200_ma}</td><td>{150_ma}</td><td>{50_ma}</td><td>{52_week_low}</td><td>{52_week_high}</td><td>{trend_template}</td></tr>'
 
 
+class MissedJoinerFn(beam.DoFn):
+    def __init__(self):
+        super(MissedJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        if left_key not in  right_dict:
+            yield (left_key, left)
+
+
+
 class PreMarketCombineFn(beam.CombineFn):
   def create_accumulator(self):
     return [HEADER_TEMPLATE]
@@ -317,6 +330,18 @@ def combine_result(input):
     return res
 
 
+def get_yesterday_bq_data(p):
+    yesterday = (date.today() - BDay(1)).date().strftime('%Y-%m-%d')
+    edgar_sql = """SELECT DISTINCT TICKER FROM `datascience-projects.gcp_shareloader.mm_trendtemplate` 
+                        WHERE AS_OF_DATE = PARSE_DATE("%F", '{yesterday}')
+
+      """
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-MM yesteredayc' >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True)
+              | 'Map to singledict' >> beam.Map(lambda t: dict(TICKER=t))))
+
+
 def write_to_bucket(lines, sink):
     return (
             lines | 'Writing to bucket' >> sink
@@ -364,6 +389,28 @@ def map_to_bq_dict(input_dict):
                 TREND_TEMPLATE = input_dict.get('trend_template', False)
                 )
 
+def find_dropped_tickers(p, todays_coll, sink):
+    todays_remapped  = (todays_coll | 'Mapping to subset ' >> beam.Map(lambda in_dict: dict(ticker=in_dict['TICKER'])))
+    yesterday_remapped = get_yesterday_bq_data(p)
+
+    left_joined = (
+                    todays_remapped
+                    | 'MissedJoiner: JoinValues' >> beam.ParDo(MissedJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(yesterday_remapped))
+                    | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                    | sink
+            )
+
+    res = (p | 'start ' >> beam.create(['----------------------  REMOVED TICKERS'])
+             | sink)
+
+    other_joined = (
+            yesterday_remapped
+            | 'Dropped from yesterda' >> beam.ParDo(MissedJoinerFn(),
+                                                       right_list=beam.pvalue.AsIter(todays_remapped))
+            | 'Map to flat tpl2' >> beam.Map(lambda tpl: tpl[1])
+            | sink
+    )
 
 
 def run(argv=None, save_main_session=True):
@@ -411,11 +458,12 @@ def run(argv=None, save_main_session=True):
 
             else:
                 logging.info('Extracting trend pipeline')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, 55*5)
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays)
+                find_dropped_tickers(p, data, test_sink )
+
         else:
             data = extract_data_pipeline(p, pipeline_options.fmprepkey)
 
-        data | test_sink
 
 
 
