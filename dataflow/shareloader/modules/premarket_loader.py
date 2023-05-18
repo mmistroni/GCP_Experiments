@@ -401,7 +401,7 @@ def find_dropped_tickers(p, todays_coll, sink):
                     | sink
             )
 
-    res = (p | 'start ' >> beam.create(['----------------------  REMOVED TICKERS'])
+    res = (p | 'start ' >> beam.Create(['----------------------  REMOVED TICKERS'])
              | sink)
 
     other_joined = (
