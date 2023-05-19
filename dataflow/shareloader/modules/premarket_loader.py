@@ -397,19 +397,19 @@ def find_dropped_tickers(p, todays_coll, sink):
                     todays_remapped
                     | 'MissedJoiner: JoinValues' >> beam.ParDo(MissedJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(yesterday_remapped))
-                    | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-                    | sink
+                    | 'to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                    | 'out to sink' >> sink
             )
 
-    res = (p | 'start ' >> beam.Create(['----------------------  REMOVED TICKERS'])
-             | sink)
+    res = (p | 'dummy line ' >> beam.Create(['----------------------  REMOVED TICKERS'])
+                    | 'dummy to sink' >>sink)
 
     other_joined = (
             yesterday_remapped
             | 'Dropped from yesterda' >> beam.ParDo(MissedJoinerFn(),
                                                        right_list=beam.pvalue.AsIter(todays_remapped))
-            | 'Map to flat tpl2' >> beam.Map(lambda tpl: tpl[1])
-            | sink
+            | 'to flat tpl2' >> beam.Map(lambda tpl: tpl[1])
+            | 'out to sink again' >> sink
     )
 
 
