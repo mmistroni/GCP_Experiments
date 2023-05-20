@@ -332,7 +332,7 @@ def combine_result(input):
 
 def get_yesterday_bq_data(p):
     yesterday = (date.today() - BDay(1)).date().strftime('%Y-%m-%d')
-    edgar_sql = """SELECT DISTINCT TICKER FROM `datascience-projects.gcp_shareloader.mm_trendtemplate` 
+    edgar_sql = f"""SELECT DISTINCT TICKER FROM `datascience-projects.gcp_shareloader.mm_trendtemplate` 
                         WHERE AS_OF_DATE = PARSE_DATE("%F", '{yesterday}')
 
       """
