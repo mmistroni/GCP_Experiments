@@ -4,7 +4,7 @@ import numpy as np
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical
 
-from shareloader.modules.premarket_loader import TrendTemplateLoader
+from shareloader.modules.premarket_loader import TrendTemplateLoader, find_dropped_tickers
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -169,6 +169,9 @@ class TestPremarketLoader(unittest.TestCase):
 
         self.assertEquals(1, send_mock.call_count)
 
+
+
+
     def test_gettrendtemplate(self):
         key = os.environ['FMPREPKEY']
 
@@ -177,6 +180,18 @@ class TestPremarketLoader(unittest.TestCase):
                    | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(key, numdays='500'))
 
                    )
+
+    @patch('shareloader.modules.premarket_loader.get_yesterday_bq_data')
+    def test_find_dropped_tickers(self, bq_data_mock):
+        key = os.environ['FMPREPKEY']
+
+        sink = beam.Map(print)
+        with TestPipeline() as p:
+
+            original = (p | 'Building original' >>beam.Create([{'ticker': 'FOO'}]))
+            one = (p | 'From Bq' >> beam.Create([{'TICKER': 'FOO'}, {'TICKER': 'BAR'}]))
+            bq_data_mock.return_value = one
+            find_dropped_tickers(p, original, sink)
 
 
 
