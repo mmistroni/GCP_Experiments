@@ -390,7 +390,7 @@ def map_to_bq_dict(input_dict):
                 )
 
 def find_dropped_tickers(p, todays_coll, sink):
-    todays_remapped  = (todays_coll | 'Mapping to subset ' >> beam.Map(lambda in_dict: dict(ticker=in_dict['TICKER'])))
+    todays_remapped  = (todays_coll | 'Mapping to subset ' >> beam.Map(lambda in_dict: dict(ticker=in_dict['ticker'])))
     yesterday_remapped = get_yesterday_bq_data(p)
 
     left_joined = (
