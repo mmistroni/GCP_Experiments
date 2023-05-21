@@ -31,6 +31,7 @@ class MissedJoinerFn(beam.DoFn):
 
     def process(self, row, **kwargs):
         right_dict = dict(kwargs['right_list'])
+        logging.info0(f'Processign row:{row}')
         left_key = row[0]
         if left_key not in  right_dict:
             yield (left_key, left_key)

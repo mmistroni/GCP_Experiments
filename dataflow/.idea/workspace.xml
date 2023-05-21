@@ -321,13 +321,6 @@
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
     </task>
-    <task id="LOCAL-00001" summary="fixing mm">
-      <created>1677408560408</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1677408560408</updated>
-    </task>
     <task id="LOCAL-00002" summary="fixing mm">
       <created>1677408574156</created>
       <option name="number" value="00002" />
@@ -664,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684658472964</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="fixing bug in mappingn ticker">
+      <created>1684666551646</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1684666551646</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -959,7 +959,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
-          <line>201</line>
+          <line>202</line>
           <option name="timeStamp" value="270" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
