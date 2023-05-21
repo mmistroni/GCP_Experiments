@@ -32,9 +32,8 @@ class MissedJoinerFn(beam.DoFn):
     def process(self, row, **kwargs):
         right_dict = dict(kwargs['right_list'])
         left_key = row[0]
-        left = row[1]
         if left_key not in  right_dict:
-            yield (left_key, left)
+            yield (left_key, left_key)
 
 
 
@@ -404,6 +403,7 @@ def find_dropped_tickers(p, todays_coll, sink):
     res = (p | 'dummy line ' >> beam.Create(['----------------------  REMOVED TICKERS'])
                     | 'dummy to sink' >>sink)
 
+    '''
     other_joined = (
             yesterday_remapped
             | 'Dropped from yesterda' >> beam.ParDo(MissedJoinerFn(),
@@ -411,6 +411,7 @@ def find_dropped_tickers(p, todays_coll, sink):
             | 'to flat tpl2' >> beam.Map(lambda tpl: tpl[1])
             | 'out to sink again' >> sink
     )
+    '''
 
 
 def run(argv=None, save_main_session=True):
