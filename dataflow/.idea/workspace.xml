@@ -9,7 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing bug in mappingn ticker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +219,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp">
+  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers">
     <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -262,7 +262,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -272,7 +272,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_get_rank&quot;" />
+      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_find_dropped_tickers&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -294,18 +294,18 @@
     </configuration>
     <list>
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.pytest for test.test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
+      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
         <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
         <item itemvalue="Python tests.pytest for test.test_marketstats.TestMarketStats.test_missed_joinis" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" />
       </list>
     </recent_temporary>
   </component>
@@ -320,13 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00002" summary="fixing mm">
-      <created>1677408574156</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1677408574156</updated>
     </task>
     <task id="LOCAL-00003" summary="filtering on trend template true">
       <created>1677607959240</created>
@@ -664,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1684666551646</updated>
     </task>
-    <option name="localTasksCounter" value="51" />
+    <task id="LOCAL-00051" summary="fixing bug in mappingn ticker">
+      <created>1684687564108</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1684687564109</updated>
+    </task>
+    <option name="localTasksCounter" value="52" />
     <servers />
   </component>
   <component name="TestHistory">
