@@ -20,6 +20,24 @@ import logging
 from unittest.mock import patch
 
 
+class AnotherLeftJoinerFn(beam.DoFn):
+
+    def __init__(self):
+        super(AnotherLeftJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        print('Left is of tpe:{}'.format(type(left)))
+        if left_key in right_dict:
+            print('Row is:{}'.format(row))
+            right = right_dict[left_key]
+            left.update(right)
+            yield (left_key, left)
+
+
 
 class TestPremarketLoader(unittest.TestCase):
 
@@ -187,11 +205,19 @@ class TestPremarketLoader(unittest.TestCase):
 
         sink = beam.Map(print)
         with TestPipeline() as p:
+            pcoll1 = p | 'Create coll1' >> beam.Create(
+                [{'ticker': 'AMZN', 'price': 20, 'performance': 20},
+                 {'ticker': 'key2', 'price': 2, 'performance': 1},
+                 {'ticker' :'key3', 'price': 3, 'performance': 3}
+                 ])
+            pcoll2 = (p | 'Create coll2' >> beam.Create([('AMZN', {'count': 410}),
+                                                        ('key2', {'count': 4})]))
 
-            original = (p | 'Building original' >>beam.Create([{'ticker': 'FOO'}]))
-            one = (p | 'From Bq' >> beam.Create([{'TICKER': 'FOO'}, {'TICKER': 'BAR'}]))
-            bq_data_mock.return_value = one
-            find_dropped_tickers(p, original, sink)
+            bq_data_mock.return_value = pcoll2
+            find_dropped_tickers(p, pcoll1, sink)
+
+
+
 
 
 

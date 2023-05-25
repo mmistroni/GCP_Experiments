@@ -31,7 +31,7 @@ class MissedJoinerFn(beam.DoFn):
 
     def process(self, row, **kwargs):
         right_dict = dict(kwargs['right_list'])
-        logging.info0(f'Processign row:{row}')
+        logging.info(f'Processign row:{row}')
         left_key = row[0]
         if left_key not in  right_dict:
             yield (left_key, left_key)
@@ -338,8 +338,9 @@ def get_yesterday_bq_data(p):
       """
     logging.info('executing SQL :{}'.format(edgar_sql))
     return (p | 'Reading-MM yesteredayc' >> beam.io.Read(
-        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True)
-              | 'Map to singledict' >> beam.Map(lambda t: dict(TICKER=t))))
+                                beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+              | 'Map to singledict' >> beam.Map(lambda t: (t, {}))
+            )
 
 
 def write_to_bucket(lines, sink):
@@ -390,7 +391,7 @@ def map_to_bq_dict(input_dict):
                 )
 
 def find_dropped_tickers(p, todays_coll, sink):
-    todays_remapped  = (todays_coll | 'Mapping to subset ' >> beam.Map(lambda in_dict: dict(ticker=in_dict['ticker'])))
+    todays_remapped  = (todays_coll | 'Mapping to subset ' >> beam.Map(lambda in_dict: (in_dict['ticker'], dict(ticker=in_dict['ticker']))))
     yesterday_remapped = get_yesterday_bq_data(p)
 
     left_joined = (
