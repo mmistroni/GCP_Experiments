@@ -9,8 +9,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added unit test for missed join">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,11 +291,11 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
       <item itemvalue="Python tests.Python tests for test_email_pipeline.TestBeamFunctions.test_left_joins" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_nyse_tickers" />
+      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
     </list>
     <recent_temporary>
       <list>
@@ -975,11 +974,6 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_datset_loader.py</url>
           <line>82</line>
           <option name="timeStamp" value="281" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
-          <line>396</line>
-          <option name="timeStamp" value="282" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/samples/test/test_email_pipeline.py</url>
