@@ -8,7 +8,7 @@ from datetime import datetime
 import apache_beam as beam
 from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
-from apache_beam.options.pipeline_options import SetupOptions
+from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
 import re, requests
 from datetime import datetime, date
 from collections import OrderedDict
@@ -104,6 +104,14 @@ def run(argv=None, save_main_session=True):
     destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
     sink = beam.io.WriteToText(destination,num_shards=1)
     pipeline_options = XyzOptions()
+
+    timeout_secs = 16200
+    experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
+
+    pipeline_options = XyzOptions()
+    pipeline_options.view_as(SetupOptions).save_main_session = True
+    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
+
     gfs = gcs.GCSFileSystem(pipeline_options)
     pattern = 'gs://mm_dataflow_bucket/inputs/shares_dataset*'
     with beam.Pipeline(options=pipeline_options) as p:
