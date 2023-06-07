@@ -273,6 +273,10 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
+
+    # Check  this https://medium.datadriveninvestor.com/markets-is-a-correction-coming-aa609fba3e34
+
+
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     with beam.Pipeline(options=pipeline_options) as p:
@@ -302,8 +306,9 @@ def run(argv=None, save_main_session=True):
         pmi_res = run_pmi(p)
         manuf_pmi_res = run_manufacturing_pmi(p)
 
-        if date.today().day == 5:
+        if date.today().day == 4:
             # We need to store it only once a month
+            logging.info(*'Running Market Stats')
             pmi_res | bq_sink
             manuf_pmi_res | bq_sink
 
