@@ -7,7 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="increasing timeout">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="sourcingn pmi on 4th day of week">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
     </list>
@@ -318,20 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00007" summary="fixing tests">
-      <created>1678618584329</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1678618584329</updated>
-    </task>
-    <task id="LOCAL-00008" summary="fixing combiners., added mocks">
-      <created>1678635599744</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1678635599744</updated>
     </task>
     <task id="LOCAL-00009" summary="removed sending mail from edgar">
       <created>1678818378062</created>
@@ -662,7 +648,21 @@
       <option name="project" value="LOCAL" />
       <updated>1685878774862</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="sourcingn pmi on 4th day of week">
+      <created>1686159328224</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1686159328224</updated>
+    </task>
+    <task id="LOCAL-00057" summary="sourcingn pmi on 4th day of week">
+      <created>1686159366817</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1686159366817</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -760,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing tests" />
     <MESSAGE value="fixing combiners., added mocks" />
     <MESSAGE value="removed sending mail from edgar" />
     <MESSAGE value="fixed economic utils and filtered results in trendtemplate" />
@@ -785,7 +784,8 @@
     <MESSAGE value="fixing bug in mappingn ticker" />
     <MESSAGE value="added unit test for missed join" />
     <MESSAGE value="increasing timeout" />
-    <option name="LAST_COMMIT_MESSAGE" value="increasing timeout" />
+    <MESSAGE value="sourcingn pmi on 4th day of week" />
+    <option name="LAST_COMMIT_MESSAGE" value="sourcingn pmi on 4th day of week" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
