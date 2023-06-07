@@ -7,9 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added unit test for missed join">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="increasing timeout">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,20 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00005" summary="adding mm template test. starting to expand premarket loader">
-      <created>1678530671226</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1678530671226</updated>
-    </task>
-    <task id="LOCAL-00006" summary="fixing tests">
-      <created>1678537593857</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1678537593857</updated>
     </task>
     <task id="LOCAL-00007" summary="fixing tests">
       <created>1678618584329</created>
@@ -662,7 +648,21 @@
       <option name="project" value="LOCAL" />
       <updated>1684688014162</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="increasing timeout">
+      <created>1685878770199</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1685878770199</updated>
+    </task>
+    <task id="LOCAL-00055" summary="increasing timeout">
+      <created>1685878774862</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1685878774862</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -760,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adding mm template test. starting to expand premarket loader" />
     <MESSAGE value="fixing tests" />
     <MESSAGE value="fixing combiners., added mocks" />
     <MESSAGE value="removed sending mail from edgar" />
@@ -785,7 +784,8 @@
     <MESSAGE value="fixing duplicate label" />
     <MESSAGE value="fixing bug in mappingn ticker" />
     <MESSAGE value="added unit test for missed join" />
-    <option name="LAST_COMMIT_MESSAGE" value="added unit test for missed join" />
+    <MESSAGE value="increasing timeout" />
+    <option name="LAST_COMMIT_MESSAGE" value="increasing timeout" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
