@@ -117,9 +117,10 @@ class TrendTemplateLoader(beam.DoFn):
             The relative strength ranking (as reported in Investor’s Business Daily) is no less than 70, and preferably in the 80s or 90s, which will generally be the case with the better selections.
             '''
 
-    def __init__(self, key, numdays='10'):
+    def __init__(self, key, numdays='10', full_run=False):
         self.key = key
         self.numdays = int(numdays)
+        self.full_run = full_run
 
     def best_fit_slope(self, y: np.array) -> float:
         '''
@@ -198,27 +199,34 @@ class TrendTemplateLoader(beam.DoFn):
             try:
                 mmdata = self.get_mm_trendtemplate(ticker)
                 if mmdata is not None:
-                    tt_filter = (mmdata['trend_template'] == True)
-                    trending = mmdata[tt_filter]
-                    if trending.shape[0] > 0:
-                        logging.info(f'Found {trending.shape} records for {ticker}')
-                        trending['asOfDate'] = pd.to_datetime(trending['date'])
 
-                        max_tolerance = (date.today() - BDay(2))
+                    if not self.full_run:
+                        # Only selecting real deal
+                        tt_filter = (mmdata['trend_template'] == True)
+                        trending = mmdata[tt_filter]
+                        if trending.shape[0] > 0:
+                            logging.info(f'Found {trending.shape} records for {ticker}')
+                            trending['asOfDate'] = pd.to_datetime(trending['date'])
 
-                        logging.info(f'Max Lookback {max_tolerance}')
+                            max_tolerance = (date.today() - BDay(2))
 
-                        date_filter = trending.asOfDate > max_tolerance
+                            logging.info(f'Max Lookback {max_tolerance}')
 
-                        filtered = trending[date_filter].drop('asOfDate', axis=1)
-                        logging.info(f' input:{trending.shape}, output:{filtered.shape}')
+                            date_filter = trending.asOfDate > max_tolerance
+
+                            filtered = trending[date_filter].drop('asOfDate', axis=1)
+                            logging.info(f' input:{trending.shape}, output:{filtered.shape}')
 
 
-                        records_dicts = filtered.to_dict('records')
+                            records_dicts = filtered.to_dict('records')
 
 
-                        if records_dicts:
-                            all_dt += records_dicts
+                            if records_dicts:
+                                all_dt += records_dicts
+                    else:
+                        records_dicts = mmdata.to_dict('recordsd')
+                        all_dt += records_dicts
+
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
@@ -356,11 +364,11 @@ def write_to_bigquery(p, bq_sink):
 
 
 
-def extract_trend_pipeline(p, fmpkey, numdays=10):
+def extract_trend_pipeline(p, fmpkey, numdays=10, full_run=False):
     return (p
             | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
-            | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays))
+            | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays, full_run))
     )
 
 def extract_data_pipeline(p, fmpkey):
@@ -457,6 +465,18 @@ def run(argv=None, save_main_session=True):
                 send_email_pipeline(data, pipeline_options.sendgridkey)
 
                 write_to_bigquery(data, bq_sink)
+
+            elif 'full_run' in pipeline_options.mmrun:
+                logging.info('Running historical ppln..')
+                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays, full_run=True)
+                destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
+                    date.today().strftime('%Y-%m-%d %H:%M'))
+
+                logging.info(f'Writing to {destination}')
+                bucket_sink = beam.io.WriteToText(destination, num_shards=1,
+                                                  header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
+                data | bucket_sink
+
 
 
             else:
