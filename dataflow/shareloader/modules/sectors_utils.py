@@ -92,7 +92,7 @@ class SectorsEmailSender(beam.DoFn):
           "<html><body><p> Compare Results against informations here https://www.investopedia.com/articles/trading/05/020305.asp</p><br><br>{}</body></html>".format(data)
 
       message = Mail(
-          from_email='mmistroni@gmail.com',
+          from_email='gcp_cloud_mm@outlook.com',
           subject='Sectors Return for last 4 Months',
           html_content=content)
 

@@ -7,8 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="sourcingn pmi on 4th day of week">
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding full run">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -317,20 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00011" summary="fixed error in market loader">
-      <created>1678947976038</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1678947976038</updated>
-    </task>
-    <task id="LOCAL-00012" summary="fixed error in market loader">
-      <created>1678968092811</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1678968092811</updated>
     </task>
     <task id="LOCAL-00013" summary="fixed error in market loader">
       <created>1678978855816</created>
@@ -661,7 +648,21 @@
       <option name="project" value="LOCAL" />
       <updated>1686160749946</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="sourcingn pmi on 4th day of week">
+      <created>1686160772455</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1686160772456</updated>
+    </task>
+    <task id="LOCAL-00061" summary="adding full run">
+      <created>1686387745650</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1686387745651</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -759,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing combiners., added mocks" />
     <MESSAGE value="removed sending mail from edgar" />
     <MESSAGE value="fixed economic utils and filtered results in trendtemplate" />
     <MESSAGE value="fixed error in market loader" />
@@ -784,7 +784,8 @@
     <MESSAGE value="added unit test for missed join" />
     <MESSAGE value="increasing timeout" />
     <MESSAGE value="sourcingn pmi on 4th day of week" />
-    <option name="LAST_COMMIT_MESSAGE" value="sourcingn pmi on 4th day of week" />
+    <MESSAGE value="adding full run" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding full run" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -953,11 +954,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
           <line>109</line>
           <option name="timeStamp" value="265" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/premarket_loader.py</url>
-          <line>202</line>
-          <option name="timeStamp" value="270" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
