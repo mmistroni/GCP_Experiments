@@ -7,9 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding full run">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="removing unused pipeline">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,21 +219,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers">
-    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline">
     <configuration name="Python tests for test_email_pipeline.TestBeamFunctions.test_left_joins" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -245,20 +231,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_email_pipeline.TestBeamFunctions.test_left_joins&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_missed_joinis" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_missed_joinis&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -290,20 +262,48 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_run_my_pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_shares_to_sector_pick.TestSharesToSector.test_pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
       <item itemvalue="Python tests.Python tests for test_email_pipeline.TestBeamFunctions.test_left_joins" />
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_nyse_tickers" />
       <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
+      <item itemvalue="Python tests.Python tests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" />
+      <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_shares_to_sector_pick.TestSharesToSector.test_pipeline" />
         <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_find_dropped_tickers" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_nyse_tickers" />
         <item itemvalue="Python tests.Python tests for test_email_pipeline.TestBeamFunctions.test_left_joins" />
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_download_historic_sandp" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       </list>
     </recent_temporary>
   </component>
@@ -318,20 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00013" summary="fixed error in market loader">
-      <created>1678978855816</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1678978855816</updated>
-    </task>
-    <task id="LOCAL-00014" summary="fixed error in market loader">
-      <created>1678989280409</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1678989280409</updated>
     </task>
     <task id="LOCAL-00015" summary="getting more reslts">
       <created>1679079011793</created>
@@ -662,7 +648,21 @@
       <option name="project" value="LOCAL" />
       <updated>1686387745651</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="updated email for sector loader">
+      <created>1688827240622</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1688827240623</updated>
+    </task>
+    <task id="LOCAL-00063" summary="removing unused pipeline">
+      <created>1689138358965</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1689138358965</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -760,8 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed sending mail from edgar" />
-    <MESSAGE value="fixed economic utils and filtered results in trendtemplate" />
     <MESSAGE value="fixed error in market loader" />
     <MESSAGE value="getting more reslts" />
     <MESSAGE value="adding experiment value to form 4" />
@@ -785,7 +783,9 @@
     <MESSAGE value="increasing timeout" />
     <MESSAGE value="sourcingn pmi on 4th day of week" />
     <MESSAGE value="adding full run" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding full run" />
+    <MESSAGE value="updated email for sector loader" />
+    <MESSAGE value="removing unused pipeline" />
+    <option name="LAST_COMMIT_MESSAGE" value="removing unused pipeline" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -822,7 +822,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>419</line>
+          <line>420</line>
           <option name="timeStamp" value="115" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -852,7 +852,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>356</line>
+          <line>357</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -862,17 +862,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>348</line>
+          <line>349</line>
           <option name="timeStamp" value="182" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>339</line>
+          <line>340</line>
           <option name="timeStamp" value="183" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>326</line>
+          <line>327</line>
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
