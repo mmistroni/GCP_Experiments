@@ -81,13 +81,18 @@ class TestMarketStats(unittest.TestCase):
         key = os.environ['FMPREPKEY']
 
         sink = Check(is_not_empty())
-
+        printer = beam.Map(print)
         with TestPipeline() as p:
-                 (p | 'start' >> beam.Create(['20210101'])
-                    | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
-                    | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
-                    | 'out' >> sink
+             res = (p | 'start' >> beam.Create(['20210101'])
+                | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
+                | 'remap' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today(), 'LABEL' : 'PMI', 'VALUE' : d['Last']})
+
                 )
+             res | printer
+             res | sink
+
+
+
 
     def test_run_manuf_pmi(self):
         key = os.environ['FMPREPKEY']

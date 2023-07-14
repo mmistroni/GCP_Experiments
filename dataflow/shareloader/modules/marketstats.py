@@ -306,11 +306,11 @@ def run(argv=None, save_main_session=True):
         pmi_res = run_pmi(p)
         manuf_pmi_res = run_manufacturing_pmi(p)
 
-        if date.today().weekday() == 3 and date.today().day() < 9:
+        if date.today().weekday() == 2 and date.today().day() < 15:
             # We need to store it only once a month
             logging.info(*'Running Market Stats')
-            pmi_res | bq_sink
-            manuf_pmi_res | bq_sink
+            pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
+            manuf_pmi_res | 'writing non manuf pmi to sink' >> bq_sink
 
 
         if run_weekday == 5:
