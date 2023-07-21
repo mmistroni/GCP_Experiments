@@ -167,6 +167,7 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <th>DIVIDEND PAID RATIO</th>
                                     <th>SELECTED NUMBER OF TIMES(LAST_QTR)</th>
                                     <th>STOCK BUY PRICE</th>
+                                    <th>MARGIN OF SAFETY</th>
                                     <th>STOCK SELL PRICE</th>
                                     <th>EARNING_YIELD</th>
                                     <th>RETURN_ON_CAPITAL</th>

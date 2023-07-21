@@ -1,12 +1,5 @@
 import apache_beam as beam
 import logging
-from .bq_utils import get_table_schema, get_table_spec, map_to_bq_dict
-from .metrics import compute_data_performance, compute_metrics, get_analyst_recommendations,\
-                                            AnotherLeftJoinerFn, Display, output_fields, merge_dicts,\
-                                            join_lists
-from datetime import date
-import argparse
-import logging
 from datetime import datetime, date
 from .metrics import get_analyst_recommendations, get_historical_data_yahoo_2, get_date_ranges,\
                     get_return

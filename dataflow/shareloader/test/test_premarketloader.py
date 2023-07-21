@@ -104,8 +104,8 @@ class TestPremarketLoader(unittest.TestCase):
 
         symbols = tickers[0:100]
 
-        start_date = date(2022, 1, 1).strftime('%Y-%m-%d')
-        end_date = date(2022, 12, 31).strftime('%Y-%m-%d')
+        start_date = date(2023, 1, 1).strftime('%Y-%m-%d')
+        end_date = date(2023, 7, 31).strftime('%Y-%m-%d')
 
         ticker_data = []
 
@@ -161,7 +161,7 @@ class TestPremarketLoader(unittest.TestCase):
 
         mgd = pd.merge(res, oldest, on='Symbol')
 
-        mgd.to_csv(f'C:/Users/Marco And Sofia/tmp/RankResults_{end_date.year}.csv', index=False)
+        mgd.to_csv(f'C:/Users/Marco And Sofia/tmp/RankResults_{end_date}.csv', index=False)
 
 
 
