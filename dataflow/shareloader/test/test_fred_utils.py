@@ -1,7 +1,7 @@
 import unittest
 import os
 from shareloader.modules.fred_utils import get_gdp
-from shareloader.modules.utils import get_similar_companies
+from shareloader.modules.utils import get_similar_companies, get_peers
 import requests
 from pprint import pprint
 
@@ -20,7 +20,20 @@ class FedUtilsTestCase(unittest.TestCase):
 
 
         res = get_similar_companies(key, industry, exchange)
+
+        old = [d.get('symbol') for d in res]
+        res2 = get_peers(key, 'AAPL')
+
+
+        pprint(old)
+        pprint('-----')
+        pprint(res2)
+
+    def test_appple_peers(self):
+        key = os.environ['FMPREPKEY']
+        res = get_peers(key, 'AAPL')
         pprint(res)
+
 
 if __name__ == '__main__':
     unittest.main()

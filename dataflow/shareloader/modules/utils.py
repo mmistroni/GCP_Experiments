@@ -22,6 +22,13 @@ def get_similar_companies(apiKey, industry, exchange):
     baseUrl = f'https://financialmodelingprep.com/api/v3/stock-screener?industry={industry}&exchange={exchange}&apikey={apiKey}'
     return requests.get(baseUrl).json()
 
+
+def get_peers(apiKey, ticker):
+    # URL = https://financialmodelingprep.com/api/v3/stock-screener?marketCapMoreThan=1000000000&betaMoreThan=1&volumeMoreThan=10000&sector=Technology&exchange=NASDAQ&dividendMoreThan=0&limit=100&apikey=79d4f398184fb636fa32ac1f95ed67e6
+    baseUrl = f'https://financialmodelingprep.com/api/v4/stock_peers?symbol={ticker}&apikey={apiKey}'
+    return requests.get(baseUrl).json()[0].get('peersList', [])
+
+
 def get_latest_price_yahoo(symbol, cob_date):
     try:  #
         print('--latest price for{}'.format(symbol))
