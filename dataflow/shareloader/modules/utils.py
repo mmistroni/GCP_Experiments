@@ -17,6 +17,11 @@ def get_all_shares_dataframe():
   return pd.DataFrame.from_dict(ds)
 
 
+def get_similar_companies(apiKey, industry, exchange):
+    # URL = https://financialmodelingprep.com/api/v3/stock-screener?marketCapMoreThan=1000000000&betaMoreThan=1&volumeMoreThan=10000&sector=Technology&exchange=NASDAQ&dividendMoreThan=0&limit=100&apikey=79d4f398184fb636fa32ac1f95ed67e6
+    baseUrl = f'https://financialmodelingprep.com/api/v3/stock-screener?industry={industry}&exchange={exchange}&apikey={apiKey}'
+    return requests.get(baseUrl).json()
+
 def get_latest_price_yahoo(symbol, cob_date):
     try:  #
         print('--latest price for{}'.format(symbol))
