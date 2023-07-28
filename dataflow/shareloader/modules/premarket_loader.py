@@ -220,23 +220,19 @@ class TrendTemplateLoader(beam.DoFn):
 
                             records_dicts = filtered.to_dict('records')
 
-
-
-
                             if records_dicts:
-                                stringified = []
-                                for r in records_dicts:
-                                    csv = ','.join([str(r[k]) for k in
-                                                    ['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope',
-                                                     '52_week_low', '52_week_high',
-                                                     'trend_template']])
-                                    stringified.append(csv)
-
-                                all_dt += stringified
+                                all_dt += records_dicts
                     else:
                         records_dicts = mmdata.to_dict('records')
-                        all_dt += records_dicts
+                        stringified = []
+                        for r in records_dicts:
+                            csv = ','.join([str(r[k]) for k in
+                                            ['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope',
+                                             '52_week_low', '52_week_high',
+                                             'trend_template']])
+                            stringified.append(csv)
 
+                        all_dt += stringified
 
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
@@ -329,7 +325,8 @@ class HistoricalMarketLoader(beam.DoFn):
 
                 recs = df.to_dict('records')
 
-                all_dt += recs
+                if recs:
+                    all_dt += recs
             except Exception as e:
                 excMsg = f"{idx}/{len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
