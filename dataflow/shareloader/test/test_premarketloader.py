@@ -192,11 +192,11 @@ class TestPremarketLoader(unittest.TestCase):
 
     def test_gettrendtemplate(self):
         key = os.environ['FMPREPKEY']
-
+        sink = beam.Map(print)
         with TestPipeline() as p:
             res = (p | 'START' >> beam.Create(['MCD'])
                    | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(key, numdays='500'))
-
+                    | sink
                    )
 
     @patch('shareloader.modules.premarket_loader.get_yesterday_bq_data')

@@ -34,6 +34,18 @@ class FedUtilsTestCase(unittest.TestCase):
         res = get_peers(key, 'AAPL')
         pprint(res)
 
+    def test_fred_URLS(self):
+        key = os.environ['FREDKEY']
+        from pprint import pprint
+        # consumer sentiment = UMCSENT
+        # PMI. USSLIND
+        # Checkout this page to see series  https://fred.stlouisfed.org/tags/series?t=nonmanufactured
+        # https://fred.stlouisfed.org/categories/1
+
+        pprint(requests.get(
+            f'https://api.stlouisfed.org/fred/series/search?search_text=ISM+Manufacturing&api_key={key}&file_type=json').json())
+
+
 
 if __name__ == '__main__':
     unittest.main()

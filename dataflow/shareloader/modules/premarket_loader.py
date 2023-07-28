@@ -221,10 +221,20 @@ class TrendTemplateLoader(beam.DoFn):
                             records_dicts = filtered.to_dict('records')
 
 
+
+
                             if records_dicts:
-                                all_dt += records_dicts
+                                stringified = []
+                                for r in records_dicts:
+                                    csv = ','.join([str(r[k]) for k in
+                                                    ['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope',
+                                                     '52_week_low', '52_week_high',
+                                                     'trend_template']])
+                                    stringified.append(csv)
+
+                                all_dt += stringified
                     else:
-                        records_dicts = mmdata.to_dict('recordsd')
+                        records_dicts = mmdata.to_dict('records')
                         all_dt += records_dicts
 
 
