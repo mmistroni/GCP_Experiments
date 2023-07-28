@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added fred endpoints. testing fmprep screener endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_fred_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_fred_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +221,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks">
+  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate">
     <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -234,7 +236,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_appple_peers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -244,11 +246,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_fred_utils.FedUtilsTestCase.test_appple_peers&quot;" />
+      <option name="_new_target" value="&quot;test_fred_utils.FedUtilsTestCase.test_fred_URLS&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_gdp" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -258,11 +260,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_fred_utils.FedUtilsTestCase.test_gdp&quot;" />
+      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_gettrendtemplate&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -272,7 +274,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_get_rank&quot;" />
+      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_premarketcombiner&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -291,19 +293,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" />
-      <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_gdp" />
       <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" />
-      <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_peers" />
+      <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
       <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
+      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" />
+      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" />
+        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" />
+        <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
         <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" />
-        <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_peers" />
-        <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_gdp" />
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_get_rank" />
       </list>
     </recent_temporary>
   </component>
@@ -1004,6 +1006,11 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
           <line>49</line>
           <option name="timeStamp" value="297" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_premarketloader.py</url>
+          <line>181</line>
+          <option name="timeStamp" value="298" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
