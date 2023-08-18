@@ -56,6 +56,23 @@ class MissedJoinerFn(beam.DoFn):
         if left_key not in  right_dict:
             yield (left_key, left)
 
+class PMIJoinerFn(beam.DoFn):
+    def __init__(self):
+        super(PMIJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        storedDate = right_dict[left_key].get('AS_OF_DATE')
+        currentDate = left.get('AS_OF_DATE')
+
+
+        if currentDate > storedDate:
+            yield (left_key, left)
+
+
+
 
 
 class TestMarketStats(unittest.TestCase):
@@ -433,7 +450,31 @@ class TestMarketStats(unittest.TestCase):
                     | debugSink
             )
 
+    def test_pmi_joinis(self):
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'PMI', 'AS_OF_DATE' : date(2023,8,1),
+                                                         'VALUE' : 55.2}
+                                                        ])
 
+            pcoll2 = p | 'Create coll2' >> beam.Create(
+                [{'TICKER': 'PMI', 'AS_OF_DATE': date(2023,7,8), 'VALUE': 56.5}
+                 ])
+
+            coll1Mapped = pcoll1 | 'Mapping' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                             dictionary))
+
+            coll2Mapped = (pcoll2 | 'Mapping 2' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+                                                                                dictionary))
+                           )
+
+            left_joined = (
+                    coll1Mapped
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(coll2Mapped))
+                    | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                    | debugSink
+            )
 
 
 if __name__ == '__main__':

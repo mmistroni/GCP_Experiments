@@ -7,11 +7,10 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added fred endpoints. testing fmprep screener endpoint">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_fred_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_fred_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_premarketloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,21 +220,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate">
-    <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_fred_utils.FedUtilsTestCase.test_appple_competitors&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis">
     <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -250,6 +235,34 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_missed_joinis" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_missed_joinis&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_pmi_joinis&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -261,20 +274,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_gettrendtemplate&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_premarketloader.TestPremarketLoader.test_premarketcombiner&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -293,19 +292,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" />
       <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
       <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
-      <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" />
       <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" />
-        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_premarketcombiner" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
         <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
-        <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_appple_competitors" />
+        <item itemvalue="Python tests.Python tests for test_premarketloader.TestPremarketLoader.test_gettrendtemplate" />
       </list>
     </recent_temporary>
   </component>
@@ -320,27 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00024" summary="adding big query sink">
-      <created>1682402007304</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1682402007304</updated>
-    </task>
-    <task id="LOCAL-00025" summary="adding big query sink">
-      <created>1682442683809</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1682442683809</updated>
-    </task>
-    <task id="LOCAL-00026" summary="adding big query sink">
-      <created>1682442689955</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1682442689955</updated>
     </task>
     <task id="LOCAL-00027" summary="adding big query sink">
       <created>1682442720205</created>
@@ -664,7 +642,28 @@
       <option name="project" value="LOCAL" />
       <updated>1690306364258</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
+      <created>1690524018957</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1690524018957</updated>
+    </task>
+    <task id="LOCAL-00074" summary="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
+      <created>1690524026726</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1690524026726</updated>
+    </task>
+    <task id="LOCAL-00075" summary="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
+      <created>1690553558568</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1690553558568</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -762,7 +761,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="update sendgrid senders" />
     <MESSAGE value="adding big query sink" />
     <MESSAGE value="fixing split flag" />
     <MESSAGE value="upgraded dataflow version" />
@@ -787,7 +785,8 @@
     <MESSAGE value="added extra split" />
     <MESSAGE value="added margin of safety field, starting to add ranks to sector" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="added fred endpoints. testing fmprep screener endpoint" />
+    <MESSAGE value="added fred endpoints. testing fmprep screener endpoint. amended premarket loader" />
+    <option name="LAST_COMMIT_MESSAGE" value="added fred endpoints. testing fmprep screener endpoint. amended premarket loader" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1011,6 +1010,31 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_premarketloader.py</url>
           <line>181</line>
           <option name="timeStamp" value="298" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_fred_utils.py</url>
+          <line>38</line>
+          <option name="timeStamp" value="299" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>53</line>
+          <option name="timeStamp" value="300" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="301" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>71</line>
+          <option name="timeStamp" value="304" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="305" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

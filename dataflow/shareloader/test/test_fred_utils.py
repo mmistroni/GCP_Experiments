@@ -41,9 +41,9 @@ class FedUtilsTestCase(unittest.TestCase):
         # PMI. USSLIND
         # Checkout this page to see series  https://fred.stlouisfed.org/tags/series?t=nonmanufactured
         # https://fred.stlouisfed.org/categories/1
-
+        series = 'UMCSENT' #'USSLIND'
         pprint(requests.get(
-            f'https://api.stlouisfed.org/fred/series/search?search_text=ISM+Manufacturing&api_key={key}&file_type=json').json())
+            f'https://api.stlouisfed.org/fred/series/observations?series_id={series}&file_type=json&api_key={key}&file_type=json').json())
 
 
 
