@@ -1,28 +1,25 @@
 import os
 import unittest
 import apache_beam as beam
-from apache_beam.testing.util import assert_that, equal_to, is_not_empty
+from apache_beam.testing.util import assert_that, is_not_empty
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
-from shareloader.modules.marketstats_utils import get_all_stocks, get_prices2, ParseNonManufacturingPMI,PutCallRatio, get_vix,\
+from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
-                        get_market_momentum, get_senate_disclosures, get_sector_rotation_indicator,\
-                        get_latest_fed_fund_rates
+                        get_market_momentum,\
+                        get_latest_fed_fund_rates, PMIJoinerFn
 
-from shareloader.modules.marketstats import run_vix, InnerJoinerFn, run_pmi, run_exchange_pipeline,\
+from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
-                                            run_manufacturing_pmi, run_pmi, MarketStatsCombineFn,\
+                                            run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
-from itertools import chain
-from bs4 import  BeautifulSoup
 import requests
-from io import StringIO
 from itertools import chain
 from unittest.mock import patch
 import argparse
@@ -54,21 +51,6 @@ class MissedJoinerFn(beam.DoFn):
         left_key = row[0]
         left = row[1]
         if left_key not in  right_dict:
-            yield (left_key, left)
-
-class PMIJoinerFn(beam.DoFn):
-    def __init__(self):
-        super(PMIJoinerFn, self).__init__()
-
-    def process(self, row, **kwargs):
-        right_dict = dict(kwargs['right_list'])
-        left_key = row[0]
-        left = row[1]
-        storedDate = right_dict[left_key].get('AS_OF_DATE')
-        currentDate = left.get('AS_OF_DATE')
-
-
-        if currentDate > storedDate:
             yield (left_key, left)
 
 
@@ -129,7 +111,7 @@ class TestMarketStats(unittest.TestCase):
         print(f'{key}|')
         with TestPipeline() as p:
             vix_result = run_vix(p, key)
-            pmi = run_pmi(p)
+            pmi = run_non_manufacturing_pmi(p)
 
             final = (
                     (vix_result, pmi)
@@ -192,7 +174,7 @@ class TestMarketStats(unittest.TestCase):
 
             )
             vix_result = run_vix(p, key)
-            pmi = run_pmi(p)
+            pmi = run_non_manufacturing_pmi(p)
 
             final = (
                     (left_joined, vix_result, pmi)
@@ -326,7 +308,7 @@ class TestMarketStats(unittest.TestCase):
 
     def test_nonmanufpmi(self):
         with TestPipeline() as p:
-            run_pmi(p) | self.notEmptySink
+            run_non_manufacturing_pmi(p) | self.notEmptySink
 
     def test_get_equity_putcall_ratio(self):
         self.assertTrue(get_equity_putcall_ratio())
@@ -453,18 +435,15 @@ class TestMarketStats(unittest.TestCase):
     def test_pmi_joinis(self):
         debugSink = beam.Map(print)
         with TestPipeline() as p:
-            pcoll1 = p | 'Create coll1' >> beam.Create([{'TICKER': 'PMI', 'AS_OF_DATE' : date(2023,8,1),
+            pmi = run_non_manufacturing_pmi(p)
+            bigQuerPmi = p | 'Create coll1' >> beam.Create([{'LABEL': 'NON-MANUFACTURING-PMI', 'AS_OF_DATE' : '2023-07-01',
                                                          'VALUE' : 55.2}
                                                         ])
 
-            pcoll2 = p | 'Create coll2' >> beam.Create(
-                [{'TICKER': 'PMI', 'AS_OF_DATE': date(2023,7,8), 'VALUE': 56.5}
-                 ])
-
-            coll1Mapped = pcoll1 | 'Mapping' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+            coll1Mapped = pmi | 'Mapping' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                              dictionary))
 
-            coll2Mapped = (pcoll2 | 'Mapping 2' >> beam.Map(lambda dictionary: (dictionary['TICKER'],
+            coll2Mapped = (bigQuerPmi | 'Mapping 2' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                 dictionary))
                            )
 

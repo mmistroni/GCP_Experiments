@@ -68,7 +68,44 @@ def create_bigquery_nonmanuf_pmi_bq(p):
 
             )
 
+def get_latest_manufacturing_pmi_from_bq(p):
+    bq_sql = """SELECT LABEL, AS_OF_DATE, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = 'MANUFACTURING-PMI'
+                ORDER BY PARSE_DATE('%F', AS_OF_DATE) DESC
+                LIMIT 1"""
 
+    logging.info('executing SQL :{}'.format(bq_sql))
+    return (p | 'Reading latest manufacturing PMI ' >> beam.io.Read(
+        beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
+            )
+
+def get_latest_non_manufacturing_pmi_from_bq(p):
+    bq_sql = """SELECT LABEL, AS_OF_DATE, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = 'NON-MANUFACTURING-PMI'
+                ORDER BY PARSE_DATE('%F', AS_OF_DATE) DESC
+                LIMIT 1"""
+
+    logging.info('executing SQL :{}'.format(bq_sql))
+    return (p | 'Reading latest manufacturing PMI ' >> beam.io.Read(
+        beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
+            )
+
+class PMIJoinerFn(beam.DoFn):
+    def __init__(self):
+        super(PMIJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        storedDateStr = right_dict[left_key].get('AS_OF_DATE')
+        currentDateStr = left.get('AS_OF_DATE')
+        storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
+
+        currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
+
+        if currentDate > storedDate:
+            yield (left_key, left)
 
 
 class InnerJoinerFn(beam.DoFn):
@@ -284,12 +321,6 @@ def get_senate_disclosures(key):
             label = 'SENATE_DISCLOSURES'
             holder.append({'AS_OF_DATE' : asOfDate.strftime('%Y-%m-%d'), 'LABEL' : label, 'VALUE' : value})
     return holder
-
-
-
-
-
-
 
 
 

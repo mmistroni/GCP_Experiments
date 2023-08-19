@@ -9,13 +9,14 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import datetime, date
-from  .marketstats_utils import is_above_52wk,get_prices,MarketBreadthCombineFn, get_all_stocks, is_below_52wk,\
-                            combine_movers,get_prices2, get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
+from  .marketstats_utils import MarketBreadthCombineFn, \
+                            get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
-                            get_sector_rotation_indicator, get_latest_fed_fund_rates
+                            get_sector_rotation_indicator, get_latest_fed_fund_rates,\
+                            get_latest_manufacturing_pmi_from_bq, PMIJoinerFn
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -111,10 +112,11 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
 
-def run_pmi(p):
+def run_non_manufacturing_pmi(p):
+    nmPmiDate = date(date.today().year, date.today().month, 1)
     return (p | 'startstart' >> beam.Create(['20210101'])
                     | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'NON-MANUFACTURING-PMI', 'VALUE' : d['Last']})
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : nmPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'NON-MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
 def run_putcall_ratio(p):
@@ -126,9 +128,11 @@ def run_putcall_ratio(p):
 
 
 def run_manufacturing_pmi(p):
+    manufPmiDate = date(date.today().year, date.today().month, 1)
+
     return (p | 'startstartnpmi' >> beam.Create(['20210101'])
                     | 'manifpmi' >>   beam.ParDo(ParseManufacturingPMI())
-                    | 'manufremap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
+                    | 'manufremap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : manufPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
 
 def run_economic_calendar(p, key):
@@ -279,6 +283,10 @@ def run(argv=None, save_main_session=True):
 
     pipeline_options = XyzOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+
+    debugSink =  beam.Map(logging.info)
+
+
     with beam.Pipeline(options=pipeline_options) as p:
 
         iexapi_key = pipeline_options.key
@@ -303,7 +311,12 @@ def run(argv=None, save_main_session=True):
 
         logging.info('Run pmi')
         
-        pmi_res = run_pmi(p)
+        pmi_res = run_non_manufacturing_pmi(p)
+
+        bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
+
+
+
         manuf_pmi_res = run_manufacturing_pmi(p)
 
         if date.today().weekday() == 2 and date.today().day() < 15:
@@ -412,9 +425,26 @@ def run(argv=None, save_main_session=True):
 
         tmp_sink = beam.io.WriteToText(destination, num_shards=1)
 
-
         write_all_to_sink(final_sink_results, bq_sink)
 
+        logging.info('----- Attepmting some Inner Joins....')
+
+        bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
+
+        coll1Mapped = pmi_res | 'Attemtp to Mapping' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+                                                                      dictionary))
+
+        coll2Mapped = (bq_pmi_res | 'Attempt Mapping 2' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+                                                                                dictionary))
+                       )
+
+        left_joined = (
+                coll1Mapped
+                | 'InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
+                                                          right_list=beam.pvalue.AsIter(coll2Mapped))
+                | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                | debugSink
+        )
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
