@@ -16,7 +16,8 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
-                            get_latest_manufacturing_pmi_from_bq, PMIJoinerFn
+                            get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex
+
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -118,6 +119,14 @@ def run_non_manufacturing_pmi(p):
                     | 'pmi' >>   beam.ParDo(ParseNonManufacturingPMI())
                     | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : nmPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'NON-MANUFACTURING-PMI', 'VALUE' : d['Last']})
             )
+
+def run_consumer_sentiment_index(p):
+    csPmiDate = date(date.today().year, date.today().month, 1)
+    return (p | 'csstartstart' >> beam.Create(['20210101'])
+                    | 'cs' >>   beam.ParDo(ParseConsumerSentimentIndex())
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['ConsumerSentiment']})
+            )
+
 
 def run_putcall_ratio(p):
     return (p | 'start putcall ratio' >> beam.Create(['20210101'])

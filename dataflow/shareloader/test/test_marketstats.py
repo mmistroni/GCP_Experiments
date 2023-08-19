@@ -15,7 +15,8 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
-                                            run_fed_fund_rates, write_all_to_sink, run_market_momentum
+                                            run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
+                                            run_consumer_sentiment_index
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -454,6 +455,12 @@ class TestMarketStats(unittest.TestCase):
                     | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                     | debugSink
             )
+
+    def test_consumer_sentiment(self):
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            pmi = run_consumer_sentiment_index(p)
+            pmi | debugSink
 
 
 if __name__ == '__main__':

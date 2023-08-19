@@ -7,7 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added join to test mohtly PMI. tested some FRED URLS">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="attempting join">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
@@ -221,7 +221,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment">
     <configuration name="Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -233,6 +233,20 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_fred_utils.FedUtilsTestCase.test_fred_URLS&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_consumer_sentiment&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -278,34 +292,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_sector_ranks&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
       <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
-      <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_and_vix" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_and_vix" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
         <item itemvalue="Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranks" />
       </list>
     </recent_temporary>
   </component>
@@ -320,13 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00028" summary="adding big query sink">
-      <created>1682444974982</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1682444974982</updated>
     </task>
     <task id="LOCAL-00029" summary="fixing split flag">
       <created>1682930074990</created>
@@ -664,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1692340549079</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="attempting join">
+      <created>1692438192489</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1692438192489</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -762,7 +762,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing split flag" />
     <MESSAGE value="upgraded dataflow version" />
     <MESSAGE value="added test" />
     <MESSAGE value="increased lookback" />
@@ -787,7 +786,8 @@
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint. amended premarket loader" />
     <MESSAGE value="added join to test mohtly PMI. tested some FRED URLS" />
-    <option name="LAST_COMMIT_MESSAGE" value="added join to test mohtly PMI. tested some FRED URLS" />
+    <MESSAGE value="attempting join" />
+    <option name="LAST_COMMIT_MESSAGE" value="attempting join" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -814,7 +814,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>322</line>
+          <line>345</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -829,17 +829,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats.py</url>
-          <line>33</line>
+          <line>34</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>390</line>
+          <line>413</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>387</line>
+          <line>410</line>
           <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -879,7 +879,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>182</line>
+          <line>188</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -924,17 +924,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>285</line>
+          <line>308</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>317</line>
+          <line>340</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>309</line>
+          <line>332</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1019,12 +1019,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>50</line>
+          <line>51</line>
           <option name="timeStamp" value="300" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>52</line>
+          <line>53</line>
           <option name="timeStamp" value="301" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

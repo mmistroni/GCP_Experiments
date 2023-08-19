@@ -167,6 +167,12 @@ def get_latest_fed_fund_rates():
     except Exception as e:
         return 'N/A'
 
+def parse_consumer_sentiment_index():
+    import pandas as pd
+    df = pd.read_csv('http://www.sca.isr.umich.edu/files/tbcics.csv', header=3).rename(
+        columns={"Unnamed: 1": "Year", "DATE OF SURVEY": "asOfDate",
+                 'INDEX OF CONSUMER SENTIMENT': 'ConsumerSentiment'})[['asOfDate', 'Year', 'ConsumerSentiment']]
+    return df.dropna().to_dict('records')[-1]
 
 class PutCallRatio(beam.DoFn):
     def get_putcall_ratios(self):
@@ -238,6 +244,23 @@ class ParseNonManufacturingPMI(beam.DoFn):
         except Exception as e:
             print('Failed to get PMI:{}'.format(str(e)))
             return [{'Last' : 'N/A'}]
+
+class ParseConsumerSentimentIndex(beam.DoFn):
+    '''
+    Parses non manufacturing PMI
+    '''
+
+    def process(self, element):
+        try:
+            result = parse_consumer_sentiment_index()
+            return [result]
+        except Exception as e:
+            print('Failed to get PMI:{}'.format(str(e)))
+            return [{'Last' : 'N/A'}]
+
+
+
+
 
 '''
 == FEAR AND GREED
