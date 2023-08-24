@@ -322,10 +322,6 @@ def run(argv=None, save_main_session=True):
         
         pmi_res = run_non_manufacturing_pmi(p)
 
-        bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
-
-
-
         manuf_pmi_res = run_manufacturing_pmi(p)
 
         if date.today().weekday() == 2 and date.today().weekday() < 15:
