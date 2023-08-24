@@ -75,7 +75,7 @@ def get_latest_manufacturing_pmi_from_bq(p):
                 LIMIT 1"""
 
     logging.info('executing SQL :{}'.format(bq_sql))
-    return (p | 'Reading latest manufacturing PMI ' >> beam.io.Read(
+    return (p | '1Reading latest manufacturing PMI ' >> beam.io.Read(
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
             )
 
@@ -86,7 +86,7 @@ def get_latest_non_manufacturing_pmi_from_bq(p):
                 LIMIT 1"""
 
     logging.info('executing SQL :{}'.format(bq_sql))
-    return (p | 'Reading latest manufacturing PMI ' >> beam.io.Read(
+    return (p | '2Reading latest manufacturing PMI ' >> beam.io.Read(
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
             )
 
