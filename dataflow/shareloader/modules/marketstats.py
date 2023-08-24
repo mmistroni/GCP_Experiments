@@ -442,7 +442,7 @@ def run(argv=None, save_main_session=True):
         coll2Mapped = (bq_pmi_res | 'Attempt Mapping 2' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                 dictionary))
                        )
-
+        '''
         left_joined = (
                 coll1Mapped
                 | 'InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
@@ -450,6 +450,7 @@ def run(argv=None, save_main_session=True):
                 | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                 | debugSink
         )
+        '''
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
