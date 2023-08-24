@@ -328,7 +328,7 @@ def run(argv=None, save_main_session=True):
 
         manuf_pmi_res = run_manufacturing_pmi(p)
 
-        if date.today().weekday() == 2 and date.today().day() < 15:
+        if date.today().weekday() == 2 and date.today().weekday() < 15:
             # We need to store it only once a month
             logging.info(*'Running Market Stats')
             pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
