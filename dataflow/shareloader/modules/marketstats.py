@@ -320,14 +320,15 @@ def run(argv=None, save_main_session=True):
 
         logging.info('Run pmi')
         
-        pmi_res = run_non_manufacturing_pmi(p)
+        non_manuf_pmi_res = run_non_manufacturing_pmi(p)
 
         manuf_pmi_res = run_manufacturing_pmi(p)
+
 
         if date.today().weekday() == 2 and date.today().weekday() < 15:
             # We need to store it only once a month
             logging.info(*'Running Market Stats')
-            pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
+            non_manuf_pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
             manuf_pmi_res | 'writing non manuf pmi to sink' >> bq_sink
 
 
@@ -377,7 +378,7 @@ def run(argv=None, save_main_session=True):
         staticStart_key = staticStart | 'Add -2' >> beam.Map(lambda d: (-2, d))
         econCalendarKey = econ_calendar | 'Add -1' >> beam.Map(lambda d: (-1, d))
         static1_key = static1 | 'Add 0' >> beam.Map(lambda d: (0, d))
-        pmi_key = pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
+        pmi_key = non_manuf_pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
 
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
@@ -388,6 +389,7 @@ def run(argv=None, save_main_session=True):
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (9, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (10, d))
+
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (15, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (16, d))
@@ -434,15 +436,20 @@ def run(argv=None, save_main_session=True):
 
         logging.info('----- Attepmting some Inner Joins....')
 
+        #consumer_sentiment_res = run_consumer_sentiment_index(p)
+
+        #consumer_sentiment_res | debugSink
+
         bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
 
-        coll1Mapped = pmi_res | 'Attemtp to Mapping' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+
+
+        coll1Mapped = manuf_pmi_res | 'Attemtp to Mapping' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                       dictionary))
 
         coll2Mapped = (bq_pmi_res | 'Attempt Mapping 2' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                 dictionary))
                        )
-        '''
         left_joined = (
                 coll1Mapped
                 | 'InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
@@ -450,7 +457,7 @@ def run(argv=None, save_main_session=True):
                 | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                 | debugSink
         )
-        '''
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
