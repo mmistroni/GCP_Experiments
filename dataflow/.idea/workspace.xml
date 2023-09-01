@@ -7,10 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixed fruit and veg">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added more logging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -220,7 +219,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment">
+  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers">
+    <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_datset_loader.TestSharesDsetLoader.test_GetAllTickers&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -246,20 +259,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_all_us_stocks&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_missed_joinis" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_missed_joinis&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -292,19 +291,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_and_vix" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
+      <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_and_vix" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_missed_joinis" />
       </list>
     </recent_temporary>
   </component>
@@ -319,13 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00038" summary="updating pyarrrow version">
-      <created>1683535754615</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1683535754615</updated>
     </task>
     <task id="LOCAL-00039" summary="updating pyarrrow version">
       <created>1683535768918</created>
@@ -663,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1693213277799</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="added more logging">
+      <created>1693547553386</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1693547553387</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -761,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added rank test" />
     <MESSAGE value="adding logging" />
     <MESSAGE value="updating pyarrrow version" />
     <MESSAGE value="adding weekly selection" />
@@ -786,7 +784,8 @@
     <MESSAGE value="removiing join temporarily" />
     <MESSAGE value="fixed pmi , tentatively" />
     <MESSAGE value="fixed fruit and veg" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed fruit and veg" />
+    <MESSAGE value="added more logging" />
+    <option name="LAST_COMMIT_MESSAGE" value="added more logging" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -888,17 +887,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
-          <line>51</line>
+          <line>52</line>
           <option name="timeStamp" value="229" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
-          <line>65</line>
+          <line>66</line>
           <option name="timeStamp" value="230" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/share_datset_loader.py</url>
-          <line>63</line>
+          <line>64</line>
           <option name="timeStamp" value="231" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

@@ -40,6 +40,7 @@ class GetAllTickers(beam.DoFn):
         return (stock_name is not None and stock_name.find('ETF') < 0 \
                     and stock_name.find('ETNF') < 0  and stock_name.find('Fund') <0) \
                     and stock_name.find('ProShares') < 0 \
+                    and (bool(exchange)) \
                     and   (exchange.lower().find('nasdaq') >= 0 or  exchange.lower() == 'nyse') \
                     and symbol.find('.') < 0
 
