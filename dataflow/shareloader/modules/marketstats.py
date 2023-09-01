@@ -444,17 +444,17 @@ def run(argv=None, save_main_session=True):
 
 
 
-        coll1Mapped = manuf_pmi_res | 'Attemtp to Mapping' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+        coll1Mapped = manuf_pmi_res | 'Mapping PMI from Web ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                       dictionary))
 
-        coll2Mapped = (bq_pmi_res | 'Attempt Mapping 2' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+        coll2Mapped = (bq_pmi_res | 'Mapping PMI from BQ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                 dictionary))
                        )
         left_joined = (
                 coll1Mapped
-                | 'InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
+                | 'PMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                           right_list=beam.pvalue.AsIter(coll2Mapped))
-                | 'Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                | 'PMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                 | debugSink
         )
 

@@ -102,10 +102,14 @@ class PMIJoinerFn(beam.DoFn):
         currentDateStr = left.get('AS_OF_DATE')
         storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
 
+        logging.info(f'Stored data: {storedDateStr}, Current Date: {currentDateStr}')
+
         currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
 
         if currentDate > storedDate:
             yield (left_key, left)
+        else:
+            logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')
 
 
 class InnerJoinerFn(beam.DoFn):
