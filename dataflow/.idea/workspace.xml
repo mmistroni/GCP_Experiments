@@ -9,7 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added more logging">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/share_datset_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +220,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment">
     <configuration name="Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -299,8 +300,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment" />
+        <item itemvalue="Python tests.Python tests for test_datset_loader.TestSharesDsetLoader.test_GetAllTickers" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_joinis" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_pmi_and_vix" />
@@ -318,13 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00039" summary="updating pyarrrow version">
-      <created>1683535768918</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1683535768918</updated>
     </task>
     <task id="LOCAL-00040" summary="updating pyarrrow version">
       <created>1683535811144</created>
@@ -662,7 +656,14 @@
       <option name="project" value="LOCAL" />
       <updated>1693547553387</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="added more logging">
+      <created>1693580571220</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1693580571220</updated>
+    </task>
+    <option name="localTasksCounter" value="89" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -812,7 +813,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>349</line>
+          <line>357</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -827,17 +828,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats.py</url>
-          <line>34</line>
+          <line>35</line>
           <option name="timeStamp" value="121" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>417</line>
+          <line>425</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>414</line>
+          <line>422</line>
           <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -877,7 +878,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>192</line>
+          <line>200</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -922,17 +923,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>312</line>
+          <line>320</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>344</line>
+          <line>352</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>336</line>
+          <line>344</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -977,7 +978,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>122</line>
+          <line>124</line>
           <option name="timeStamp" value="286" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1032,18 +1033,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>259</line>
-          <option name="timeStamp" value="314" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>178</line>
-          <option name="timeStamp" value="315" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>258</line>
-          <option name="timeStamp" value="316" />
+          <option name="timeStamp" value="317" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

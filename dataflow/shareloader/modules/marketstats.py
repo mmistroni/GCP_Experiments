@@ -16,7 +16,8 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
-                            get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex
+                            get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
+                            get_latest_non_manufacturing_pmi_from_bq
 
 
 from sendgrid import SendGridAPIClient
@@ -124,7 +125,7 @@ def run_consumer_sentiment_index(p):
     csPmiDate = date(date.today().year, date.today().month, 1)
     return (p | 'csstartstart' >> beam.Create(['20210101'])
                     | 'cs' >>   beam.ParDo(ParseConsumerSentimentIndex())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['ConsumerSentiment']})
+                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['Last']})
             )
 
 
@@ -196,8 +197,6 @@ def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
     asOfDate = (date.today() - BDay(1)).date()
     prevDate = (asOfDate - BDay(1)).date()
-
-
 
     dt = get_all_prices_for_date(key, asOfDate.strftime('%Y-%m-%d'))
     ydt = get_all_prices_for_date(key, prevDate.strftime('%Y-%m-%d'))
@@ -324,6 +323,8 @@ def run(argv=None, save_main_session=True):
 
         manuf_pmi_res = run_manufacturing_pmi(p)
 
+        consumer_res = run_consumer_sentiment_index(p)
+
 
         if date.today().weekday() == 2 and date.today().weekday() < 15:
             # We need to store it only once a month
@@ -331,6 +332,8 @@ def run(argv=None, save_main_session=True):
             non_manuf_pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
             manuf_pmi_res | 'writing non manuf pmi to sink' >> bq_sink
 
+        if date.today().day == 28 :
+            consumer_res | 'writing consume res to sink' >> bq_sink
 
         if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
@@ -389,17 +392,12 @@ def run(argv=None, save_main_session=True):
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (9, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (10, d))
-
+        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (11, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (15, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (16, d))
         cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (17, d))
-
-
         # we need a global combiner to write to sink
-
-
-
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
 
         non_manuf_pmi_hist_key = non_pmi_hist | 'Add 30' >> beam.Map(lambda d: (30, d))
@@ -407,7 +405,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, growth_vs_val_key,
-                        fed_funds_key,
+                        fed_funds_key, cons_res_key,
                         static_key, stats_key,
                         pmi_hist_key, non_manuf_pmi_hist_key,
                         )
@@ -442,7 +440,7 @@ def run(argv=None, save_main_session=True):
 
         bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
 
-
+        bq_nmfpmi_res = get_latest_non_manufacturing_pmi_from_bq(p)
 
         coll1Mapped = manuf_pmi_res | 'Mapping PMI from Web ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                       dictionary))
@@ -457,6 +455,23 @@ def run(argv=None, save_main_session=True):
                 | 'PMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
                 | debugSink
         )
+
+        bq_nmfpmi_res = get_latest_non_manufacturing_pmi_from_bq(p)
+
+        nonMfPmiSourced = non_manuf_pmi_res | 'Mapping NMPMI from Web ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+                                                                                              dictionary))
+
+        nonMfPmiMapped = (bq_nmfpmi_res | 'Mapping NMPMI from BQ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+                                                                                          dictionary))
+                       )
+        nm_left_joined = (
+                nonMfPmiSourced
+                | 'NMPMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
+                                                              right_list=beam.pvalue.AsIter(nonMfPmiMapped))
+                | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                | debugSink
+        )
+
 
 
 if __name__ == '__main__':

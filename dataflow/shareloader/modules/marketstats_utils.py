@@ -93,8 +93,10 @@ def get_latest_non_manufacturing_pmi_from_bq(p):
 class PMIJoinerFn(beam.DoFn):
     def __init__(self):
         super(PMIJoinerFn, self).__init__()
+        logging.info('----- Instantiated Joiners.....')
 
     def process(self, row, **kwargs):
+        logging.info('---- Processing-----')
         right_dict = dict(kwargs['right_list'])
         left_key = row[0]
         left = row[1]
@@ -172,11 +174,17 @@ def get_latest_fed_fund_rates():
         return 'N/A'
 
 def parse_consumer_sentiment_index():
-    import pandas as pd
-    df = pd.read_csv('http://www.sca.isr.umich.edu/files/tbcics.csv', header=3).rename(
-        columns={"Unnamed: 1": "Year", "DATE OF SURVEY": "asOfDate",
-                 'INDEX OF CONSUMER SENTIMENT': 'ConsumerSentiment'})[['asOfDate', 'Year', 'ConsumerSentiment']]
-    return df.dropna().to_dict('records')[-1]
+    ua = get_user_agent()
+    try:
+        r = requests.get('https://tradingeconomics.com/united-states/consumer-confidence', headers={'User-Agent': ua})
+        bs = BeautifulSoup(r.content, 'html.parser')
+        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl01_Panel1"})[0]  #
+        anchor = div_item.find_all('a', {"href": "/united-states/consumer-confidence"})[0]
+        p = anchor.parent.parent.find_all('td')[1]
+        return {'Last': p.text}
+    except Exception as e:
+        return 'N/A'
+
 
 class PutCallRatio(beam.DoFn):
     def get_putcall_ratios(self):
@@ -213,7 +221,7 @@ class ParseManufacturingPMI(beam.DoFn):
             result = self.get_manufacturing_pmi()
             return result
         except Exception as e:
-            print('Failed to get PMI:{}'.format(str(e)))
+            logging.info('Failed to get PMI:{}'.format(str(e)))
             return []
 
 
@@ -260,7 +268,7 @@ class ParseConsumerSentimentIndex(beam.DoFn):
             return [result]
         except Exception as e:
             print('Failed to get PMI:{}'.format(str(e)))
-            return [{'Last' : 'N/A'}]
+            return []
 
 
 
