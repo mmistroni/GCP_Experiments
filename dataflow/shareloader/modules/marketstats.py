@@ -125,7 +125,7 @@ def run_consumer_sentiment_index(p):
     csPmiDate = date(date.today().year, date.today().month, 1)
     return (p | 'csstartstart' >> beam.Create(['20210101'])
                     | 'cs' >>   beam.ParDo(ParseConsumerSentimentIndex())
-                    | 'remap  pmi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['Last']})
+                    | 'remap  csi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['Last']})
             )
 
 
