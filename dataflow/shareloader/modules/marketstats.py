@@ -440,8 +440,6 @@ def run(argv=None, save_main_session=True):
 
         bq_pmi_res = get_latest_manufacturing_pmi_from_bq(p)
 
-        bq_nmfpmi_res = get_latest_non_manufacturing_pmi_from_bq(p)
-
         coll1Mapped = manuf_pmi_res | 'Mapping PMI from Web ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                       dictionary))
 

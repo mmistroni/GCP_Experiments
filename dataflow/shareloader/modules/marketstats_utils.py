@@ -98,20 +98,23 @@ class PMIJoinerFn(beam.DoFn):
     def process(self, row, **kwargs):
         logging.info('---- Processing-----')
         right_dict = dict(kwargs['right_list'])
-        left_key = row[0]
-        left = row[1]
-        storedDateStr = right_dict[left_key].get('AS_OF_DATE')
-        currentDateStr = left.get('AS_OF_DATE')
-        storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
 
-        logging.info(f'Stored data: {storedDateStr}, Current Date: {currentDateStr}')
+        logging.info(f'Row:{row}....')
+        if len(row) > 1:
+            left_key = row[0]
+            left = row[1]
+            storedDateStr = right_dict[left_key].get('AS_OF_DATE')
+            currentDateStr = left.get('AS_OF_DATE')
+            storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
 
-        currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
+            logging.info(f'Stored data: {storedDateStr}, Current Date: {currentDateStr}')
 
-        if currentDate > storedDate:
-            yield (left_key, left)
-        else:
-            logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')
+            currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
+
+            if currentDate > storedDate:
+                yield (left_key, left)
+            else:
+                logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')
 
 
 class InnerJoinerFn(beam.DoFn):
