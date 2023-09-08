@@ -90,6 +90,17 @@ def get_latest_non_manufacturing_pmi_from_bq(p):
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
             )
 
+def get_latest_consumer_sentiment_from_bq(p):
+    bq_sql = """SELECT LABEL, AS_OF_DATE, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = 'CONSUMER_SENTIMENT_INDEX'
+                ORDER BY PARSE_DATE('%F', AS_OF_DATE) DESC
+                LIMIT 1"""
+
+    logging.info('executing SQL :{}'.format(bq_sql))
+    return (p | '2Reading latest manufacturing PMI ' >> beam.io.Read(
+        beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
+            )
+
 class PMIJoinerFn(beam.DoFn):
     def __init__(self):
         super(PMIJoinerFn, self).__init__()

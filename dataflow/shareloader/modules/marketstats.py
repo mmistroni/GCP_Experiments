@@ -428,8 +428,6 @@ def run(argv=None, save_main_session=True):
         destination = 'gs://mm_dataflow_bucket/outputs/marketstats_{}'.format(
             date.today().strftime('%Y-%m-%d %H:%M'))
 
-        tmp_sink = beam.io.WriteToText(destination, num_shards=1)
-
         write_all_to_sink(final_sink_results, bq_sink)
 
         logging.info('----- Attepmting some Inner Joins....')
@@ -451,8 +449,11 @@ def run(argv=None, save_main_session=True):
                 | 'PMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                           right_list=beam.pvalue.AsIter(coll2Mapped))
                 | 'PMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-                | 'PMI TO Sink' >>debugSink
+
         )
+
+        left_joined | 'PMI TO Debug Sink' >> debugSink
+        left_joined | 'PMI TO BQ Sink' >> bq_sink
 
         bq_nmfpmi_res = get_latest_non_manufacturing_pmi_from_bq(p)
 
@@ -470,6 +471,8 @@ def run(argv=None, save_main_session=True):
                 | 'NPMI to sink' >> debugSink
         )
 
+        nm_left_joined | 'NPPMI TO Debug Sink' >> debugSink
+        nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
 
 if __name__ == '__main__':
