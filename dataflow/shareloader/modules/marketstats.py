@@ -451,7 +451,7 @@ def run(argv=None, save_main_session=True):
                 | 'PMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                           right_list=beam.pvalue.AsIter(coll2Mapped))
                 | 'PMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-                | debugSink
+                | 'PMI TO Sink' >>debugSink
         )
 
         bq_nmfpmi_res = get_latest_non_manufacturing_pmi_from_bq(p)
@@ -467,7 +467,7 @@ def run(argv=None, save_main_session=True):
                 | 'NMPMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(nonMfPmiMapped))
                 | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
-                | debugSink
+                | 'NPMI to sink' >> debugSink
         )
 
 
