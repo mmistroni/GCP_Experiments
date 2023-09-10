@@ -50,22 +50,26 @@ def get_fruit_and_veg_prices():
     return []
 
 def get_petrol_prices():
-    url = 'https://www.gov.uk/government/statistics/weekly-road-fuel-prices'
-    req = requests.get(url)
-    soup = BeautifulSoup(req.text, "html.parser")
-    span = soup.find_all('span', {"class": "download"})[0]
-    anchor = span.find_all('a', {"class": "govuk-link"})[0]
-    link = anchor.get('href')
-    r = requests.get(link).text
-    dt = pd.read_csv(io.StringIO(r), header=2)[-1:][['Date','ULSP', 'ULSD']].to_dict('records')[-1]
-    return [
-                {'asOfDate' : datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
-                 'label' : 'Petrol',
-                  'value': float(dt['ULSP'])},
-                {'asOfDate': datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
-                 'label': 'Diesel',
-                 'value': float(dt['ULSD'])}
-                ]
+    try:
+        url = 'https://www.gov.uk/government/statistics/weekly-road-fuel-prices'
+        req = requests.get(url)
+        soup = BeautifulSoup(req.text, "html.parser")
+        span = soup.find_all('span', {"class": "download"})[0]
+        anchor = span.find_all('a', {"class": "govuk-link"})[0]
+        link = anchor.get('href')
+        r = requests.get(link).text
+        dt = pd.read_csv(io.StringIO(r), header=2)[-1:][['Date','ULSP', 'ULSD']].to_dict('records')[-1]
+        return [
+                    {'asOfDate' : datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                     'label' : 'Petrol',
+                      'value': float(dt['ULSP'])},
+                    {'asOfDate': datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                     'label': 'Diesel',
+                     'value': float(dt['ULSD'])}
+                        ]
+    except Exception as e:
+        logging.info(f'Problem in getting petro lprices {str(e)}')
+        return []
 
 def get_latest_url():
     url = "https://cy.ons.gov.uk/datasets/online-job-advert-estimates/editions"
