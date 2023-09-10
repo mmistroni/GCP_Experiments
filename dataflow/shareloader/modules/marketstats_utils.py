@@ -123,6 +123,7 @@ class PMIJoinerFn(beam.DoFn):
             currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
 
             if currentDate > storedDate:
+                logging.info(f'We need to store  {left_key} in BQ..')
                 yield (left_key, left)
             else:
                 logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')

@@ -467,12 +467,12 @@ def run(argv=None, save_main_session=True):
                 nonMfPmiSourced
                 | 'NMPMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(nonMfPmiMapped))
-                | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
+                | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1][1])
                 | 'NPMI to sink' >> debugSink
         )
 
         nm_left_joined | 'NPPMI TO Debug Sink' >> debugSink
-        nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
+        #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
 
 if __name__ == '__main__':
