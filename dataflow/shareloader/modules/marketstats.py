@@ -459,7 +459,7 @@ def run(argv=None, save_main_session=True):
 
         nonMfPmiSourced = non_manuf_pmi_res | 'Mapping NMPMI from Web ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                               dictionary))
-
+        '''
         nonMfPmiMapped = (bq_nmfpmi_res | 'Mapping NMPMI from BQ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                           dictionary))
                        )
@@ -472,7 +472,7 @@ def run(argv=None, save_main_session=True):
         )
 
         #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
-
+        '''
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)
