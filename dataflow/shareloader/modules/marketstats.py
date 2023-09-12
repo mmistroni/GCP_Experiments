@@ -471,7 +471,6 @@ def run(argv=None, save_main_session=True):
                 | 'NPMI to sink' >> debugSink
         )
 
-        nm_left_joined | 'NPPMI TO Debug Sink' >> debugSink
         #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
 

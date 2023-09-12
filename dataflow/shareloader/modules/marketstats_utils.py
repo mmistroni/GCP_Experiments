@@ -267,9 +267,10 @@ class ParseNonManufacturingPMI(beam.DoFn):
     def process(self, element):
         try:
             result = self.get_latest_pmi()
+            logging.info(f'Result is:{result}')
             return [result]
         except Exception as e:
-            print('Failed to get PMI:{}'.format(str(e)))
+            logging.info('Failed to get PMI:{}'.format(str(e)))
             return [{'Last' : 'N/A'}]
 
 class ParseConsumerSentimentIndex(beam.DoFn):
