@@ -241,6 +241,7 @@ class ParseManufacturingPMI(beam.DoFn):
 
 
 
+
 class ParseNonManufacturingPMI(beam.DoFn):
     '''
     Parses non manufacturing PMI
