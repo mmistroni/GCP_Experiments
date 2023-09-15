@@ -17,7 +17,7 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
-                            get_latest_non_manufacturing_pmi_from_bq
+                            get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline
 
 
 from sendgrid import SendGridAPIClient
@@ -326,15 +326,16 @@ def run(argv=None, save_main_session=True):
         consumer_res = run_consumer_sentiment_index(p)
 
 
+        """
         if date.today().weekday() == 2 and date.today().weekday() < 15:
             # We need to store it only once a month
             logging.info(*'Running Market Stats')
             non_manuf_pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
             manuf_pmi_res | 'writing non manuf pmi to sink' >> bq_sink
-
+        
         if date.today().day == 28 :
             consumer_res | 'writing consume res to sink' >> bq_sink
-
+        """
         if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
             cftc = run_cftc_spfutures(p, iexapi_key)
@@ -468,12 +469,34 @@ def run(argv=None, save_main_session=True):
                 | 'NMPMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(nonMfPmiMapped))
                 | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1][1])
-                | 'NPMI to sink' >> debugSink
+
         )
 
-        '''
+        nm_left_joined | 'NPMI to sink' >> debugSink
+
+        nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
+
+        # Consumer sentiment index
+        consumerSentimentmiSourced = consumer_res | 'Mapping consumer res from Web ' >> beam.Map(
+            lambda dictionary: (dictionary['LABEL'],
+                                dictionary))
+        bq_consres_res = create_bigquery_pipeline(p, 'CONSUMER_SENTIMENT')
+
+        bqConsResMapped = (bq_consres_res | 'Mapping ConsRes from BQ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
+                                                                                                  dictionary))
+                          )
+        cres_left_joined = (
+                consumerSentimentmiSourced
+                | 'ConsRes InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
+                                                                right_list=beam.pvalue.AsIter(bqConsResMapped))
+                | 'ConsRes Map to flat tpl' >> beam.Map(lambda tpl: tpl[1][1])
+
+        )
+
+        cres_left_joined | 'NPMI to sink' >> debugSink
+
         #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
-        '''
+
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

@@ -67,6 +67,22 @@ def create_bigquery_nonmanuf_pmi_bq(p):
         beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
 
             )
+def create_bigquery_pipeline(p, label):
+    logging.info(f'Running BQ for {label}')
+    edgar_sql = f"""SELECT DISTINCT LABEL,  VALUE, 
+                 DATE(CONCAT(EXTRACT (YEAR FROM DATE(AS_OF_DATE)), '-', 
+                  EXTRACT (MONTH FROM DATE(AS_OF_DATE)), '-01')) AS AS_OF_DATE  FROM `datascience-projects.gcp_shareloader.market_stats` 
+                WHERE LABEL = '{label}' 
+                GROUP BY LABEL, VALUE, AS_OF_DATE
+                ORDER BY LABEL, AS_OF_DATE DESC
+                LIMIT 7
+      """
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-PMI historic-{label}' >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+
+            )
+
 
 def get_latest_manufacturing_pmi_from_bq(p):
     bq_sql = """SELECT LABEL, AS_OF_DATE, VALUE FROM `datascience-projects.gcp_shareloader.market_stats` 
