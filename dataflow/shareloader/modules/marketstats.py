@@ -493,7 +493,7 @@ def run(argv=None, save_main_session=True):
 
         )
 
-        cres_left_joined | 'NPMI to sink' >> debugSink
+        cres_left_joined | 'CRES to sink' >> debugSink
 
         #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
