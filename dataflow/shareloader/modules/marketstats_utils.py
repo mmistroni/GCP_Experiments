@@ -130,19 +130,25 @@ class PMIJoinerFn(beam.DoFn):
         if len(row) > 1:
             left_key = row[0]
             left = row[1]
-            storedDateStr = right_dict[left_key].get('AS_OF_DATE')
-            currentDateStr = left.get('AS_OF_DATE')
-            storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
+            logging.info(f'Left dict:{left}')
+            logging.info(f'Right idct:{right}')
+            if left_key in right_dict:
+                storedDateStr = right_dict[left_key].get('AS_OF_DATE')
+                currentDateStr = left.get('AS_OF_DATE')
+                storedDate = datetime.strptime(storedDateStr, '%Y-%m-%d')
 
-            logging.info(f'Stored data: {storedDateStr}, Current Date: {currentDateStr}')
+                logging.info(f'Stored data: {storedDateStr}, Current Date: {currentDateStr}')
 
-            currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
+                currentDate = datetime.strptime(currentDateStr, '%Y-%m-%d')
 
-            if currentDate > storedDate:
+                if currentDate > storedDate:
+                    logging.info(f'We need to store  {left_key} in BQ..')
+                    yield (left_key, left)
+                else:
+                    logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')
+            else:
                 logging.info(f'We need to store  {left_key} in BQ..')
                 yield (left_key, left)
-            else:
-                logging.info(f'{currentDateStr} is same as {storedDateStr}. No action')
 
 
 class InnerJoinerFn(beam.DoFn):
