@@ -319,13 +319,6 @@
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
     </task>
-    <task id="LOCAL-00053" summary="added unit test for missed join">
-      <created>1684688014162</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1684688014162</updated>
-    </task>
     <task id="LOCAL-00054" summary="increasing timeout">
       <created>1685878770199</created>
       <option name="number" value="00054" />
@@ -662,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1694789001329</updated>
     </task>
-    <option name="localTasksCounter" value="102" />
+    <task id="LOCAL-00102" summary="added consres">
+      <created>1694853819924</created>
+      <option name="number" value="00102" />
+      <option name="presentableId" value="LOCAL-00102" />
+      <option name="project" value="LOCAL" />
+      <updated>1694853819924</updated>
+    </task>
+    <option name="localTasksCounter" value="103" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -812,7 +812,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>396</line>
+          <line>410</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -832,12 +832,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>464</line>
+          <line>480</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>461</line>
+          <line>477</line>
           <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -877,7 +877,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>237</line>
+          <line>252</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -922,17 +922,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>359</line>
+          <line>372</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>391</line>
+          <line>405</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>383</line>
+          <line>397</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -977,7 +977,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>161</line>
+          <line>170</line>
           <option name="timeStamp" value="286" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1029,10 +1029,6 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
           <line>397</line>
           <option name="timeStamp" value="313" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <option name="timeStamp" value="317" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
