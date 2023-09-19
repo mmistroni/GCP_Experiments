@@ -7,11 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added consres">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
-    </list>
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixed dodgy mapping" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -319,13 +315,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00056" summary="sourcingn pmi on 4th day of week">
-      <created>1686159328224</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1686159328224</updated>
     </task>
     <task id="LOCAL-00057" summary="sourcingn pmi on 4th day of week">
       <created>1686159366817</created>
@@ -663,7 +652,14 @@
       <option name="project" value="LOCAL" />
       <updated>1695143906522</updated>
     </task>
-    <option name="localTasksCounter" value="105" />
+    <task id="LOCAL-00105" summary="fixed dodgy mapping">
+      <created>1695144018196</created>
+      <option name="number" value="00105" />
+      <option name="presentableId" value="LOCAL-00105" />
+      <option name="project" value="LOCAL" />
+      <updated>1695144018196</updated>
+    </task>
+    <option name="localTasksCounter" value="106" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -761,7 +757,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added ticker check" />
     <MESSAGE value="fixing duplicate label" />
     <MESSAGE value="fixing bug in mappingn ticker" />
     <MESSAGE value="added unit test for missed join" />
@@ -786,7 +781,8 @@
     <MESSAGE value="trying to fix non man pmi" />
     <MESSAGE value="fixing petrol prices" />
     <MESSAGE value="added consres" />
-    <option name="LAST_COMMIT_MESSAGE" value="added consres" />
+    <MESSAGE value="fixed dodgy mapping" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed dodgy mapping" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
