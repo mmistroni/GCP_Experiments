@@ -158,7 +158,7 @@ class PMIJoinerFn(beam.DoFn):
             else:
                 logging.info(f'No data in BQ need to store  {left_key} in BQ..')
                 logging.info('REturning {left_key} {left}')
-                return  (left_key, left)
+                yield  (left_key, left)
 
 
 class InnerJoinerFn(beam.DoFn):

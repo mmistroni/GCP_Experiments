@@ -468,7 +468,7 @@ def run(argv=None, save_main_session=True):
                 nonMfPmiSourced
                 | 'NMPMI InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                               right_list=beam.pvalue.AsIter(nonMfPmiMapped))
-                | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1][1])
+                | 'NMPMI Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
 
         )
 
@@ -489,7 +489,7 @@ def run(argv=None, save_main_session=True):
                 consumerSentimentmiSourced
                 | 'ConsRes InnerJoiner: JoinValues' >> beam.ParDo(PMIJoinerFn(),
                                                                 right_list=beam.pvalue.AsIter(bqConsResMapped))
-                | 'ConsRes Map to flat tpl' >> beam.Map(lambda tpl: tpl[1][1])
+                | 'ConsRes Map to flat tpl' >> beam.Map(lambda tpl: tpl[1])
 
         )
 
