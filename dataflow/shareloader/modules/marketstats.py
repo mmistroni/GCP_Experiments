@@ -480,7 +480,7 @@ def run(argv=None, save_main_session=True):
         consumerSentimentmiSourced = consumer_res | 'Mapping consumer res from Web ' >> beam.Map(
             lambda dictionary: (dictionary['LABEL'],
                                 dictionary))
-        bq_consres_res = create_bigquery_pipeline(p, 'CONSUMER_SENTIMENT')
+        bq_consres_res = create_bigquery_pipeline(p, 'CONSUMER_SENTIMENT_INDEX')
 
         bqConsResMapped = (bq_consres_res | 'Mapping ConsRes from BQ' >> beam.Map(lambda dictionary: (dictionary['LABEL'],
                                                                                                   dictionary))
@@ -496,7 +496,7 @@ def run(argv=None, save_main_session=True):
         cres_left_joined | 'CRES to sink' >> debugSink
         cres_left_joined | 'CRES to BQsink' >> bq_sink
 
-        #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
+
 
 
 if __name__ == '__main__':
