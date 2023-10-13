@@ -462,6 +462,11 @@ class TestMarketStats(unittest.TestCase):
             pmi = run_consumer_sentiment_index(p)
             pmi | debugSink
 
+    def test_get_prices2(self):
+        fmp_key = os.environ['FMPREPKEY']
+
+        res = get_prices2()
+
 
 if __name__ == '__main__':
     unittest.main()

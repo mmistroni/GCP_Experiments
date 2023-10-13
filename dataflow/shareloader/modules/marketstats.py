@@ -325,17 +325,6 @@ def run(argv=None, save_main_session=True):
 
         consumer_res = run_consumer_sentiment_index(p)
 
-
-        """
-        if date.today().weekday() == 2 and date.today().weekday() < 15:
-            # We need to store it only once a month
-            logging.info(*'Running Market Stats')
-            non_manuf_pmi_res | 'WritinNG PMI TO SINK' >> bq_sink
-            manuf_pmi_res | 'writing non manuf pmi to sink' >> bq_sink
-        
-        if date.today().day == 28 :
-            consumer_res | 'writing consume res to sink' >> bq_sink
-        """
         if run_weekday == 5:
             logging.info(f'Weekday for rundate is {run_weekday}')
             cftc = run_cftc_spfutures(p, iexapi_key)

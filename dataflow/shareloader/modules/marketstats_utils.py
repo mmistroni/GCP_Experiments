@@ -160,6 +160,31 @@ class PMIJoinerFn(beam.DoFn):
                 logging.info('REturning {left_key} {left}')
                 yield  (left_key, left)
 
+class NewHighNewLowLoader(beam.DoFn):
+    def __init__(self, key, microcap_flag=False, split_flag=None):
+        self.key = key
+
+    def get_quote(self, ticker):
+        stat_url = f'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={self.key}'
+        return requests.get(stat_url).json()[0]
+
+    def process(self, elements):
+        all_dt = []
+        new_high = []
+        new_low = []
+        tickers_to_process = elements.split(',')
+        for idx, ticker in enumerate(tickers_to_process):
+            try:
+                data = self.get_quote(ticker)
+                if data['price'] > data['yearHigh']:
+                    new_high.append(ticker)
+                if data['price'] < data['yearLow']:
+                    new_low.append(ticker)
+            except Exception as e:
+                logging.info(f'Unable to fetch data for {ticker}:{str(e)}')
+
+        return [len(new_high) - len(new_low)]
+
 
 class InnerJoinerFn(beam.DoFn):
     def __init__(self):
@@ -224,6 +249,7 @@ def get_latest_fed_fund_rates():
         return row.find_all('td')[5].text
     except Exception as e:
         return 'N/A'
+
 
 
 def parse_consumer_sentiment_index():
