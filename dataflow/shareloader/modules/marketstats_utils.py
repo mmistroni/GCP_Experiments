@@ -161,7 +161,7 @@ class PMIJoinerFn(beam.DoFn):
                 yield  (left_key, left)
 
 class NewHighNewLowLoader(beam.DoFn):
-    def __init__(self, key, microcap_flag=False, split_flag=None):
+    def __init__(self, key):
         self.key = key
 
     def get_quote(self, ticker):

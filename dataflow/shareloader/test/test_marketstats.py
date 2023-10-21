@@ -9,7 +9,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum,\
-                        get_latest_fed_fund_rates, PMIJoinerFn
+                        get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -462,10 +462,18 @@ class TestMarketStats(unittest.TestCase):
             pmi = run_consumer_sentiment_index(p)
             pmi | debugSink
 
-    def test_get_prices2(self):
+    def test_newhigh_newlow(self):
         fmp_key = os.environ['FMPREPKEY']
+        nyse = get_all_us_stocks2(fmp_key, "New York Stock Exchange")
+        full_ticks = ','.join(nyse)
+        debugSink = beam.Map(print)
 
-        res = get_prices2()
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create([full_ticks])
+                    | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmp_key))
+                    |  debugSink
+            )
 
 
 if __name__ == '__main__':
