@@ -176,9 +176,9 @@ class NewHighNewLowLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             try:
                 data = self.get_quote(ticker)
-                if data['price'] > data['yearHigh']:
+                if data['price'] >= data['yearHigh']:
                     new_high.append(ticker)
-                if data['price'] < data['yearLow']:
+                if data['price'] <= data['yearLow']:
                     new_low.append(ticker)
             except Exception as e:
                 logging.info(f'Unable to fetch data for {ticker}:{str(e)}')
