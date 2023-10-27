@@ -7,17 +7,7 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="started to write new high new low">
-      <change afterPath="$PROJECT_DIR$/shareloader/Dockerfile_tester" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/dataflow_tester.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/dftester_template_metadata" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
-    </list>
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added new high new low and template for testing pipelines" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -325,20 +315,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00064" summary="added extra split">
-      <created>1689313956007</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1689313956007</updated>
-    </task>
-    <task id="LOCAL-00065" summary="added extra split">
-      <created>1689313964911</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1689313964911</updated>
     </task>
     <task id="LOCAL-00066" summary="added extra split">
       <created>1689357292580</created>
@@ -669,7 +645,21 @@
       <option name="project" value="LOCAL" />
       <updated>1697889049529</updated>
     </task>
-    <option name="localTasksCounter" value="113" />
+    <task id="LOCAL-00113" summary="added new high new low and template for testing pipelines">
+      <created>1698430077593</created>
+      <option name="number" value="00113" />
+      <option name="presentableId" value="LOCAL-00113" />
+      <option name="project" value="LOCAL" />
+      <updated>1698430077593</updated>
+    </task>
+    <task id="LOCAL-00114" summary="added new high new low and template for testing pipelines">
+      <created>1698430086772</created>
+      <option name="number" value="00114" />
+      <option name="presentableId" value="LOCAL-00114" />
+      <option name="project" value="LOCAL" />
+      <updated>1698430086772</updated>
+    </task>
+    <option name="localTasksCounter" value="115" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -767,7 +757,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing bug in mappingn ticker" />
     <MESSAGE value="added unit test for missed join" />
     <MESSAGE value="increasing timeout" />
     <MESSAGE value="sourcingn pmi on 4th day of week" />
@@ -792,7 +781,8 @@
     <MESSAGE value="added consres" />
     <MESSAGE value="fixed dodgy mapping" />
     <MESSAGE value="started to write new high new low" />
-    <option name="LAST_COMMIT_MESSAGE" value="started to write new high new low" />
+    <MESSAGE value="added new high new low and template for testing pipelines" />
+    <option name="LAST_COMMIT_MESSAGE" value="added new high new low and template for testing pipelines" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
