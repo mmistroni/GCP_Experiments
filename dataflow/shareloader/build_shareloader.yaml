@@ -50,9 +50,32 @@ steps:
           , '--metadata-file'
           , '$_MARKETSTATS_METADATA_FILE']  
     id: 'build-marketstats-flex-template'
+  - name: gcr.io/cloud-builders/docker
+      args:
+        [ 'build'
+        , '--tag=gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
+        , '--file=./dataflow/shareloader/Dockerfile_tester'
+        , './dataflow/shareloader/'
+        ]
+      id: 'dftester-image'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'dataflow'
+        , 'flex-template'
+        , 'build'
+        , '$_DFTESTER_TEMPLATE_GCS_LOCATION'
+        , '--image'
+        , 'gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
+        , '--sdk-language'
+        , 'PYTHON'
+        , '--metadata-file'
+        , '$_DFTESTER_METADATA_FILE' ]
+    id: 'build-dftester-flex-template'
 
 
-images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME' ]
+images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$__DFTESTER_IMAGE_NAME' ]
 
 
 substitutions:
@@ -63,4 +86,7 @@ substitutions:
   _MARKETSTATS_IMAGE_NAME: marketstats:latest
   _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template.json
   _MARKETSTATS_METADATA_FILE: ./dataflow/shareloader/marketstats_template_metadata
+  _DFTESTER_IMAGE_NAME: dftester:latest
+  _DFTESTER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/dftester_flex_template.json
+  _DFTESTER_METADATA_FILE: ./dataflow/shareloader/dftester_template_metadata
 

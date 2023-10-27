@@ -165,6 +165,7 @@ class NewHighNewLowLoader(beam.DoFn):
         self.key = key
 
     def get_quote(self, ticker):
+        # get yesterday price
         stat_url = f'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={self.key}'
         return requests.get(stat_url).json()[0]
 
@@ -177,8 +178,10 @@ class NewHighNewLowLoader(beam.DoFn):
             try:
                 data = self.get_quote(ticker)
                 if data['price'] >= data['yearHigh']:
+                    logging.info(f'New high for {ticker}')
                     new_high.append(ticker)
                 if data['price'] <= data['yearLow']:
+                    logging.info(f'New low for {ticker}')
                     new_low.append(ticker)
             except Exception as e:
                 logging.info(f'Unable to fetch data for {ticker}:{str(e)}')
@@ -249,8 +252,6 @@ def get_latest_fed_fund_rates():
         return row.find_all('td')[5].text
     except Exception as e:
         return 'N/A'
-
-
 
 def parse_consumer_sentiment_index():
     ua = get_user_agent()

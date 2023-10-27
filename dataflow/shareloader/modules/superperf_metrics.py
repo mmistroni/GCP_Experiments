@@ -126,8 +126,6 @@ def evaluate_progression(input):
     return all(res)
 
 
-
-
 def get_fmprep_historical(ticker, key, numdays=20, colname='adjClose'):
     hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
     data = requests.get(hist_url).json().get('historical')

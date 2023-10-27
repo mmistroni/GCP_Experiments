@@ -1,0 +1,11 @@
+{
+  "name": "DFlow tester ",
+  "description": "An template for testing dataflow pipelines.",
+  "parameters": [
+    {
+      "name": "fmprepkey",
+      "helpText": "FMPREP  key",
+      "label": "fmprepkey"
+    }
+  ]
+}

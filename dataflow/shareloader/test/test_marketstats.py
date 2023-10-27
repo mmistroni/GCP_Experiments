@@ -9,7 +9,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum,\
-                        get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader
+                        get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -465,7 +465,7 @@ class TestMarketStats(unittest.TestCase):
     def test_newhigh_newlow(self):
         fmp_key = os.environ['FMPREPKEY']
         nyse = get_all_us_stocks2(fmp_key, "New York Stock Exchange")
-        full_ticks = ','.join(nyse)
+        full_ticks = 'APPF,CIDM,FXCO,GMM,HZNP,IMAC,INTR,ERYP'
         debugSink = beam.Map(print)
 
         with TestPipeline() as p:
@@ -474,6 +474,16 @@ class TestMarketStats(unittest.TestCase):
                     | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmp_key))
                     |  debugSink
             )
+
+    def test_prices2(self):
+        fmp_key = os.environ['FMPREPKEY']
+        full_ticks = 'APPF,CIDM'
+
+        for tick in full_ticks.split(','):
+            res = get_prices2(tick, fmp_key)
+            print('foo')
+
+
 
 
 if __name__ == '__main__':
