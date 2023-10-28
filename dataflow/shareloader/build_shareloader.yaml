@@ -51,14 +51,16 @@ steps:
           , '$_MARKETSTATS_METADATA_FILE']  
     id: 'build-marketstats-flex-template'
   - name: gcr.io/cloud-builders/docker
-      args:
-        [ 'build'
-        , '--tag=gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
-        , '--file=./dataflow/shareloader/Dockerfile_tester'
-        , './dataflow/shareloader/'
-        ]
-      id: 'dftester-image'
+    id: 'dftester-image'
+    args:
+      [ 'build'
+      , '--tag=gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
+      , '--file=./dataflow/shareloader/Dockerfile_tester'
+      , './dataflow/shareloader/'
+      ]
+
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'build-dftester-flex-template'
     entrypoint: 'gcloud'
     args:
       [
@@ -72,7 +74,7 @@ steps:
         , 'PYTHON'
         , '--metadata-file'
         , '$_DFTESTER_METADATA_FILE' ]
-    id: 'build-dftester-flex-template'
+
 
 
 images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$__DFTESTER_IMAGE_NAME' ]
