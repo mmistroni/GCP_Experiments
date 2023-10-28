@@ -77,7 +77,7 @@ steps:
 
 
 
-images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$__DFTESTER_IMAGE_NAME' ]
+images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME' ]
 
 
 substitutions:

@@ -319,13 +319,6 @@
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
     </task>
-    <task id="LOCAL-00067" summary="added margin of safety field, starting to add ranks to sector">
-      <created>1689961990599</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1689961990600</updated>
-    </task>
     <task id="LOCAL-00068" summary="added margin of safety field, starting to add ranks to sector">
       <created>1689962004337</created>
       <option name="number" value="00068" />
@@ -662,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698430130650</updated>
     </task>
-    <option name="localTasksCounter" value="116" />
+    <task id="LOCAL-00116" summary="added new high new low and template for testing pipelines">
+      <created>1698483645389</created>
+      <option name="number" value="00116" />
+      <option name="presentableId" value="LOCAL-00116" />
+      <option name="project" value="LOCAL" />
+      <updated>1698483645389</updated>
+    </task>
+    <option name="localTasksCounter" value="117" />
     <servers />
   </component>
   <component name="TestHistory">
