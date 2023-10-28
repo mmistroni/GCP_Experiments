@@ -13,7 +13,7 @@ steps:
           , '$_DFTESTER_TEMPLATE_GCS_LOCATION'
           , '--parameters'
           , 'fmprepkey=$_FMPREP_KEY'
-          '--region=$_REGION'
+          ,'--region=$_REGION'
           ]  
 substitutions:
   _JOB_NAME: 'dftester'
