@@ -8,8 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added new high new low and template for testing pipelines">
+      <change afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,13 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00068" summary="added margin of safety field, starting to add ranks to sector">
-      <created>1689962004337</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1689962004337</updated>
     </task>
     <task id="LOCAL-00069" summary="added fred endpoints. testing fmprep screener endpoint">
       <created>1690265376461</created>
@@ -662,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698483645389</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="added new high new low and template for testing pipelines">
+      <created>1698484776158</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1698484776158</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="TestHistory">
