@@ -36,7 +36,7 @@ def run(argv=None, save_main_session=True):
 
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
-    logging.info('Fetching data for sectors {} '.format(pipeline_options.sector))
+    logging.info('Starting tester pipeline')
 
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
