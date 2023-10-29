@@ -17,7 +17,7 @@ class XyzOptions(PipelineOptions):
 
 def run_my_pipeline(p, fmpkey):
     nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
-    full_ticks = '.'.join(nyse)
+    full_ticks = ','.join(nyse)
 
     return ( p
             | 'Start' >> beam.Create([full_ticks])
