@@ -21,7 +21,7 @@ def run_my_pipeline(p, fmpkey):
 
     return ( p
             | 'Start' >> beam.Create([full_ticks])
-            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmp_key))
+            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpkey))
 
     )
 

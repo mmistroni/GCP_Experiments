@@ -7,9 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added new high new low and template for testing pipelines">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixin gbug">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -318,20 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00070" summary="added fred endpoints. testing fmprep screener endpoint">
-      <created>1690306283390</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1690306283391</updated>
-    </task>
-    <task id="LOCAL-00071" summary="added fred endpoints. testing fmprep screener endpoint">
-      <created>1690306337237</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1690306337237</updated>
     </task>
     <task id="LOCAL-00072" summary="added fred endpoints. testing fmprep screener endpoint">
       <created>1690306364258</created>
@@ -662,7 +648,21 @@
       <option name="project" value="LOCAL" />
       <updated>1698486968836</updated>
     </task>
-    <option name="localTasksCounter" value="119" />
+    <task id="LOCAL-00119" summary="added new high new low and template for testing pipelines">
+      <created>1698487030647</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1698487030647</updated>
+    </task>
+    <task id="LOCAL-00120" summary="fixin gbug">
+      <created>1698576791983</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1698576791983</updated>
+    </task>
+    <option name="localTasksCounter" value="121" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -760,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added unit test for missed join" />
     <MESSAGE value="increasing timeout" />
     <MESSAGE value="sourcingn pmi on 4th day of week" />
     <MESSAGE value="adding full run" />
@@ -785,7 +784,8 @@
     <MESSAGE value="fixed dodgy mapping" />
     <MESSAGE value="started to write new high new low" />
     <MESSAGE value="added new high new low and template for testing pipelines" />
-    <option name="LAST_COMMIT_MESSAGE" value="added new high new low and template for testing pipelines" />
+    <MESSAGE value="fixin gbug" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixin gbug" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
