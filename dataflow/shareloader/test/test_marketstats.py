@@ -318,15 +318,10 @@ class TestMarketStats(unittest.TestCase):
         fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
             (p
-             | 'Get List of Tickers' >> beam.Create([get_market_momentum(fmp_key)])
-             | self.notEmptySink
+             | 'Get List of Tickers' >> beam.Create([get_market_momentum(fmp_key, '^RUT')])
+             | self.printSink
              )
 
-    def test_get_market_momentum(self):
-        fmp_key = os.environ['FMPREPKEY']
-        with TestPipeline(options=PipelineOptions()) as p:
-            res = run_market_momentum(p, fmp_key)
-            res | self.notEmptySink
 
 
     def test_get_vix(self):

@@ -16,9 +16,6 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-def get_all_ticks_for_exchange(exchange):
-
-
 def run_my_pipeline(p, fmpkey):
     nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
     nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")

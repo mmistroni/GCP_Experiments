@@ -373,10 +373,10 @@ check investopedia.comm  high yield bond spread
 
 
 '''
+market_momentum_dict = {'^GSPC' : 'S&PClose', '^RUT' : 'Russell2000Close'}
 
-
-def get_market_momentum(key):
-    hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/^GSPC?apikey={}'.format(key)
+def get_market_momentum(key, ticker='^GSPC'):
+    hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={key}'
     lastDays = requests.get(hist_url).json().get('historical')[0:125]
     close = [d['close'] for d in lastDays]
     day125avg = statistics.mean(close)
@@ -384,7 +384,8 @@ def get_market_momentum(key):
 
     status = 'FEAR' if latest < day125avg else 'GREED'
 
-    return [f'S&PClose:(125MVGAVG:{day125avg})|{latest}|STATUS:{status}']
+    prefix = market_momentum_dict[ticker]
+    return [f'{prefix}:(125MVGAVG:{day125avg})|{latest}|STATUS:{status}']
 
 
 def get_cftc_spfutures(key):

@@ -7,9 +7,11 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixin gbug">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding nasdaq">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,8 +221,29 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow">
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum">
+    <configuration name="test_marketstats" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/shareloader/test/test_marketstats.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -230,7 +253,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_all_us_stocks&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_market_momentum&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -276,34 +299,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_compute_rsi" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_compute_rsi&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_rsi" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_prices2" />
+      <item itemvalue="Python.test_marketstats" />
+      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" />
+        <item itemvalue="Python.test_marketstats" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_prices2" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_compute_rsi" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_all_us_stocks" />
       </list>
     </recent_temporary>
   </component>
@@ -318,13 +327,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00073" summary="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
-      <created>1690524018957</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1690524018957</updated>
     </task>
     <task id="LOCAL-00074" summary="added fred endpoints. testing fmprep screener endpoint. amended premarket loader">
       <created>1690524026726</created>
@@ -662,7 +664,14 @@
       <option name="project" value="LOCAL" />
       <updated>1698580119992</updated>
     </task>
-    <option name="localTasksCounter" value="122" />
+    <task id="LOCAL-00122" summary="adding nasdaq">
+      <created>1698771309872</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1698771309873</updated>
+    </task>
+    <option name="localTasksCounter" value="123" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -760,7 +769,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="increasing timeout" />
     <MESSAGE value="sourcingn pmi on 4th day of week" />
     <MESSAGE value="adding full run" />
     <MESSAGE value="updated email for sector loader" />
@@ -785,7 +793,8 @@
     <MESSAGE value="started to write new high new low" />
     <MESSAGE value="added new high new low and template for testing pipelines" />
     <MESSAGE value="fixin gbug" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixin gbug" />
+    <MESSAGE value="adding nasdaq" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding nasdaq" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -827,12 +836,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>508</line>
+          <line>509</line>
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>505</line>
+          <line>506</line>
           <option name="timeStamp" value="133" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -917,17 +926,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>400</line>
+          <line>401</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>433</line>
+          <line>434</line>
           <option name="timeStamp" value="250" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>425</line>
+          <line>426</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1022,7 +1031,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>397</line>
+          <line>392</line>
           <option name="timeStamp" value="313" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1077,13 +1086,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>352</line>
+          <line>347</line>
           <option name="timeStamp" value="354" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>483</line>
+          <line>478</line>
           <option name="timeStamp" value="357" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>380</line>
+          <option name="timeStamp" value="358" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
