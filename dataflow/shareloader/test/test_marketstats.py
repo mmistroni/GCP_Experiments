@@ -197,7 +197,7 @@ class TestMarketStats(unittest.TestCase):
                     | 'FlattenCombine all' >> beam.Flatten()
                     | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
                     | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                    | self.notEmptySink
+                    | self.printSink
 
             )
     def test_combineGlobally(self):
@@ -478,7 +478,10 @@ class TestMarketStats(unittest.TestCase):
             res = get_prices2(tick, fmp_key)
             print('foo')
 
-
+    def test_MarketBreadth(self):
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            pass
 
 
 if __name__ == '__main__':

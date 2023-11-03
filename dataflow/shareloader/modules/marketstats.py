@@ -175,9 +175,9 @@ def run_fed_fund_rates(p):
             )
 
 
-def run_market_momentum(p, key):
+def run_market_momentum(p, key, ticker='^GSPC'):
     return (p | 'start run_mm' >> beam.Create(['20210101'])
-                    | 'mm' >>   beam.Map(lambda d:  get_market_momentum(key))
+                    | 'mm' >>   beam.Map(lambda d:  get_market_momentum(key, ticker))
                     | 'remap mm' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
             )
 
@@ -334,6 +334,11 @@ def run(argv=None, save_main_session=True):
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
 
+        nasdaq_res = run_market_momentum(p, iexapi_key, 'QQQ')
+
+        russell_res = run_market_momentum(p, iexapi_key, 'IWM')
+
+
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
@@ -379,10 +384,13 @@ def run(argv=None, save_main_session=True):
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (8, d))
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (9, d))
-        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (10, d))
-        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (11, d))
+        qqq_key = nasdaq_res | 'Add mm' >> beam.Map(lambda d: (8, d))
+        rut_key = russell_res | 'Add mm' >> beam.Map(lambda d: (8, d))
+
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (11, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (12, d))
+        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (13, d))
+        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (14, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (15, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (16, d))
@@ -394,7 +402,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, cftc_key,  vix_key, sd_key, growth_vs_val_key,
+                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key, cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
                         pmi_hist_key, non_manuf_pmi_hist_key,
