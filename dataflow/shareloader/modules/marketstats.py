@@ -384,8 +384,8 @@ def run(argv=None, save_main_session=True):
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (6, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
-        qqq_key = nasdaq_res | 'Add mm' >> beam.Map(lambda d: (8, d))
-        rut_key = russell_res | 'Add mm' >> beam.Map(lambda d: (9, d))
+        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (8, d))
+        rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (9, d))
 
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (11, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (12, d))
