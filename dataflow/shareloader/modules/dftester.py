@@ -15,9 +15,11 @@ class XyzOptions(PipelineOptions):
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
 
+
 def run_my_pipeline(p, fmpkey):
     nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
-    full_ticks = ','.join(nyse)
+    nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")
+    full_ticks = '.'.join(nyse + nasdaq)
 
     return ( p
             | 'Start' >> beam.Create([full_ticks])
