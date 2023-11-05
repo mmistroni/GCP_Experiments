@@ -178,7 +178,7 @@ def run_fed_fund_rates(p):
 def run_market_momentum(p, key, ticker='^GSPC'):
     return (p | f'start run_mm_{ticker}' >> beam.Create(['20210101'])
                     | f'mm_{ticker}' >>   beam.Map(lambda d:  get_market_momentum(key, ticker))
-                    | 'remap mm_{ticker}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
+                    | f'remap mm_{ticker}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
             )
 
 def run_growth_vs_value(p, key):
