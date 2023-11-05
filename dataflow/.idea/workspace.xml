@@ -298,9 +298,9 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.test_marketstats" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_prices2" />
-      <item itemvalue="Python.test_marketstats" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_market_momentum" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_another" />
     </list>
@@ -325,13 +325,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00076" summary="added join to test mohtly PMI. tested some FRED URLS">
-      <created>1692340549079</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1692340549079</updated>
     </task>
     <task id="LOCAL-00077" summary="attempting join">
       <created>1692438192489</created>
@@ -669,7 +662,14 @@
       <option name="project" value="LOCAL" />
       <updated>1699035488979</updated>
     </task>
-    <option name="localTasksCounter" value="125" />
+    <task id="LOCAL-00125" summary="adding nasdaq and rut">
+      <created>1699035506013</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1699035506013</updated>
+    </task>
+    <option name="localTasksCounter" value="126" />
     <servers />
   </component>
   <component name="TestHistory">
