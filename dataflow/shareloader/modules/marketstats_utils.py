@@ -429,7 +429,6 @@ def get_mcclellan(ticker):
               if not math.isnan(value):
                   data.append({'date': date, 'value': value})
 
-
           df = pd.DataFrame.from_dict(data)
 
           return {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
