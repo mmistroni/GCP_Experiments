@@ -9,7 +9,8 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum,\
-                        get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2
+                        get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
+                        get_mcclellan
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -478,10 +479,20 @@ class TestMarketStats(unittest.TestCase):
             res = get_prices2(tick, fmp_key)
             print('foo')
 
-    def test_MarketBreadth(self):
-        fmp_key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            pass
+    def test_McClellan(self):
+        import pandas as pd
+        res1 = get_mcclellan('$NYSI')
+        print(res1)
+        res2 = get_mcclellan('$NYMO')
+        print(res2)
+
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

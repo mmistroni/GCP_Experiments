@@ -9,6 +9,7 @@ from datetime import date, timedelta, datetime
 from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
+import math
 
 
 def create_bigquery_ppln(p, label):
@@ -409,6 +410,40 @@ def get_sp500():
 
     sp500_df = sp500_df[['Symbol', 'Security', 'GICS Sector', 'GICS Sub-Industry']]
     return sp500_df.to_dict('records')
+
+def get_mcclellan(ticker):
+    try:
+          YEARS = 25
+          URL = f'https://stockcharts.com/c-sc/sc?s={ticker}&p=D&yr={YEARS}&mn=0&dy=0&i=t3757734781c&img=text&inspector=yes'
+          data = requests.get(URL, headers={'user-agent': get_user_agent()}).text
+          data = data.split('<pricedata>')[1].replace('</pricedata>', '')
+          lines = data.split('|')
+          data = []
+          for line in lines:
+              cols = line.split(' ')
+              date = datetime(int(cols[1][0:4]), int(cols[1][4:6]), int(cols[1][6:8]))
+              value = float(cols[3])
+
+              if not math.isnan(value):
+                  data.append({'date': date, 'value': value})
+
+
+          df = pd.DataFrame.from_dict(data)
+
+          return {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
+                  'LABEL' : ticker,
+                  'VALUE' : df.tail(1).to_dict('records')[0]['value']
+                  }
+    except Exception as e:
+        logging.info(f'Failed to get data for {ticker}:{str(e)}')
+        {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'),
+         'LABEL': ticker,
+         'VALUE': 0.0
+         }
+
+
+
+
 
 
 def get_vix(key):
