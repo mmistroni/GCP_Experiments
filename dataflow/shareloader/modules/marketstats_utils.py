@@ -374,7 +374,9 @@ check investopedia.comm  high yield bond spread
 
 
 '''
-market_momentum_dict = {'^GSPC' : 'S&PClose', '^RUT' : 'Russell2000Close'}
+market_momentum_dict = {'^GSPC' : 'S&PClose', 'QQQ' : 'Nasdaq100Close',
+                        'IWM': 'Russell2000Close', '^RUT' : 'Rusell2000Close'
+                        }
 
 def get_market_momentum(key, ticker='^GSPC'):
     hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={key}'
