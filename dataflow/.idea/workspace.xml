@@ -7,10 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="addinig nysi nymo">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added params to calculate peter lynch ratio">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -320,20 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00081" summary="fixing typo">
-      <created>1692891874536</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1692891874536</updated>
-    </task>
-    <task id="LOCAL-00082" summary="removiing join temporarily">
-      <created>1692899511275</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1692899511275</updated>
     </task>
     <task id="LOCAL-00083" summary="fixed pmi , tentatively">
       <created>1693212812479</created>
@@ -664,7 +649,21 @@
       <option name="project" value="LOCAL" />
       <updated>1699383197322</updated>
     </task>
-    <option name="localTasksCounter" value="130" />
+    <task id="LOCAL-00130" summary="added params to calculate peter lynch ratio">
+      <created>1699860658731</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1699860658731</updated>
+    </task>
+    <task id="LOCAL-00131" summary="added params to calculate peter lynch ratio">
+      <created>1699860679022</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1699860679022</updated>
+    </task>
+    <option name="localTasksCounter" value="132" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -762,7 +761,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated email for sector loader" />
     <MESSAGE value="removing unused pipeline" />
     <MESSAGE value="added extra split" />
     <MESSAGE value="added margin of safety field, starting to add ranks to sector" />
@@ -787,7 +785,8 @@
     <MESSAGE value="adding nasdaq" />
     <MESSAGE value="adding nasdaq and rut" />
     <MESSAGE value="addinig nysi nymo" />
-    <option name="LAST_COMMIT_MESSAGE" value="addinig nysi nymo" />
+    <MESSAGE value="added params to calculate peter lynch ratio" />
+    <option name="LAST_COMMIT_MESSAGE" value="added params to calculate peter lynch ratio" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -844,7 +843,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>668</line>
+          <line>678</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1069,13 +1068,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>639</line>
+          <line>649</line>
           <option name="timeStamp" value="366" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
           <line>247</line>
           <option name="timeStamp" value="367" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>238</line>
+          <option name="timeStamp" value="369" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

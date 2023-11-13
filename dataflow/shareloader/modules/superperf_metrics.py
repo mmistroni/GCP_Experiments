@@ -590,6 +590,16 @@ def get_key_metrics_benchmark(ticker, key):
     except Exception as e:
         return None
 
+def get_peter_lynch_ratio(ticker, inputDict):
+    # need growth ratio, div yield and pe/ratio
+    divYield = inputDict['dividendYield']
+    peRatio = inputDict['peRatio'] / 100
+    growth =  inputDict['epsGrowth5yrs'] - 1
+
+    return (divYield + growth) / peRatio
+
+
+
 def get_financial_ratios_benchmark(ticker, key):
     # some eps in last 10 yrs
     try:
