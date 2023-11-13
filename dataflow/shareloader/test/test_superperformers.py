@@ -12,7 +12,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
                 get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
-                get_mm_trend_template
+                get_mm_trend_template, get_fundamental_parameters
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -207,8 +207,9 @@ class TestSuperPerformers(unittest.TestCase):
 
     def test_get_financial_ratios(self):
         key = os.environ['FMPREPKEY']
-
-        self.assertTrue(get_financial_ratios('AAPL', key))
+        # dividend yield here
+        res = get_financial_ratios('AAPL', key)
+        self.assertTrue(res)
 
     def test_get_stock_dividends(self):
         import requests
@@ -224,13 +225,39 @@ class TestSuperPerformers(unittest.TestCase):
         from pprint import pprint
         self.assertTrue(all_divis)
 
+    def test_get_peterlynch_ratios(self):
+        key = os.environ['FMPREPKEY']
+
+        # pe  / we have it in financial ratios
+        # dividendYield we have it in fnancial ratios
+        # epsGrowth  added.
+
+        # financial ratios for bench has div Yield  + peRatio (pe ratio not in percentage)
+        bench = get_financial_ratios_benchmark('AAPL', key)
+
+        # div yield
+        standard = get_financial_ratios('AAPL', key)
+
+        ibench = get_income_benchmark('AAPL', key)
+
+        # div yield
+        istandard = get_fundamental_parameters('AAPL', key)
+
+
+
+        self.assertIsNotNone(bench)
+        self.assertIsNotNone(standard)
+
+
+
+
     def test_benchmarkLoader(self):
         key = os.environ['FMPREPKEY']
         printingSink = beam.Map(print)
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['MAGS'])
+             (p | 'Starting' >> beam.Create(['AMZN'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
                          | 'Filtering' >> beam.Filter(benchmark_filter)
@@ -238,7 +265,7 @@ class TestSuperPerformers(unittest.TestCase):
                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
 
-              | self.notEmptySink
+              | printingSink
              )
 
     def test_fundamentalLoader(self):
@@ -247,13 +274,13 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['KRNY'])
+             (p | 'Starting' >> beam.Create(['AMZN'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
                          #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
                          #| 'Filtering' >> beam.Filter(asset_play_filter)
-                         | self.notEmptySink
+                         | printingSink
              )
 
     def test_load_fundamental_data(self):

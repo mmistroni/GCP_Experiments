@@ -364,6 +364,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             if eps_5yrs_ago > 0:
                 complex_n = pow(eps_thisyear / eps_5yrs_ago, 1 / 5) - 1
                 fundamental_dict['eps_growth_past_5yrs'] = float(complex_n.real)
+                fundamental_dict['epsGrowth5yrs'] = (eps_thisyear - income_statement[4].get('eps', -99)) / income_statement[4].get('eps', -99)
             else:
                 fundamental_dict['eps_growth_past_5yrs'] = -1
             # Now we get the quarterl stats
@@ -378,6 +379,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
 
         fundamental_dict['eps_growth_this_year'] = -1
         fundamental_dict['eps_growth_past_5yrs'] = -1
+        fundamental_dict['epsGrowth5yrs'] = fundamental_dict['eps_growth_past_5yrs']
         # Now we get the quarterl stats
         qtrly_fundamental_dict = get_fundamental_parameters_qtr(ticker, key)
         fundamental_dict.update(qtrly_fundamental_dict)
@@ -421,7 +423,8 @@ def get_financial_ratios(ticker, key):
                     dividendYield=0 if latest.get('dividendYielTTM') is None else latest.get('dividendYielTTM'),
                     returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'),
                     netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'),
-                    currentRatio = 0 if latest.get('currentRatioTTM') is None else latest.get('currentRatioTTM'))
+                    currentRatio = 0 if latest.get('currentRatioTTM') is None else latest.get('currentRatioTTM'),
+                    peRatio = 0 if latest.get('peRatioTTM') is None else latest.get('peRatioTTM'))
             ratioDict.update(dataDict)
         except Exception as e:
             return {}
@@ -531,6 +534,7 @@ def compute_cagr(input_list):
     if all([item != 0 for item in input_list]):
         return ','.join ([ "%.2f" %  ((current_amount / starter) ** (1 / (idx+1))) for idx, current_amount in enumerate(input_list[1:])])
     return '-0.0'
+
 
 def get_income_benchmark(ticker, key):
     # some eps in last 10 yrs
