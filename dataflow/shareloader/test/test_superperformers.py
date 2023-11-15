@@ -12,7 +12,7 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
                 get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
-                get_mm_trend_template, get_fundamental_parameters
+                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -242,6 +242,8 @@ class TestSuperPerformers(unittest.TestCase):
 
         # div yield
         istandard = get_fundamental_parameters('AAPL', key)
+
+        res = get_peter_lynch_ratio(key, 'AAPL', standard)
 
 
 

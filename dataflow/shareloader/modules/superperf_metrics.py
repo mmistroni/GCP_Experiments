@@ -573,6 +573,15 @@ def get_income_benchmark(ticker, key):
     except Exception as e:
         return None
 
+def get_eps_growth(ticker, key, field='estimatedEpsAvg'):
+    try:
+        baseUrl = f'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'
+        return requests.get(baseUrl).json()[0].get(field)
+    except Exception as e:
+        return -99
+
+
+
 def get_key_metrics_benchmark(ticker, key):
     # some eps in last 10 yrs
     try:
@@ -590,11 +599,11 @@ def get_key_metrics_benchmark(ticker, key):
     except Exception as e:
         return None
 
-def get_peter_lynch_ratio(ticker, inputDict):
+def get_peter_lynch_ratio(key, ticker, inputDict):
     # need growth ratio, div yield and pe/ratio
-    divYield = inputDict['dividendYield']
-    peRatio = inputDict['peRatio'] / 100
-    growth =  inputDict['epsGrowth5yrs'] - 1
+    divYield = inputDict['dividendYield'] * 100
+    peRatio = inputDict['peRatio']
+    growth =  get_eps_growth(ticker, key)
 
     return (divYield + growth) / peRatio
 
