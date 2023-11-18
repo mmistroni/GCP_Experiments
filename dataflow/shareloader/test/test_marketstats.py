@@ -480,11 +480,25 @@ class TestMarketStats(unittest.TestCase):
             print('foo')
 
     def test_McClellan(self):
+
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create(['$NYSI'])
+                    | 'Get mmcl' >> beam.Map(get_mcclellan)
+                    |  'nysi sink' >>self.printSink
+            )
+
+            res2 = (p
+                   | 'Start2' >> beam.Create(['$NYMO'])
+                   | 'Get mmcl2' >> beam.Map(get_mcclellan)
+                   | 'nymo sink' >> self.printSink
+                   )
+
         import pandas as pd
-        res1 = get_mcclellan('$NYSI')
-        print(res1)
-        res2 = get_mcclellan('$NYMO')
-        print(res2)
+        #res1 = get_mcclellan('$NYSI')
+        #print(res1)
+        #res2 = get_mcclellan('$NYMO')
+        #print(res2)
 
 
 if __name__ == '__main__':

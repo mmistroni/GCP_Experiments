@@ -443,10 +443,6 @@ def get_mcclellan(ticker):
          }
 
 
-
-
-
-
 def get_vix(key):
     try:
         base_url = 'https://financialmodelingprep.com/api/v3/quote-short/{}?apikey={}'.format('^VIX', key)

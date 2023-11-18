@@ -17,7 +17,8 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
-                            get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline
+                            get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
+                            get_mcclellan
 
 
 from sendgrid import SendGridAPIClient
@@ -193,6 +194,14 @@ def run_cftc_spfutures(p, key):
                     | 'remap cftcspfutures' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'CFTC-SPFUTURES', 'VALUE' : str(d)})
             )
 
+def run_mcclellan_pipeline(p, ticker):
+    return (p
+     | f'Start_{ticker}' >> beam.Create(['$NYSI'])
+     | f'Get mmcl_{ticker}' >> beam.Map(get_mcclellan)
+     )
+
+
+
 def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
     asOfDate = (date.today() - BDay(1)).date()
@@ -338,16 +347,17 @@ def run(argv=None, save_main_session=True):
 
         russell_res = run_market_momentum(p, iexapi_key, 'IWM')
 
-
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
+
+        nysi_res = run_mcclellan_pipeline(p, '$NYSI')
+        nymo_res = run_mcclellan_pipeline(p, '$NYMO')
 
         logging.info('Run NYSE..')
         nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
         logging.info('Run Nasdaq..')
         nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
-
         equity_pcratio = run_putcall_ratio(p)
 
         fed_funds = run_fed_fund_rates(p)
@@ -387,22 +397,27 @@ def run(argv=None, save_main_session=True):
         qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (8, d))
         rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (9, d))
 
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (11, d))
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (12, d))
-        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (13, d))
-        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (14, d))
+        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (10, d))
+        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (11, d))
 
-        static_key = static | 'Add 10' >> beam.Map(lambda d: (15, d))
-        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (16, d))
-        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (17, d))
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (21, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (22, d))
+        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (23, d))
+        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (24, d))
+
+        static_key = static | 'Add 10' >> beam.Map(lambda d: (25, d))
+        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (26, d))
+        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (27, d))
         # we need a global combiner to write to sink
-        pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (20, d))
+        pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (30, d))
 
-        non_manuf_pmi_hist_key = non_pmi_hist | 'Add 30' >> beam.Map(lambda d: (30, d))
+        non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beam.Map(lambda d: (40, d))
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key, cftc_key,  vix_key, sd_key, growth_vs_val_key,
+                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
+                        nysi_key, nymo_key,
+                        cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
                         pmi_hist_key, non_manuf_pmi_hist_key,
