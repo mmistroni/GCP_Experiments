@@ -594,6 +594,7 @@ def get_key_metrics_benchmark(ticker, key):
             dataDict['tangibleBookValuePerShare'] = keyMetrics[0].get('tangibleBookValuePerShareTTM') or 0
             dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
             dataDict['freeCashFlowPerShare'] = keyMetrics[0].get('freeCashFlowPerShareTTM') or 0
+            dataDict['earningsYield'] = keyMetrics[0].get('earningsYield') or 0
 
             return dataDict
     except Exception as e:

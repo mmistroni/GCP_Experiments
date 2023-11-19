@@ -223,7 +223,6 @@ class FundamentalLoader(beam.DoFn):
                         financial_ratios = get_financial_ratios(ticker, self.key)
                         if financial_ratios:
                             fundamental_data.update(financial_ratios)
-
                     updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
                     descr_and_tech = get_descriptive_and_technical(ticker, self.key)
                     updated_dict.update(descr_and_tech)
@@ -233,6 +232,8 @@ class FundamentalLoader(beam.DoFn):
                     latest_rsi = compute_rsi(ticker, self.key)
                     updated_dict['piotroskyScore'] = piotrosky_score
                     updated_dict['rsi'] = latest_rsi
+                    keyMetrics = get_key_metrics_benchmark(ticker, self.key)
+                    updated_dict.update(keyMetrics)
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
