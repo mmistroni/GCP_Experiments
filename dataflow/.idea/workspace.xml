@@ -7,11 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added params to calculate peter lynch ratio">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added nymo and nysi">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,13 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00085" summary="fixed fruit and veg">
-      <created>1693213262093</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1693213262093</updated>
     </task>
     <task id="LOCAL-00086" summary="fixed fruit and veg">
       <created>1693213277799</created>
@@ -665,7 +656,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700072192685</updated>
     </task>
-    <option name="localTasksCounter" value="134" />
+    <task id="LOCAL-00134" summary="added nymo and nysi">
+      <created>1700299314776</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1700299314776</updated>
+    </task>
+    <option name="localTasksCounter" value="135" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -763,7 +761,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removing unused pipeline" />
     <MESSAGE value="added extra split" />
     <MESSAGE value="added margin of safety field, starting to add ranks to sector" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint" />
@@ -788,7 +785,8 @@
     <MESSAGE value="adding nasdaq and rut" />
     <MESSAGE value="addinig nysi nymo" />
     <MESSAGE value="added params to calculate peter lynch ratio" />
-    <option name="LAST_COMMIT_MESSAGE" value="added params to calculate peter lynch ratio" />
+    <MESSAGE value="added nymo and nysi" />
+    <option name="LAST_COMMIT_MESSAGE" value="added nymo and nysi" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

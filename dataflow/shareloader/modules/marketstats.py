@@ -196,7 +196,7 @@ def run_cftc_spfutures(p, key):
 
 def run_mcclellan_pipeline(p, ticker):
     return (p
-     | f'Start_{ticker}' >> beam.Create(['$NYSI'])
+     | f'Start_{ticker}' >> beam.Create([ticker])
      | f'Get mmcl_{ticker}' >> beam.Map(get_mcclellan)
      )
 
