@@ -16,6 +16,14 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
+def run_stocksel_pipeline(p, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US.csv'):
+    return (p
+            | 'Reading Tickers' >> beam.io.textio.ReadFromText(inputFile)
+            | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
+            | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
+            )
+
+
 def run_my_pipeline(p, fmpkey):
     nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
     nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")
@@ -43,5 +51,6 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        data = run_my_pipeline(p, pipeline_options.fmprepkey)
+        #data = run_my_pipeline(p, pipeline_options.fmprepkey)
+        data = run_stocksel_pipeline(p)
         data | 'Writing to sink' >> sink
