@@ -7,9 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added nymo and nysi">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added key metrics to fundamental loader">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -319,20 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00086" summary="fixed fruit and veg">
-      <created>1693213277799</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1693213277799</updated>
-    </task>
-    <task id="LOCAL-00087" summary="added more logging">
-      <created>1693547553386</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1693547553387</updated>
     </task>
     <task id="LOCAL-00088" summary="added more logging">
       <created>1693580571220</created>
@@ -663,7 +649,21 @@
       <option name="project" value="LOCAL" />
       <updated>1700299314776</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="added nymo and nysi">
+      <created>1700386752427</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1700386752427</updated>
+    </task>
+    <task id="LOCAL-00136" summary="added key metrics to fundamental loader">
+      <created>1700387107026</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1700387107026</updated>
+    </task>
+    <option name="localTasksCounter" value="137" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -761,7 +761,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added extra split" />
     <MESSAGE value="added margin of safety field, starting to add ranks to sector" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint. amended premarket loader" />
@@ -786,7 +785,8 @@
     <MESSAGE value="addinig nysi nymo" />
     <MESSAGE value="added params to calculate peter lynch ratio" />
     <MESSAGE value="added nymo and nysi" />
-    <option name="LAST_COMMIT_MESSAGE" value="added nymo and nysi" />
+    <MESSAGE value="added key metrics to fundamental loader" />
+    <option name="LAST_COMMIT_MESSAGE" value="added key metrics to fundamental loader" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -817,11 +817,6 @@
           <option name="timeStamp" value="102" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>420</line>
-          <option name="timeStamp" value="115" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats.py</url>
           <line>36</line>
           <option name="timeStamp" value="121" />
@@ -838,27 +833,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>357</line>
+          <line>358</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>687</line>
+          <line>688</line>
           <option name="timeStamp" value="181" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>349</line>
+          <line>350</line>
           <option name="timeStamp" value="182" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>340</line>
+          <line>341</line>
           <option name="timeStamp" value="183" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>327</line>
+          <line>328</line>
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1068,7 +1063,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>658</line>
+          <line>659</line>
           <option name="timeStamp" value="366" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1078,7 +1073,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>607</line>
+          <line>608</line>
           <option name="timeStamp" value="380" />
         </line-breakpoint>
       </breakpoints>

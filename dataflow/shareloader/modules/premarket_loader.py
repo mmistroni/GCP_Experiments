@@ -368,15 +368,26 @@ def write_to_bigquery(p, bq_sink):
               | 'Writing to Sink ' >> bq_sink
               )
 
-
-
-
 def extract_trend_pipeline(p, fmpkey, numdays=10, full_run=False):
     return (p
             | 'Reading Tickers' >> beam.Create(get_all_stocks(fmpkey))
             | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
             | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays, full_run))
     )
+
+def extract_full_run_pipeline(p, fmpkey, input_file, numdays):
+
+
+
+    return (p
+            | 'Reading Tickers' >> beam.io.textio.ReadFromText(input_file)
+            | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
+            | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
+            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals' >> beam.ParDo(TrendTemplateLoader(fmpkey, numdays, True))
+    )
+
+
 
 def extract_data_pipeline(p, fmpkey):
     return (p
@@ -475,7 +486,11 @@ def run(argv=None, save_main_session=True):
 
             elif 'full_run' in pipeline_options.mmrun:
                 logging.info('Running historical ppln..')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays, full_run=True)
+
+                all_tickers_5y = 'gs://mm_dataflow_bucket/inputs/history_5y_tickers_US.csv'
+
+
+                data = extract_full_run_pipeline(p, pipeline_options.fmprepkey, all_tickers_5y, pipeline_options.numdays, )
                 destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
                     date.today().strftime('%Y-%m-%d %H:%M'))
 
