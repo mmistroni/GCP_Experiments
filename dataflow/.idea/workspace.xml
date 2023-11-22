@@ -7,9 +7,10 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="sourcing historical tickers from somewhere else">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="amending output for stats">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/premarketloader_run.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/premarketloader_run.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -319,20 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00091" summary="trying to fix non man pmi">
-      <created>1694151091543</created>
-      <option name="number" value="00091" />
-      <option name="presentableId" value="LOCAL-00091" />
-      <option name="project" value="LOCAL" />
-      <updated>1694151091543</updated>
-    </task>
-    <task id="LOCAL-00092" summary="trying to fix non man pmi">
-      <created>1694193440174</created>
-      <option name="number" value="00092" />
-      <option name="presentableId" value="LOCAL-00092" />
-      <option name="project" value="LOCAL" />
-      <updated>1694193440174</updated>
     </task>
     <task id="LOCAL-00093" summary="trying to fix non man pmi">
       <created>1694334226783</created>
@@ -663,7 +650,21 @@
       <option name="project" value="LOCAL" />
       <updated>1700506013403</updated>
     </task>
-    <option name="localTasksCounter" value="140" />
+    <task id="LOCAL-00140" summary="amending output for stats">
+      <created>1700635332583</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1700635332584</updated>
+    </task>
+    <task id="LOCAL-00141" summary="amending output for stats">
+      <created>1700635341869</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1700635341869</updated>
+    </task>
+    <option name="localTasksCounter" value="142" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -761,7 +762,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added fred endpoints. testing fmprep screener endpoint" />
     <MESSAGE value="added fred endpoints. testing fmprep screener endpoint. amended premarket loader" />
     <MESSAGE value="added join to test mohtly PMI. tested some FRED URLS" />
     <MESSAGE value="attempting join" />
@@ -786,7 +786,8 @@
     <MESSAGE value="added nymo and nysi" />
     <MESSAGE value="added key metrics to fundamental loader" />
     <MESSAGE value="sourcing historical tickers from somewhere else" />
-    <option name="LAST_COMMIT_MESSAGE" value="sourcing historical tickers from somewhere else" />
+    <MESSAGE value="amending output for stats" />
+    <option name="LAST_COMMIT_MESSAGE" value="amending output for stats" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -102,6 +102,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--mmrun')
         parser.add_argument('--numdays')
         parser.add_argument('--sendgridkey')
+        parser.add_argument('--inputfile')
 
 
 class TrendTemplateLoader(beam.DoFn):
@@ -485,9 +486,9 @@ def run(argv=None, save_main_session=True):
                 write_to_bigquery(data, bq_sink)
 
             elif 'full_run' in pipeline_options.mmrun:
-                logging.info('Running historical ppln..')
+                logging.info(f'Running historical ppln for:{pipeline_options.inputfile}')
 
-                all_tickers_5y = 'gs://mm_dataflow_bucket/inputs/history_5y_tickers_US.csv'
+                all_tickers_5y = pipeline_options.inputfile
 
 
                 data = extract_full_run_pipeline(p, pipeline_options.fmprepkey, all_tickers_5y, pipeline_options.numdays, )
@@ -497,7 +498,7 @@ def run(argv=None, save_main_session=True):
                 logging.info(f'Writing to {destination}')
                 bucket_sink = beam.io.WriteToText(destination, num_shards=1,
                                                   header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
-                data | bucket_sink
+                data | test_sink
 
 
 
