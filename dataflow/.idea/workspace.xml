@@ -7,12 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding new input params to marketloader">
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding extra test methods">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -322,13 +319,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00094" summary="fixing petrol prices">
-      <created>1694334454548</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1694334454548</updated>
     </task>
     <task id="LOCAL-00095" summary="fixing petrol prices">
       <created>1694334462809</created>
@@ -666,7 +656,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700636039765</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <task id="LOCAL-00143" summary="adding extra test methods">
+      <created>1700638363996</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1700638363996</updated>
+    </task>
+    <option name="localTasksCounter" value="144" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -764,7 +761,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added join to test mohtly PMI. tested some FRED URLS" />
     <MESSAGE value="attempting join" />
     <MESSAGE value="adding consumers index" />
     <MESSAGE value="fixing typo" />
@@ -789,7 +785,8 @@
     <MESSAGE value="sourcing historical tickers from somewhere else" />
     <MESSAGE value="amending output for stats" />
     <MESSAGE value="adding new input params to marketloader" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding new input params to marketloader" />
+    <MESSAGE value="adding extra test methods" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding extra test methods" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

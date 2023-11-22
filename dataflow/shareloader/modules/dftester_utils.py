@@ -1,27 +1,79 @@
+import requests
+import logging
+from datetime import datetime
 
+def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
+    divYield = dataDict['dividendYield'] * 100
+    peRatio = dataDict['peRatio']
 
-from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
-                get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
-                get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
-                get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
-                get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
-                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio
+    cob = datetime.strptime(asOfDateStr, '%Y-%m-%d')
 
+    try:
+        baseUrl = f'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'
+        all_estimates = requests.get(baseUrl).json()
+        estimatesList = []
+        for estimate in all_estimates:
+            estimatesList.append( ( datetime.strptime(estimate['date'], '%Y-%m-%d'), estimate['estimatedEpsAvg']) )
+        valid = [tpl for tpl  in estimatesList if tpl[0] > cob]
 
-def get_fundamental_data(ticker, key):
-    ## we get ROC, divYield and pl ratio
-    metrics = get_key_metrics_benchmark(ticker, key)
-    ratios = get_financial_ratios(ticker, key)
+        if valid:
+            epsGrowth = float(valid[0][1])
+            return (divYield + epsGrowth) / peRatio
+        return -99
+    except Exception as e:
+        return -99
 
-    ratios.update(metrics)
+def get_financial_ratios(ticker, key, period='annual'):
+    keys = ["currentRatio", "quickRatio", "cashRatio", "date", "calendarYear",
+            "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed"
+                                                "priceToBookRatio", "priceToSalesRatio",
+            "priceEarningsRatio", "priceToFreeCashFlowsRatio",
+            "priceEarningsToGrowthRatio", "dividendYield", "priceFairValue"
+            ]
+    globalDict = dict()
+    try:
+        financial_ratios = requests.get(
+            f'https://financialmodelingprep.com/api/v3/ratios/{ticker}?period={period}&limit=5&apikey={key}').json()
 
-    peterlynch = get_peter_lynch_ratio(key, 'AAPL', ratios)
+        for dataDict in financial_ratios:
+            tmpDict = dict((k, dataDict.get(key, None)) for k in keys)
+            globalDict[dataDict['date']] = tmpDict
+    except Exception as e:
+        logging.info(f'Unable to get data for {ticker}:{str(e)}')
+        return globalDict
 
-    ratios['peterLynchRatio'] = peterlynch
-    return ratios
+def get_key_metrics(ticker, key, period='annual'):
+    keys = [
+            "date", "calendarYear", "revenuePerShare", "earningsYield", "debtToEquity",
+            "debtToAssets", "capexToRevenue", "grahamNumber"
+    ]
 
+    globalDict = dict()
 
+    try:
+        keyMetrics = requests.get(
+           f'https://financialmodelingprep.com/api/v3/key-metrics/{ticker}?period={period}&limit=5&apikey={key}').json()
+        for dataDict in keyMetrics:
+            tmpDict = dict((k, dataDict.get(key, None)) for k in keys)
+            globalDict[dataDict['date']] = tmpDict
 
+    except Exception as e:
+        logging.info(f'Unable to get data for {ticker}:{str(e)}')
 
+    return globalDict
 
+def get_fundamental_data(ticker, key, period='annual'): # we do separately , for each ticker we get perhaps the last
+    ## we get ROC, divYield and pl ratio. we need to get historicals on a quarterly and annually
+    # then we build a dataframe with all the information
+    metrics = get_key_metrics(ticker, key, period)
+    ratios = get_financial_ratios(ticker, key, period)
 
+    mergedDicts = []
+    for asOfDate, dataDict in metrics.items():
+        ratioDict = ratios.get(asOfDate)
+        if ratioDict:
+            dataDict.merge(ratioDict)
+            peterLynch = calculate_peter_lynch_ratio(key, ticker, asOfDate, ratios)
+            dataDict['lynchRatio'] = peterLynch
+            mergedDicts.append(dataDict)
+    return mergedDicts
