@@ -807,6 +807,23 @@ class TestSuperPerformers(unittest.TestCase):
 
 
 
+    def test_metrics(self):
+        key = os.environ['FMPREPKEY']
+        metrics = get_key_metrics_benchmark('AAPL', key)
+        ratios = get_financial_ratios('AAPL', key)
+
+        ratios.update(metrics)
+
+        peterlynch = get_peter_lynch_ratio(key, 'AAPL', ratios)
+
+        print(f'PLynch ={peterlynch}')
+
+
+
+
+
+
+
 
 
 
