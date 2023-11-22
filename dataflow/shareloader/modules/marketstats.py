@@ -45,7 +45,7 @@ class MarketStatsCombineFn(beam.CombineFn):
         sorted_els = sorted(all_data, key=lambda t: t[0])
         mapped = list(map (lambda tpl: tpl[1], sorted_els))
         
-        stringified = list(map(lambda x: '{}-{}-{}'.format(x['AS_OF_DATE'],
+        stringified = list(map(lambda x: '|{}|{}|{}|'.format(x['AS_OF_DATE'],
                                                            x['LABEL'],
                                                            x['VALUE']), mapped))
                 
