@@ -40,7 +40,7 @@ def get_financial_ratios(ticker, key, period='annual'):
             globalDict[dataDict['date']] = tmpDict
     except Exception as e:
         logging.info(f'Unable to get data for {ticker}:{str(e)}')
-        return globalDict
+    return globalDict
 
 def get_key_metrics(ticker, key, period='annual'):
     keys = [
