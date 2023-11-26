@@ -1,10 +1,11 @@
 import requests
 import logging
 from datetime import datetime
+## TODO: identify how to store the data. mayb we just return  a list of dicts and let the sink do the stuff
 
 def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
     divYield = dataDict['dividendYield'] * 100
-    peRatio = dataDict['peRatio']
+    peRatio = dataDict['priceEarningsRatio']
 
     cob = datetime.strptime(asOfDateStr, '%Y-%m-%d')
 
@@ -25,22 +26,22 @@ def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
 
 def get_financial_ratios(ticker, key, period='annual'):
     keys = ["currentRatio", "quickRatio", "cashRatio", "date", "calendarYear",
-            "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed"
-                                                "priceToBookRatio", "priceToSalesRatio",
+            "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed",
+            "priceToBookRatio", "priceToSalesRatio",
             "priceEarningsRatio", "priceToFreeCashFlowsRatio",
             "priceEarningsToGrowthRatio", "dividendYield", "priceFairValue"
             ]
-    globalDict = dict()
+    global_dict = dict()
     try:
         financial_ratios = requests.get(
             f'https://financialmodelingprep.com/api/v3/ratios/{ticker}?period={period}&limit=5&apikey={key}').json()
 
-        for dataDict in financial_ratios:
-            tmpDict = dict((k, dataDict.get(key, None)) for k in keys)
-            globalDict[dataDict['date']] = tmpDict
+        for data_dict in financial_ratios:
+            tmp_dict = dict((k, data_dict.get(k, None)) for k in keys)
+            global_dict[data_dict['date']] = tmp_dict
     except Exception as e:
         logging.info(f'Unable to get data for {ticker}:{str(e)}')
-    return globalDict
+    return global_dict
 
 def get_key_metrics(ticker, key, period='annual'):
     keys = [
@@ -54,7 +55,7 @@ def get_key_metrics(ticker, key, period='annual'):
         keyMetrics = requests.get(
            f'https://financialmodelingprep.com/api/v3/key-metrics/{ticker}?period={period}&limit=5&apikey={key}').json()
         for dataDict in keyMetrics:
-            tmpDict = dict((k, dataDict.get(key, None)) for k in keys)
+            tmpDict = dict((k, dataDict.get(k, None)) for k in keys)
             globalDict[dataDict['date']] = tmpDict
 
     except Exception as e:
@@ -69,11 +70,30 @@ def get_fundamental_data(ticker, key, period='annual'): # we do separately , for
     ratios = get_financial_ratios(ticker, key, period)
 
     mergedDicts = []
-    for asOfDate, dataDict in metrics.items():
-        ratioDict = ratios.get(asOfDate)
-        if ratioDict:
-            dataDict.merge(ratioDict)
-            peterLynch = calculate_peter_lynch_ratio(key, ticker, asOfDate, ratios)
-            dataDict['lynchRatio'] = peterLynch
-            mergedDicts.append(dataDict)
+    for asOfDate, metricsDict in metrics.items():
+        ratiosDict = ratios.get(asOfDate)
+        if ratiosDict:
+            ratiosDict.update(metricsDict)
+            peterLynch = calculate_peter_lynch_ratio(key, ticker, asOfDate, ratiosDict)
+            ratiosDict['lynchRatio'] = peterLynch
+            mergedDicts.append(ratiosDict)
     return mergedDicts
+
+def get_tickers_for_sectors(sector, key):
+    ''' Sectors
+    Consumer Cyclical, Energy, Technology, Industrials, Financial Services,
+    Basic Materials, Communication Services, Consumer Defensive,
+    Healthcare, Real Estate, Utilities, Industrial Goods, Financial, Services, Conglomerates
+
+    Industry
+
+
+
+
+    '''
+
+
+
+    url = 'https://financialmodelingprep.com/api/v3/stock-screener?sector={sector}&apikey={key}'
+    return requests.get(url).json()
+

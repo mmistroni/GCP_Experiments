@@ -10,6 +10,8 @@
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding extra test methods">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/dftester_utils_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/dftester_utils_test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +22,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="HTML File" />
-        <option value="Python Unit Test" />
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -220,8 +222,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_metrics">
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_McClellan" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_first" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -231,11 +233,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_McClellan&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_financial_ratios_first&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_last" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -245,11 +247,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_benchmarkLoader&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_financial_ratios_last&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_income" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -259,11 +261,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_income&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_fundamental_data&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_peterlynch_ratios" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -273,11 +275,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_peterlynch_ratios&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_fundamental_data_last&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_metrics" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_key_metrics_last" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -287,24 +289,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_metrics&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_key_metrics_last&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_McClellan" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_income" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_peterlynch_ratios" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_metrics" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_first" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_last" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_key_metrics_last" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_metrics" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_McClellan" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_peterlynch_ratios" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_income" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_key_metrics_last" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_last" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_financial_ratios_first" />
       </list>
     </recent_temporary>
   </component>
@@ -319,13 +321,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00095" summary="fixing petrol prices">
-      <created>1694334462809</created>
-      <option name="number" value="00095" />
-      <option name="presentableId" value="LOCAL-00095" />
-      <option name="project" value="LOCAL" />
-      <updated>1694334462809</updated>
     </task>
     <task id="LOCAL-00096" summary="fixing petrol prices">
       <created>1694518276795</created>
@@ -663,7 +658,14 @@
       <option name="project" value="LOCAL" />
       <updated>1700638363996</updated>
     </task>
-    <option name="localTasksCounter" value="144" />
+    <task id="LOCAL-00144" summary="adding extra test methods">
+      <created>1700678987384</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1700678987384</updated>
+    </task>
+    <option name="localTasksCounter" value="145" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -833,7 +835,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>358</line>
+          <line>362</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -843,17 +845,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>350</line>
+          <line>353</line>
           <option name="timeStamp" value="182" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>341</line>
+          <line>344</line>
           <option name="timeStamp" value="183" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>328</line>
+          <line>331</line>
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1080,6 +1082,21 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
           <line>818</line>
           <option name="timeStamp" value="382" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/dftester_utils_test.py</url>
+          <line>101</line>
+          <option name="timeStamp" value="384" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/dftester_utils_test.py</url>
+          <line>42</line>
+          <option name="timeStamp" value="385" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/dftester_utils_test.py</url>
+          <line>22</line>
+          <option name="timeStamp" value="391" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

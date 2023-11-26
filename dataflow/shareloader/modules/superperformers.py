@@ -11,7 +11,9 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
                                             get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
-                                            calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid
+                                            calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
+                                            get_peter_lynch_ratio
+
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''
@@ -234,6 +236,7 @@ class FundamentalLoader(beam.DoFn):
                     updated_dict['rsi'] = latest_rsi
                     keyMetrics = get_key_metrics_benchmark(ticker, self.key)
                     updated_dict.update(keyMetrics)
+                    updated_dict['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, updated_dict)
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
@@ -349,6 +352,7 @@ class BenchmarkLoader(beam.DoFn):
                                     #latest_rsi = compute_rsi(ticker, self.key)
                                     quotes_data['rsi'] = 0
                                     quotes_data['piotroskyScore'] = 0
+                                    quotes_data['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, quotes_data)
 
                                 #priceChangeDict = get_price_change(ticker, self.key)
                                 #quotes_data.update(priceChangeDict)
