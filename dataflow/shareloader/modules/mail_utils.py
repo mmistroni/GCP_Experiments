@@ -172,6 +172,7 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <th>EARNING_YIELD</th>
                                     <th>RETURN_ON_CAPITAL</th>
                                     <th>RSI</th>
+                                    <th>LYNCH RATIO</th>
                                 </tr>
                             </thead>
                             <tbody>

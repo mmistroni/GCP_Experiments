@@ -519,6 +519,7 @@ def map_to_bq_dict(input_dict, label):
                 PIOTROSKY_SCORE=input_dict.get('piotroskyScore', -1),
                 RETURN_ON_CAPITAL=input_dict.get('returnOnCapital', -1),
                 NET_INCOME=input_dict.get('netIncome', -1),
+                LYNCH_RATIO=input_dict.get('lynchRatio', -1)
 
                 )
 

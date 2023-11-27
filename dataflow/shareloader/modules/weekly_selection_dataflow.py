@@ -51,6 +51,7 @@ ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
                        <td>{}</td>
+                       <td>{}</td>
                        </tr>"""
 
 class StockSelectionCombineFn(beam.CombineFn):
@@ -84,7 +85,7 @@ def create_monthly_data_ppln(p):
 def create_weekly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date_str))
-    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO, NET_INCOME, MARKETCAP, RSI, RETURN_ON_CAPITAL  
+    bq_sql = """SELECT TICKER, LABEL, PRICE, YEARHIGH,YEARLOW, PRICEAVG50, PRICEAVG200, BOOKVALUEPERSHARE , CASHFLOWPERSHARE, DIVIDENDRATIO, NET_INCOME, MARKETCAP, RSI, RETURN_ON_CAPITAL,LYNCH_RATIO  
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE >= PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
@@ -173,7 +174,8 @@ def kickoff_pipeline(weeklyPipeline, monthlyPipeline):
                                                      row['PRICEAVG200'] * .7,
                                                      (row.get('NET_INCOME',0) if row.get('NET_INCOME', 0) is not None else 0) / (row.get('MARKETCAP',1) if row.get('MARKETCAP') is not None else 1),
                                                      row.get('RETURN_ON_CAPITAL', 0),
-                                                     row.get('RSI', 0)),
+                                                     row.get('RSI', 0),
+                                                     row.get('LYNCH_RATIO')),
                                          )
     )
 

@@ -259,10 +259,10 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['AMZN'])
+             (p | 'Starting' >> beam.Create(['BSVN'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
-                         | 'Filtering' >> beam.Filter(benchmark_filter)
+                         #| 'Filtering' >> beam.Filter(benchmark_filter)
                          #| 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
                          #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
