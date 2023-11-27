@@ -23,7 +23,7 @@ class DfTesterLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             try:
                 data  =get_fundamental_data(ticker, self.key, self.period)
-                holder += data
+                all_dt += data
             except Exception as e:
                 excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
