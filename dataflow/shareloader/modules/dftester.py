@@ -8,6 +8,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date
 from .marketstats_utils import get_all_us_stocks2, NewHighNewLowLoader
+from .dftester_utils import combine_tickers, DfTesterLoader
 
 class XyzOptions(PipelineOptions):
 
@@ -16,16 +17,26 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-
-
-
-
-def run_stocksel_pipeline(p, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US.csv'):
+def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_reduced.csv',
+                                    period='annual'):
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(inputFile)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
+            | 'Combining Tickers' >> beam.CombineGlobally(combine_tickers)
+            | 'Run Loader' >> beam.ParDo(DfTesterLoader(fmpKey, period=period))
             )
+
+
+def ru(fund_data):
+    logging.info('Running probe..,')
+    logging.info('Returning')
+    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_probe_{}'.format(
+        date.today().strftime('%Y-%m-%d %H:%M'))
+    sink = beam.io.WriteToText(destination, num_shards=1)
+    (fund_data | 'Writing to text sink' >> sink)
+
+
 
 
 def run_my_pipeline(p, fmpkey):
@@ -55,6 +66,11 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
+        destination =  'gs://mm_dataflow_bucket/outputs/dftester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
+        bucketSink = beam.io.WriteToText(destination, num_shards=1)
+
         #data = run_my_pipeline(p, pipeline_options.fmprepkey)
         data = run_stocksel_pipeline(p)
-        data | 'Writing to sink' >> sink
+        #data | 'Writing to sink' >> sink
+
+        data | 'Wrrting to bucket' >> bucketSink

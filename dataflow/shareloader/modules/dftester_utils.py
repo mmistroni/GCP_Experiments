@@ -1,7 +1,42 @@
 import requests
 import logging
 from datetime import datetime
-## TODO: identify how to store the data. mayb we just return  a list of dicts and let the sink do the stuff
+import apache_beam as beam
+
+
+class DfTesterLoader(beam.DoFn):
+    def __init__(self, key, period='annual'):
+        self.key = key
+        self.period = period
+
+    def process(self, elements):
+        all_dt = []
+        logging.info('fRunning with split of:{split}')
+        tickers_to_process = elements.split(',')
+        num_to_process = len(tickers_to_process) // 3
+
+        excMsg = ''
+        isException = False
+
+        all_dt = []
+
+        for idx, ticker in enumerate(tickers_to_process):
+            try:
+                data  =get_fundamental_data(ticker, self.key, self.period)
+                holder += data
+            except Exception as e:
+                excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
+                isException = True
+                break
+        if isException:
+            raise Exception(excMsg)
+        return all_dt
+
+
+
+
+def combine_tickers(input):
+    return ','.join(input)
 
 def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
     divYield = dataDict['dividendYield'] * 100
@@ -76,6 +111,7 @@ def get_fundamental_data(ticker, key, period='annual'): # we do separately , for
             ratiosDict.update(metricsDict)
             peterLynch = calculate_peter_lynch_ratio(key, ticker, asOfDate, ratiosDict)
             ratiosDict['lynchRatio'] = peterLynch
+            ratiosDict['ticker'] = ticker
             mergedDicts.append(ratiosDict)
     return mergedDicts
 
