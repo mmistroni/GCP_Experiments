@@ -39,12 +39,12 @@ def combine_tickers(input):
     return ','.join(input)
 
 def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
-    divYield = dataDict['dividendYield'] * 100
-    peRatio = dataDict['priceEarningsRatio']
-
-    cob = datetime.strptime(asOfDateStr, '%Y-%m-%d')
-
+    if dataDict['dividendYield']  is None or  dataDict['priceEarningsRatio'] is None:
+        return -99
     try:
+        divYield = dataDict['dividendYield'] * 100
+        peRatio = dataDict['priceEarningsRatio']
+        cob = datetime.strptime(asOfDateStr, '%Y-%m-%d')
         baseUrl = f'https://financialmodelingprep.com/api/v3/analyst-estimates/{ticker}?apikey={key}'
         all_estimates = requests.get(baseUrl).json()
         estimatesList = []
