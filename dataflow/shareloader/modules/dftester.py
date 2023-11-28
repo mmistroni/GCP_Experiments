@@ -70,7 +70,7 @@ def run(argv=None, save_main_session=True):
         bucketSink = beam.io.WriteToText(destination, num_shards=1)
 
         #data = run_my_pipeline(p, pipeline_options.fmprepkey)
-        data = run_stocksel_pipeline(p)
+        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey)
         #data | 'Writing to sink' >> sink
 
         data | 'Wrrting to bucket' >> bucketSink
