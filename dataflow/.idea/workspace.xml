@@ -9,8 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="writing to csv">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,8 +221,8 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline">
-    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries">
+    <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -232,7 +232,21 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_fundamental_data_last&quot;" />
+      <option name="_new_target" value="&quot;test_dfetster_utils.TestDfTesterLoader.test_all_industries&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -278,34 +292,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_load_fundamental_data&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
       <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline" />
+      <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector" />
+      <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
+        <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data" />
-        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data_last" />
       </list>
     </recent_temporary>
   </component>
@@ -320,13 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00104" summary="added consres">
-      <created>1695143906521</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1695143906522</updated>
     </task>
     <task id="LOCAL-00105" summary="fixed dodgy mapping">
       <created>1695144018196</created>
@@ -664,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701242666756</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <task id="LOCAL-00153" summary="writing to csv">
+      <created>1701277604145</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1701277604145</updated>
+    </task>
+    <option name="localTasksCounter" value="154" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -1109,23 +1109,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/dftester_utils.py</url>
-          <line>133</line>
+          <line>132</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/dftester_utils.py</url>
-          <line>47</line>
+          <line>46</line>
           <option name="timeStamp" value="397" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/dftester_utils.py</url>
-          <line>51</line>
+          <line>50</line>
           <option name="timeStamp" value="398" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/dftester_utils.py</url>
-          <line>52</line>
+          <line>51</line>
           <option name="timeStamp" value="399" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
+          <line>54</line>
+          <option name="timeStamp" value="400" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
+          <line>73</line>
+          <option name="timeStamp" value="403" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

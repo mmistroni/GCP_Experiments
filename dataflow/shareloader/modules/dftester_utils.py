@@ -19,7 +19,6 @@ def get_fields():
             ]
 
 
-
 class DfTesterLoader(beam.DoFn):
     def __init__(self, key, period='annual'):
         self.key = key
@@ -140,14 +139,42 @@ def get_tickers_for_sectors(sector, key):
     Healthcare, Real Estate, Utilities, Industrial Goods, Financial, Services, Conglomerates
 
     Industry
+    '''
+
+    url = f'https://financialmodelingprep.com/api/v3/stock-screener?sector={sector}&apikey={key}'
+    return requests.get(url).json()
+
+def get_tickers_for_industry(industry, key):
+    ''' Sectors
+    Consumer Cyclical, Energy, Technology, Industrials, Financial Services,
+    Basic Materials, Communication Services, Consumer Defensive,
+    Healthcare, Real Estate, Utilities, Industrial Goods, Financial, Services, Conglomerates
+
+    Industry
 
 
 
 
     '''
 
-
-
-    url = 'https://financialmodelingprep.com/api/v3/stock-screener?sector={sector}&apikey={key}'
+    url = f'https://financialmodelingprep.com/api/v3/stock-screener?industry={industry}&apikey={key}'
     return requests.get(url).json()
+
+
+def get_sectors():
+    return ['Consumer Cyclical', 'Energy', 'Technology', 'Industrials',
+            'Financial Services', 'Basic Materials', 'Communication Services',
+            'Consumer Defensive', 'Healthcare', 'Real Estate', 'Utilities',
+            'Industrial Goods', 'Financial', 'Services', 'Conglomerates']
+
+
+def get_industries(key):
+    inds = []
+    for sector in get_sectors():
+        companies = get_tickers_for_sectors(sector, key)
+        sector_inds = [d['industry'] for d in companies]
+        inds += sector_inds
+
+    return set(inds)
+
 
