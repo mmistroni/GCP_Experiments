@@ -65,7 +65,7 @@ def run(argv=None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         destination =  'gs://mm_dataflow_bucket/outputs/dftester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
-        bucketSink = beam.io.WriteToText(destination, num_shards=1, header=get_fields())
+        bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
 
         data = run_stocksel_pipeline(p, pipeline_options.fmprepkey)
         data | 'Wrrting to bucket' >> bucketSink

@@ -26,7 +26,7 @@ class DfTesterLoader(beam.DoFn):
         self.period = period
 
     def to_list_of_vals(self, data_dict):
-        return [data_dict[field] for field in get_fields()]
+        return ','.join([str(data_dict[field]) for field in get_fields()])
 
     def process(self, elements):
         all_dt = []

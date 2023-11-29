@@ -7,11 +7,10 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixed math issue">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="writing to csv">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,13 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00103" summary="added consres">
-      <created>1694940116407</created>
-      <option name="number" value="00103" />
-      <option name="presentableId" value="LOCAL-00103" />
-      <option name="project" value="LOCAL" />
-      <updated>1694940116407</updated>
     </task>
     <task id="LOCAL-00104" summary="added consres">
       <created>1695143906521</created>
@@ -665,7 +657,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701194133498</updated>
     </task>
-    <option name="localTasksCounter" value="152" />
+    <task id="LOCAL-00152" summary="writing to csv">
+      <created>1701242666756</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1701242666756</updated>
+    </task>
+    <option name="localTasksCounter" value="153" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -763,7 +762,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixed fruit and veg" />
     <MESSAGE value="added more logging" />
     <MESSAGE value="adding consumer sentiment index" />
     <MESSAGE value="trying to fix non man pmi" />
@@ -788,7 +786,8 @@
     <MESSAGE value="fixed typo" />
     <MESSAGE value="added key" />
     <MESSAGE value="fixed math issue" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed math issue" />
+    <MESSAGE value="writing to csv" />
+    <option name="LAST_COMMIT_MESSAGE" value="writing to csv" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
