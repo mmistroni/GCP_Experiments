@@ -36,10 +36,9 @@ class TestDfTesterLoader(unittest.TestCase):
     def test_run_pipeline(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(['AAAU'])
+            input = (p | 'Start' >> beam.Create(['AAPL'])
                        | 'Run Loader' >> beam.ParDo(DfTesterLoader(key, period='annual'))
-                       | 'Sample N elements' >> beam.combiners.Sample.FixedSizeGlobally(20)
-                       | self.debugSink
+                       | self.notEmptySink
                      )
 
 

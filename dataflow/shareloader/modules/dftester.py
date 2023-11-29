@@ -1,14 +1,12 @@
 from __future__ import absolute_import
 
 import logging
-from apache_beam.io.gcp.internal.clients import bigquery
 import apache_beam as beam
-from apache_beam.io import ReadFromText
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date
 from .marketstats_utils import get_all_us_stocks2, NewHighNewLowLoader
-from .dftester_utils import combine_tickers, DfTesterLoader
+from .dftester_utils import combine_tickers, DfTesterLoader, get_fields
 
 class XyzOptions(PipelineOptions):
 
@@ -28,7 +26,7 @@ def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/h
             )
 
 
-def ru(fund_data):
+def run(fund_data):
     logging.info('Running probe..,')
     logging.info('Returning')
     destination = 'gs://mm_dataflow_bucket/outputs/superperformers_probe_{}'.format(
@@ -67,10 +65,7 @@ def run(argv=None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         destination =  'gs://mm_dataflow_bucket/outputs/dftester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
-        bucketSink = beam.io.WriteToText(destination, num_shards=1)
+        bucketSink = beam.io.WriteToText(destination, num_shards=1, header=get_fields())
 
-        #data = run_my_pipeline(p, pipeline_options.fmprepkey)
         data = run_stocksel_pipeline(p, pipeline_options.fmprepkey)
-        #data | 'Writing to sink' >> sink
-
         data | 'Wrrting to bucket' >> bucketSink

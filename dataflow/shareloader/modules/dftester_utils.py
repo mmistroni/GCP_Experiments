@@ -4,10 +4,29 @@ from datetime import datetime
 import apache_beam as beam
 
 
+
+def get_fields():
+    return ["ticker", "date", "currentRatio", "quickRatio", "cashRatio", "calendarYear",
+            "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed",
+            "priceToBookRatio", "priceToSalesRatio",
+            "priceEarningsRatio", "priceToFreeCashFlowsRatio",
+            "priceEarningsToGrowthRatio", "dividendYield", "priceFairValue"
+            ] + \
+            [
+                "revenuePerShare", "earningsYield", "debtToEquity",
+                "debtToAssets", "capexToRevenue", "grahamNumber",
+                "lynchRatio"
+            ]
+
+
+
 class DfTesterLoader(beam.DoFn):
     def __init__(self, key, period='annual'):
         self.key = key
         self.period = period
+
+    def to_list_of_vals(self, data_dict):
+        return [data_dict[field] for field in get_fields()]
 
     def process(self, elements):
         all_dt = []
@@ -23,7 +42,8 @@ class DfTesterLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             try:
                 data  =get_fundamental_data(ticker, self.key, self.period)
-                all_dt += data
+                vals_only = [self.to_list_of_vals(d) for d in data]
+                all_dt += vals_only
             except Exception as e:
                 excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 isException = True
@@ -31,8 +51,6 @@ class DfTesterLoader(beam.DoFn):
         if isException:
             raise Exception(excMsg)
         return all_dt
-
-
 
 
 def combine_tickers(input):
