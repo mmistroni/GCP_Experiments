@@ -600,11 +600,16 @@ def get_key_metrics_benchmark(ticker, key):
 
 def get_peter_lynch_ratio(key, ticker, inputDict):
     # need growth ratio, div yield and pe/ratio
-    divYield = inputDict['dividendYield'] * 100
-    peRatio = inputDict['peRatio']
-    growth =  get_eps_growth(ticker, key)
+    try:
+        divYield = inputDict['dividendYield'] * 100
+        peRatio = inputDict['peRatio']
+        growth =  get_eps_growth(ticker, key)
 
-    return (divYield + growth) / peRatio
+        if peRatio and peRatio != 0:
+            return (divYield + growth) / peRatio
+    except Exception as e:
+        logging.info(f'Unable to calculate plynch for {ticker}')
+    return -1
 
 
 
