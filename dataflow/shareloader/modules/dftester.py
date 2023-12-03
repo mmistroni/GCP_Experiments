@@ -15,7 +15,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--fmprepkey')
 
 
-def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_reduced.csv',
+def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_20231126.csv',
                                     period='annual'):
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(inputFile)
