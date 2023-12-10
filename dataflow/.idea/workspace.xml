@@ -7,11 +7,8 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing peter lynch ratio">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing broken item">
       <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -321,13 +318,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00109" summary="fixed dodgy mapping">
-      <created>1697218534081</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1697218534082</updated>
     </task>
     <task id="LOCAL-00110" summary="started to write new high new low">
       <created>1697220379545</created>
@@ -665,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1701672341005</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <task id="LOCAL-00158" summary="fixing broken item">
+      <created>1702203659197</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1702203659197</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -763,7 +760,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="trying to fix non man pmi" />
     <MESSAGE value="fixing petrol prices" />
     <MESSAGE value="added consres" />
     <MESSAGE value="fixed dodgy mapping" />
@@ -788,7 +784,8 @@
     <MESSAGE value="writing to csv" />
     <MESSAGE value="added sectors and inds" />
     <MESSAGE value="fixing peter lynch ratio" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing peter lynch ratio" />
+    <MESSAGE value="fixing broken item" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing broken item" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

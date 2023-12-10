@@ -241,7 +241,7 @@ class FundamentalLoader(beam.DoFn):
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
-                isException = True
+                #isException = True
                 excMsg = f"{idx/len(tickers_to_process)}Failed to process fundamental loader for {ticker}:{str(e)}"
                 break
         if isException:
