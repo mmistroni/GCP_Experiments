@@ -596,7 +596,7 @@ def get_key_metrics_benchmark(ticker, key):
 
             return dataDict
     except Exception as e:
-        return None
+        return dataDict
 
 def get_peter_lynch_ratio(key, ticker, inputDict):
     # need growth ratio, div yield and pe/ratio

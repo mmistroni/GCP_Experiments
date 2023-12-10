@@ -234,9 +234,10 @@ class FundamentalLoader(beam.DoFn):
                     latest_rsi = compute_rsi(ticker, self.key)
                     updated_dict['piotroskyScore'] = piotrosky_score
                     updated_dict['rsi'] = latest_rsi
+                    logging.info('Getting Key Metrics Benchmark..')
                     keyMetrics = get_key_metrics_benchmark(ticker, self.key)
                     updated_dict.update(keyMetrics)
-                    updated_dict['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, updated_dict)
+                    updated_dict['lynchRatio'] = -1 #get_peter_lynch_ratio(self.key, ticker, updated_dict)
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")

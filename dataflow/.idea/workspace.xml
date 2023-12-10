@@ -9,6 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing peter lynch ratio">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -219,7 +222,21 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries">
+  <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader">
+    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_fundamental_data&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -262,20 +279,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_benchmarkLoader&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -291,19 +294,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
       <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline" />
       <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector" />
       <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
+      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
+      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
+        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_get_tickers_for_sector" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
       </list>
     </recent_temporary>
   </component>
@@ -832,7 +835,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>362</line>
+          <line>363</line>
           <option name="timeStamp" value="179" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -842,17 +845,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>353</line>
+          <line>354</line>
           <option name="timeStamp" value="182" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>344</line>
+          <line>345</line>
           <option name="timeStamp" value="183" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>331</line>
+          <line>332</line>
           <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1092,12 +1095,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>360</line>
+          <line>361</line>
           <option name="timeStamp" value="392" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <line>310</line>
+          <line>311</line>
           <option name="timeStamp" value="393" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1129,6 +1132,11 @@
           <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
           <line>73</line>
           <option name="timeStamp" value="403" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
+          <line>206</line>
+          <option name="timeStamp" value="404" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

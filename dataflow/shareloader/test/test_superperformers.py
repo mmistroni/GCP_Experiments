@@ -276,7 +276,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-             (p | 'Starting' >> beam.Create(['AMZN'])
+             (p | 'Starting' >> beam.Create(['MOB'])
                          | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                          | 'Running Loader' >> beam.ParDo(FundamentalLoader(key))
                          #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
@@ -291,7 +291,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            ticks = (p | 'Starting' >> beam.Create(['AAPL'])
+            ticks = (p | 'Starting' >> beam.Create(['MOP'])
                | 'tstCombine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                    )
 
