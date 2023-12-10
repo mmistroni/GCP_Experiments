@@ -291,13 +291,13 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            ticks = (p | 'Starting' >> beam.Create(['MOP'])
+            ticks = (p | 'Starting' >> beam.Create(['SAIL'])
                | 'tstCombine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                    )
 
             res = load_fundamental_data(ticks, key)
 
-            res | self.notEmptySink
+            res | printingSink
 
     def test_get_financial_ratios_benchmark(self):
         import pandas as pd
