@@ -34,19 +34,25 @@ def get_fruit_and_veg_prices():
     baseUrl = 'https://www.gov.uk/government/statistical-data-sets/wholesale-fruit-and-vegetable-prices-weekly-average'
     req = requests.get(baseUrl)
     soup = BeautifulSoup(req.text, "html.parser")
-    span = soup.find_all('span', {"class": "download"})
-    if len(span) > 0:
-        span = span[0]
-        anchor = span.find_all('a', {"class": "govuk-link"})[0]
-        link = anchor.get('href')
-        r = requests.get(link).text
-        dt = pd.read_csv(io.StringIO(r), header=0)
-        dt['asOfDate'] = pd.to_datetime(dt['date'], infer_datetime_format=True).dt.date
-        latest = dt[dt.asOfDate == dt.asOfDate.max()][['asOfDate', 'category', 'item', 'variety', 'price', 'unit']]
-        latest['label'] = latest.apply(lambda r: f"{r['category']}-{r['item']}-{r['variety']}({r['unit']})", axis=1)
-        latest['value'] = latest.price.apply(lambda valstr: float(valstr))
+    spans = soup.find_all('div', {"class": "gem-c-attachment__details"})
+    if len(spans) > 0:
+        try:
+            for span in spans:
+                anchor = span.find_all('a', {"class": "govuk-link"})[0]
+                link = anchor.get('href')
+                if link.endswith('csv'):
+                    r = requests.get(link).text
+                    dt = pd.read_csv(io.StringIO(r), header=0)
+                    dt['asOfDate'] = pd.to_datetime(dt['date'], infer_datetime_format=True).dt.date
+                    latest = dt[dt.asOfDate == dt.asOfDate.max()][['asOfDate', 'category', 'item', 'variety', 'price', 'unit']]
+                    latest['label'] = latest.apply(lambda r: f"{r['category']}-{r['item']}-{r['variety']}({r['unit']})", axis=1)
+                    latest['value'] = latest.price.apply(lambda valstr: float(valstr))
+                    return latest[['asOfDate', 'label', 'value']].to_dict('records')
+                else:
+                    logging.info(f'Wrong link:{link}')
+        except Exception as e:
+            logging.info(f'exception in retrieving fruit and veg:{str(e)}')
 
-        return latest[['asOfDate', 'label', 'value']].to_dict('records')
     return []
 
 def get_petrol_prices():
@@ -54,19 +60,23 @@ def get_petrol_prices():
         url = 'https://www.gov.uk/government/statistics/weekly-road-fuel-prices'
         req = requests.get(url)
         soup = BeautifulSoup(req.text, "html.parser")
-        span = soup.find_all('span', {"class": "download"})[0]
-        anchor = span.find_all('a', {"class": "govuk-link"})[0]
-        link = anchor.get('href')
-        r = requests.get(link).text
-        dt = pd.read_csv(io.StringIO(r), header=2)[-1:][['Date','ULSP', 'ULSD']].to_dict('records')[-1]
-        return [
-                    {'asOfDate' : datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
-                     'label' : 'Petrol',
-                      'value': float(dt['ULSP'])},
-                    {'asOfDate': datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
-                     'label': 'Diesel',
-                     'value': float(dt['ULSD'])}
-                        ]
+
+        spans = soup.find_all('div', {"class": "gem-c-attachment__details"})
+        if len(spans) > 0:
+            for span in spans:
+                anchor = span.find_all('a', {"class": "govuk-link"})[0]
+                link = anchor.get('href')
+                if link.endswith('csv'):
+                    r = requests.get(link).text
+                    dt = pd.read_csv(io.StringIO(r), header=2)[-1:][['Date','ULSP', 'ULSD']].to_dict('records')[-1]
+                    return [
+                                {'asOfDate' : datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                                 'label' : 'Petrol',
+                                  'value': float(dt['ULSP'])},
+                                {'asOfDate': datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                                 'label': 'Diesel',
+                                 'value': float(dt['ULSD'])}
+                                    ]
     except Exception as e:
         logging.info(f'Problem in getting petro lprices {str(e)}')
         return []

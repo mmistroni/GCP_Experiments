@@ -291,7 +291,7 @@ class TestSuperPerformers(unittest.TestCase):
 
         print('Key is:{}|'.format(key))
         with TestPipeline() as p:
-            ticks = (p | 'Starting' >> beam.Create(['SAIL'])
+            ticks = (p | 'Starting' >> beam.Create(['GEHI'])
                | 'tstCombine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
                    )
 

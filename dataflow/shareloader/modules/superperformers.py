@@ -238,7 +238,7 @@ class FundamentalLoader(beam.DoFn):
                     keyMetrics = get_key_metrics_benchmark(ticker, self.key)
                     updated_dict.update(keyMetrics)
                     logging.info(f'Getting lynchratio for {ticker}')
-                    updated_dict['lynchRatio'] = -1 #get_peter_lynch_ratio(self.key, ticker, updated_dict)
+                    updated_dict['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, updated_dict)
                     all_dt.append(updated_dict)
             except Exception as e:
                 logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")

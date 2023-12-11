@@ -582,8 +582,9 @@ def get_eps_growth(ticker, key, field='estimatedEpsAvg'):
 
 def get_key_metrics_benchmark(ticker, key):
     # some eps in last 10 yrs
+    dataDict = {}
+
     try:
-        dataDict = {}
         keyMetrics = requests.get(
             'https://financialmodelingprep.com/api/v3/key-metrics-ttm/{}?limit=2&apikey={}'.format(ticker, key)).json()
 
@@ -593,10 +594,9 @@ def get_key_metrics_benchmark(ticker, key):
             dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
             dataDict['freeCashFlowPerShare'] = keyMetrics[0].get('freeCashFlowPerShareTTM') or 0
             dataDict['earningsYield'] = keyMetrics[0].get('earningsYieldTTM') or 0
-
-            return dataDict
     except Exception as e:
-        return dataDict
+        logging.info(f'Exception in gettng keymeetrics for {ticker}:{str(e)}')
+    return dataDict
 
 def get_peter_lynch_ratio(key, ticker, inputDict):
     # need growth ratio, div yield and pe/ratio
