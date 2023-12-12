@@ -16,7 +16,7 @@ class XyzOptions(PipelineOptions):
 
 
 def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_20231126.csv',
-                                    period='annual'):
+                                    period='quarter'):
     return (p
             | 'Reading Tickers' >> beam.io.textio.ReadFromText(inputFile)
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
@@ -67,5 +67,7 @@ def run(argv=None, save_main_session=True):
         destination =  'gs://mm_dataflow_bucket/outputs/dftester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
         bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
 
-        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey)
+        # TDO parameterize period and limits
+
+        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period='quarter')
         data | 'Wrrting to bucket' >> bucketSink

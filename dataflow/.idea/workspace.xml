@@ -7,10 +7,10 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="fixing broken item">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="getting data quarterly">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -222,7 +222,7 @@
     </key>
   </component>
   <component name="RunManager" selected="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data">
-    <configuration name="Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -232,11 +232,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;dftester_utils_test.MyTestCase.test_get_fundamental_data&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_fruit_and_veg_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -246,11 +246,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_dfetster_utils.TestDfTesterLoader.test_all_industries&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_fruit_and_veg_prices&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -260,7 +260,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_fundamentalLoader&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -293,19 +293,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
-      <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoaderForAssetPLay" />
       <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_fruit_and_veg_prices" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_load_fundamental_data" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_fruit_and_veg_prices" />
         <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoaderForAssetPLay" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_fundamentalLoader" />
-        <item itemvalue="Python tests.Python tests for dftester_utils_test.MyTestCase.test_get_fundamental_data" />
-        <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_all_industries" />
       </list>
     </recent_temporary>
   </component>
@@ -320,20 +320,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00111" summary="started to write new high new low">
-      <created>1697888640590</created>
-      <option name="number" value="00111" />
-      <option name="presentableId" value="LOCAL-00111" />
-      <option name="project" value="LOCAL" />
-      <updated>1697888640590</updated>
-    </task>
-    <task id="LOCAL-00112" summary="started to write new high new low">
-      <created>1697889049529</created>
-      <option name="number" value="00112" />
-      <option name="presentableId" value="LOCAL-00112" />
-      <option name="project" value="LOCAL" />
-      <updated>1697889049529</updated>
     </task>
     <task id="LOCAL-00113" summary="added new high new low and template for testing pipelines">
       <created>1698430077593</created>
@@ -664,7 +650,21 @@
       <option name="project" value="LOCAL" />
       <updated>1702203720139</updated>
     </task>
-    <option name="localTasksCounter" value="160" />
+    <task id="LOCAL-00160" summary="fixing broken item">
+      <created>1702204529185</created>
+      <option name="number" value="00160" />
+      <option name="presentableId" value="LOCAL-00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1702204529186</updated>
+    </task>
+    <task id="LOCAL-00161" summary="fixing broken metrics">
+      <created>1702319003773</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1702319003774</updated>
+    </task>
+    <option name="localTasksCounter" value="162" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -762,8 +762,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing petrol prices" />
-    <MESSAGE value="added consres" />
     <MESSAGE value="fixed dodgy mapping" />
     <MESSAGE value="started to write new high new low" />
     <MESSAGE value="added new high new low and template for testing pipelines" />
@@ -787,16 +785,13 @@
     <MESSAGE value="added sectors and inds" />
     <MESSAGE value="fixing peter lynch ratio" />
     <MESSAGE value="fixing broken item" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixing broken item" />
+    <MESSAGE value="fixing broken metrics" />
+    <MESSAGE value="getting data quarterly" />
+    <option name="LAST_COMMIT_MESSAGE" value="getting data quarterly" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>43</line>
-          <option name="timeStamp" value="53" />
-        </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/news_util.py</url>
           <line>84</line>
@@ -814,7 +809,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>105</line>
+          <line>115</line>
           <option name="timeStamp" value="102" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -914,22 +909,22 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>121</line>
+          <line>131</line>
           <option name="timeStamp" value="264" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>116</line>
+          <line>126</line>
           <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>115</line>
+          <line>125</line>
           <option name="timeStamp" value="274" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
-          <line>99</line>
+          <line>109</line>
           <option name="timeStamp" value="275" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1133,14 +1128,64 @@
           <option name="timeStamp" value="403" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
+          <line>53</line>
+          <option name="timeStamp" value="410" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
+          <line>49</line>
+          <option name="timeStamp" value="414" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
+          <line>69</line>
+          <option name="timeStamp" value="416" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py</url>
+          <line>39</line>
+          <option name="timeStamp" value="417" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
           <line>245</line>
-          <option name="timeStamp" value="405" />
+          <option name="timeStamp" value="419" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
+          <line>237</line>
+          <option name="timeStamp" value="420" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
+          <line>587</line>
+          <option name="timeStamp" value="421" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
+          <line>590</line>
+          <option name="timeStamp" value="422" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
+          <line>238</line>
+          <option name="timeStamp" value="423" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
+          <line>598</line>
+          <option name="timeStamp" value="424" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
+          <line>244</line>
+          <option name="timeStamp" value="425" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
           <line>249</line>
-          <option name="timeStamp" value="406" />
+          <option name="timeStamp" value="426" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

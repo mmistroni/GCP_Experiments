@@ -22,7 +22,7 @@ def get_fields():
 class DfTesterLoader(beam.DoFn):
     def __init__(self, key, period='annual'):
         self.key = key
-        self.period = period
+        self.periodperiod = period
 
     def to_list_of_vals(self, data_dict):
         return ','.join([str(data_dict[field]) for field in get_fields()])
