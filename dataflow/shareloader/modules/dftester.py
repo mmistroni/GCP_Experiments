@@ -13,6 +13,9 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--fmprepkey')
+        parser.add_argument('--input')
+        parser.add_argument('--output')
+        parser.add_argument('--period')
 
 
 def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_20231126.csv',
@@ -64,10 +67,10 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        destination =  'gs://mm_dataflow_bucket/outputs/dftester_{}'.format(date.today().strftime('%Y-%m-%d %H:%M'))
+        destination =  f"gs://mm_dataflow_bucket/outputs/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"
         bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
 
         # TDO parameterize period and limits
 
-        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period='quarter')
+        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period=pipeline_options.period)
         data | 'Wrrting to bucket' >> bucketSink

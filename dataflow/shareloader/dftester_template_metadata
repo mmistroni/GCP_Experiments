@@ -6,6 +6,22 @@
       "name": "fmprepkey",
       "helpText": "FMPREP  key",
       "label": "fmprepkey"
+    },
+    {
+      "name": "input",
+      "helpText": "Input File",
+      "label": "input"
+    },
+    {
+      "name": "output",
+      "helpText": "Output File",
+      "label": "output"
+    },
+    {
+      "name": "period",
+      "helpText": "Period of financial statements",
+      "label": "period"
     }
+
   ]
 }

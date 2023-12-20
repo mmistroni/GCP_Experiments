@@ -13,6 +13,12 @@ steps:
           , '$_DFTESTER_TEMPLATE_GCS_LOCATION'
           , '--parameters'
           , 'fmprepkey=$_FMPREP_KEY'
+          , '--parameters'
+          , 'input=$_INPUT'
+          , '--parameters'
+          , 'output=$_OUTPUT'
+          , '--parameters'
+          , 'period=$_PERIOD'
           ,'--region=$_REGION'
           ]  
 substitutions:
@@ -20,5 +26,8 @@ substitutions:
   _DFTESTER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/dftester_flex_template.json
   _REGION: us-central1
   _FMPREP_KEY: ''
+  _INPUT: ''
+  _OUTPUT: ''
+  _PERIOD: 'annual'
 
 
