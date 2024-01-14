@@ -5,6 +5,7 @@ import apache_beam as beam
 
 
 
+
 def get_fields():
     return ["ticker", "date", "currentRatio", "quickRatio", "cashRatio", "calendarYear",
             "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed",

@@ -28,18 +28,6 @@ def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/h
             | 'Run Loader' >> beam.ParDo(DfTesterLoader(fmpKey, period=period))
             )
 
-
-def run(fund_data):
-    logging.info('Running probe..,')
-    logging.info('Returning')
-    destination = 'gs://mm_dataflow_bucket/outputs/superperformers_probe_{}'.format(
-        date.today().strftime('%Y-%m-%d %H:%M'))
-    sink = beam.io.WriteToText(destination, num_shards=1)
-    (fund_data | 'Writing to text sink' >> sink)
-
-
-
-
 def run_my_pipeline(p, fmpkey):
     nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
     nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")
@@ -67,7 +55,7 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        destination =  f"gs://mm_dataflow_bucket/outputs/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"
+        destination =  f"gs://mm_dataflow_bucket/datasets/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"
         bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
 
         # TDO parameterize period and limits
