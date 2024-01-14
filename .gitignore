@@ -1,3 +1,4 @@
 **/dataflow/testing
 **/*egg-info*
 **/*pycache
+**/*pytest_cache*
