@@ -662,7 +662,6 @@ class TestSuperPerformers(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
-        """
         res = requests.get(
             'https://financialmodelingprep.com/api/v3/institutional-holder/{}?apikey={}'.format('COLM', key)).json()
 
@@ -678,7 +677,6 @@ class TestSuperPerformers(unittest.TestCase):
         shares = [v[0] for k, v in ddict.items() ]
 
         print(f'COLM HOLDING are:{sum(shares)}')
-        """
 
 
 

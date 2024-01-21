@@ -110,19 +110,12 @@ def get_latest_jobs_statistics():
     data = requests.get(latestUrl, headers={'User-Agent': get_user_agent()})
     workbook = openpyxl.load_workbook(BytesIO(data.content))
 
-
-
-
     sheet = workbook.get_sheet_by_name('Adverts by category YoY')
 
     header_cellz = [sheet.cell(row=x, column=1).value for x in range(1, sheet.max_row)]
 
     headers = header_cellz.index('Date') +1
-
-
     vacancies_names = [(sheet.cell(row=headers, column=c).value) for c in range(2, sheet.max_column - 1)]
-
-
     it_column, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
     logging.info(f'IT ROWS:{it_column}')
 
@@ -132,4 +125,52 @@ def get_latest_jobs_statistics():
     return {'label' : 'IT-JOB-VACANCIES',
             'asOfDate' : asOfDate.strftime('%Y-%m-%d'),
             'value' : float(it_vacancies)}
+
+
+def get_card_spending():
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/ukspendingoncreditanddebitcards'
+    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    soup = BeautifulSoup(req.text, "html.parser")
+    hrefs = soup.find_all('a')
+    latest = [link.get('href').split('?')[1] for link in hrefs if
+              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+
+    latest = pd.read_excel(dataset_url,
+                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Weekly CHAPS indices SA',
+                           header=3).tail(1).to_dict('records')[0]
+
+    cob = latest['Date'].strftime('%Y-%m-%d')
+    latest_value = latest['Aggregate']
+
+    return {'label': 'CREDIT-DEBIT-SPENDING',
+            'asOfDate': cob,
+            'value': latest_value}
+
+def get_gas_prices():
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas'
+
+    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    soup = BeautifulSoup(req.text, "html.parser")
+    hrefs = soup.find_all('a')
+    latest = [link.get('href').split('?')[1] for link in hrefs if
+              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+
+    latest = pd.read_excel(dataset_url,
+                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
+    colnames = latest.columns[0:3]
+    last_record = latest[colnames].tail(1).to_dict('records')[0]
+
+    cob = last_record['Date'].strftime('%Y-%m-%d')
+    latest = last_record['SAP actual day\n(p/kWh)']
+    rolling = last_record['SAP preceding seven-day rolling average\n(p/kWh)']
+
+    return {'label': 'GAS-PRICES',
+     'asOfDate': cob,
+     'value': latest}
+
+
+def get_gas_future_prices():
+    pass
 
