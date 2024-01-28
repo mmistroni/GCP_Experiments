@@ -143,9 +143,9 @@ def get_card_spending():
     cob = latest['Date'].strftime('%Y-%m-%d')
     latest_value = latest['Aggregate']
 
-    return {'label': 'CREDIT-DEBIT-SPENDING',
+    return [{'label': 'CREDIT-DEBIT-SPENDING',
             'asOfDate': cob,
-            'value': latest_value}
+            'value': latest_value}]
 
 def get_gas_prices():
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas'
@@ -166,9 +166,9 @@ def get_gas_prices():
     latest = last_record['SAP actual day\n(p/kWh)']
     rolling = last_record['SAP preceding seven-day rolling average\n(p/kWh)']
 
-    return {'label': 'GAS-PRICES',
+    return [{'label': 'GAS-PRICES',
      'asOfDate': cob,
-     'value': latest}
+     'value': latest}]
 
 
 def get_gas_future_prices():
