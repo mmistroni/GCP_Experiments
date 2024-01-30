@@ -7,10 +7,11 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="updated economc utils">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added gas and credit card spending">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -250,6 +251,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -278,34 +293,20 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_institutional_holdings&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <list>
-      <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_institutional_holdings" />
       </list>
     </recent_temporary>
   </component>
@@ -320,20 +321,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00118" summary="added new high new low and template for testing pipelines">
-      <created>1698486968836</created>
-      <option name="number" value="00118" />
-      <option name="presentableId" value="LOCAL-00118" />
-      <option name="project" value="LOCAL" />
-      <updated>1698486968836</updated>
-    </task>
-    <task id="LOCAL-00119" summary="added new high new low and template for testing pipelines">
-      <created>1698487030647</created>
-      <option name="number" value="00119" />
-      <option name="presentableId" value="LOCAL-00119" />
-      <option name="project" value="LOCAL" />
-      <updated>1698487030647</updated>
     </task>
     <task id="LOCAL-00120" summary="fixin gbug">
       <created>1698576791983</created>
@@ -664,7 +651,21 @@
       <option name="project" value="LOCAL" />
       <updated>1706120344832</updated>
     </task>
-    <option name="localTasksCounter" value="167" />
+    <task id="LOCAL-00167" summary="added gas and credit card spending">
+      <created>1706436660469</created>
+      <option name="number" value="00167" />
+      <option name="presentableId" value="LOCAL-00167" />
+      <option name="project" value="LOCAL" />
+      <updated>1706436660469</updated>
+    </task>
+    <task id="LOCAL-00168" summary="added gas and credit card spending">
+      <created>1706436677089</created>
+      <option name="number" value="00168" />
+      <option name="presentableId" value="LOCAL-00168" />
+      <option name="project" value="LOCAL" />
+      <updated>1706436677089</updated>
+    </task>
+    <option name="localTasksCounter" value="169" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -762,7 +763,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixin gbug" />
     <MESSAGE value="adding nasdaq" />
     <MESSAGE value="adding nasdaq and rut" />
     <MESSAGE value="addinig nysi nymo" />
@@ -787,7 +787,8 @@
     <MESSAGE value="fixed bug in dftester" />
     <MESSAGE value="added more data to economic utils" />
     <MESSAGE value="updated economc utils" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated economc utils" />
+    <MESSAGE value="added gas and credit card spending" />
+    <option name="LAST_COMMIT_MESSAGE" value="added gas and credit card spending" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

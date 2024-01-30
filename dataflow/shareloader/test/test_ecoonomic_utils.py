@@ -1,7 +1,7 @@
 import unittest
 
 from shareloader.modules.economic_utils import get_latest_jobs_statistics, get_fruit_and_veg_prices, get_petrol_prices,\
-                                get_card_spending, get_gas_prices
+                                get_card_spending, get_gas_prices, get_electricity_prices
 
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
@@ -48,6 +48,12 @@ class EconomicUtilsTestCase(unittest.TestCase):
 
     def test_get_gas_prices(self):
         res =  get_gas_prices()
+        print(res)
+        self.assertTrue(len(res) > 0)
+
+
+    def test_get_electricity_prices(self):
+        res =  get_electricity_prices()
         print(res)
         self.assertTrue(len(res) > 0)
 

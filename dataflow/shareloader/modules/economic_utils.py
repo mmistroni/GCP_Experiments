@@ -171,6 +171,28 @@ def get_gas_prices():
      'value': latest}]
 
 
-def get_gas_future_prices():
-    pass
+def get_electricity_prices():
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systempriceofelectricity'
+
+    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    soup = BeautifulSoup(req.text, "html.parser")
+    hrefs = soup.find_all('a')
+    latest = [link.get('href').split('?')[1] for link in hrefs if
+              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+
+    latest = pd.read_excel(dataset_url,
+                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=3)
+    colnames = latest.columns[0:3]
+
+    print(colnames)
+    last_record = latest[colnames].tail(1).to_dict('records')[0]
+
+    cob = last_record['Date'].strftime('%Y-%m-%d')
+    latest = last_record['Daily average']
+
+    return [{'label': 'ELECTRICITY-PRICES',
+     'asOfDate': cob,
+     'value': latest}]
+
 
