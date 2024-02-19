@@ -21,6 +21,11 @@
       "name": "period",
       "helpText": "Period of financial statements",
       "label": "period"
+    },
+    {
+      "name": "limit",
+      "helpText": "Look back Period for financial statements",
+      "label": "limit"
     }
 
   ]

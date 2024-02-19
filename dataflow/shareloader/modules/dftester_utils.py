@@ -21,9 +21,10 @@ def get_fields():
 
 
 class DfTesterLoader(beam.DoFn):
-    def __init__(self, key, period='annual'):
+    def __init__(self, key, period='annual', limit=10):
         self.key = key
         self.period = period
+        self.limit = limit
 
     def to_list_of_vals(self, data_dict):
         return ','.join([str(data_dict[field]) for field in get_fields()])
@@ -41,7 +42,7 @@ class DfTesterLoader(beam.DoFn):
 
         for idx, ticker in enumerate(tickers_to_process):
             try:
-                data  =get_fundamental_data(ticker, self.key, self.period)
+                data  =get_fundamental_data(ticker, self.key, self.period, self.limit)
                 vals_only = [self.to_list_of_vals(d) for d in data]
                 all_dt += vals_only
             except Exception as e:
@@ -77,7 +78,7 @@ def calculate_peter_lynch_ratio(key, ticker, asOfDateStr, dataDict):
     except Exception as e:
         return -99
 
-def get_financial_ratios(ticker, key, period='annual'):
+def get_financial_ratios(ticker, key, period='annual', limit=10):
     keys = ["currentRatio", "quickRatio", "cashRatio", "date", "calendarYear",
             "returnOnAssets", "returnOnEquity", "returnOnCapitalEmployed",
             "priceToBookRatio", "priceToSalesRatio",
@@ -87,7 +88,7 @@ def get_financial_ratios(ticker, key, period='annual'):
     global_dict = dict()
     try:
         financial_ratios = requests.get(
-            f'https://financialmodelingprep.com/api/v3/ratios/{ticker}?period={period}&limit=5&apikey={key}').json()
+            f'https://financialmodelingprep.com/api/v3/ratios/{ticker}?period={period}&limit={limit}&apikey={key}').json()
 
         for data_dict in financial_ratios:
             tmp_dict = dict((k, data_dict.get(k, None)) for k in keys)
@@ -96,7 +97,7 @@ def get_financial_ratios(ticker, key, period='annual'):
         logging.info(f'Unable to get data for {ticker}:{str(e)}')
     return global_dict
 
-def get_key_metrics(ticker, key, period='annual'):
+def get_key_metrics(ticker, key, period='annual', limit=10):
     keys = [
             "date", "calendarYear", "revenuePerShare", "earningsYield", "debtToEquity",
             "debtToAssets", "capexToRevenue", "grahamNumber"
@@ -106,7 +107,7 @@ def get_key_metrics(ticker, key, period='annual'):
 
     try:
         keyMetrics = requests.get(
-           f'https://financialmodelingprep.com/api/v3/key-metrics/{ticker}?period={period}&limit=5&apikey={key}').json()
+           f'https://financialmodelingprep.com/api/v3/key-metrics/{ticker}?period={period}&limit={limit}&apikey={key}').json()
         for dataDict in keyMetrics:
             tmpDict = dict((k, dataDict.get(k, None)) for k in keys)
             globalDict[dataDict['date']] = tmpDict
@@ -116,11 +117,11 @@ def get_key_metrics(ticker, key, period='annual'):
 
     return globalDict
 
-def get_fundamental_data(ticker, key, period='annual'): # we do separately , for each ticker we get perhaps the last
+def get_fundamental_data(ticker, key, period='annual', limit=10): # we do separately , for each ticker we get perhaps the last
     ## we get ROC, divYield and pl ratio. we need to get historicals on a quarterly and annually
     # then we build a dataframe with all the information
-    metrics = get_key_metrics(ticker, key, period)
-    ratios = get_financial_ratios(ticker, key, period)
+    metrics = get_key_metrics(ticker, key, period, limit)
+    ratios = get_financial_ratios(ticker, key, period, limit)
 
     mergedDicts = []
     for asOfDate, metricsDict in metrics.items():

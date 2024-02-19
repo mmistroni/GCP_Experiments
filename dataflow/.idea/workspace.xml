@@ -8,10 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added gas and credit card spending">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/state_of_uk_economy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/dftester_template_metadata" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/dftester_template_metadata" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,6 +140,9 @@
       </list>
     </option>
   </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3
+}]]></component>
   <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="158" />
     <option name="y" value="105" />
@@ -198,14 +202,11 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DefaultHtmlFileTemplate" value="HTML File" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="TODO_SCOPE" value="All Places" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/shareloader/test" />
-    <property name="settings.editor.selected.configurable" value="preferences.externalDependencies" />
-  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true"
+  }
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
@@ -225,6 +226,7 @@
   <component name="RunManager" selected="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline">
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -239,6 +241,7 @@
     </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -253,6 +256,7 @@
     </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -267,6 +271,7 @@
     </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -281,6 +286,7 @@
     </configuration>
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
@@ -296,9 +302,9 @@
     <list>
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
     </list>
     <recent_temporary>
       <list>
@@ -309,6 +315,13 @@
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_latest_job_statistics" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-5a2391486177-d3b881c8e49f-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-233.13763.11" />
+      </set>
+    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -321,13 +334,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1578173873121</updated>
-    </task>
-    <task id="LOCAL-00120" summary="fixin gbug">
-      <created>1698576791983</created>
-      <option name="number" value="00120" />
-      <option name="presentableId" value="LOCAL-00120" />
-      <option name="project" value="LOCAL" />
-      <updated>1698576791983</updated>
     </task>
     <task id="LOCAL-00121" summary="fixin gbug">
       <created>1698580119992</created>
@@ -665,7 +671,14 @@
       <option name="project" value="LOCAL" />
       <updated>1706436677089</updated>
     </task>
-    <option name="localTasksCounter" value="169" />
+    <task id="LOCAL-00169" summary="added gas and credit card spending">
+      <created>1706637036541</created>
+      <option name="number" value="00169" />
+      <option name="presentableId" value="LOCAL-00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1706637036542</updated>
+    </task>
+    <option name="localTasksCounter" value="170" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -737,15 +750,6 @@
     </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
     <option name="RECENT_FILTERS">
       <map>
         <entry key="Branch">
@@ -760,7 +764,15 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="adding nasdaq" />
@@ -1100,7 +1112,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/dftester_utils.py</url>
-          <line>133</line>
+          <line>134</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

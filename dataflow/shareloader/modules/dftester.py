@@ -16,6 +16,8 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--input')
         parser.add_argument('--output')
         parser.add_argument('--period')
+        parser.add_argument('--limit')
+
 
 
 def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/history_5y_tickers_US_with_sector_and_industry_20231126.csv',
@@ -25,7 +27,7 @@ def run_stocksel_pipeline(p, fmpKey, inputFile='gs://mm_dataflow_bucket/inputs/h
             | 'Converting to Tuple' >> beam.Map(lambda row: row.split(','))
             | 'Extracting only ticker and Industry' >> beam.Map(lambda item: (item[0]))
             | 'Combining Tickers' >> beam.CombineGlobally(combine_tickers)
-            | 'Run Loader' >> beam.ParDo(DfTesterLoader(fmpKey, period=period))
+            | 'Run Loader' >> beam.ParDo(DfTesterLoader(fmpKey, period=period, limit=10))
             )
 
 def run_my_pipeline(p, fmpkey):
