@@ -7,9 +7,9 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="added gas and credit card spending">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding limit parameter">
+      <change afterPath="$PROJECT_DIR$/shareloader/.python-version" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -675,7 +675,7 @@
       <option name="project" value="LOCAL" />
       <updated>1706637036542</updated>
     </task>
-    <option name="localTasksCounter" value="171" />
+    <option name="localTasksCounter" value="172" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -772,7 +772,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adding nasdaq" />
     <MESSAGE value="adding nasdaq and rut" />
     <MESSAGE value="addinig nysi nymo" />
     <MESSAGE value="added params to calculate peter lynch ratio" />
@@ -797,7 +796,8 @@
     <MESSAGE value="added more data to economic utils" />
     <MESSAGE value="updated economc utils" />
     <MESSAGE value="added gas and credit card spending" />
-    <option name="LAST_COMMIT_MESSAGE" value="added gas and credit card spending" />
+    <MESSAGE value="adding limit parameter" />
+    <option name="LAST_COMMIT_MESSAGE" value="adding limit parameter" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
