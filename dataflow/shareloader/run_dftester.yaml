@@ -19,8 +19,8 @@ steps:
           , 'output=$_OUTPUT'
           , '--parameters'
           , 'period=$_PERIOD'
-          ,'--parameters'
-          ,'limit=$_LIMIT
+          , '--parameters'
+          ,'limit=$_LIMIT'
           ,'--region=$_REGION'
           ]  
 substitutions:
