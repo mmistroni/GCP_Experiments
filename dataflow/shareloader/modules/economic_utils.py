@@ -9,6 +9,9 @@ from .news_util import get_user_agent
 
 ECONOMIC_QUERY = """SELECT *  FROM `datascience-projects.gcp_shareloader.tmpeconomy` 
                         WHERE LABEL IN  ('Diesel', 'Petrol', 'IT-JOB-VACANCIES',
+                        'CREDIT-DEBIT-SPENDING',
+                        'ELECTRICITY-PRICES',
+                        'GAS-PRICES'
                         'fruit-apples-gala(kg)','it-computing-software',
                         'fruit-pears-conference(kg)',
                         'vegetable-lettuce-cos(head)',
@@ -194,5 +197,23 @@ def get_electricity_prices():
     return [{'label': 'ELECTRICITY-PRICES',
      'asOfDate': cob,
      'value': latest}]
+
+'''
+New data to fetch
+
+For loan delinquencies, we publish the direct debit failure rate provided from Vocalink and Pay.UK data.  This is broken down in the main categories of direct debit payments e.g. energy, mortgage ect.
+https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/monthlydirectdebitfailurerateandaveragetransactionamount
+For businesses bankrupt we do not publish this exactly, but we do publish data from Companies House about company dissolutions which may be of use -
+https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/companyincorporationsandvoluntarydissolutions
+We also publish the number of companies proposing redundancies, which may be another indicator of use –
+https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies
+Our full list of published datasets can be found here -
+
+https://www.ons.gov.uk/economy/economicoutputandproductivity/output/bulletins/economicactivityandsocialchangeintheukrealtimeindicators/29february2024/relateddata
+
+
+
+
+'''
 
 

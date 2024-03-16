@@ -10,7 +10,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
-                        get_mcclellan
+                        get_mcclellan, get_cftc_spfutures
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -478,6 +478,14 @@ class TestMarketStats(unittest.TestCase):
         for tick in full_ticks.split(','):
             res = get_prices2(tick, fmp_key)
             print('foo')
+
+    def test_get_cftc_spfutures(selfself):
+        fmp_key = os.environ['FMPREPKEY']
+        base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VX?apikey={fmp_key}'
+        all_data = requests.get(base_url).json()
+        print(all_data)
+
+
 
     def test_McClellan(self):
 
