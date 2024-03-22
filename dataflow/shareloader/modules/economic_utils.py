@@ -198,6 +198,58 @@ def get_electricity_prices():
      'asOfDate': cob,
      'value': latest}]
 
+def get_redundancies_notifications():
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
+
+    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    soup = BeautifulSoup(req.text, "html.parser")
+    hrefs = soup.find_all('a')
+    latest = [link.get('href').split('?')[1] for link in hrefs if
+              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+
+    latest = pd.read_excel(dataset_url,
+                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
+    colnames = latest.columns[0:3]
+
+    print(colnames)
+    last_record = latest[colnames].tail(1).to_dict('records')[0]
+
+    cob = last_record['Date'].strftime('%Y-%m-%d')
+    latest = last_record['Potential redundancies']
+
+    return [{'label': 'POTENTIAL-REDUNDANCIES',
+     'asOfDate': cob,
+     'value': latest}]
+
+
+def get_company_dissolutions():
+    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/companyincorporationsandvoluntarydissolutions'
+
+    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+    soup = BeautifulSoup(req.text, "html.parser")
+    hrefs = soup.find_all('a')
+    latest = [link.get('href').split('?')[1] for link in hrefs if
+              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+
+    latest = pd.read_excel(dataset_url,
+                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Compulsory Dissolutions', header=4)
+    colnames = latest.columns[0:3]
+
+    print(colnames)
+    last_record = latest[colnames].tail(1).to_dict('records')[0]
+
+    cob = last_record['Week ending to'].strftime('%Y-%m-%d')
+    latest = last_record['Weekly']
+
+    return [{'label': 'COMPANY-DISSOLUTUIONS',
+     'asOfDate': cob,
+     'value': latest}]
+
+
+
+
 '''
 New data to fetch
 

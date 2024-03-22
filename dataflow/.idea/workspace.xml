@@ -7,10 +7,10 @@
     <bookmark url="file://$PROJECT_DIR$/edgar_flow/modules/edgar_daily_form4.py" description="from apache_beam.options.pipeline_options import S..." line="4" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="adding limit parameter">
+    <list default="true" id="8c280486-eda6-4317-9c69-8b4d4ab732ba" name="Default Changelist" comment="amended vix ticker">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/economic_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,12 +200,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor": "Debug",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "ignore.virus.scanning.warn.message": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
@@ -222,7 +225,7 @@
       <recent name="C:\Users\marco\GCP_Experiments\dataflow\edgar_flow" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures">
+  <component name="RunManager" selected="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions">
     <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -238,7 +241,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -249,7 +252,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -268,7 +271,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -279,7 +282,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices&quot;" />
+      <option name="_new_target" value="&quot;test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -299,19 +302,19 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions" />
+      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications" />
       <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" />
       <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
-      <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions" />
+        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline" />
         <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_electricity_prices" />
-        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices" />
-        <item itemvalue="Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_card_spending" />
       </list>
     </recent_temporary>
   </component>
@@ -677,7 +680,7 @@
       <option name="project" value="LOCAL" />
       <updated>1706637036542</updated>
     </task>
-    <option name="localTasksCounter" value="175" />
+    <option name="localTasksCounter" value="176" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -774,7 +777,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adding nasdaq and rut" />
     <MESSAGE value="addinig nysi nymo" />
     <MESSAGE value="added params to calculate peter lynch ratio" />
     <MESSAGE value="added nymo and nysi" />
@@ -799,7 +801,8 @@
     <MESSAGE value="updated economc utils" />
     <MESSAGE value="added gas and credit card spending" />
     <MESSAGE value="adding limit parameter" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding limit parameter" />
+    <MESSAGE value="amended vix ticker" />
+    <option name="LAST_COMMIT_MESSAGE" value="amended vix ticker" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1196,8 +1199,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_ecoonomic_utils.py</url>
-          <line>40</line>
+          <line>41</line>
           <option name="timeStamp" value="430" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/economic_utils.py</url>
+          <line>242</line>
+          <option name="timeStamp" value="436" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
