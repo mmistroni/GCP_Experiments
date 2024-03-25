@@ -198,6 +198,7 @@ def get_electricity_prices():
      'asOfDate': cob,
      'value': latest}]
 
+
 def get_redundancies_notifications():
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
 
