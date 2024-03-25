@@ -2,3 +2,4 @@
 **/*egg-info*
 **/*pycache
 **/*pytest_cache*
+**/workspace.xml
