@@ -200,6 +200,7 @@ def get_electricity_prices():
 
 
 def get_redundancies_notifications():
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
 
     req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
