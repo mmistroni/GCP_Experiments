@@ -11,7 +11,9 @@ ECONOMIC_QUERY = """SELECT *  FROM `datascience-projects.gcp_shareloader.tmpecon
                         WHERE LABEL IN  ('Diesel', 'Petrol', 'IT-JOB-VACANCIES',
                         'CREDIT-DEBIT-SPENDING',
                         'ELECTRICITY-PRICES',
-                        'GAS-PRICES'
+                        'GAS-PRICES',
+                        'COMPANY-DISSOLUTIONS',
+                        'POTENTIAL-REDUNDANCIES',
                         'fruit-apples-gala(kg)','it-computing-software',
                         'fruit-pears-conference(kg)',
                         'vegetable-lettuce-cos(head)',
@@ -99,35 +101,38 @@ def get_latest_url():
     anchor = soup.find_all('a')
     links = [a for a in anchor if
              'Download Online job advert estimates' in a.get('aria-label', '') and str(current_year) in a.get('aria-label', '')]
-    link = links[0].get('href')
-    full_url = f'https://www.ons.gov.uk/{link}'
-    return full_url
+    if links:
+        link = links[0].get('href')
+        full_url = f'https://www.ons.gov.uk/{link}'
+        return full_url
 
 
 def get_latest_jobs_statistics():
     import datetime
     import openpyxl
     from io import BytesIO
+    ## TODO need to amennd this
     latestUrl = get_latest_url()
-    logging.info(f'Latest URL from ONS is {latestUrl}')
-    data = requests.get(latestUrl, headers={'User-Agent': get_user_agent()})
-    workbook = openpyxl.load_workbook(BytesIO(data.content))
+    if latestUrl:
+        logging.info(f'Latest URL from ONS is {latestUrl}')
 
-    sheet = workbook.get_sheet_by_name('Adverts by category YoY')
+        df = pd.read_excel(
+            latestUrl,
+            sheet_name='Adverts by category YoY',
+            storage_options={'User-Agent': 'Mozilla/5.0'}, header=6)
 
-    header_cellz = [sheet.cell(row=x, column=1).value for x in range(1, sheet.max_row)]
+        data = df[['Date', 'IT / Computing / Software']].tail(1).to_dict('records')[0]
 
-    headers = header_cellz.index('Date') +1
-    vacancies_names = [(sheet.cell(row=headers, column=c).value) for c in range(2, sheet.max_column - 1)]
-    it_column, _ = [(idx, v) for idx, v in enumerate(vacancies_names) if 'Computing' in v][0]
-    logging.info(f'IT ROWS:{it_column}')
 
-    it_vacancies = sheet.cell(row=sheet.max_row, column=it_column + 2).value
-    asOfDate = sheet.cell(row=sheet.max_row, column=1).value
 
+        return {'label' : 'IT-JOB-VACANCIES',
+                'asOfDate' : data['Date'].date().strftime('%Y-%m-%d'),
+                'value' : float(data['IT / Computing / Software'])
+                }
     return {'label' : 'IT-JOB-VACANCIES',
-            'asOfDate' : asOfDate.strftime('%Y-%m-%d'),
-            'value' : float(it_vacancies)}
+            'asOfDate' : date.today().strftime('%Y-%m-%d'),
+                'value' : float(0)}
+
 
 
 def get_card_spending():
@@ -245,7 +250,7 @@ def get_company_dissolutions():
     cob = last_record['Week ending to'].strftime('%Y-%m-%d')
     latest = last_record['Weekly']
 
-    return [{'label': 'COMPANY-DISSOLUTUIONS',
+    return [{'label': 'COMPANY-DISSOLUTIONS',
      'asOfDate': cob,
      'value': latest}]
 

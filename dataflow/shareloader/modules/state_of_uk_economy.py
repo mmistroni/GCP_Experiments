@@ -8,7 +8,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 
 from .economic_utils import get_petrol_prices, get_latest_jobs_statistics, get_fruit_and_veg_prices,\
-                            get_card_spending, get_gas_prices,get_electricity_prices
+                            get_card_spending, get_gas_prices,get_electricity_prices, get_company_dissolutions,\
+                            get_redundancies_notifications
 
 # Check Datasets here
 ## https://beta.ukdataservice.ac.uk/datacatalogue/studies/?Search=#!?Search=House&Rows=10&Sort=1&DateFrom=440&DateTo=2022&CountryFacet=England&Page=1
@@ -38,8 +39,14 @@ def kickoff_pipeline(pipeline):
     elecprices = (pipeline | 'Create elecprices' >> beam.Create(get_electricity_prices())
                  )
 
+    dissolutions = (pipeline | 'Create dissolutions' >> beam.Create(get_company_dissolutions())
+                 )
+
+    redundancies = (pipeline | 'Create redundancies' >> beam.Create(get_redundancies_notifications())
+                  )
+
     return (
-            (jobstats, fruitandveg, pprices, ccard_spending, gasprices, elecprices)
+            (jobstats, fruitandveg, pprices, ccard_spending, gasprices, elecprices, dissolutions, redundancies)
             | 'FlattenCombine all' >> beam.Flatten()
             | 'MAP Values' >> beam.Map(lambda d: dict(AS_OF_DATE=d['asOfDate'], LABEL=d['label'], VALUE=d['value']))
 
