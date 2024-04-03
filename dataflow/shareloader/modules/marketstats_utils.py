@@ -255,6 +255,7 @@ def get_latest_fed_fund_rates():
         return 'N/A'
 
 def parse_consumer_sentiment_index():
+
     ua = get_user_agent()
     try:
         r = requests.get('https://tradingeconomics.com/united-states/consumer-confidence', headers={'User-Agent': ua})
