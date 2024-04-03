@@ -264,7 +264,7 @@ def parse_consumer_sentiment_index():
         p = anchor.parent.parent.find_all('td')[1]
         return {'Last': p.text}
     except Exception as e:
-        return 'N/A'
+        return {'Last': p.text}
 
 
 class PutCallRatio(beam.DoFn):
