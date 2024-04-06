@@ -260,10 +260,22 @@ def parse_consumer_sentiment_index():
     try:
         r = requests.get('https://tradingeconomics.com/united-states/consumer-confidence', headers={'User-Agent': ua})
         bs = BeautifulSoup(r.content, 'html.parser')
-        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl01_Panel1"})[0]  #
-        anchor = div_item.find_all('a', {"href": "/united-states/consumer-confidence"})[0]
-        p = anchor.parent.parent.find_all('td')[1]
-        return {'Last': p.text}
+
+        items = bs.find_all('tr')
+
+        valids = [i for i in items if i.get('data-category') is not None and 'Consumer Confidence' in i.get('data-category')]
+
+        lastVal = None
+        lastDate = None
+        for valid in valids:
+            tds  = valid.find_all('td')
+            testDate = tds[0].text
+            testVal = tds[4].text.strip()
+            if testVal:
+                lastDate = testDate
+                lastVal = testVal
+
+        return {'Last': lastVal}
     except Exception as e:
         return {'Last': f'N/A-{str(e)}'}
 
