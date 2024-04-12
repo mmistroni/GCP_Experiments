@@ -515,11 +515,15 @@ def get_equity_putcall_ratio():
     bs = BeautifulSoup(r.content, 'html.parser')
     div_item = bs.find('div', {"class": "key-stat-title"})
     import re
-    data = div_item.text
-    values = re.findall(r'\d+\.\d+', data)
-    if not values:
+    try:
+        data = div_item.text
+        values = re.findall(r'\d+\.\d+', data)
+        if not values:
+            return 1
+        return float(values[0])
+    except Exception as e:
+        logging.info(f'Exception:{str(e)}')
         return 1
-    return float(values[0])
 
 
 def get_skew_index():
