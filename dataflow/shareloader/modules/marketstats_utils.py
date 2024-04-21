@@ -240,16 +240,17 @@ def get_all_prices_for_date(apikey, asOfDate):
 
 
 def get_latest_fed_fund_rates():
-    import requests
-    from bs4 import BeautifulSoup
-    link = 'https://finance.yahoo.com/quote/ZQ%3DF/history?p=ZQ%3DF'
-    r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
-    bs = BeautifulSoup(r.content, 'html.parser')
-    t = bs.find_all('table', {"class": "W(100%) M(0)"})[0]
-
-    rows = t.find_all('tr')
-    row = rows[1]
     try:
+
+        import requests
+        from bs4 import BeautifulSoup
+        link = 'https://finance.yahoo.com/quote/ZQ%3DF/history?p=ZQ%3DF'
+        r = requests.get(link, headers={'user-agent': 'my-app/0.0.1'})
+        bs = BeautifulSoup(r.content, 'html.parser')
+        t = bs.find_all('table', {"class": "W(100%) M(0)"})[0]
+
+        rows = t.find_all('tr')
+        row = rows[1]
         return row.find_all('td')[5].text
     except Exception as e:
         return 'N/A'
