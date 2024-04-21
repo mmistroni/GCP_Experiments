@@ -472,7 +472,7 @@ def run(argv=None, save_main_session=True):
             if 'historical' in pipeline_options.mmrun:
                 logging.info('Running historical ppln..')
                 data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays)
-                destination = 'gs://mm_dataflow_bucket/inputs/historical_prices_5y_{}'.format(
+                destination = 'gs://mm_dataflow_bucket/dataset/supertrend_{}'.format(
                                         date.today().strftime('%Y-%m-%d %H:%M'))
 
                 logging.info(f'Writing to {destination}')
