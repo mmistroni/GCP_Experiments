@@ -17,7 +17,7 @@ res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolum
 
 def _run_screener(filters):
     foverview = Overview()
-    foverview.set_filter(filters_dict=filters_dict)
+    foverview.set_filter(filters_dict=filters)
     df = foverview.screener_view()
     return df.to_dict('records') if df is not None else []
 
