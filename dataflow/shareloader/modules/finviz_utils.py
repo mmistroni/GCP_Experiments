@@ -40,7 +40,8 @@ def get_universe_stocks():
     filter = get_universe_filter()
     return _run_screener(filter)
 
-def get_canslim():
+def \
+        get_canslim():
     '''
     Descriptive Parameters:
 
@@ -107,37 +108,26 @@ def get_leaps():
     '''
     Descriptive Parameters:
 
-    Average Volume: Over 200K
-    Float: Under 50M
-    Stocks only (ex-Funds)
-    Stocks that have above 200K average daily volume are liquid and stocks with a low float under 50 million shares are more likely to explode faster because of the lower supply. For example, low float stocks like FUTU, CELH, BLNK, GRWG, SI, and DQ are all up more than 750% from their 52-week lows.
+        Market Cap: +Small (over $2bln)
+        Average Volume: Over 200K
+        Price: Over $5
+        With these descriptive parameters, I narrow the list to stocks that are above 300 million dollars in market cap and with at least 10 million dollars of daily average dollar volume. Stocks that pass these parameters are again more likely to be quality companies with some institutional sponsorship.
 
-    Fundamental Parameters:
+        Fundamental Parameters:
 
-    EPS Growth This Year: Over 20%
-    EPS Growth Next Year: Over 20%
-    EPS Growth qtr over qtr: Over 20%
-    Sales Growth qtr over qtr: Over 20%
-    EPS Growth past 5 years: Over 20%
-    Return on Equity: Positive (>0%)
-    Gross Margin: Positive (>0%)
-    Institutional Sponsorship: Over 20%
-
-    Technical Parameters:
-
-    Price above SMA20
-    Price above SMA50
-    Price above SMA200
-    0–10% below High
-
+        EPS Growth This Year: Over 20%
+        EPS Growth Next Year: Over 25%
+        EPS Growth qtr over qtr: Over 20%
+        Sales Growth qtr over qtr: Over 25%
+        Return on Equity: Over 15%
+        Gross Margin: Over 0%
+        Institutional Sponsorship: Over 30%
         :return:
         '''
 
     price_filters =  {
-        '20-Day Simple Moving Average': 'Price above SMA20',
-        '50-Day Simple Moving Average': 'Price above SMA50',
-        '200-Day Simple Moving Average': 'Price above SMA200',
-        '52-Week High/Low': '0-10% below High'
+        'Price': 'Over $5',
+
     }
 
     desc_filters = {
@@ -147,16 +137,12 @@ def get_leaps():
     }
 
     fund_filters = {
-        'Average Volume': 'Over 200K',
-        'Float': 'Under 50M',
-        # 'Asset Type':'Equities (Stocks)'
         'EPS growththis year': 'Over 20%',
-        'EPS growthnext year': 'Over 20%',
+        'EPS growthnext year': 'Over 25%',
         'EPS growthqtr over qtr': 'Over 20%',
-        'Sales growthqtr over qtr': 'Over 20%',
-        'EPS growthpast 5 years': 'Over 20%',
+        'Sales growthqtr over qtr': 'Over 25%',
         'Gross Margin': 'Positive (>0%)',
-        'Return on Equity': 'Positive (>0%)',
+        'Return on Equity': 'Over +15%',
         'InstitutionalOwnership': 'Over 20%'
     }
 
