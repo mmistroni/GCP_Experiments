@@ -154,7 +154,34 @@ def get_leaps():
 
 
 def get_graham_defensive():
-    pass
+
+    # https://groww.in/blog/benjamin-grahams-7-stock-criteria
+
+    filters_dict = {'Market Cap.': '+Mid (over $2bln)',
+                    'Current Ratio' : 'Over 2',
+                    'Debt/Equity': 'Under 1',
+                    'EPS growthpast 5 years' : 'Over 30%',
+                    'P/E': 'Low (<15)',
+                    'InstitutionalOwnership': 'Under 60%'
+                    }
+    data =  _run_screener(filters_dict)
+
+    # now we need to filter via fmp for
+    '''
+                 (input_dict['debtOverCapital'] < 0) \
+                   and (input_dict['dividendPaid'] == True)\
+                   and (input_dict['epsGrowth'] >= 0.33) \
+                   and (input_dict['positiveEps'] > 0 ) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   
+    
+    '''
+
+    return data
+
+
+
+
 
 
 

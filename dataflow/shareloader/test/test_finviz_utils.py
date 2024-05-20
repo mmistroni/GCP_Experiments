@@ -1,5 +1,6 @@
 import unittest
-from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps
+from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
+                                            get_graham_defensive
 from pprint import pprint
 
 
@@ -15,6 +16,13 @@ class MyTestCase(unittest.TestCase):
 
         pprint(item.keys())
 
+    def test_universe(self):
+        rres = get_universe_stocks()
+        print(rres)
+
+    def test_gdefensive(self):
+        res = get_graham_defensive()
+        print(res)
 
 
 

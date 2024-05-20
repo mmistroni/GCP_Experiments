@@ -21,6 +21,11 @@
       "name": "sendgridkey",
       "helpText": "SendGrid key",
       "label": "SendgRidKey"
-    }
+    },
+    {
+      "name": "inputfile",
+      "helpText": "Input file",
+      "label": "inputfile"
+    },
   ]
 }
