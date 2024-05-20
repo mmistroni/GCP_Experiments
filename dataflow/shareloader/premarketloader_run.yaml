@@ -19,7 +19,7 @@ steps:
           , '--parameters'
           , 'sendgridkey=$_SENDGRIDKEY'
           , '--parameters'
-          , 'inputfiley=$_INPUTFILE'
+          , 'inputfile=$_INPUTFILE'
 
         ,'--region=$_REGION'
           ]  
