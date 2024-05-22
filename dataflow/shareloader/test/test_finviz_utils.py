@@ -22,6 +22,18 @@ class MyTestCase(unittest.TestCase):
 
     def test_gdefensive(self):
         res = get_graham_defensive()
+
+        tickers = [data['Ticker'] for data in res]
+
+        # Now, narrowing down
+
+
+
+
+        pprint(tickers)
+
+
+
         print(res)
 
 

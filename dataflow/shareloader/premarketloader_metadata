@@ -26,6 +26,6 @@
       "name": "inputfile",
       "helpText": "Input file",
       "label": "inputfile"
-    },
+    }
   ]
 }

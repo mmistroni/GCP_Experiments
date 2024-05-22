@@ -40,8 +40,7 @@ def get_universe_stocks():
     filter = get_universe_filter()
     return _run_screener(filter)
 
-def \
-        get_canslim():
+def  get_canslim():
     '''
     Descriptive Parameters:
 
