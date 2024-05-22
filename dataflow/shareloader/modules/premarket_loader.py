@@ -498,7 +498,7 @@ def run(argv=None, save_main_session=True):
                 logging.info(f'Writing to {destination}')
                 bucket_sink = beam.io.WriteToText(destination, num_shards=1,
                                                   header='date,ticker,close,200_ma,150_ma,50_ma,slope,52_week_low,52_week_high,trend_template')
-                data | test_sink
+                data | bucket_sink
 
 
 
