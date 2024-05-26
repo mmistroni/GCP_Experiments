@@ -76,7 +76,7 @@ class TestEdgarUtils(unittest.TestCase):
                 direction = tds[1].text
                 cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
 
-                if (date.today() - cob).days > 2:
+                if (date.today() - cob).days > 3:
                     continue
 
                 print(f'Ticker:{ticker}|Direction:{direction}|Date:{cob}')

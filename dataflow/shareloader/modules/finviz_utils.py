@@ -3,6 +3,8 @@
 # https://finvizfinance.readthedocs.io/en/latest/
 #https://medium.com/the-investors-handbook/the-best-finviz-screens-for-growth-investors-72795f507b91
 from finvizfinance.screener.overview import Overview
+from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
+                                                    get_financial_ratios_benchmark
 
 '''
 res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
@@ -151,27 +153,88 @@ def get_leaps():
 
     return _run_screener(filters_dict)
 
+def get_graham_entreprise(fmpKey):
+    pass
 
-def get_graham_defensive():
+def get_magic_formula(fmpKey):
+    # Greenblatt magic formula plus institutional ownership
+    pass
+
+
+
+def get_graham_defensive(fmpKey):
 
     # https://groww.in/blog/benjamin-grahams-7-stock-criteria
+    # at least MidCap  finviz
+    # Current Ratio > 2 finviz
+    # Profitable earnings in last 10 years
+    # Consistent Dividend Payment over last 20 years dividend
+    # > 33% increase in earnings over last 10 years income
+    # Price To Book < 11.5  financial ratio
+    # PE Ratio < 15  finviz
 
     filters_dict = {'Market Cap.': '+Mid (over $2bln)',
                     'Current Ratio' : 'Over 2',
                     'Debt/Equity': 'Under 1',
-                    'EPS growthpast 5 years' : 'Over 30%',
                     'P/E': 'Low (<15)',
                     'InstitutionalOwnership': 'Under 60%'
                     }
     data =  _run_screener(filters_dict)
 
+    keys = [k for k in data[0].keys()] if data else []
+
+    extra_keys = ['debtOverCapital', 'dividendPaid', 'epsGrowth',
+                  'positiveEps' , 'priceToBookRatio']
+
+    new_keys = keys +  extra_keys
+
+    # Need to group all these params in 1-2 fmp calls
+
+
+    new_data = []
+    for finviz_dict in data:
+        ticker = finviz_dict['Ticker']
+        bench_data = get_balancesheet_benchmark(ticker, fmpKey)
+        divi_data = get_dividend_paid(ticker, fmpKey)
+        income_data = get_income_benchmark(ticker, fmpKey)
+        financial_ratios_benchmark = get_financial_ratios_benchmark(ticker, fmpKey)
+        if bench_data:
+            finviz_dict.update(bench_data)
+        if divi_data:
+            finviz_dict.update(divi_data)
+        if income_data:
+            finviz_dict.update(income_data)
+        if financial_ratios_benchmark:
+            finviz_dict.update(financial_ratios_benchmark)
+
+        out_dict = dict((k, v) for k, v in finviz_dict.items() if k in new_keys)
+
+
+        new_data.append(out_dict)
+    return new_data
+
+
     # now we need to filter via fmp for
     '''
-                 (input_dict['debtOverCapital'] < 0) \
-                   and (input_dict['dividendPaid'] == True)\
-                   and (input_dict['epsGrowth'] >= 0.33) \
-                   and (input_dict['positiveEps'] > 0 ) \
-                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                  (input_dict['debtOverCapital'] < 0) \ # balance sheet benchmark
+                   and (input_dict['dividendPaid'] == True)\ get divi paid
+                   and (input_dict['epsGrowth'] >= 0.33) \  # it's in income benchmark
+                   
+                   For demonstration purposes, let's assume hypothetical EPS data for KO:
+                Three-Year Average EPS (2014-2016): $1.50
+                Three-Year Average EPS (2021-2023): $5.00
+                Following Graham's EPS Growth Rate Formula:
+
+                EPS Growth Rate = ((Three-Year Avg EPS (end) - Three-Year Avg EPS (beginning)) / Three-Year Avg EPS (beginning)) * 100%
+                EPS Growth Rate = (($5.00 - $1.50) / $1.50) * 100%
+                EPS Growth Rate = (3.50 / $1.50) * 100%
+                EPS Growth Rate = 233.33%
+                   
+                   
+                   
+                   
+                   and (input_dict['positiveEps'] > 0 ) \  # income benchmark
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \  #get_financial_ratios_benchmark
                    
     
     '''

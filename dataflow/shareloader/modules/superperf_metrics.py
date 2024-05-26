@@ -387,9 +387,9 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
 def get_dividend_paid(ticker, key):
     dataDict = {}
     try:
-        divis = requests.get(
-            'https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{}?apikey={}'.format(
-                ticker, key)).json()['historical']
+
+        diviUrl = f"https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{ticker}?apikey={key}"
+        divis = requests.get(diviUrl).json()['historical']
         currentDate = date.today()
         hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
         all_divis = [d.get('adjDividend', 0) for d in divis if

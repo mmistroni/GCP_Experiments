@@ -5,6 +5,7 @@ from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
 
+
 class MyTestCase(unittest.TestCase):
     def test_canslim(self):
         res = get_canslim()
@@ -24,17 +25,21 @@ class MyTestCase(unittest.TestCase):
     def test_gdefensive(self):
         key = os.environ['FMPREPKEY']
 
-        res = get_graham_defensive()
+        res = get_graham_defensive(key)
 
-        tickers = [data['Ticker'] for data in res]
+        for data in res:
+            if not data.get('dividendPaid'):
+                print(f"Skipping {data['Ticker']}..dividend check failed ")
+                continue
+            if not data.get('priceToBookRatio') or data['priceToBookRatio'] > 1.5:
+                print(f"Skipping {data['Ticker']}..price to book ratiofailed ")
+                continue
+            if not data.get('epsGrowth') or data['epsGrowth'] < 0.33:
+                print(f"Skipping {data['Ticker']}..epsGrowth failed  ")
+                continue
+            pprint(data)
 
-        # Now, narrowing down. we need constant divi for last 20 years
-        new_dict = dict((t, get_dividend_paid(t, key)) for t in tickers)
 
-        good_dict = dict((k, v) for k, v in new_dict.items() if v['numOfDividendsPaid'] > 20)
-
-
-        pprint(good_dict)
 
 
 
