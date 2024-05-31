@@ -2,6 +2,9 @@
 #https://pypi.org/project/finvizfinance/
 # https://finvizfinance.readthedocs.io/en/latest/
 #https://medium.com/the-investors-handbook/the-best-finviz-screens-for-growth-investors-72795f507b91
+
+#https://www.justetf.com/uk/etf-profile.html?isin=IE000NDWFGA5
+#https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
 from finvizfinance.screener.overview import Overview
 from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
                                                     get_financial_ratios_benchmark
@@ -82,13 +85,11 @@ def  get_canslim():
     desc_filters = {
         'Average Volume': 'Over 200K',
         'Float' : 'Under 50M',
-        #'Asset Type':'Equities (Stocks)'
     }
 
     fund_filters = {
         'Average Volume': 'Over 200K',
         'Float': 'Under 50M',
-        # 'Asset Type':'Equities (Stocks)'
         'EPS growththis year': 'Over 20%',
         'EPS growthnext year': 'Over 20%',
         'EPS growthqtr over qtr': 'Over 20%',
@@ -153,11 +154,30 @@ def get_leaps():
 
     return _run_screener(filters_dict)
 
-def get_graham_entreprise(fmpKey):
-    pass
+def get_graham_enterprise(fmpKey):
+    '''
+        Current superperf filter
+        return (input_dict['currentRatio'] >= 1.5) \
+                   and (input_dict['enterpriseDebt'] <= 1.2) \
+                   and (input_dict['dividendPaidEnterprise'] == True)\
+                   and (input_dict['epsGrowth5yrs'] > 0) \
+                   and (input_dict['positiveEpsLast5Yrs'] == 5   ) \
+                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+    '''''
+    filters_dict = {'Market Cap.': '+Mid (over $2bln)',
+                    'Current Ratio': 'Over 1',
+                    'Debt/Equity': 'Under 1',
+                    'P/E': 'Under 10',
+                    'InstitutionalOwnership': 'Under 60%'
+                    }
+
+    return _run_screener(filters_dict)
 
 def get_magic_formula(fmpKey):
     # Greenblatt magic formula plus institutional ownership
+    # Div Yield > 0 and ROC  > 0
     pass
 
 
@@ -172,12 +192,25 @@ def get_graham_defensive(fmpKey):
     # > 33% increase in earnings over last 10 years income
     # Price To Book < 11.5  financial ratio
     # PE Ratio < 15  finviz
+    ''' our current criteria from superperfs are
+
+    filters = { 'marketCap' : 'marketCap > 2000000000',
+                 'currentRatio' : 'currentRatio >= 2',
+                  'debtOverCapital' : 'debtOverCapital < 0',
+                  'dividendPaid' : 'dividendPaid == True',
+                  'epsGrowth' : 'epsGrowth >= 0.33',
+                   'positiveEps' : 'positiveEps > 0',
+                   'peRatio' : 'peRatio <= 15',
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
+    '''
 
     filters_dict = {'Market Cap.': '+Mid (over $2bln)',
                     'Current Ratio' : 'Over 2',
                     'Debt/Equity': 'Under 1',
                     'P/E': 'Low (<15)',
-                    'InstitutionalOwnership': 'Under 60%'
+                    'InstitutionalOwnership': 'Under 60%',
+                    'EPS growthpast5 years' : 'Positive(>0'
                     }
     data =  _run_screener(filters_dict)
 
@@ -208,38 +241,11 @@ def get_graham_defensive(fmpKey):
             finviz_dict.update(financial_ratios_benchmark)
 
         out_dict = dict((k, v) for k, v in finviz_dict.items() if k in new_keys)
-
-
         new_data.append(out_dict)
+
+
     return new_data
 
-
-    # now we need to filter via fmp for
-    '''
-                  (input_dict['debtOverCapital'] < 0) \ # balance sheet benchmark
-                   and (input_dict['dividendPaid'] == True)\ get divi paid
-                   and (input_dict['epsGrowth'] >= 0.33) \  # it's in income benchmark
-                   
-                   For demonstration purposes, let's assume hypothetical EPS data for KO:
-                Three-Year Average EPS (2014-2016): $1.50
-                Three-Year Average EPS (2021-2023): $5.00
-                Following Graham's EPS Growth Rate Formula:
-
-                EPS Growth Rate = ((Three-Year Avg EPS (end) - Three-Year Avg EPS (beginning)) / Three-Year Avg EPS (beginning)) * 100%
-                EPS Growth Rate = (($5.00 - $1.50) / $1.50) * 100%
-                EPS Growth Rate = (3.50 / $1.50) * 100%
-                EPS Growth Rate = 233.33%
-                   
-                   
-                   
-                   
-                   and (input_dict['positiveEps'] > 0 ) \  # income benchmark
-                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \  #get_financial_ratios_benchmark
-                   
-    
-    '''
-
-    return data
 
 
 

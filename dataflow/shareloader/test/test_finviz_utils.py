@@ -1,6 +1,6 @@
 import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
-                                            get_graham_defensive
+                                            get_graham_defensive, get_graham_enterprise
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -22,26 +22,42 @@ class MyTestCase(unittest.TestCase):
         rres = get_universe_stocks()
         print(rres)
 
+
+    def filter_defensive(self, input_dict):
+        if ('debtOverCapital' in input_dict and input_dict['debtOverCapital'] < 0) \
+             and ('dividendPaid' in input_dict and input_dict['dividendPaid']  == True) \
+                 and ('epsGrowth' in input_dict and input_dict['epsGrowth'] >= 0.33) \
+                 and ('positiveEps' in input_dict and  input_dict['positiveEps'] > 0) \
+                 and ('priceToBookRatio' in input_dict and input_dict['priceToBookRatio'] > 0) :
+            return True
+        return False
+
+    def filter_enterprise(self, input_dict):
+        if ('debtOverCapital' in input_dict and input_dict['debtOverCapital'] < 0) \
+             and ('dividendPaid' in input_dict and input_dict['dividendPaid']  == True) \
+                 and ('epsGrowth' in input_dict and input_dict['epsGrowth'] >= 0.33) \
+                 and ('positiveEps' in input_dict and  input_dict['positiveEps'] > 0) \
+                 and ('priceToBookRatio' in input_dict and input_dict['priceToBookRatio'] > 0) :
+            return True
+        return False
+
+
+
     def test_gdefensive(self):
         key = os.environ['FMPREPKEY']
 
         res = get_graham_defensive(key)
 
         for data in res:
-            if not data.get('dividendPaid'):
-                print(f"Skipping {data['Ticker']}..dividend check failed ")
-                continue
-            if not data.get('priceToBookRatio') or data['priceToBookRatio'] > 1.5:
-                print(f"Skipping {data['Ticker']}..price to book ratiofailed ")
-                continue
-            if not data.get('epsGrowth') or data['epsGrowth'] < 0.33:
-                print(f"Skipping {data['Ticker']}..epsGrowth failed  ")
-                continue
-            pprint(data)
+            if self.filter_defensive(data):
+                pprint(data)
 
+    def test_genterprise(self):
+        key = os.environ['FMPREPKEY']
 
+        res = get_graham_enterprise(key)
 
-
+        print(res)
 
 
 if __name__ == '__main__':
