@@ -73,14 +73,18 @@ def get_petrol_prices():
                 link = anchor.get('href')
                 if link.endswith('csv'):
                     r = requests.get(link).text
-                    dt = pd.read_csv(io.StringIO(r), header=2)[-1:][['Date','ULSP', 'ULSD']].to_dict('records')[-1]
+                    dt = pd.read_csv(io.StringIO(r), header=0)[-1:]
+
+                    colnames = dt.columns[0:3]
+
+                    dt = dt[colnames].to_dict('records')[-1]
                     return [
-                                {'asOfDate' : datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                                {'asOfDate' : datetime.strptime(dt[colnames[0]], "%d/%m/%Y").date(),
                                  'label' : 'Petrol',
-                                  'value': float(dt['ULSP'])},
-                                {'asOfDate': datetime.strptime(dt['Date'], "%d/%m/%Y").date(),
+                                  'value': float(dt[colnames[1]])},
+                                {'asOfDate': datetime.strptime(dt[colnames[0]], "%d/%m/%Y").date(),
                                  'label': 'Diesel',
-                                 'value': float(dt['ULSD'])}
+                                 'value': float(dt[colnames[2]])}
                                     ]
     except Exception as e:
         logging.info(f'Problem in getting petro lprices {str(e)}')
