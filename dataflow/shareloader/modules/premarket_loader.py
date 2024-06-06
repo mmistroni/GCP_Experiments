@@ -492,7 +492,7 @@ def run(argv=None, save_main_session=True):
 
 
                 data = extract_full_run_pipeline(p, pipeline_options.fmprepkey, all_tickers_5y, pipeline_options.numdays, )
-                destination = 'gs://mm_dataflow_bucket/datasets/historical_prices_5y_{}'.format(
+                destination = 'gs://mm_dataflow_bucket/datasets/historical_prices_5y_{}.csv'.format(
                     date.today().strftime('%Y-%m-%d %H:%M'))
 
                 logging.info(f'Writing to {destination}')
