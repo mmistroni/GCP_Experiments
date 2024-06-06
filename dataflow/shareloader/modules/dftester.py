@@ -17,6 +17,8 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--output')
         parser.add_argument('--period')
         parser.add_argument('--limit')
+        parser.add_argument('--pat')
+        parser.add_argument('--obb_user')
 
 
 

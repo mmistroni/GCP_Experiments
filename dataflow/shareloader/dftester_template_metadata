@@ -26,6 +26,18 @@
       "name": "limit",
       "helpText": "Look back Period for financial statements",
       "label": "limit"
+    },
+    {
+      "name": "pat",
+      "helpText": "Pat id to log in to obb",
+      "label": "pat",
+      "isOptional" : true
+    },
+    {
+      "name": "obb_username",
+      "helpText": "Obb Username",
+      "label": "obb username",
+      "isOptional" : true
     }
 
   ]
