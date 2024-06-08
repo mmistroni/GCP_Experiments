@@ -32,12 +32,6 @@
       "helpText": "Pat id to log in to obb",
       "label": "pat",
       "isOptional" : true
-    },
-    {
-      "name": "obb_username",
-      "helpText": "Obb Username",
-      "label": "obb username",
-      "isOptional" : true
     }
 
   ]

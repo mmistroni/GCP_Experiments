@@ -7,6 +7,7 @@ from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date
 from .marketstats_utils import get_all_us_stocks2, NewHighNewLowLoader
 from .dftester_utils import combine_tickers, DfTesterLoader, get_fields
+from .obb_utils import OBBLoader
 
 class XyzOptions(PipelineOptions):
 
@@ -18,7 +19,6 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--period')
         parser.add_argument('--limit')
         parser.add_argument('--pat')
-        parser.add_argument('--obb_user')
 
 
 
@@ -43,6 +43,19 @@ def run_my_pipeline(p, fmpkey):
 
     )
 
+def run_obb_pipeline(p, fmpkey):
+    nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
+    nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")
+    full_ticks = '.'.join(nyse + nasdaq)
+
+    return ( p
+            | 'Start' >> beam.Create([full_ticks])
+            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpkey))
+
+    )
+
+
+
 
 
 def run(argv=None, save_main_session=True):
@@ -66,3 +79,10 @@ def run(argv=None, save_main_session=True):
 
         data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period=pipeline_options.period)
         data | 'Wrrting to bucket' >> bucketSink
+
+        obb = run_obb_pipeline(p, pipeline_options.pat)
+
+        obb | sink
+
+
+
