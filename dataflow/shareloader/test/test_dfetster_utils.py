@@ -10,6 +10,7 @@ from apache_beam.testing.util import assert_that, equal_to
 import os
 from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
+from shareloader.modules.obb_utils import OBBLoader
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -26,12 +27,13 @@ class TestDfTesterLoader(unittest.TestCase):
     def setUp(self) -> None:
         self.notEmptySink = Check(is_not_empty())
         self.debugSink = beam.Map(print)
-        self.patcher = patch('shareloader.modules.share_datset_loader.XyzOptions._add_argparse_args')
-        self.mock_foo = self.patcher.start()
+        #self.patcher = patch('shareloader.modules.share_datset_loader.XyzOptions._add_argparse_args')
+        #self.mock_foo = self.patcher.start()
         parser = argparse.ArgumentParser(add_help=False)
 
     def tearDown(self):
-        self.patcher.stop()
+        pass
+        #self.patcher.stop()
 
     # https://beam.apache.org/documentation/pipelines/test-your-pipeline/
     def test_run_pipeline(self):
@@ -72,3 +74,22 @@ class TestDfTesterLoader(unittest.TestCase):
         data = get_industries(key)
 
         self.assertTrue(data)
+    def test_obb_pipeline(self):
+        pat = os.environ['OBB_PAT_KEY']
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Run Loader' >> beam.ParDo(OBBLoader(pat))
+                     | self.debugSink
+                     )
+
+
+
+
+
+
+
+
+
+
+
+

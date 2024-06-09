@@ -21,6 +21,8 @@ steps:
           , 'period=$_PERIOD'
           , '--parameters'
           ,'limit=$_LIMIT'
+          , '--parameters'
+          ,'pat=$_PAT'
           ,'--region=$_REGION'
           ]  
 substitutions:
@@ -32,5 +34,6 @@ substitutions:
   _OUTPUT: ''
   _PERIOD: 'annual'
   _LIMIT: '10'
+  _PAT: '''
 
 

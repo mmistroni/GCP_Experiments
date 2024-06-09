@@ -72,17 +72,19 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        destination =  f"gs://mm_dataflow_bucket/datasets/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"
-        bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
+        if bool(pipeline_options.pat):
+            logging.info('running OBB....')
+            obb = run_obb_pipeline(p, pipeline_options.pat)
+            obb | sink
+        else:
+            destination =  f"gs://mm_dataflow_bucket/datasets/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"
+            bucketSink = beam.io.WriteToText(destination, num_shards=1, header=','.join(get_fields()))
 
-        # TDO parameterize period and limits
+            # TDO parameterize period and limits
 
-        data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period=pipeline_options.period)
-        data | 'Wrrting to bucket' >> bucketSink
+            data = run_stocksel_pipeline(p, pipeline_options.fmprepkey, period=pipeline_options.period)
+            data | 'Wrrting to bucket' >> bucketSink
 
-        obb = run_obb_pipeline(p, pipeline_options.pat)
-
-        obb | sink
 
 
 
