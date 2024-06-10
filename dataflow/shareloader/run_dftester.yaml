@@ -34,6 +34,6 @@ substitutions:
   _OUTPUT: ''
   _PERIOD: 'annual'
   _LIMIT: '10'
-  _PAT: '''
+  _PAT: ''
 
 
