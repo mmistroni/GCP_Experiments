@@ -9,7 +9,7 @@ WORKDIR ${WORKDIR}
 COPY modules ${WORKDIR}/modules
 
 
-RUN pip install openbb avro-python3 pyarrow apache-beam[gcp]==2.46.0 sendgrid==6.7.1  vaderSentiment==3.3.2 pandas-datareader
+RUN pip install openbb avro-python3 apache-beam[gcp]==2.46.0 sendgrid==6.7.1  vaderSentiment==3.3.2 pandas-datareader
 
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY setup-dftester.py ${WORKDIR}/setup_dftester.py
