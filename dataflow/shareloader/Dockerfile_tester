@@ -12,12 +12,12 @@ COPY modules ${WORKDIR}/modules
 RUN pip install openbb avro-python3 pyarrow apache-beam[gcp]==2.46.0 sendgrid==6.7.1  vaderSentiment==3.3.2 pandas-datareader
 
 COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup.py ${WORKDIR}/setup.py
+COPY setup-dftester.py ${WORKDIR}/setup_dftester.py
 COPY dataflow_tester.py ${WORKDIR}/dataflow_tester.py
 
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
+ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup_dftester.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/dataflow_tester.py"
 
 
