@@ -17,7 +17,7 @@ COPY dataflow_tester.py ${WORKDIR}/dataflow_tester.py
 
 
 # Super important to add these lines.
-#ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup_dftester.py"
+ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup_dftester.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/dataflow_tester.py"
 
 
