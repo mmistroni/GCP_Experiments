@@ -6,7 +6,6 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
-    'openbb',
     'sendgrid==6.2.1',
     'pandas_datareader',
     'vaderSentiment',
