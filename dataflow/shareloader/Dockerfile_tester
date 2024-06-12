@@ -12,7 +12,7 @@ WORKDIR ${WORKDIR}
 COPY modules ${WORKDIR}/modules
 
 COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup-dftester.py ${WORKDIR}/setup_dftester.py
+COPY setup_dftester.py ${WORKDIR}/setup_dftester.py
 COPY dataflow_tester.py ${WORKDIR}/dataflow_tester.py
 COPY requirements.txt ${WORKDIR}/requirements.txt
 
