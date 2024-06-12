@@ -1,6 +1,9 @@
-FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
+#FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
 # https://github.com/GoogleCloudPlatform/python-docs-samples/blob/main/dataflow/flex-templates/pipeline_with_dependencies/Dockerfile
 FROM python:3.11-slim
+
+COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
 ARG WORKDIR=/dataflow/template
 RUN mkdir -p ${WORKDIR}
@@ -8,19 +11,43 @@ RUN mkdir -p ${WORKDIR}/modules
 WORKDIR ${WORKDIR}
 COPY modules ${WORKDIR}/modules
 
-
-RUN pip install openbb avro-python3 apache-beam[gcp]==2.46.0 sendgrid==6.7.1  vaderSentiment==3.3.2 pandas-datareader
-
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY setup-dftester.py ${WORKDIR}/setup_dftester.py
 COPY dataflow_tester.py ${WORKDIR}/dataflow_tester.py
+COPY requirements.txt ${WORKDIR}/requirements.txt
+
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+RUN pip install -e .
+
 
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup_dftester.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/dataflow_tester.py"
 
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
+
+# Because this image will be used as custom sdk container image, and it already 
+# installs the dependencies from the requirements.txt, we can omit
+# the FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE directive here
+# to reduce pipeline submission time.
+# Similarly, since we already installed the pipeline package,
+# we don't have to specify the FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
+
+# Optionally, verify that dependencies are not conflicting.
+# A conflict may or may not be significant for your pipeline.
+RUN pip check
+
+# Optionally, list all installed dependencies.
+# The output can be used to seed requirements.txt for reproducible builds.
+RUN pip freeze
+
+# Set the entrypoint to Apache Beam SDK launcher, which allows this image
+# to be used as an SDK container image.
+ENTRYPOINT ["/opt/apache/beam/boot"]
+
 
