@@ -41,10 +41,13 @@ class FedUtilsTestCase(unittest.TestCase):
         # PMI. USSLIND
         # Checkout this page to see series  https://fred.stlouisfed.org/tags/series?t=nonmanufactured
         # https://fred.stlouisfed.org/categories/1
-        series = 'UMCSENT' #'USSLIND'
+        series = 'BAMLH0A0HYM2'# 'UMCSENT' #'USSLIND'  hhigy yiueld spreadds
         pprint(requests.get(
             f'https://api.stlouisfed.org/fred/series/observations?series_id={series}&file_type=json&api_key={key}&file_type=json').json())
 
+        # treasury constant amt
+        pprint(requests.get(
+            f'https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&file_type=json&api_key={key}&file_type=json').json())
 
 
 if __name__ == '__main__':

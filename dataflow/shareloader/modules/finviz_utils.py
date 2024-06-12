@@ -178,8 +178,13 @@ def get_graham_enterprise(fmpKey):
 def get_magic_formula(fmpKey):
     # Greenblatt magic formula plus institutional ownership
     # Div Yield > 0 and ROC  > 0
-    pass
+    # we take the stock universe filter, which skims the best, and apply roc > 0 and div yield > 0
+    universe_filter = get_universe_filter()
 
+    universe_filter['Dividend Yield'] = 'High (>5%)'
+
+    # From this we need FMP to filter out
+    return _run_screener(universe_filter)
 
 
 def get_graham_defensive(fmpKey):
@@ -245,6 +250,74 @@ def get_graham_defensive(fmpKey):
 
 
     return new_data
+
+def get_extra_watchlist():
+    '''
+    Descriptive Parameters:
+            Market Cap: +Mid (over $2bln)
+            Average Volume: Over 200K
+            Price: Over $10
+            Stocks only (ex-Funds)
+            With these descriptive parameters, I narrow the list to stocks that are relatively large companies with a respectable amount of liquidity. Stocks that pass these parameters are more likely to be quality companies.
+
+            Fundamental Parameters:
+
+            EPS Growth This Year: Over 20%
+            EPS Growth Next Year: Over 20%
+            EPS Growth qtr over qtr: Over 20%
+            Sales Growth qtr over qtr: Over 20%
+            Return on Equity: Over 20%
+            Gross Margin: Over 20%
+            With this scan, I keep the fundamental parameters to show only the fastest-growing companies with the best financial numbers. Stocks with greater than 20% revenue and earnings growth can lead to explosive movements in price as large institutions rapidly take positions in them. High return on equity and gross margin also show that the company is doing a great job managing the growth in revenue and sales.
+
+            Technical Parameters:
+
+            Price above SMA20
+            Price above SMA50
+            Price above SMA200
+
+    :return:
+    '''
+
+    price_filters = {
+        'Price': 'Over $10',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+    }
+
+    desc_filters = {
+        'Market Cap.': '+Mid (over $2bln)',
+        'Average Volume': 'Over 200K',
+        #'Float': 'Under 50M',
+        # 'Asset Type':'Equities (Stocks)'
+    }
+
+    fund_filters = {
+        'EPS growththis year': 'Over 20%',
+        'EPS growthnext year': 'Over 20%',
+        'EPS growthqtr over qtr': 'Over 20%',
+        'Sales growthqtr over qtr': 'Over 20%',
+        'Gross Margin': 'Over 20%',
+        'Return on Equity': 'Over +20%',
+        'InstitutionalOwnership': 'Under 60%'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+def get_new_highs():
+    # Categories > Money, Banking, & Finance > Interest Rates > Corporate Bonds
+    # https://fred.stlouisfed.org/series/BAMLH0A0HYM2
+    pass
+
+
+
+
+
 
 
 

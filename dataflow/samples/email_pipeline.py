@@ -19,7 +19,6 @@ from collections import OrderedDict
 import requests
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
-import pandas_datareader.data as dr
 from apache_beam.io.gcp.internal.clients import bigquery
 from datetime import date
 

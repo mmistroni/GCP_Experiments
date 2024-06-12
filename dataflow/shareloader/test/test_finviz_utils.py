@@ -1,6 +1,7 @@
 import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
-                                            get_graham_defensive, get_graham_enterprise
+                                            get_graham_defensive, get_graham_enterprise,\
+                                            get_extra_watchlist
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -58,6 +59,14 @@ class MyTestCase(unittest.TestCase):
         res = get_graham_enterprise(key)
 
         print(res)
+
+    def test_extra_watchlist(self):
+        key = os.environ['FMPREPKEY']
+
+        res = get_extra_watchlist()
+
+        print(res)
+
 
 
 if __name__ == '__main__':
