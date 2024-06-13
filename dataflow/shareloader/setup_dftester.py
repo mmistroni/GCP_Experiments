@@ -7,8 +7,8 @@ import setuptools
 # restriction is specified.
 REQUIRED_PACKAGES = [
     'openbb',
-    "apache-beam[gcp]==2.54.0",  # Must match the version in `Dockerfile``.
-    'sendgrid==6.2.1',
+    "apache-beam[gcp]",  # Must match the version in `Dockerfile``.
+    'sendgrid',
     'pandas_datareader',
     'vaderSentiment',
     'numpy',
