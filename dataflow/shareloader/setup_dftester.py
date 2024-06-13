@@ -16,7 +16,7 @@ REQUIRED_PACKAGES = [
     'lxml',
     'pandas_datareader',
     'beautifulsoup4,
-    'xlrd,
+    'xlrd',
     'openpyxl'
     ]
 
