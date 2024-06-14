@@ -43,14 +43,11 @@ def run_my_pipeline(p, fmpkey):
 
     )
 
-def run_obb_pipeline(p, fmpkey):
-    nyse = get_all_us_stocks2(fmpkey, "New York Stock Exchange")
-    nasdaq = get_all_us_stocks2(fmpkey, "Nasdaq Global Select")
-    full_ticks = '.'.join(nyse + nasdaq)
-
+def run_obb_pipeline(p, pat):
+    
     return ( p
-            | 'Start' >> beam.Create([full_ticks])
-            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpkey))
+            | 'Start' >> beam.Create(['AAPL'])
+            | 'Get all List' >> beam.ParDo(OBBLoader(pat))
 
     )
 
