@@ -6,6 +6,7 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
+    'openbb',
     "apache-beam[gcp]",  # Must match the version in `Dockerfile``.
     'sendgrid',
     'pandas_datareader',
