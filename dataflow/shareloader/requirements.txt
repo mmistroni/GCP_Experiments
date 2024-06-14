@@ -131,3 +131,4 @@ wrapt==1.16.0
 zstandard==0.22.0
 openbb
 pandas-datareader
+
