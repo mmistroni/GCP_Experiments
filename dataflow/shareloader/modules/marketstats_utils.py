@@ -221,7 +221,7 @@ def get_all_us_stocks(token, security_type='cs', nasdaq=True):
 
 
 def get_all_us_stocks2(token, exchange):
-    logging.info('GEt All Us stocks  2        ..')
+    logging.info(f'GEt All Us stocks  2 for :exchange} using token {token}        ..')
     all_dt = requests.get(
         'https://financialmodelingprep.com/api/v3/available-traded/list?apikey={}'.format(token)).json()
     us_stocks = [d['symbol'] for d in all_dt if
