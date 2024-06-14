@@ -1,4 +1,4 @@
-from modules.dftester import run
+from .modules.dftester import run
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
