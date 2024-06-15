@@ -19,7 +19,7 @@ ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
 COPY requirements.txt .
-COPY setup_dftester.py .\setup.py
+COPY setup_dftester.py setup.py
 COPY dataflow_tester.py .
 COPY modules modules
 
