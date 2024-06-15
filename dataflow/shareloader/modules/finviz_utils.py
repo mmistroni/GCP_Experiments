@@ -312,7 +312,66 @@ def get_extra_watchlist():
 def get_new_highs():
     # Categories > Money, Banking, & Finance > Interest Rates > Corporate Bonds
     # https://fred.stlouisfed.org/series/BAMLH0A0HYM2
-    pass
+    '''
+
+    Descriptive Parameters:
+
+Market Cap: +Small (over $300mln)
+Average Volume: Over 200K
+Relative Volume: Over 1
+Price: Over $10
+
+Fundamental Parameters:
+
+EPS Growth This Year: Positive (>0%)
+EPS Growth Next Year: Positive (>0%)
+EPS Growth qtr over qtr: Positive (>0%)
+Sales Growth qtr over qtr: Positive (>0%)
+Return on Equity: Positive (>0%)
+
+Today Up
+Price above SMA20
+Price above SMA50
+Price above SMA200
+Change: Up
+Change from Open: Up
+52-Week High/Low: New High
+
+    :return:
+    '''
+
+    desc_filters = {
+        'Market Cap.': '+Small (over $300mln)',
+        'Average Volume': 'Over 200K',
+        'Relative Volume': 'Over 1',
+    }
+    fund_filters = {
+        'EPS growththis year': 'Positive (>0%)',
+        'EPS growthnext year': 'Positive (>0%)',
+        'EPS growthqtr over qtr': 'Positive (>0%)',
+        'Sales growthqtr over qtr': 'Positive (>0%)',
+        'Return on Equity': 'Positive (>0%)',
+        'InstitutionalOwnership': 'Under 60%'
+    }
+
+    price_filters = {
+        'Price': 'Over $10',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        'Change' : 'Up',
+        'Change from Open' : 'Up',
+        '52-Week High/Low' : 'New High'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+
+
 
 
 

@@ -1,7 +1,7 @@
 import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
-                                            get_extra_watchlist
+                                            get_extra_watchlist, get_new_highs
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -65,6 +65,11 @@ class MyTestCase(unittest.TestCase):
 
         res = get_extra_watchlist()
 
+        print(res)
+
+    def test_new_high(self):
+
+        res = get_new_highs()
         print(res)
 
 

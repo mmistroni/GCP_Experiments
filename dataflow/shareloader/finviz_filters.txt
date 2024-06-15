@@ -1,0 +1,18 @@
+'52 - Week High / Low'.
+
+Possible filter:
+    ['Exchange', 'Index', 'Sector', 'Industry', 'Country',
+     'Market Cap.', 'P/E', 'Forward P/E', 'PEG', 'P/S', 'P/B',
+     'Price/Cash', 'Price/Free Cash Flow',
+     'EPS growththis year', 'EPS growthnext year', 'EPS growthpast 5 years',
+     'EPS growthnext 5 years', 'Sales growthpast 5 years',
+     'EPS growthqtr over qtr', 'Sales growthqtr over qtr', 'Dividend Yield',
+     'Return on Assets', 'Return on Equity',
+     'Return on Investment', 'Current Ratio', 'Quick Ratio',
+     'LT Debt/Equity', 'Debt/Equity', 'Gross Margin', 'Operating Margin',
+     'Net Profit Margin', 'Payout Ratio', 'InsiderOwnership', 'InsiderTransactions',
+      'InstitutionalOwnership', 'InstitutionalTransactions', 'Float Short',
+      'Analyst Recom.', 'Option/Short', 'Earnings Date', 'Performance', 'Performance 2',
+      'Volatility', 'RSI (14)', 'Gap', '20-Day Simple Moving Average',
+      '50-Day Simple Moving Average', '200-Day Simple Moving Average',
+      'Change', 'Change from Open', '20-Day High/Low', '50-Day High/Low', '52-Week High/Low', 'Pattern', 'Candlestick', 'Beta', 'Average True Range', 'Average Volume', 'Relative Volume', 'Current Volume', 'Price', 'Target Price', 'IPO Date', 'Shares Outstanding', 'Float']
