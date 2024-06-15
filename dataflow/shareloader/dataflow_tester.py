@@ -1,5 +1,5 @@
-from modules.dftester import run
+from mypackage import dftester
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run()
+  dftester.run()

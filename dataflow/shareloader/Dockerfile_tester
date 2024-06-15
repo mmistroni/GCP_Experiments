@@ -21,12 +21,12 @@ WORKDIR ${WORKDIR}
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
 COPY dataflow_tester.py .
-COPY modules modules
+COPY mypackage mypackage
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
 RUN echo '--- listing modules -----'
-RUN ls -la  ${WORKDIR}/modules
+RUN ls -la  ${WORKDIR}/mypackage
 RUN echo '----- cat ting  main--'
 RUN cat dataflow_tester.py
 RUN echo '----- INSTALLING REQS ----'
