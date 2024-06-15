@@ -3,6 +3,14 @@
 
 steps:
   # Build the container image with the Python version of our choice.
+  - name: gcr.io/cloud-builders/docker
+    id: 'dftester-image'
+    args:
+      [   'build'
+        , '--tag=gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
+        , '--file=./dataflow/shareloader/Dockerfile_tester'
+        , './dataflow/shareloader/'
+      ]
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'build-dftester-flex-template'
     entrypoint: 'gcloud'
@@ -18,9 +26,6 @@ steps:
         , 'PYTHON'
         , '--metadata-file'
         , '$_DFTESTER_METADATA_FILE' ]
-
-
-
 
 substitutions:
   _PROJECT_ID: datascience-projects
