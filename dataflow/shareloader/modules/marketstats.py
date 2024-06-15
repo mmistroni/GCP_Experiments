@@ -24,7 +24,7 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from functools import reduce
-
+import time
 
 
 class MarketStatsCombineFn(beam.CombineFn):
@@ -208,6 +208,10 @@ def run_exchange_pipeline(p, key, exchange):
     prevDate = (asOfDate - BDay(1)).date()
 
     dt = get_all_prices_for_date(key, asOfDate.strftime('%Y-%m-%d'))
+
+    time.sleep(60)
+
+
     ydt = get_all_prices_for_date(key, prevDate.strftime('%Y-%m-%d'))
 
     filtered = [(d['symbol'], d)  for d in dt]

@@ -4,16 +4,15 @@ FROM python:3.11-slim
 COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
 COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
-ARG WORKDIR=/dataflow/template
-RUN mkdir -p ${WORKDIR}
-RUN mkdir -p ${WORKDIR}/modules
+ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
+
 COPY modules ${WORKDIR}/modules
 
-COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup_dftester.py ${WORKDIR}/setup.py
-COPY dataflow_tester.py ${WORKDIR}/dataflow_tester.py
-COPY requirements.txt ${WORKDIR}/requirements.txt
+COPY requirements.txt .
+COPY setup_dftester.py .
+COPY dataflow_tester.py .
+COPY modules modules
 
 
 RUN pip install --no-cache-dir -r requirements.txt
@@ -46,7 +45,6 @@ RUN pip freeze
 # Set the entrypoint to Apache Beam SDK launcher, which allows this image
 # to be used as an SDK container image.
 ENTRYPOINT ["/opt/apache/beam/boot"]
-
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
