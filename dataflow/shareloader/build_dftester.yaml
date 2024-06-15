@@ -21,8 +21,6 @@ steps:
 
 
 
-images: ['gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME' ]
-
 
 substitutions:
   _PROJECT_ID: datascience-projects
