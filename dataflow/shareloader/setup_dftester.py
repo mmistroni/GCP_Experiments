@@ -22,7 +22,7 @@ REQUIRED_PACKAGES = [
 
 
 setuptools.setup(
-    name='my_custom_application',
+    name='mypackage',
     version='0.0.1',
     description='Shres Runner Package.',
     install_requires=REQUIRED_PACKAGES,
