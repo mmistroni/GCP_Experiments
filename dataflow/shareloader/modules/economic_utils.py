@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import date, datetime
 import logging
+import time
 from .news_util import get_user_agent
 
 ECONOMIC_QUERY = """SELECT *  FROM `datascience-projects.gcp_shareloader.tmpeconomy` 
@@ -37,6 +38,7 @@ ECONOMIC_QUERY = """SELECT *  FROM `datascience-projects.gcp_shareloader.tmpecon
 
 def get_fruit_and_veg_prices():
     baseUrl = 'https://www.gov.uk/government/statistical-data-sets/wholesale-fruit-and-vegetable-prices-weekly-average'
+    time.sleep(60)
     req = requests.get(baseUrl)
     soup = BeautifulSoup(req.text, "html.parser")
     spans = soup.find_all('div', {"class": "gem-c-attachment__details"})
@@ -61,6 +63,8 @@ def get_fruit_and_veg_prices():
     return []
 
 def get_petrol_prices():
+    time.sleep(60)
+
     try:
         url = 'https://www.gov.uk/government/statistics/weekly-road-fuel-prices'
         req = requests.get(url)
@@ -91,6 +95,7 @@ def get_petrol_prices():
         return []
 
 def get_latest_url():
+
     url = "https://cy.ons.gov.uk/datasets/online-job-advert-estimates/editions"
     ## check this https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/employmentandemployeetypes/bulletins/jobsandvacanciesintheuk/august2022
     ##  https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/onlinejobadvertestimates
@@ -116,6 +121,8 @@ def get_latest_jobs_statistics():
     import openpyxl
     from io import BytesIO
     ## TODO need to amennd this
+    time.sleep(60)
+
     latestUrl = get_latest_url()
     if latestUrl:
         logging.info(f'Latest URL from ONS is {latestUrl}')
@@ -140,6 +147,8 @@ def get_latest_jobs_statistics():
 
 
 def get_card_spending():
+    time.sleep(60)
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/ukspendingoncreditanddebitcards'
     req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
     soup = BeautifulSoup(req.text, "html.parser")
@@ -160,6 +169,8 @@ def get_card_spending():
             'value': latest_value}]
 
 def get_gas_prices():
+    time.sleep(60)
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas'
 
     req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -184,6 +195,8 @@ def get_gas_prices():
 
 
 def get_electricity_prices():
+    time.sleep(60)
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systempriceofelectricity'
 
     req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -209,6 +222,7 @@ def get_electricity_prices():
 
 
 def get_redundancies_notifications():
+    time.sleep(60)
 
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
 
@@ -235,6 +249,8 @@ def get_redundancies_notifications():
 
 
 def get_company_dissolutions():
+    time.sleep(60)
+
     url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/companyincorporationsandvoluntarydissolutions'
 
     req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
