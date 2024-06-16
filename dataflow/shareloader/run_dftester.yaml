@@ -23,8 +23,10 @@ steps:
           ,'limit=$_LIMIT'
           , '--parameters'
           ,'pat=$_PAT'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
-          , '--setup_file=/template/setup.py'
+          
           ]  
 substitutions:
   _JOB_NAME: 'dftester'
