@@ -15,9 +15,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_leaps(self):
         res = get_leaps()
-        item = res[0]
-
-        pprint(item.keys())
+        pprint(res)
 
     def test_universe(self):
         rres = get_universe_stocks()

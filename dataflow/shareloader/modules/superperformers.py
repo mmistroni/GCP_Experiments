@@ -14,6 +14,9 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
                                             get_peter_lynch_ratio
 
+from shareloader.modules.finviz_utils import get_universe_stocks, get_extra_watchlist, \
+    get_new_highs, get_canslim, get_leaps
+
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''
@@ -249,42 +252,6 @@ class FundamentalLoader(beam.DoFn):
             raise Exception(excMsg)
         return all_dt
 
-def load_bennchmark_data(ticker, key):
-    quotes_data = get_quote_benchmark(ticker, key)
-    if quotes_data:
-        income_data = get_income_benchmark(ticker, key)
-        if income_data:
-            quotes_data.update(income_data)
-            balance_sheet_data = get_balancesheet_benchmark(ticker, key)
-            if balance_sheet_data:
-                quotes_data.update(balance_sheet_data)
-                financial_ratios_data = get_financial_ratios_benchmark(ticker, key)
-                if financial_ratios_data:
-                    quotes_data.update(financial_ratios_data)
-                    key_metrics_dta = get_key_metrics_benchmark(ticker, key)
-                    if key_metrics_dta:
-                        quotes_data.update(key_metrics_dta)
-                        asset_play_dict = get_asset_play_parameters(ticker, key)
-                        quotes_data.update(asset_play_dict)
-                        # CHecking if assets > stocks outstanding
-                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
-                        # current assets
-                        quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
-                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] - \
-                                                                quotes_data['totalCurrentLiabilities'] - \
-                                                                quotes_data['inventory']) / quotes_data[
-                                                                   'sharesOutstanding']
-
-                        piotrosky_score = calculate_piotrosky_score(key, ticker)
-                        latest_rsi = compute_rsi(ticker, key)
-                        quotes_data['rsi'] = latest_rsi
-                        quotes_data['piotroskyScore'] = piotrosky_score
-                    priceChangeDict = get_price_change(ticker, key)
-                    if priceChangeDict:
-                        quotes_data.update(priceChangeDict)
-
-    return quotes_data
-
 class BenchmarkLoader(beam.DoFn):
     def __init__(self, key, split=None):
         self.key = key
@@ -368,6 +335,69 @@ class BenchmarkLoader(beam.DoFn):
         if isException:
             raise Exception(excMsg)
         return all_dt
+
+
+class FinvizLoader(FundamentalLoader):
+    def __init__(self, key, microcap_flag=False, split_flag=None):
+        self.key = key
+        self.microcap_flag = microcap_flag
+        self.split = split_flag
+
+
+
+
+    def process(self, elements):
+        logging.info('Getting LEAPS')
+        leaps_tickers = [d['Ticker'] for d in get_leaps()]
+
+        data = super().process(leaps_tickers)
+
+
+
+
+
+
+
+
+
+
+
+def load_bennchmark_data(ticker, key):
+    quotes_data = get_quote_benchmark(ticker, key)
+    if quotes_data:
+        income_data = get_income_benchmark(ticker, key)
+        if income_data:
+            quotes_data.update(income_data)
+            balance_sheet_data = get_balancesheet_benchmark(ticker, key)
+            if balance_sheet_data:
+                quotes_data.update(balance_sheet_data)
+                financial_ratios_data = get_financial_ratios_benchmark(ticker, key)
+                if financial_ratios_data:
+                    quotes_data.update(financial_ratios_data)
+                    key_metrics_dta = get_key_metrics_benchmark(ticker, key)
+                    if key_metrics_dta:
+                        quotes_data.update(key_metrics_dta)
+                        asset_play_dict = get_asset_play_parameters(ticker, key)
+                        quotes_data.update(asset_play_dict)
+                        # CHecking if assets > stocks outstanding
+                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                        # current assets
+                        quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
+                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] - \
+                                                                quotes_data['totalCurrentLiabilities'] - \
+                                                                quotes_data['inventory']) / quotes_data[
+                                                                   'sharesOutstanding']
+
+                        piotrosky_score = calculate_piotrosky_score(key, ticker)
+                        latest_rsi = compute_rsi(ticker, key)
+                        quotes_data['rsi'] = latest_rsi
+                        quotes_data['piotroskyScore'] = piotrosky_score
+                    priceChangeDict = get_price_change(ticker, key)
+                    if priceChangeDict:
+                        quotes_data.update(priceChangeDict)
+
+    return quotes_data
+
 
 
 def write_to_bucket(lines, sink):
