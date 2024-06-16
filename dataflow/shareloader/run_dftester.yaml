@@ -38,5 +38,8 @@ substitutions:
   _PERIOD: 'annual'
   _LIMIT: '10'
   _PAT: ''
+  _PROJECT_ID: datascience-projects
+  _DFTESTER_IMAGE_NAME: dftester:latest3
+  _SDK_CONTAINER_IMAGE: gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME
 
 
