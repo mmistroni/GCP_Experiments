@@ -24,6 +24,7 @@ steps:
           , '--parameters'
           ,'pat=$_PAT'
           ,'--region=$_REGION'
+          , '--setup_file=/template/setup.py'
           ]  
 substitutions:
   _JOB_NAME: 'dftester'
