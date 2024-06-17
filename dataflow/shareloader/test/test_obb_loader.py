@@ -10,9 +10,10 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date, datetime
 from unittest.mock import patch
 #from shareloader.modules.finviz_utils import get_leaps
-from mypackage.launcher import run_obb_pipeline
+
 import os
 from shareloader.modules.finviz_utils import get_universe_stocks
+from shareloader.mypackage.launcher import run_obb_pipeline
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -44,7 +45,7 @@ class TestEdgarUtils(unittest.TestCase):
 
         with TestPipeline() as p:
             (p
-             | 'Start' >> beam.Create(get_leaps())
+             | 'Start' >> beam.Create([{'Ticker' : 'AAPL'}])
              | 'Mapping ticks' >> beam.Map(lambda d: d['Ticker'])
              | 'combining' >> beam.CombineGlobally(lambda x: ','.join(x))
              | 'Get all List' >> beam.ParDo(OBBLoader(key))

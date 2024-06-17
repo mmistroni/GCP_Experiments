@@ -344,11 +344,30 @@ class FinvizLoader(FundamentalLoader):
         self.split = split_flag
 
 
+    def _get_data(self, ticker, key, label):
+        try :
+            result = load_bennchmark_data(ticker, key)
+            result['label'] = label
+            return result
+        except Exception as e:
+            logging.info(f'Failed to get data for {ticker}:{str(e)}')
+
 
 
     def process(self, elements):
+        holder = []
         logging.info('Getting LEAPS')
         leaps_tickers = [d['Ticker'] for d in get_leaps()]
+        for ticker in leaps_tickers:
+            data = self._get_data(ticker, self.key, 'LEAPS')
+            if data:
+                holder.append(data)
+        logging.info('Getting CANSLIM')
+        canslim_tickers = [d['Ticker'] for d in get_canslim()]
+        for ticker in canslim_tickers:
+            data = self._get_data(ticker, self.key, 'CANSLIM')
+            if data:
+                holder.append(data)
 
         data = super().process(leaps_tickers)
 

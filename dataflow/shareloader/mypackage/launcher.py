@@ -5,7 +5,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from mypackage.obb_utils import OBBLoader
-from mypackage.finviz_utils import get_leaps
+
 
 class XyzOptions(PipelineOptions):
 
@@ -21,9 +21,7 @@ class XyzOptions(PipelineOptions):
 def run_obb_pipeline(p, key):
     
     return ( p
-             | 'Start' >> beam.Create(get_leaps())
-             | 'Mapping ticks' >> beam.Map(lambda d: d['Ticker'])
-             | 'combining' >> beam.CombineGlobally(lambda x: ','.join(x))
+             | 'Start' >> beam.Create(['AAPL,AMZN'])
              | 'Get all List' >> beam.ParDo(OBBLoader(key))
 
     )
