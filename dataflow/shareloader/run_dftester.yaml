@@ -40,6 +40,6 @@ substitutions:
   _PAT: ''
   _PROJECT_ID: datascience-projects
   _DFTESTER_IMAGE_NAME: dftester:latest3
-  _SDK_CONTAINER_IMAGE: gcr.io/$_PROJECT_ID/dftester:latest3
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest3
 
 
