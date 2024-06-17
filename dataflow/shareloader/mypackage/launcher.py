@@ -4,7 +4,6 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-from mypackage.obb_utils import OBBLoader
 
 
 class XyzOptions(PipelineOptions):
