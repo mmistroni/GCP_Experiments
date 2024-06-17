@@ -22,7 +22,7 @@ def run_obb_pipeline(p, key):
     
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
-             | 'Get all List' >> beam.ParDo(OBBLoader(key))
+             #| 'Get all List' >> beam.ParDo(OBBLoader(key))
 
     )
 
