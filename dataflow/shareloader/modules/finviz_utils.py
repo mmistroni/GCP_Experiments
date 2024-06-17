@@ -5,9 +5,12 @@
 
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000NDWFGA5
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
+import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
-                                                    get_financial_ratios_benchmark
+                                                    get_financial_ratios_benchmark, load_bennchmark_data
+
+import logging
 
 '''
 res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
@@ -369,6 +372,53 @@ Change from Open: Up
     filters_dict.update(fund_filters)
 
     return _run_screener(filters_dict)
+
+
+class FinvizLoader(beam.DoFn):
+    def __init__(self, key, microcap_flag=False, split_flag=None):
+        self.key = key
+        self.microcap_flag = microcap_flag
+        self.split = split_flag
+
+
+    def _get_data(self, ticker, key, label):
+        try :
+            result = load_bennchmark_data(ticker, key)
+            result['label'] = label
+            return result
+        except Exception as e:
+            logging.info(f'Failed to get data for {ticker}:{str(e)}')
+
+
+
+    def process(self, elements):
+        holder = []
+        logging.info('Getting LEAPS')
+        leaps_tickers = [d['Ticker'] for d in get_leaps()]
+        for ticker in leaps_tickers:
+            data = self._get_data(ticker, self.key, 'LEAPS')
+            if data:
+                holder.append(data)
+        logging.info('Getting CANSLIM')
+        canslim_tickers = [d['Ticker'] for d in get_canslim()]
+        for ticker in canslim_tickers:
+            data = self._get_data(ticker, self.key, 'CANSLIM')
+            if data:
+                holder.append(data)
+
+        newhighm_tickers = [d['Ticker'] for d in get_new_highs()()]
+        for ticker in newhighm_tickers:
+            data = self._get_data(ticker, self.key, 'NEWHIGH')
+            if data:
+                holder.append(data)
+
+        extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
+        for ticker in newhighm_tickers:
+            data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
+            if data:
+                holder.append(data)
+
+        return holder
 
 
 

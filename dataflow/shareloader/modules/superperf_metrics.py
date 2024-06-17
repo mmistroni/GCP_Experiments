@@ -691,4 +691,39 @@ def get_quote_benchmark(ticker, key):
     except Exception as e:
         logging.info(f'Exception in getting quote daqta for :{ticker}:{str(e)}')
 
+def load_bennchmark_data(ticker, key):
+    quotes_data = get_quote_benchmark(ticker, key)
+    if quotes_data:
+        income_data = get_income_benchmark(ticker, key)
+        if income_data:
+            quotes_data.update(income_data)
+            balance_sheet_data = get_balancesheet_benchmark(ticker, key)
+            if balance_sheet_data:
+                quotes_data.update(balance_sheet_data)
+                financial_ratios_data = get_financial_ratios_benchmark(ticker, key)
+                if financial_ratios_data:
+                    quotes_data.update(financial_ratios_data)
+                    key_metrics_dta = get_key_metrics_benchmark(ticker, key)
+                    if key_metrics_dta:
+                        quotes_data.update(key_metrics_dta)
+                        asset_play_dict = get_asset_play_parameters(ticker, key)
+                        quotes_data.update(asset_play_dict)
+                        # CHecking if assets > stocks outstanding
+                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                        # current assets
+                        quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
+                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] - \
+                                                                quotes_data['totalCurrentLiabilities'] - \
+                                                                quotes_data['inventory']) / quotes_data[
+                                                                   'sharesOutstanding']
+
+                        piotrosky_score = calculate_piotrosky_score(key, ticker)
+                        latest_rsi = compute_rsi(ticker, key)
+                        quotes_data['rsi'] = latest_rsi
+                        quotes_data['piotroskyScore'] = piotrosky_score
+                    priceChangeDict = get_price_change(ticker, key)
+                    if priceChangeDict:
+                        quotes_data.update(priceChangeDict)
+
+    return quotes_data
 

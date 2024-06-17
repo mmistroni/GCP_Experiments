@@ -5,14 +5,14 @@ from shareloader.modules.superperformers import filter_universe, load_fundamenta
                                                 combine_tickers, benchmark_filter, FundamentalLoader,\
                                                 asset_play_filter, defensive_stocks_filter, map_to_bq_dict,\
                                                 get_universe_filter, get_defensive_filter_df,\
-                                                get_enterprise_filter_df, load_bennchmark_data, \
+                                                get_enterprise_filter_df,  \
                                                 load_microcap_data, microcap_filter, microcap_sanity_check
 from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_and_technical, \
                 get_financial_ratios, get_fmprep_historical, get_quote_benchmark, \
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
                 get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
-                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio
+                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio,load_bennchmark_data
 
 from itertools import chain
 from pandas.tseries.offsets import BDay

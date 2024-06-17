@@ -4,6 +4,7 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
+from mypackage.obb_utils import OBBLoader
 
 
 class XyzOptions(PipelineOptions):
@@ -21,7 +22,7 @@ def run_obb_pipeline(p, key):
     logging.info('Running OBB ppln')
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
-             #| 'Get all List' >> beam.ParDo(OBBLoader(key))
+             | 'Get all List' >> beam.ParDo(OBBLoader(key))
 
     )
 
