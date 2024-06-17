@@ -1,0 +1,391 @@
+## finviz utilities
+#https://pypi.org/project/finvizfinance/
+# https://finvizfinance.readthedocs.io/en/latest/
+#https://medium.com/the-investors-handbook/the-best-finviz-screens-for-growth-investors-72795f507b91
+
+#https://www.justetf.com/uk/etf-profile.html?isin=IE000NDWFGA5
+#https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
+from finvizfinance.screener.overview import Overview
+from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
+                                                    get_financial_ratios_benchmark
+
+'''
+res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
+        and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
+        and (input_dict.get('grossProfitMargin', 0) > 0) \
+        and  (input_dict.get('price', 0) > input_dict.get('priceAvg20', 0))\
+        and (input_dict.get('price', 0) > input_dict.get('priceAvg50', 0)) \
+        and (input_dict.get('price', 0) > input_dict.get('priceAvg200', 0))  \
+        and (input_dict.get('net_sales_qtr_over_qtr', 0) > 0.2) and (input_dict.get('returnOnEquity', 0) > 0) \
+        and (input_dict.get('eps_growth_next_year', 0) > 0) and (input_dict.get('eps_growth_qtr_over_qtr', 0) > 0.2)
+'''
+
+def _run_screener(filters):
+    foverview = Overview()
+    foverview.set_filter(filters_dict=filters)
+    df = foverview.screener_view()
+    return df.to_dict('records') if df is not None else []
+
+def get_universe_filter():
+
+    filters_dict = {'Market Cap.':'+Small (over $300mln)',
+                    'Average Volume' : 'Over 200K',
+                    'Price' : 'Over $10',
+                    'EPS growththis year' :  'Over 20%',
+                    'EPS growthnext year' :  'Positive (>0%)',
+                    'Gross Margin' : 'Positive (>0%)',
+                    'EPS growthqtr over qtr': 'Over 20%',
+                    'Sales growthqtr over qtr' : 'Over 20%',
+                    'Return on Equity' : 'Positive (>0%)'
+
+                    }
+    return filters_dict
+
+def get_universe_stocks():
+    filter = get_universe_filter()
+    return _run_screener(filter)
+
+def  get_canslim():
+    '''
+    Descriptive Parameters:
+
+    Average Volume: Over 200K
+    Float: Under 50M
+    Stocks only (ex-Funds)
+    Stocks that have above 200K average daily volume are liquid and stocks with a low float under 50 million shares are more likely to explode faster because of the lower supply. For example, low float stocks like FUTU, CELH, BLNK, GRWG, SI, and DQ are all up more than 750% from their 52-week lows.
+
+    Fundamental Parameters:
+
+    EPS Growth This Year: Over 20%
+    EPS Growth Next Year: Over 20%
+    EPS Growth qtr over qtr: Over 20%
+    Sales Growth qtr over qtr: Over 20%
+    EPS Growth past 5 years: Over 20%
+    Return on Equity: Positive (>0%)
+    Gross Margin: Positive (>0%)
+    Institutional Sponsorship: Over 20%
+
+    Technical Parameters:
+
+    Price above SMA20
+    Price above SMA50
+    Price above SMA200
+    0–10% below High
+
+        :return:
+        '''
+
+    price_filters =  {
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        '52-Week High/Low': '0-10% below High'
+    }
+
+    desc_filters = {
+        'Average Volume': 'Over 200K',
+        'Float' : 'Under 50M',
+    }
+
+    fund_filters = {
+        'Average Volume': 'Over 200K',
+        'Float': 'Under 50M',
+        'EPS growththis year': 'Over 20%',
+        'EPS growthnext year': 'Over 20%',
+        'EPS growthqtr over qtr': 'Over 20%',
+        'Sales growthqtr over qtr': 'Over 20%',
+        'EPS growthpast 5 years': 'Over 20%',
+        'Gross Margin': 'Positive (>0%)',
+        'Return on Equity': 'Positive (>0%)',
+        'InstitutionalOwnership': 'Over 20%'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+def get_leaps():
+    '''
+    Descriptive Parameters:
+
+        Market Cap: +Small (over $2bln)
+        Average Volume: Over 200K
+        Price: Over $5
+        With these descriptive parameters, I narrow the list to stocks that are above 300 million dollars in market cap and with at least 10 million dollars of daily average dollar volume. Stocks that pass these parameters are again more likely to be quality companies with some institutional sponsorship.
+
+        Fundamental Parameters:
+
+        EPS Growth This Year: Over 20%
+        EPS Growth Next Year: Over 25%
+        EPS Growth qtr over qtr: Over 20%
+        Sales Growth qtr over qtr: Over 25%
+        Return on Equity: Over 15%
+        Gross Margin: Over 0%
+        Institutional Sponsorship: Over 30%
+        :return:
+        '''
+
+    price_filters =  {
+        'Price': 'Over $5',
+
+    }
+
+    desc_filters = {
+        'Average Volume': 'Over 200K',
+        'Float' : 'Under 50M',
+        #'Asset Type':'Equities (Stocks)'
+    }
+
+    fund_filters = {
+        'EPS growththis year': 'Over 20%',
+        'EPS growthnext year': 'Over 25%',
+        'EPS growthqtr over qtr': 'Over 20%',
+        'Sales growthqtr over qtr': 'Over 25%',
+        'Gross Margin': 'Positive (>0%)',
+        'Return on Equity': 'Over +15%',
+        'InstitutionalOwnership': 'Over 20%'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+def get_graham_enterprise(fmpKey):
+    '''
+        Current superperf filter
+        return (input_dict['currentRatio'] >= 1.5) \
+                   and (input_dict['enterpriseDebt'] <= 1.2) \
+                   and (input_dict['dividendPaidEnterprise'] == True)\
+                   and (input_dict['epsGrowth5yrs'] > 0) \
+                   and (input_dict['positiveEpsLast5Yrs'] == 5   ) \
+                   and (input_dict['peRatio'] > 0) and  (input_dict['peRatio'] <= 10) \
+                   and (input_dict['priceToBookRatio'] > 0) and (input_dict['priceToBookRatio'] < 1.5) \
+                   and (input_dict['institutionalOwnershipPercentage'] < 0.6)
+    '''''
+    filters_dict = {'Market Cap.': '+Mid (over $2bln)',
+                    'Current Ratio': 'Over 1',
+                    'Debt/Equity': 'Under 1',
+                    'P/E': 'Under 10',
+                    'InstitutionalOwnership': 'Under 60%'
+                    }
+
+    return _run_screener(filters_dict)
+
+def get_magic_formula(fmpKey):
+    # Greenblatt magic formula plus institutional ownership
+    # Div Yield > 0 and ROC  > 0
+    # we take the stock universe filter, which skims the best, and apply roc > 0 and div yield > 0
+    universe_filter = get_universe_filter()
+
+    universe_filter['Dividend Yield'] = 'High (>5%)'
+
+    # From this we need FMP to filter out
+    return _run_screener(universe_filter)
+
+
+def get_graham_defensive(fmpKey):
+
+    # https://groww.in/blog/benjamin-grahams-7-stock-criteria
+    # at least MidCap  finviz
+    # Current Ratio > 2 finviz
+    # Profitable earnings in last 10 years
+    # Consistent Dividend Payment over last 20 years dividend
+    # > 33% increase in earnings over last 10 years income
+    # Price To Book < 11.5  financial ratio
+    # PE Ratio < 15  finviz
+    ''' our current criteria from superperfs are
+
+    filters = { 'marketCap' : 'marketCap > 2000000000',
+                 'currentRatio' : 'currentRatio >= 2',
+                  'debtOverCapital' : 'debtOverCapital < 0',
+                  'dividendPaid' : 'dividendPaid == True',
+                  'epsGrowth' : 'epsGrowth >= 0.33',
+                   'positiveEps' : 'positiveEps > 0',
+                   'peRatio' : 'peRatio <= 15',
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
+    '''
+
+    filters_dict = {'Market Cap.': '+Mid (over $2bln)',
+                    'Current Ratio' : 'Over 2',
+                    'Debt/Equity': 'Under 1',
+                    'P/E': 'Low (<15)',
+                    'InstitutionalOwnership': 'Under 60%',
+                    'EPS growthpast5 years' : 'Positive(>0'
+                    }
+    data =  _run_screener(filters_dict)
+
+    keys = [k for k in data[0].keys()] if data else []
+
+    extra_keys = ['debtOverCapital', 'dividendPaid', 'epsGrowth',
+                  'positiveEps' , 'priceToBookRatio']
+
+    new_keys = keys +  extra_keys
+
+    # Need to group all these params in 1-2 fmp calls
+
+
+    new_data = []
+    for finviz_dict in data:
+        ticker = finviz_dict['Ticker']
+        bench_data = get_balancesheet_benchmark(ticker, fmpKey)
+        divi_data = get_dividend_paid(ticker, fmpKey)
+        income_data = get_income_benchmark(ticker, fmpKey)
+        financial_ratios_benchmark = get_financial_ratios_benchmark(ticker, fmpKey)
+        if bench_data:
+            finviz_dict.update(bench_data)
+        if divi_data:
+            finviz_dict.update(divi_data)
+        if income_data:
+            finviz_dict.update(income_data)
+        if financial_ratios_benchmark:
+            finviz_dict.update(financial_ratios_benchmark)
+
+        out_dict = dict((k, v) for k, v in finviz_dict.items() if k in new_keys)
+        new_data.append(out_dict)
+
+
+    return new_data
+
+def get_extra_watchlist():
+    '''
+    Descriptive Parameters:
+            Market Cap: +Mid (over $2bln)
+            Average Volume: Over 200K
+            Price: Over $10
+            Stocks only (ex-Funds)
+            With these descriptive parameters, I narrow the list to stocks that are relatively large companies with a respectable amount of liquidity. Stocks that pass these parameters are more likely to be quality companies.
+
+            Fundamental Parameters:
+
+            EPS Growth This Year: Over 20%
+            EPS Growth Next Year: Over 20%
+            EPS Growth qtr over qtr: Over 20%
+            Sales Growth qtr over qtr: Over 20%
+            Return on Equity: Over 20%
+            Gross Margin: Over 20%
+            With this scan, I keep the fundamental parameters to show only the fastest-growing companies with the best financial numbers. Stocks with greater than 20% revenue and earnings growth can lead to explosive movements in price as large institutions rapidly take positions in them. High return on equity and gross margin also show that the company is doing a great job managing the growth in revenue and sales.
+
+            Technical Parameters:
+
+            Price above SMA20
+            Price above SMA50
+            Price above SMA200
+
+    :return:
+    '''
+
+    price_filters = {
+        'Price': 'Over $10',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+    }
+
+    desc_filters = {
+        'Market Cap.': '+Mid (over $2bln)',
+        'Average Volume': 'Over 200K',
+        #'Float': 'Under 50M',
+        # 'Asset Type':'Equities (Stocks)'
+    }
+
+    fund_filters = {
+        'EPS growththis year': 'Over 20%',
+        'EPS growthnext year': 'Over 20%',
+        'EPS growthqtr over qtr': 'Over 20%',
+        'Sales growthqtr over qtr': 'Over 20%',
+        'Gross Margin': 'Over 20%',
+        'Return on Equity': 'Over +20%',
+        'InstitutionalOwnership': 'Under 60%'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+def get_new_highs():
+    # Categories > Money, Banking, & Finance > Interest Rates > Corporate Bonds
+    # https://fred.stlouisfed.org/series/BAMLH0A0HYM2
+    '''
+
+    Descriptive Parameters:
+
+Market Cap: +Small (over $300mln)
+Average Volume: Over 200K
+Relative Volume: Over 1
+Price: Over $10
+
+Fundamental Parameters:
+
+EPS Growth This Year: Positive (>0%)
+EPS Growth Next Year: Positive (>0%)
+EPS Growth qtr over qtr: Positive (>0%)
+Sales Growth qtr over qtr: Positive (>0%)
+Return on Equity: Positive (>0%)
+
+Today Up
+Price above SMA20
+Price above SMA50
+Price above SMA200
+Change: Up
+Change from Open: Up
+52-Week High/Low: New High
+
+    :return:
+    '''
+
+    desc_filters = {
+        'Market Cap.': '+Small (over $300mln)',
+        'Average Volume': 'Over 200K',
+        'Relative Volume': 'Over 1',
+    }
+    fund_filters = {
+        'EPS growththis year': 'Positive (>0%)',
+        'EPS growthnext year': 'Positive (>0%)',
+        'EPS growthqtr over qtr': 'Positive (>0%)',
+        'Sales growthqtr over qtr': 'Positive (>0%)',
+        'Return on Equity': 'Positive (>0%)',
+        'InstitutionalOwnership': 'Under 60%'
+    }
+
+    price_filters = {
+        'Price': 'Over $10',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        'Change' : 'Up',
+        'Change from Open' : 'Up',
+        '52-Week High/Low' : 'New High'
+    }
+
+    filters_dict = price_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    return _run_screener(filters_dict)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

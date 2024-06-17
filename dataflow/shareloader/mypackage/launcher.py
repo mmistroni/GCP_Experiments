@@ -5,6 +5,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from mypackage.obb_utils import OBBLoader
+from mypackage.finviz_utils import get_leaps
 
 class XyzOptions(PipelineOptions):
 
@@ -17,11 +18,13 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--limit')
         parser.add_argument('--pat')
 
-def run_obb_pipeline(p, pat):
+def run_obb_pipeline(p, key):
     
     return ( p
-            | 'Start' >> beam.Create(['AAPL'])
-            | 'Get all List' >> beam.ParDo(OBBLoader(pat))
+             | 'Start' >> beam.Create(get_leaps())
+             | 'Mapping ticks' >> beam.Map(lambda d: d['Ticker'])
+             | 'combining' >> beam.CombineGlobally(lambda x: ','.join(x))
+             | 'Get all List' >> beam.ParDo(OBBLoader(key))
 
     )
 
@@ -42,7 +45,7 @@ def run(argv=None, save_main_session=True):
 
         if bool(pipeline_options.pat):
             logging.info('running OBB....')
-            obb = run_obb_pipeline(p, pipeline_options.pat)
+            obb = run_obb_pipeline(p, pipeline_options.fmprepkey)
             obb | sink
 
 
