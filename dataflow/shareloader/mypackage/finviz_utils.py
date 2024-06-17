@@ -6,8 +6,6 @@
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000NDWFGA5
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
 from finvizfinance.screener.overview import Overview
-from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
-                                                    get_financial_ratios_benchmark
 
 '''
 res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
@@ -188,69 +186,7 @@ def get_magic_formula(fmpKey):
 
 
 def get_graham_defensive(fmpKey):
-
-    # https://groww.in/blog/benjamin-grahams-7-stock-criteria
-    # at least MidCap  finviz
-    # Current Ratio > 2 finviz
-    # Profitable earnings in last 10 years
-    # Consistent Dividend Payment over last 20 years dividend
-    # > 33% increase in earnings over last 10 years income
-    # Price To Book < 11.5  financial ratio
-    # PE Ratio < 15  finviz
-    ''' our current criteria from superperfs are
-
-    filters = { 'marketCap' : 'marketCap > 2000000000',
-                 'currentRatio' : 'currentRatio >= 2',
-                  'debtOverCapital' : 'debtOverCapital < 0',
-                  'dividendPaid' : 'dividendPaid == True',
-                  'epsGrowth' : 'epsGrowth >= 0.33',
-                   'positiveEps' : 'positiveEps > 0',
-                   'peRatio' : 'peRatio <= 15',
-                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
-                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6'}
-    '''
-
-    filters_dict = {'Market Cap.': '+Mid (over $2bln)',
-                    'Current Ratio' : 'Over 2',
-                    'Debt/Equity': 'Under 1',
-                    'P/E': 'Low (<15)',
-                    'InstitutionalOwnership': 'Under 60%',
-                    'EPS growthpast5 years' : 'Positive(>0'
-                    }
-    data =  _run_screener(filters_dict)
-
-    keys = [k for k in data[0].keys()] if data else []
-
-    extra_keys = ['debtOverCapital', 'dividendPaid', 'epsGrowth',
-                  'positiveEps' , 'priceToBookRatio']
-
-    new_keys = keys +  extra_keys
-
-    # Need to group all these params in 1-2 fmp calls
-
-
-    new_data = []
-    for finviz_dict in data:
-        ticker = finviz_dict['Ticker']
-        bench_data = get_balancesheet_benchmark(ticker, fmpKey)
-        divi_data = get_dividend_paid(ticker, fmpKey)
-        income_data = get_income_benchmark(ticker, fmpKey)
-        financial_ratios_benchmark = get_financial_ratios_benchmark(ticker, fmpKey)
-        if bench_data:
-            finviz_dict.update(bench_data)
-        if divi_data:
-            finviz_dict.update(divi_data)
-        if income_data:
-            finviz_dict.update(income_data)
-        if financial_ratios_benchmark:
-            finviz_dict.update(financial_ratios_benchmark)
-
-        out_dict = dict((k, v) for k, v in finviz_dict.items() if k in new_keys)
-        new_data.append(out_dict)
-
-
-    return new_data
-
+    pass
 def get_extra_watchlist():
     '''
     Descriptive Parameters:
