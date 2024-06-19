@@ -18,7 +18,7 @@ COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:2023
 ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
-MKDIR ${WORKDIR}/shareloader
+RUN mkdir -p ${WORKDIR}/shareloader
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
 COPY dataflow_tester.py .

@@ -15,7 +15,6 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class MyTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.notEmptySink = Check(is_not_empty())
         self.debugSink = beam.Map(print)
 
     def test_canslim(self):
