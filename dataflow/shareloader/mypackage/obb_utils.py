@@ -42,7 +42,9 @@ class OBBLoader(beam.DoFn):
                 except Exception as e:
                     logging.info(f'Exception processin {ticker}:{str(e)}')
 
-        return results
+            return results
+        except Exception as e:
+            raise e
 
 
 
