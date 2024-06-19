@@ -413,7 +413,7 @@ class FinvizLoader(beam.DoFn):
                 holder.append(data)
 
         extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
-        for ticker in newhighm_tickers:
+        for ticker in extra_watchlist:
             data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
             if data:
                 holder.append(data)
