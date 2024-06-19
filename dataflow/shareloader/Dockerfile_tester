@@ -21,7 +21,7 @@ WORKDIR ${WORKDIR}
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
 COPY dataflow_tester.py .
-COPY modules modules
+COPY shareloader shareloader
 COPY __init__.py ${WORKDIR}/__init__.py
 
 

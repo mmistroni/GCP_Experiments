@@ -7,7 +7,7 @@
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
 import apache_beam as beam
 from finvizfinance.screener.overview import Overview
-from modules.superperf_metrics import  load_bennchmark_data
+from shareloader.modules.superperf_metrics import  load_bennchmark_data
 
 import logging
 
@@ -406,7 +406,7 @@ class FinvizLoader(beam.DoFn):
             if data:
                 holder.append(data)
 
-        newhighm_tickers = [d['Ticker'] for d in get_new_highs()()]
+        newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
         for ticker in newhighm_tickers:
             data = self._get_data(ticker, self.key, 'NEWHIGH')
             if data:

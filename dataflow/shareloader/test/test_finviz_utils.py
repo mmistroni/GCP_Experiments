@@ -1,13 +1,23 @@
 import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
-                                            get_extra_watchlist, get_new_highs
+                                            get_extra_watchlist, get_new_highs, FinvizLoader
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
+from apache_beam.testing.util import assert_that, equal_to, is_not_empty
+from apache_beam.testing.test_pipeline import TestPipeline
+from apache_beam.testing.util import assert_that, equal_to
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
 
 
 class MyTestCase(unittest.TestCase):
+
+    def setUp(self) -> None:
+        self.notEmptySink = Check(is_not_empty())
+        self.debugSink = beam.Map(print)
+
     def test_canslim(self):
         res = get_canslim()
         pprint(res)
@@ -68,6 +78,14 @@ class MyTestCase(unittest.TestCase):
 
         res = get_new_highs()
         print(res)
+
+    def test_finvizloader(self):
+        key = os.environ['FMPREPKEY']
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Run Loader' >> beam.ParDo(FinvizLoader(key))
+                     | self.debugSink
+                     )
 
 
 

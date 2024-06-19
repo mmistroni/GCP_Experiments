@@ -21,7 +21,7 @@ REQUIRED_PACKAGES = [
 
 
 setuptools.setup(
-    name='modules',
+    name='shareloader',
     version='0.0.1',
     description='Shres Runner Package.',
     install_requires=REQUIRED_PACKAGES,
