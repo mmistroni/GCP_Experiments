@@ -1,19 +1,16 @@
 
 import unittest
 import requests
-from lxml import etree
-from io import StringIO, BytesIO
 from shareloader.mypackage.obb_utils import OBBLoader
 import apache_beam as beam
-from apache_beam.testing.util import assert_that, equal_to, is_not_empty
+from apache_beam.testing.util import assert_that, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date, datetime
 from unittest.mock import patch
 #from shareloader.modules.finviz_utils import get_leaps
 
 import os
-from shareloader.modules.finviz_utils import get_universe_stocks
-from shareloader.mypackage.launcher import run_obb_pipeline
+from modules.launcher import run_obb_pipeline
 
 class Check(beam.PTransform):
     def __init__(self, checker):

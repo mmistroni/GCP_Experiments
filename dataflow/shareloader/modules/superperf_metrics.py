@@ -1,7 +1,6 @@
 from datetime import datetime, date
 import requests
 import logging
-import statistics
 import pandas as pd
 from pandas.tseries.offsets import BDay
 # Criteria #1

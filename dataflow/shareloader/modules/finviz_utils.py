@@ -7,8 +7,7 @@
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
 import apache_beam as beam
 from finvizfinance.screener.overview import Overview
-from shareloader.modules.superperf_metrics import get_balancesheet_benchmark, get_dividend_paid, get_income_benchmark,\
-                                                    get_financial_ratios_benchmark, load_bennchmark_data
+from modules.superperf_metrics import  load_bennchmark_data
 
 import logging
 
@@ -231,6 +230,7 @@ def get_graham_defensive(fmpKey):
 
     # Need to group all these params in 1-2 fmp calls
 
+    '''
 
     new_data = []
     for finviz_dict in data:
@@ -253,7 +253,7 @@ def get_graham_defensive(fmpKey):
 
 
     return new_data
-
+    '''
 def get_extra_watchlist():
     '''
     Descriptive Parameters:

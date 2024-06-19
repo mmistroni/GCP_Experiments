@@ -4,14 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="another try">
-      <change beforePath="$PROJECT_DIR$/.idea/dataflow.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataflow.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="trying out new finviz">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_tester" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_tester" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/dataflow_tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/dataflow_tester.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/mypackage/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/setup_dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup_dftester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +28,7 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
@@ -83,6 +84,9 @@
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\mypackage" />
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
@@ -187,70 +191,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00008" summary="fix for mstats">
-      <option name="closed" value="true" />
-      <created>1713687531981</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1713687531981</updated>
-    </task>
-    <task id="LOCAL-00009" summary="replaced output bucket">
-      <option name="closed" value="true" />
-      <created>1713687737083</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1713687737083</updated>
-    </task>
-    <task id="LOCAL-00010" summary="replaced output bucket">
-      <option name="closed" value="true" />
-      <created>1714718871847</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1714718871847</updated>
-    </task>
-    <task id="LOCAL-00011" summary="added logic to finvizz. added cramer tracker">
-      <option name="closed" value="true" />
-      <created>1715754768521</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1715754768521</updated>
-    </task>
-    <task id="LOCAL-00012" summary="added logic to finvizz. added cramer tracker">
-      <option name="closed" value="true" />
-      <created>1715968130436</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1715968130436</updated>
-    </task>
-    <task id="LOCAL-00013" summary="added logic to finvizz. added cramer tracker">
-      <option name="closed" value="true" />
-      <created>1716110963493</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1716110963493</updated>
-    </task>
-    <task id="LOCAL-00014" summary="fixing typo in yaml">
-      <option name="closed" value="true" />
-      <created>1716225037748</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1716225037748</updated>
-    </task>
-    <task id="LOCAL-00015" summary="fixing typo in yaml">
-      <option name="closed" value="true" />
-      <created>1716227346221</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1716227346221</updated>
     </task>
     <task id="LOCAL-00016" summary="fixing typo in yaml">
       <option name="closed" value="true" />
@@ -580,7 +520,71 @@
       <option name="project" value="LOCAL" />
       <updated>1718558018121</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718775531737</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1718775531737</updated>
+    </task>
+    <task id="LOCAL-00058" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718777481477</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1718777481477</updated>
+    </task>
+    <task id="LOCAL-00059" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718780561339</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1718780561339</updated>
+    </task>
+    <task id="LOCAL-00060" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718780583836</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1718780583836</updated>
+    </task>
+    <task id="LOCAL-00061" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718790412516</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1718790412517</updated>
+    </task>
+    <task id="LOCAL-00062" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718800649020</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1718800649020</updated>
+    </task>
+    <task id="LOCAL-00063" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718804787114</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1718804787114</updated>
+    </task>
+    <task id="LOCAL-00064" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718807999728</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1718807999728</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -615,7 +619,8 @@
     <MESSAGE value="amended dockerfile" />
     <MESSAGE value="amended setup copy" />
     <MESSAGE value="another try" />
-    <option name="LAST_COMMIT_MESSAGE" value="another try" />
+    <MESSAGE value="trying out new finviz" />
+    <option name="LAST_COMMIT_MESSAGE" value="trying out new finviz" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

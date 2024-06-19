@@ -4,7 +4,7 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-from mypackage.obb_utils import OBBLoader
+from modules.finviz_utils import FinvizLoader
 
 
 class XyzOptions(PipelineOptions):
@@ -23,7 +23,7 @@ def run_obb_pipeline(p, fmpkey, pat):
     logging.info('Running OBB ppln')
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
-             | 'Get all List' >> beam.ParDo(OBBLoader(fmpkey, pat))
+             | 'Get all List' >> beam.ParDo(FinvizLoader(fmpkey))
 
     )
 

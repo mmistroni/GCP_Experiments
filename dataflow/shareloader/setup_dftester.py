@@ -6,7 +6,6 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
-    'openbb',
     "apache-beam[gcp]",  # Must match the version in `Dockerfile``.
     'sendgrid',
     'pandas_datareader',
@@ -22,7 +21,7 @@ REQUIRED_PACKAGES = [
 
 
 setuptools.setup(
-    name='mypackage',
+    name='modules',
     version='0.0.1',
     description='Shres Runner Package.',
     install_requires=REQUIRED_PACKAGES,
