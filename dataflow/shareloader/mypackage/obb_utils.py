@@ -1,6 +1,5 @@
 import logging
 import apache_beam as beam
-from openbb import obb
 import requests
 
 
@@ -13,7 +12,9 @@ class OBBLoader(beam.DoFn):
 
     def process(self, elements):
         try:
+
             logging.info('activating obb')
+            from openbb import obb
             obb.account.login(pat=self.pat)
             logging.info('OBB ctivated obb')
 
