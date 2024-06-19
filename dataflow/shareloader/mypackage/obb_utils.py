@@ -10,6 +10,7 @@ class OBBLoader(beam.DoFn):
         self.pat = pat
 
 
+
     def process(self, elements):
         try:
             logging.info('activating obb')
