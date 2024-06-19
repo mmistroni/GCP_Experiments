@@ -9,6 +9,7 @@ class OBBLoader(beam.DoFn):
         self.key = key
         self.pat = pat
 
+
     def process(self, elements):
         logging.info(f'Logging in to OBB.. pat={self.key}')
         from openbb import obb
