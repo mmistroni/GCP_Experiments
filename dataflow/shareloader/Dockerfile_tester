@@ -28,8 +28,13 @@ COPY __init__.py ${WORKDIR}/__init__.py
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
-RUN echo '--- listing modules -----'
+RUN echo '--- listing shareloader -----'
 RUN ls -la  ${WORKDIR}/shareloader
+
+RUN echo '--- listing modules -----'
+RUN ls -la  ${WORKDIR}/shareloader/modules
+
+
 RUN echo '----- cat ting  main--'
 RUN cat dataflow_tester.py
 RUN echo '----- INSTALLING REQS ----'
