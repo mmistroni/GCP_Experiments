@@ -13,6 +13,11 @@ class OBBLoader(beam.DoFn):
     def process(self, elements):
         try:
 
+            logging.info('activating obb')
+            from openbb import obb
+            obb.account.login(pat=self.pat)
+            logging.info('OBB ctivated obb')
+
             results = []
             for ticker in elements.split(','):
                 logging.info(f'Processing :{ticker}')
@@ -41,7 +46,9 @@ class OBBLoader(beam.DoFn):
 
             return results
         except Exception as e:
-            raise e
+            logging.info(f'An exception has occurrend@{str(e)}')
+            return [{'something wrong' : str(e)}]
+
 
 
 
