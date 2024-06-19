@@ -13,11 +13,6 @@ class OBBLoader(beam.DoFn):
     def process(self, elements):
         try:
 
-            logging.info('activating obb')
-            from openbb import obb
-            obb.account.login(pat=self.pat)
-            logging.info('OBB ctivated obb')
-
             results = []
             for ticker in elements.split(','):
                 logging.info(f'Processing :{ticker}')
