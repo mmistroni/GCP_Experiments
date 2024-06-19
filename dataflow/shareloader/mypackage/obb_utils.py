@@ -18,6 +18,7 @@ class OBBLoader(beam.DoFn):
             obb.account.login(pat=self.pat)
             logging.info('OBB ctivated obb')
 
+
             results = []
             for ticker in elements.split(','):
                 logging.info(f'Processing :{ticker}')
