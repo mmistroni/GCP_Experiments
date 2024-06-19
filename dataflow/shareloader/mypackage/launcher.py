@@ -18,11 +18,11 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--limit')
         parser.add_argument('--pat')
 
-def run_obb_pipeline(p, key):
+def run_obb_pipeline(p, fmpkey, pat):
     logging.info('Running OBB ppln')
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
-             | 'Get all List' >> beam.ParDo(OBBLoader(key))
+             | 'Get all List' >> beam.ParDo(OBBLoader(fmpkey, pat))
 
     )
 
@@ -43,7 +43,7 @@ def run(argv=None, save_main_session=True):
 
         if bool(pipeline_options.pat):
             logging.info('running OBB....')
-            obb = run_obb_pipeline(p, pipeline_options.fmprepkey)
+            obb = run_obb_pipeline(p, pipeline_options.fmprepkey, pipeline_options.pat)
             logging.info('printing to sink.....')
             obb | sink
 

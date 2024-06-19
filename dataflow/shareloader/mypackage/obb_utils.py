@@ -5,11 +5,16 @@ import requests
 
 
 class OBBLoader(beam.DoFn):
-    def __init__(self, key, period='annual', limit=10):
+    def __init__(self, key, pat):
         self.key = key
+        self.pat = pat
 
     def process(self, elements):
         logging.info(f'Logging in to OBB.. pat={self.key}')
+        from openbb import obb
+        logging.info('activating obb')
+        obb.account.login(pat=self.pat)
+
         results = []
         for ticker in elements.split(','):
             logging.info(f'Processing :{ticker}')
