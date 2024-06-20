@@ -388,11 +388,21 @@ def get_dividend_paid(ticker, key):
     try:
 
         diviUrl = f"https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{ticker}?apikey={key}"
+
+        divis = requests.get(diviUrl).json()['historical']
         divis = requests.get(diviUrl).json()['historical']
         currentDate = date.today()
-        hist_date = date(currentDate.year - 20, currentDate.month, currentDate.day)
-        all_divis = [d.get('adjDividend', 0) for d in divis if
-                     datetime.strptime(d.get('date', date(2000, 1, 1)), '%Y-%m-%d').date() > hist_date]
+        hist_year = currentDate.year - 21
+
+        all_divis_data = [d for d in divis if
+                          d.get('date') is not None and datetime.strptime(d['date'],
+                                                                          '%Y-%m-%d').date().year >= hist_year and
+                          datetime.strptime(d['date'], '%Y-%m-%d').date().year < currentDate.year]
+        unique_labels = [d['label'].split()[0] for d in all_divis_data]
+        uniques = list(set(unique_labels))
+        has_all_paid = len(all_divis_data) % len(uniques) == 0
+
+        all_divis = [d.get('adjDividend', 0) for d in all_divis_data]
         dataDict['dividendPaid'] = all([d > 0 for d in all_divis])
         dataDict['dividendPaidEnterprise'] = any([d > 0 for d in all_divis])
         dataDict['dividendPaidRatio'] = dataDict['dividendPaid'] / len(all_divis) if len(all_divis) > 0 else 0

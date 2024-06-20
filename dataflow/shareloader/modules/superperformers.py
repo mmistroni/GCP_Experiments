@@ -13,10 +13,6 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
                                             calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
                                             get_peter_lynch_ratio
-
-from shareloader.modules.finviz_utils import get_universe_stocks, get_extra_watchlist, \
-    get_new_highs, get_canslim, get_leaps
-
 from apache_beam.io.gcp.internal.clients import bigquery
 
 '''

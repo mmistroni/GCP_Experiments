@@ -12,7 +12,8 @@ from shareloader.modules.superperf_metrics import get_all_data, get_descriptive_
                 get_financial_ratios_benchmark, get_key_metrics_benchmark, get_income_benchmark,\
                 get_balancesheet_benchmark, compute_cagr, calculate_piotrosky_score, \
                 get_institutional_holders_quote, filter_historical, get_latest_stock_news,\
-                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio,load_bennchmark_data
+                get_mm_trend_template, get_fundamental_parameters, get_peter_lynch_ratio,load_bennchmark_data,\
+                get_dividend_paid
 
 from itertools import chain
 from pandas.tseries.offsets import BDay
@@ -859,6 +860,31 @@ class TestSuperPerformers(unittest.TestCase):
                                    'display.precision', 3,
                                    ):
                 print(merged.to_string(index=False))
+
+    def test_get_dividend_paid(self):
+        key = os.environ['FMPREPKEY']
+        ticker = 'MMM'
+        diviUrl = f"https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{ticker}?apikey={key}"
+        divis = requests.get(diviUrl).json()['historical']
+        currentDate = date.today()
+        hist_year = currentDate.year - 21
+
+        all_divis_data = [d for d in divis if
+                     d.get('date') is not None and datetime.strptime(d['date'], '%Y-%m-%d').date().year >= hist_year and
+                     datetime.strptime(d['date'], '%Y-%m-%d').date().year < currentDate.year]
+        unique_labels = [d['label'].split()[0] for d in all_divis_data]
+
+        uniques = list(set(unique_labels))
+
+        has_all_paid = len(all_divis_data) % len(uniques) == 0
+
+        print(f'{ticker} has paid all divis? {has_all_paid}')
+
+
+
+
+
+
 
 
 
