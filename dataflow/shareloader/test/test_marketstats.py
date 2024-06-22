@@ -485,6 +485,13 @@ class TestMarketStats(unittest.TestCase):
         all_data = requests.get(base_url).json()
         print(all_data)
 
+    def test_get_cftc_spfutures_pipeline(selfself):
+        fmp_key = os.environ['FMPREPKEY']
+        base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VX?apikey={fmp_key}'
+        all_data = requests.get(base_url).json()
+        print(all_data)
+
+
 
 
     def test_McClellan(self):
