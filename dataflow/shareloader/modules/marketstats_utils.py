@@ -510,6 +510,7 @@ def get_economic_calendar(fmprepkey):
 
 
 def get_equity_putcall_ratio():
+    # replace with
     from .news_util import get_user_agent
     r = requests.get('https://ycharts.com/indicators/cboe_equity_put_call_ratio',
                      headers={'User-Agent': get_user_agent()})

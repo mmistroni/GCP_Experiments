@@ -1,6 +1,6 @@
 import unittest
 import os
-from shareloader.modules.fred_utils import get_gdp
+from shareloader.modules.fred_utils import get_gdp, get_high_yields_spreads
 from shareloader.modules.utils import get_similar_companies, get_peers
 import requests
 from pprint import pprint
@@ -48,6 +48,16 @@ class FedUtilsTestCase(unittest.TestCase):
         # treasury constant amt
         pprint(requests.get(
             f'https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&file_type=json&api_key={key}&file_type=json').json())
+
+    def test_high_yield_spreads(self):
+        key = os.environ['FREDKEY']
+
+        data = requests.get(
+            f'https://api.stlouisfed.org/fred/series/observations?series_id=BAMLH0A0HYM2&file_type=json&api_key={key}&file_type=json').json()
+
+        pprint(data['observations'][-3:])
+
+        #print(get_high_yields_spreads(key))
 
 
 if __name__ == '__main__':

@@ -9,6 +9,68 @@ from .marketstats_utils import get_all_us_stocks2, NewHighNewLowLoader
 from .dftester_utils import combine_tickers, DfTesterLoader, get_fields
 from .obb_utils import OBBLoader
 
+''' 
+Big Query Table needs to have following fields
+'cob'
+'symbol', 
+'price', 
+'change', 
+'yearHigh', 
+'yearLow', 
+'marketCap', 
+'priceAvg50', 
+'priceAvg200', 
+'exchange', 
+'avgVolume', 
+'open', 
+'eps', 
+'pe', 
+'sharesOutstanding', 
+'institutionalOwnershipPercentage', 
+'epsGrowth', 
+'epsGrowth5yrs', 
+'OPERATING_INCOME_CAGR', 
+'positiveEps', 
+'positiveEpsLast5Yrs', 
+'netIncome', 
+'income_statement_date', 
+'debtOverCapital', 
+'enterpriseDebt', 
+'totalAssets', 
+'inventory', 
+'totalCurrentAssets', 
+'totalCurrentLiabilities', 
+'dividendPaid', 
+'dividendPaidEnterprise', 
+'dividendPayoutRatio', 
+'numOfDividendsPaid', 
+'returnOnCapital', 
+'peRatio', 
+'netProfitMargin', 
+'currentRatio', 
+'priceToBookRatio', 
+'grossProfitMargin', 
+'returnOnEquity', 
+'dividendYield', 
+'pegRatio', 
+'payoutRatio', 
+'tangibleBookValuePerShare', 
+'netCurrentAssetValue', 
+'freeCashFlowPerShare', 
+'earningsYield', 
+'bookValuePerShare', 
+'canBuyAllItsStock', 
+'netQuickAssetPerShare', 
+'rsi', 
+'piotroskyScore', 
+'ticker', 
+'52weekChange', 
+'label'
+
+'''
+
+
+
 class XyzOptions(PipelineOptions):
 
     @classmethod
@@ -71,7 +133,8 @@ def run(argv=None, save_main_session=True):
 
         if bool(pipeline_options.pat):
             logging.info('running OBB....')
-            obb = run_obb_pipeline(p, pipeline_options.pat)
+        #'obb = run_obb_pipeline(p, pipeline_options.pat)
+            obb = run_my_pipeline(p, pipeline_options.fmprepkey)
             obb | sink
         else:
             destination =  f"gs://mm_dataflow_bucket/datasets/{pipeline_options.output}_{date.today().strftime('%Y-%m-%d %H:%M')}"

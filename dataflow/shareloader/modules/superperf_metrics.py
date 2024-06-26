@@ -667,6 +667,8 @@ def get_financial_ratios_benchmark(ticker, key):
             dataDict['dividendPayoutRatio'] = latest.get('payoutRatioTTM') or 0
             dataDict['dividendYield'] = latest.get('dividendYielTTM') or 0
             dataDict['returnOnCapital'] =  latest.get('returnOnCapitalEmployedTTM') or 0
+            dataDict['pegRatio'] = latest.get('pegRatioTTM') or 0
+            dataDict['payoutRatio'] = latest.get('pegRatioTTM') or -1
             return dataDict
     except Exception as e:
         return dataDict
