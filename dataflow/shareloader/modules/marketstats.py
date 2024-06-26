@@ -217,7 +217,7 @@ def run_newhigh_new_low(p, fmpKey):
            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpKey))
            | 'Mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
                                               'LABEL' : 'NEW_HIGH_NEW_LOW',
-                                              'VALUE' : f"{d['VALUE']}-(HIGH:{d['NEW_HIGH']},LOW:{d['NEW_LOW']}"
+                                              'VALUE' : f"{d['VALUE']} (HIGH:{d['NEW_HIGH']},LOW:{d['NEW_LOW']}"
                                               })
            )
 
