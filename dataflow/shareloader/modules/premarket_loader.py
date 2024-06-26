@@ -123,6 +123,15 @@ class TrendTemplateLoader(beam.DoFn):
         self.numdays = int(numdays)
         self.full_run = full_run
 
+    def get_fields(self):
+        return ['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']
+
+    def stringify(self, input_dict):
+        data = [str(input_dict[f]) for f in self.get_fields()]
+        return data
+
+
+
     def best_fit_slope(self, y: np.array) -> float:
         '''
         Determine the slope for the linear regression line
@@ -178,7 +187,15 @@ class TrendTemplateLoader(beam.DoFn):
                         & (df['priceWithin25pc52wkhigh'] == True)
                         & (df['priceWithin25pc52wkhigh'] == True)
                 )
-                return df[['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+                data =  df[['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
+                records = data.to_dict['records']
+                logging.info('Stringifying.....')
+                to_csv = list(map(lambda d: self.stringify(d), records))
+
+                return to_csv
+
+
+
             else:
                 return None
         except Exception as e:
