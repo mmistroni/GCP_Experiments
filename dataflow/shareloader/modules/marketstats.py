@@ -18,7 +18,7 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
-                            get_mcclellan
+                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks
 
 
 from sendgrid import SendGridAPIClient
@@ -200,7 +200,17 @@ def run_mcclellan_pipeline(p, ticker):
      | f'Get mmcl_{ticker}' >> beam.Map(get_mcclellan)
      )
 
+def run_newhigh_new_low(p, fmpKey):
+    full_ticks = ','.join(get_all_us_stocks(fmpKey))
 
+    return  (p
+           | 'Start' >> beam.Create([full_ticks])
+           | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpKey))
+           | 'Mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
+                                              'LABEL' : 'NEW_HIGH_NEW_LOW',
+                                              'VALUE' : f"{d['VALUE']}-(HIGH:{d['NEW_HIGH']},LOW:{d['NEW_LOW']}"
+                                              })
+           )
 
 def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))

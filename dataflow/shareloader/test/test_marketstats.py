@@ -17,7 +17,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
-                                            run_consumer_sentiment_index
+                                            run_consumer_sentiment_index, run_newhigh_new_low
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -461,7 +461,7 @@ class TestMarketStats(unittest.TestCase):
     def test_newhigh_newlow(self):
         fmp_key = os.environ['FMPREPKEY']
         nyse = get_all_us_stocks2(fmp_key, "New York Stock Exchange")
-        full_ticks = 'APPF,CIDM,FXCO,GMM,HZNP,IMAC,INTR,ERYP'
+        full_ticks = 'ADSE,ALNY,AMZN,AOSL,BRFH,COKE,DAKT,DXJS,DYCQR,EUDA,FORLU,FTE,HLAL,HSPO,INDH,INDY,ISRG,JVSA,MSFL,MSFT,NPAB,PAL,PFX,PNQI,RDVT,SLNHP,TTMI,VITL,VSEC,WENAW,WTFCM'
         debugSink = beam.Map(print)
 
         with TestPipeline() as p:
@@ -470,6 +470,14 @@ class TestMarketStats(unittest.TestCase):
                     | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmp_key))
                     |  debugSink
             )
+    def test_highlowpipeline(self):
+        fmp_key = os.environ['FMPREPKEY']
+        debugSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            res = run_newhigh_new_low(p, fmp_key)
+            res | debugSink
+
 
     def test_prices2(self):
         fmp_key = os.environ['FMPREPKEY']

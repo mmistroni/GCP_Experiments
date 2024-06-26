@@ -178,16 +178,16 @@ class NewHighNewLowLoader(beam.DoFn):
         for idx, ticker in enumerate(tickers_to_process):
             try:
                 data = self.get_quote(ticker)
-                if data['price'] >= data['yearHigh']:
+                if data['price'] == data['dayHigh'] and data['price'] == data['yearHigh']:
                     logging.info(f'New high for {ticker}')
                     new_high.append(ticker)
-                if data['price'] <= data['yearLow']:
+                if data['price'] == data['dayLow']  and data['price'] == data['yearLow']:
                     logging.info(f'New low for {ticker}')
                     new_low.append(ticker)
             except Exception as e:
                 logging.info(f'Unable to fetch data for {ticker}:{str(e)}')
 
-        return [len(new_high) - len(new_low)]
+        return [{'VALUE': len(new_high) - len(new_low), 'NEW_HIGH' : len(new_high), 'NEW_LOW':len(new_low)}]
 
 
 class InnerJoinerFn(beam.DoFn):
