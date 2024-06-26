@@ -18,7 +18,7 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
-                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks
+                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks, get_junkbonddemand
 
 
 from sendgrid import SendGridAPIClient
@@ -163,6 +163,15 @@ def run_vix(p, key):
                     | 'vix' >>   beam.Map(lambda d:  get_vix(key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
             )
+
+def run_junk_bond_demand(p, fredkey):
+    return (p | 'start run_junk' >> beam.Create(['20210101'])
+                    | 'junk' >>   beam.Map(lambda d:  get_junkbonddemand(fredkey))
+                    | 'remap junk' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'JUNK_BOND_DEMAND', 'VALUE' : str(d)})
+            )
+
+
+
 
 def run_senate_disclosures(p, key):
     return (p | 'start run_sd' >> beam.Create(['20210101'])

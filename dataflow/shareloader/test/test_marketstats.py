@@ -17,7 +17,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
-                                            run_consumer_sentiment_index, run_newhigh_new_low
+                                            run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -476,6 +476,15 @@ class TestMarketStats(unittest.TestCase):
 
         with TestPipeline() as p:
             res = run_newhigh_new_low(p, fmp_key)
+            res | debugSink
+
+
+    def test_junkbonddemand(self):
+        key = os.environ['FREDKEY']
+        debugSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            res = run_junk_bond_demand(p, key)
             res | debugSink
 
 

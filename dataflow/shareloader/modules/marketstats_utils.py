@@ -9,6 +9,7 @@ from datetime import date, timedelta, datetime
 from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
+from .fred_utils import get_high_yields_spreads
 import math
 
 
@@ -464,6 +465,19 @@ def get_vix(key):
         return requests.get(base_url).json()[0]['price']
     except Exception as e:
         logging.info(f'Exception in getting vix:{str(e)}')
+        return 0.0
+
+def get_junkbonddemand(fred_key):
+    try:
+
+        fred_data = get_high_yields_spreads(fred_key)
+
+        last = fred_data['observations'][-1]
+        penultimate = fred_data['observations'][2]
+
+        return float(last) - float(penultimate)
+    except Exception as e:
+        logging.info(f'Exception in getting junk bond demand:{str(e)}')
         return 0.0
 
 
