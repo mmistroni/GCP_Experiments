@@ -1,7 +1,8 @@
 import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
-                                            get_extra_watchlist, get_new_highs, FinvizLoader
+                                            get_extra_watchlist, get_new_highs, FinvizLoader, \
+                                            get_high_low
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -86,7 +87,9 @@ class MyTestCase(unittest.TestCase):
                      | self.debugSink
                      )
 
-
+    def test_highlow(self):
+        res = get_high_low()
+        print(res)
 
 if __name__ == '__main__':
     unittest.main()

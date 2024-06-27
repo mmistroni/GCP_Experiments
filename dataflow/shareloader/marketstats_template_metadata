@@ -16,6 +16,11 @@
       "name": "recipients",
       "helpText": "recipients",
       "label": "recipients"
+    },
+    {
+      "name": "fredkey",
+      "helpText": "fred key",
+      "label": "fred key"
     }
   ]
 }

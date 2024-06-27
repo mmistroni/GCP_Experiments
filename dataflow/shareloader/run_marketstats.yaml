@@ -16,6 +16,8 @@ steps:
           , 'sendgridkey=$_SENDGRID_KEY'
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
+          , '--parameters'
+          , 'fredkey=$_FRED_KEY'
           , '--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
@@ -27,3 +29,4 @@ substitutions:
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
   _RECIPIENTS : 'mmistroni@gmail.com'
+  _FRED_KEY: ''

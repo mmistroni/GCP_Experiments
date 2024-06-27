@@ -10,6 +10,7 @@ from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
+from .finviz_utils import get_high_low
 import math
 
 
@@ -172,23 +173,12 @@ class NewHighNewLowLoader(beam.DoFn):
         return requests.get(stat_url).json()[0]
 
     def process(self, elements):
-        all_dt = []
-        new_high = []
-        new_low = []
-        tickers_to_process = elements.split(',')
-        for idx, ticker in enumerate(tickers_to_process):
-            try:
-                data = self.get_quote(ticker)
-                if data['price'] == data['dayHigh'] and data['price'] == data['yearHigh']:
-                    logging.info(f'New high for {ticker}')
-                    new_high.append(ticker)
-                if data['price'] == data['dayLow']  and data['price'] == data['yearLow']:
-                    logging.info(f'New low for {ticker}')
-                    new_low.append(ticker)
-            except Exception as e:
-                logging.info(f'Unable to fetch data for {ticker}:{str(e)}')
 
-        return [{'VALUE': len(new_high) - len(new_low), 'NEW_HIGH' : len(new_high), 'NEW_LOW':len(new_low)}]
+        high_low_dict = get_high_low()
+
+        logging.info(f'------\n{high_low_dict}' )
+
+        return [high_low_dict]
 
 
 class InnerJoinerFn(beam.DoFn):

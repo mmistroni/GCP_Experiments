@@ -111,6 +111,7 @@ class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument('--key')
+        parser.add_argument('--fredkey')
         parser.add_argument('--sendgridkey')
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
@@ -217,7 +218,7 @@ def run_newhigh_new_low(p, fmpKey):
            | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpKey))
            | 'Mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
                                               'LABEL' : 'NEW_HIGH_NEW_LOW',
-                                              'VALUE' : f"{d['VALUE']} (HIGH:{d['NEW_HIGH']},LOW:{d['NEW_LOW']}"
+                                              'VALUE' : f"{d['VALUE']}"
                                               })
            )
 
@@ -330,6 +331,7 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
 
         iexapi_key = pipeline_options.key
+        fred_key = pipeline_options.fredkey
         logging.info(pipeline_options.get_all_options())
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
         
@@ -387,6 +389,10 @@ def run(argv=None, save_main_session=True):
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
+        high_low = run_newhigh_new_low(p, iexapi_key)
+
+        junk_bond = run_junk_bond_demand(p, fred_key)
+
         staticStart = (p | 'Create static start' >> beam.Create(
             [dict(AS_OF_DATE='------- ', LABEL='<b> THIS WEEK ECONOMIC CALENDAR</b>', VALUE='--------')])
                    )
@@ -403,6 +409,7 @@ def run(argv=None, save_main_session=True):
         pmi_hist = run_prev_dates_statistics_manuf_pmi(p)
 
         non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
+
 
 
 
@@ -423,10 +430,18 @@ def run(argv=None, save_main_session=True):
         nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (10, d))
         nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (11, d))
 
+        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d:(12, d))
+        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
+
+
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (21, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (22, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (23, d))
         cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (24, d))
+
+
+
+
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (25, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (26, d))
@@ -439,7 +454,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key,
+                        nysi_key, nymo_key,highlow_key, junk_bond_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,

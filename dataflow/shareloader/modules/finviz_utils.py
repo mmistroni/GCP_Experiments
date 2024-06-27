@@ -373,6 +373,33 @@ Change from Open: Up
 
     return _run_screener(filters_dict)
 
+def get_high_low():
+    high_filter = 'New High'
+    low_filter = 'New Low'
+
+    high_filter_dict = {'52-Week High/Low' : high_filter}
+    low_filter_dict = {'52-Week High/Low' : low_filter}
+
+    highs = _run_screener(high_filter_dict)
+    high_ticks = ','.join([d['Ticker'] for d in highs])
+    lows = _run_screener(low_filter_dict)
+    low_ticks = ','.join([d['Ticker'] for d in lows])
+    return {'VALUE' : len(highs) - len(lows), 'NEW_HIGH' : len(highs), 'NEW_LOW' : len(lows),
+            'HIGH_TICKERS' : high_ticks, 'LOW_TICKERS' : low_ticks}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class FinvizLoader(beam.DoFn):
     def __init__(self, key, microcap_flag=False, split_flag=None):

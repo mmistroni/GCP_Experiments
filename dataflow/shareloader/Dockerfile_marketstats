@@ -7,7 +7,7 @@ WORKDIR ${WORKDIR}
 COPY modules ${WORKDIR}/modules
 
 
-RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp]==2.46.0 sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0 beautifulsoup4==4.10.0 vaderSentiment==3.3.2
+RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp] sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0 beautifulsoup4==4.10.0 vaderSentiment==3.3.2 finvizfinance
 RUN apt-get update && apt-get install -y iputils-ping dnsutils 
 
 COPY __init__.py ${WORKDIR}/__init__.py
