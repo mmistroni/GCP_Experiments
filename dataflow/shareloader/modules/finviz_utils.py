@@ -7,7 +7,7 @@
 #https://www.justetf.com/uk/etf-profile.html?isin=IE000M7V94E1#chart URANIUM ETF
 import apache_beam as beam
 from finvizfinance.screener.overview import Overview
-from shareloader.modules.superperf_metrics import  load_bennchmark_data
+from .superperf_metrics import  load_bennchmark_data
 
 import logging
 
