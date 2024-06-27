@@ -21,7 +21,7 @@ def create_bigquery_ppln(p, label):
 WHERE  PARSE_DATE("%F", AS_OF_DATE) > PARSE_DATE("%F", "{cutoff}")  
 AND LABEL IN ('NASDAQ GLOBAL SELECT_MARKET BREADTH',
   'VIX', 'NEW YORK STOCK EXCHANGE_MARKET BREADTH',  'EQUITY_PUTCALL_RATIO' , 'MARKET_MOMENTUM', 'SECTOR ROTATION(GROWTH/VALUE)',
-  'FED_FUND_RATES') 
+  'FED_FUND_RATES', 'NEW_HIGH_NEW_LOW', 'JUNK_BOND_DEMAND') 
 ORDER BY LABEL ASC, PARSE_DATE("%F", AS_OF_DATE) ASC 
   """.format(cutoff=cutoff_date, label=label)
     logging.info('executing SQL :{}'.format(edgar_sql))
