@@ -187,14 +187,7 @@ class TrendTemplateLoader(beam.DoFn):
                         & (df['priceWithin25pc52wkhigh'] == True)
                         & (df['priceWithin25pc52wkhigh'] == True)
                 )
-                data =  df[['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
-                records = data.to_dict['records']
-                logging.info('Stringifying.....')
-                to_csv = list(map(lambda d: self.stringify(d), records))
-
-                return to_csv
-
-
+                return  df[['date', 'ticker', 'close', '200_ma', '150_ma', '50_ma', 'slope', '52_week_low', '52_week_high', 'trend_template']]
 
             else:
                 return None
@@ -206,6 +199,8 @@ class TrendTemplateLoader(beam.DoFn):
         all_dt = []
         tickers_to_process = elements.split(',')
         logging.info(f'Ticker to process:{len(tickers_to_process)}')
+        logging.info(f'Is full run?{self.full_run}')
+
 
         excMsg = ''
         isException = False
@@ -241,6 +236,7 @@ class TrendTemplateLoader(beam.DoFn):
                             if records_dicts:
                                 all_dt += records_dicts
                     else:
+                        logging.info('getting record and stringicy')
                         records_dicts = mmdata.to_dict('records')
                         stringified = []
                         for r in records_dicts:
