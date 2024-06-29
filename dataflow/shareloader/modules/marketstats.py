@@ -434,14 +434,10 @@ def run(argv=None, save_main_session=True):
         junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
 
 
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (21, d))
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (22, d))
-        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (23, d))
-        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (24, d))
-
-
-
-
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (21, d))
+        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
+        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (23, d))
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (24, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (25, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (26, d))
