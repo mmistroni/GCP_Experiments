@@ -470,7 +470,7 @@ def run(argv=None, save_main_session=True):
 
         final_sink_results = [
                  vix_res, mmomentum_res, growth_vs_val_res, nyse,
-                 nasdaq, equity_pcratio, fed_funds,
+                 nasdaq, equity_pcratio, fed_funds, junk_bond, high_low
                 ]
 
         # Writing everything to sink
