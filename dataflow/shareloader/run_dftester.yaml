@@ -26,7 +26,7 @@ steps:
           , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
-          
+          ,'--subnetwork=regions/us-central1/subnetworks/default'
           ]  
 substitutions:
   _JOB_NAME: 'dftester'
