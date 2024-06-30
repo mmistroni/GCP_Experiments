@@ -5,6 +5,8 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
+from apache_beam.io.gcp.internal.clients import bigquery
+from datetime import date
 
 
 class XyzOptions(PipelineOptions):
@@ -19,13 +21,42 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--pat')
 
 
+
+def get_bq_schema():
+    return {
+        "cob": "DATE",  "symbol": "STRING", "price": "FLOAT", "change": "FLOAT", "yearHigh": "FLOAT",
+        "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
+        "price": "FLOAT", "avgVolume": "FLOAT", "open": "FLOAT", "eps": "FLOAT", "sharesOutstanding": "FLOAT",
+        "institutionalOwnershipPercentage": "FLOAT", "epsGrowth": "FLOAT", "epsGrowth5yrs": "FLOAT", "OPERATING_INCOME_CAGR": "FLOAT",
+        "positiveEps": "FLOAT", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "net_income_statement_date": "STRING",
+        "debtOverCapital": "FLOAT", "enterpriseDebt": "FLOAT", "totalAssets": "FLOAT", "inventory": "FLOAT",
+        "totalCurrentAssets": "FLOAT", "totalCurrentLiabilities": "FLOAT", "dividendPaid": "BOOLEAN", "dividendPaidEnterprise": "BOOLEAN",
+        "dividendPayoutRatio": "FLOAT", "numOfDividendsPaid": "FLOAT", "returnOnCapital": "FLOAT",
+        "peRatio": "FLOAT", "netProfitMargin": "FLOAT", "currentRatio": "FLOAT", "priceToBookRatio": "FLOAT",
+        "grossProfitMargin": "FLOAT", "returnOnEquity": "FLOAT", "dividendYield": "FLOAT", "pegRatio": "FLOAT",
+        "tangibleBookValuePerShare": "FLOAT", "netCurrentAssetValue": "FLOAT", "freeCashFlowPerShare": "FLOAT",
+        "earningYield": "FLOAT", "bookValuePerShare": "FLOAT", "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
+        "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "TIMESTAMP", "52weekChange": "FLOAT", "label": "STRING"
+    }
+
+
 def run_obb_pipeline(p, fmpkey, pat):
     logging.info('Running OBB ppln')
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
              | 'Get all List' >> beam.ParDo(FinvizLoader(fmpkey))
+             | 'Map to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
 
     )
+
+def map_to_bq_dict(input_dict):
+
+    custom_dict = input_dict.copy()
+    custom_dict['cob']  = date.today()
+    custom_dict['ticker'] = None
+    return custom_dict
+
+
 
 
 def run(argv=None, save_main_session=True):
@@ -39,6 +70,15 @@ def run(argv=None, save_main_session=True):
 
     logging.info('Starting tester pipeline')
 
+    bq_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='finviz_selection'),
+        schema=get_bq_schema(),
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
@@ -47,6 +87,9 @@ def run(argv=None, save_main_session=True):
             obb = run_obb_pipeline(p, pipeline_options.fmprepkey, pipeline_options.pat)
             logging.info('printing to sink.....')
             obb | sink
+            logging.info('Storing to BQ')
+            obb | bq_sink
+
 
 
 

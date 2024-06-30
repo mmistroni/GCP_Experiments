@@ -105,19 +105,6 @@ def run_my_pipeline(p, fmpkey):
 
     )
 
-
-def run_obb_pipeline(p, pat):
-    
-    return ( p
-            | 'Start' >> beam.Create(['AAPL'])
-            | 'Get all List' >> beam.ParDo(OBBLoader(pat))
-
-    )
-
-
-
-
-
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
