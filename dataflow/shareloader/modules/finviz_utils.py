@@ -403,7 +403,7 @@ class FinvizLoader(beam.DoFn):
             logging.info(f'Failed to get data for {ticker}:{str(e)}')
 
     def _connectToVM(self):
-        url = 'http://10.128.0.87/api/v1/equity/discovery/gainers?provider=yfinance&sort=desc'
+        url = 'http://10.128.0.87:8000/api/v1/equity/discovery/gainers?provider=yfinance&sort=desc'
         logging.info(f'Connecting to  {url}')
         try:
             data = requests.get(url).json()
