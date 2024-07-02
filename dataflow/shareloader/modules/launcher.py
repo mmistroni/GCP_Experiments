@@ -23,7 +23,8 @@ class XyzOptions(PipelineOptions):
 
 
 def get_bq_schema():
-    return {
+    schema_list = []
+    field_dict =  {
         "cob": "DATE",  "symbol": "STRING", "price": "FLOAT", "change": "FLOAT", "yearHigh": "FLOAT",
         "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
         "price": "FLOAT", "avgVolume": "FLOAT", "open": "FLOAT", "eps": "FLOAT", "sharesOutstanding": "FLOAT",
@@ -38,6 +39,13 @@ def get_bq_schema():
         "earningYield": "FLOAT", "bookValuePerShare": "FLOAT", "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
         "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "TIMESTAMP", "52weekChange": "FLOAT", "label": "STRING"
     }
+
+    for fields, types in field_dict.items():
+        schema = bigquery.SchemaField(fields, types)
+        schema_list.append(schema)
+    return schema_list
+
+
 
 
 def run_obb_pipeline(p, fmpkey, pat):
@@ -81,7 +89,7 @@ def run(argv=None, save_main_session=True):
 
 
 
-
+    '''
     bq_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
@@ -90,7 +98,7 @@ def run(argv=None, save_main_session=True):
         schema=get_bq_schema(),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-
+    '''
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
@@ -99,8 +107,8 @@ def run(argv=None, save_main_session=True):
             obb = run_obb_pipeline(p, pipeline_options.fmprepkey, pipeline_options.pat)
             logging.info('printing to sink.....')
             obb | sink
-            logging.info('Storing to BQ')
-            obb | bq_sink
+            #logging.info('Storing to BQ')
+            #obb | bq_sink
 
 
 
