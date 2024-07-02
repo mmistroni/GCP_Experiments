@@ -6,6 +6,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
+
 from datetime import date
 
 
@@ -43,7 +44,7 @@ def get_bq_schema():
     for fields, types in field_dict.items():
         schema = bigquery.SchemaField(fields, types)
         schema_list.append(schema)
-    return schema_list
+    return bigquery.TableSchema(schema_list)
 
 
 
