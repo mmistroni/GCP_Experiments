@@ -7,7 +7,7 @@ from apache_beam.options.pipeline_options import SetupOptions
 from datetime import date
 from .marketstats_utils import get_all_us_stocks2, NewHighNewLowLoader
 from .dftester_utils import combine_tickers, DfTesterLoader, get_fields
-from .obb_utils import OBBLoader
+
 
 ''' 
 Big Query Table needs to have following fields

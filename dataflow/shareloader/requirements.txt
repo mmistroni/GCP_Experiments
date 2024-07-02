@@ -1,6 +1,5 @@
 apache-beam[gcp]
-openbb
-avro-python3 
+avro-python3
 pyarrow
 pandas-datareader
 finvizfinance
