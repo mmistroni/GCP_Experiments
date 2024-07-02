@@ -414,36 +414,41 @@ class FinvizLoader(beam.DoFn):
 
     def process(self, elements):
         holder = []
-        logging.info('Getting LEAPS')
+        logging.info('Getting XXXLEAPS')
         leaps_tickers = [d['Ticker'] for d in get_leaps()]
-        for ticker in leaps_tickers:
-            data = self._get_data(ticker, self.key, 'LEAPS')
-            if data:
-                holder.append(data)
-        logging.info('Getting CANSLIM')
-        canslim_tickers = [d['Ticker'] for d in get_canslim()]
-        for ticker in canslim_tickers:
-            data = self._get_data(ticker, self.key, 'CANSLIM')
-            if data:
-                holder.append(data)
+        try:
+            for ticker in leaps_tickers:
+                data = self._get_data(ticker, self.key, 'LEAPS')
+                if data:
+                    holder.append(data)
+            logging.info('Getting CANSLIM')
+            canslim_tickers = [d['Ticker'] for d in get_canslim()]
+            for ticker in canslim_tickers:
+                data = self._get_data(ticker, self.key, 'CANSLIM')
+                if data:
+                    holder.append(data)
 
-        newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
-        for ticker in newhighm_tickers:
-            data = self._get_data(ticker, self.key, 'NEWHIGH')
-            if data:
-                holder.append(data)
+            logging.info('Getting newhigh')
 
-        extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
-        for ticker in extra_watchlist:
-            data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
-            if data:
-                holder.append(data)
+            newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
+            for ticker in newhighm_tickers:
+                data = self._get_data(ticker, self.key, 'NEWHIGH')
+                if data:
+                    holder.append(data)
 
-        logging.info('Attempting to connect to interal LVM')
+            extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
+            for ticker in extra_watchlist:
+                data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
+                if data:
+                    holder.append(data)
 
-        self._connectToVM()
+            logging.info('Attempting to connect to interal LVM')
 
-        return holder
+            self._connectToVM()
+
+            return holder
+        except Exception as e :
+            logging.info(f'Exception in running:{str(e)}')
 
 
 
