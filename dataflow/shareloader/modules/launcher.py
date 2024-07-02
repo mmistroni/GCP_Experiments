@@ -70,6 +70,18 @@ def run(argv=None, save_main_session=True):
 
     logging.info('Starting tester pipeline')
 
+    # connecting dataflow to http running on gcp
+    # https://www.trycatchdebug.net/news/1314929/gcp-dataflow-and-http-server#:~:text=To%20connect%20a%20GCP%20Dataflow%20job%20to%20the,transform%20to%20fetch%20data%20from%20the%20HTTP%20server.
+    # https://cloud.google.com/dataflow/docs/guides/routes-firewall
+    '''
+    With gcloud, you'll use the --subnetwork flag and specify the subnetwork URL in the format projects/your-project-id/regions/your-region/subnetworks/your-subnetwork-name.
+        projects/datascience-projects/regions/us-central1/subnetworks/default
+        regions/us-central1/subnetworks/default
+    '''
+
+
+
+
     bq_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",

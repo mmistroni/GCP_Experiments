@@ -8,7 +8,7 @@
 import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from .superperf_metrics import  load_bennchmark_data
-
+import requests
 import logging
 
 '''
@@ -387,20 +387,6 @@ def get_high_low():
     return {'VALUE' : len(highs) - len(lows), 'NEW_HIGH' : len(highs), 'NEW_LOW' : len(lows),
             'HIGH_TICKERS' : high_ticks, 'LOW_TICKERS' : low_ticks}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class FinvizLoader(beam.DoFn):
     def __init__(self, key, microcap_flag=False, split_flag=None):
         self.key = key
@@ -416,7 +402,15 @@ class FinvizLoader(beam.DoFn):
         except Exception as e:
             logging.info(f'Failed to get data for {ticker}:{str(e)}')
 
-
+    def _connectToVM(self):
+        url = 'http://10.128.0.87/api/v1/equity/discovery/gainers?provider=yfinance&sort=desc'
+        logging.info(f'Connecting to  {url}')
+        try:
+            data = requests.get(url).json()
+            logging.info(f'Obtained:{data}')
+            logging.info('Out of here')
+        except Exception as e:
+            logging.info(f'Failed to  fetch data:{str(e)}')
 
     def process(self, elements):
         holder = []
@@ -444,6 +438,10 @@ class FinvizLoader(beam.DoFn):
             data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
             if data:
                 holder.append(data)
+
+        logging.info('Attempting to connect to interal LVM')
+
+        self._connectToVM()
 
         return holder
 
