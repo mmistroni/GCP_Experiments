@@ -462,8 +462,8 @@ def get_junkbonddemand(fred_key):
 
         fred_data = get_high_yields_spreads(fred_key)
 
-        last = fred_data['observations'][-1]
-        penultimate = fred_data['observations'][2]
+        last = fred_data['observations'][-1]['value']
+        penultimate = fred_data['observations'][-2]['value']
 
         return float(last) - float(penultimate)
     except Exception as e:
