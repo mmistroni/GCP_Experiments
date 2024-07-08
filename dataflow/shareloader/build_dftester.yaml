@@ -24,8 +24,11 @@ steps:
         , 'gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME'
         , '--sdk-language'
         , 'PYTHON'
+        , '--staging-location'
+        , 'gs://datascience-projects_cloudbuild'
         , '--metadata-file'
         , '$_DFTESTER_METADATA_FILE' ]
+
 
 images: [ 'gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME' ]
 

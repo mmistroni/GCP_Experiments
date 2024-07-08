@@ -21,6 +21,7 @@ steps:
           , 'gcr.io/$_PROJECT_ID/$_ECONOMICS_IMAGE_NAME'
           , '--sdk-language'
           , 'PYTHON'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
           , '--metadata-file'
           , '$_ECONOMICS_METADATA_FILE']
     id: 'build-economics-flex-template'

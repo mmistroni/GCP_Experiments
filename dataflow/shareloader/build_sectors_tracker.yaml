@@ -23,6 +23,7 @@ steps:
           , 'gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME'
           , '--sdk-language'
           , 'PYTHON'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
           , '--metadata-file'
           , '$_SECTORS_METADATA_FILE']
     id: 'build-sectors-flex-template'

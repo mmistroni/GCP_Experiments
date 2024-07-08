@@ -23,6 +23,7 @@ steps:
           , 'gcr.io/$_PROJECT_ID/$_WEEKLYSELECTION_IMAGE_NAME'
           , '--sdk-language'
           , 'PYTHON'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
           , '--metadata-file'
           , '$_WEEKLYSELECTION_METADATA_FILE']
     id: 'build-weeklyselection-flex-template'
