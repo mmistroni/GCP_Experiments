@@ -17,7 +17,8 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_cftc_spfutures, run_senate_disclosures,\
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
-                                            run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand
+                                            run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
+                                            run_cramer_pipeline
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -537,6 +538,16 @@ class TestMarketStats(unittest.TestCase):
         res = parse_consumer_sentiment_index()
         print(res)
         assert res is not None
+
+
+    def test_cramer_pipeline(self):
+        with TestPipeline() as p:
+            res = run_cramer_pipeline(p, 7)
+            debugSink = beam.Map(print)
+
+            res | debugSink
+
+
 
 
 

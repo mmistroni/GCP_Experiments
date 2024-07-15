@@ -12,6 +12,8 @@ from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
 from .finviz_utils import get_high_low
 import math
+from bs4 import BeautifulSoup
+
 
 
 def create_bigquery_ppln(p, label):
@@ -639,3 +641,34 @@ class Market52Week(beam.CombineFn):
     def extract_output(self, sum_count):
         (hi, lo) = sum_count
         return (hi, lo)
+
+
+def get_cramer_picks(numdays):
+
+    baseUrl = 'https://www.quiverquant.com/cramertracker/'
+
+    req = requests.get(baseUrl, headers={'User-Agent': get_user_agent()})
+    soup = BeautifulSoup(req.text, "html.parser")
+
+    table = soup.find_all('div', {"class": "holdings-table table-inner"})[0]
+
+    holder = []
+
+
+    for row in table.find_all('tr'):
+        tds = row.find_all('td')
+        if not tds:
+            continue
+        else:
+            ticker  = tds[0].text
+            direction = tds[1].text
+            cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
+
+            if (date.today() - cob).days > numdays:
+                continue
+            else:
+                holder.append(dict(COB=cob, TICKER=ticker, DIRECTION=direction))
+
+    return holder
+
+

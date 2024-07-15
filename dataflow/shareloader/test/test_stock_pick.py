@@ -56,30 +56,6 @@ class TestEdgarUtils(unittest.TestCase):
             run_my_pipeline(p)
 
 
-    def test_cramer_inverse(self):
-        from bs4 import BeautifulSoup
-        from shareloader.modules.news_util import get_user_agent
-
-        baseUrl = 'https://www.quiverquant.com/cramertracker/'
-
-        req = requests.get(baseUrl, headers={'User-Agent': get_user_agent()})
-        soup = BeautifulSoup(req.text, "html.parser")
-
-        table = soup.find_all('div', {"class": "holdings-table table-inner"})[0]
-
-        for row in table.find_all('tr'):
-            tds = row.find_all('td')
-            if not tds:
-                continue
-            else:
-                ticker  = tds[0].text
-                direction = tds[1].text
-                cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
-
-                if (date.today() - cob).days > 3:
-                    continue
-
-                print(f'Ticker:{ticker}|Direction:{direction}|Date:{cob}')
 
 
 

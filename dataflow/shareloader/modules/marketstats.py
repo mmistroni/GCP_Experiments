@@ -18,7 +18,8 @@ from  .marketstats_utils import MarketBreadthCombineFn, \
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
-                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks, get_junkbonddemand
+                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks, get_junkbonddemand, \
+                            get_cramer_picks
 
 
 from sendgrid import SendGridAPIClient
@@ -130,6 +131,11 @@ def run_consumer_sentiment_index(p):
                     | 'remap  csi' >> beam.Map(lambda d: {'AS_OF_DATE' : csPmiDate.strftime('%Y-%m-%d'), 'LABEL' : 'CONSUMER_SENTIMENT_INDEX', 'VALUE' : d['Last']})
             )
 
+
+def run_cramer_pipeline(p, numdays=5):
+    return (p | 'cramer starter' >> beam.Create(['20240101'])
+              | 'getting picks'  >> beam.Map(lambda d: get_cramer_picks(numdays))
+              )
 
 def run_putcall_ratio(p):
     return (p | 'start putcall ratio' >> beam.Create(['20210101'])
@@ -349,6 +355,15 @@ def run(argv=None, save_main_session=True):
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
+        cramer_sink = beam.io.WriteToBigQuery(
+            bigquery.TableReference(
+                projectId="datascience-projects",
+                datasetId='gcp_shareloader',
+                tableId='cramer'),
+            schema='COB:DATE,TICKER:STRING,DIRECTION:STRING',
+            write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+            create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
         run_weekday = date.today().weekday()
 
         logging.info('Run pmi')
@@ -541,6 +556,13 @@ def run(argv=None, save_main_session=True):
 
         cres_left_joined | 'CRES to sink' >> debugSink
         cres_left_joined | 'CRES to BQsink' >> bq_sink
+
+        cramer_result = run_cramer_pipeline()
+
+        cramer_result | cramer_sink
+
+
+
 
 
 
