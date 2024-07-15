@@ -90,7 +90,6 @@ def run(argv=None, save_main_session=True):
 
 
 
-    '''
     bq_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
@@ -99,7 +98,7 @@ def run(argv=None, save_main_session=True):
         schema=get_bq_schema(),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
-    '''
+
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
@@ -109,7 +108,7 @@ def run(argv=None, save_main_session=True):
             logging.info('printing to sink.....')
             obb | sink
             #logging.info('Storing to BQ')
-            #obb | bq_sink
+            obb | bq_sink
 
 
 
