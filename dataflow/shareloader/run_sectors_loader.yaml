@@ -16,8 +16,8 @@ steps:
           , 'sendgridkey=$_SENDGRID_KEY'
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
-
-        , '--region=$_REGION'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
+          , '--region=$_REGION'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 

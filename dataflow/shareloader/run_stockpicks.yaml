@@ -11,6 +11,7 @@ steps:
           , '--template-file-gcs-location'
           , '$_TEMPLATE_GCS_LOCATION'
           , '--region=$_REGION'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 

@@ -27,7 +27,9 @@ steps:
           , '--sdk-language'
           , 'PYTHON'
           , '--metadata-file'
-          , '$_EDGARFORM4_METADATA_FILE']  
+          , '$_EDGARFORM4_METADATA_FILE'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
+      ]
     id: 'build-edgarform4-flex-template'
     waitFor: ['build-edgarform4-image']
   

@@ -17,6 +17,7 @@ steps:
           , '--parameters'
           , 'recipients=mmistroni@gmail.com'
           , '--region=$_REGION'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 

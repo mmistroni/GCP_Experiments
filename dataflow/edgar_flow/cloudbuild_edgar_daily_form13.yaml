@@ -25,7 +25,9 @@ steps:
           , '--sdk-language'
           , 'PYTHON'
           , '--metadata-file'
-          , '$_EDGARFORM13_METADATA_FILE']  
+          , '$_EDGARFORM13_METADATA_FILE'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
+      ]
     id: 'build-edgarform13-flex-template'
     waitFor: ['build-edgarform13-image']
   
