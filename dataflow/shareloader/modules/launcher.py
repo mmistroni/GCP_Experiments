@@ -45,7 +45,7 @@ def get_bq_schema():
     }
 
     schemaFields = []
-    for fname, ftype in field_dict:
+    for fname, ftype in field_dict.items():
         schemaFields.append({"name" : fname, "type" : ftype})
 
     schema = {
