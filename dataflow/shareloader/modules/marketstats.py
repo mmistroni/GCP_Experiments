@@ -360,7 +360,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='cramer'),
-            schema='COB:DATE,TICKER:STRING,DIRECTION:STRING',
+            schema='COB:STRING,TICKER:STRING,DIRECTION:STRING',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
@@ -562,6 +562,7 @@ def run(argv=None, save_main_session=True):
         debug_sink = beam.Map(logging.info)
 
         cramer_result | debug_sink
+        cramer_result | cramer_sink
 
 
 
