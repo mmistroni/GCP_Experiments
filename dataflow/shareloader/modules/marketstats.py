@@ -134,7 +134,7 @@ def run_consumer_sentiment_index(p):
 
 def run_cramer_pipeline(p, numdays=5):
     return (p | 'cramer starter' >> beam.Create(['20240101'])
-              | 'getting picks'  >> beam.Map(lambda d: get_cramer_picks(numdays))
+              | 'getting picks'  >> beam.FlatMap(lambda d: get_cramer_picks(numdays))
               )
 
 def run_putcall_ratio(p):
