@@ -359,8 +359,8 @@ def run(argv=None, save_main_session=True):
             bigquery.TableReference(
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
-                tableId='cramer'),
-            schema='COB:STRING,TICKER:STRING,DIRECTION:STRING',
+                tableId='cramer_predictions'),
+            schema='DATE:STRING,TICKER:STRING,DIRECTION:STRING,PRICE:FLOAT',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 

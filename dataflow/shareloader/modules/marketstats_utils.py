@@ -663,11 +663,11 @@ def get_cramer_picks(numdays):
             ticker  = tds[0].text
             direction = tds[1].text
             cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
-
+            # need to fetch current price
             if (date.today() - cob).days > numdays:
                 continue
             else:
-                holder.append(dict(COB=cob.strftime('%Y%m%d'), TICKER=ticker, DIRECTION=direction))
+                holder.append(dict(DATE=cob.strftime('%Y%m%d'), TICKER=ticker, PREDICTION=direction))
 
     return holder
 
