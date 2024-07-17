@@ -6,6 +6,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
+from apache_beam.io.gcp.bigquery import TableRowJsonCoder
 
 from datetime import date
 
@@ -24,7 +25,9 @@ class XyzOptions(PipelineOptions):
 
 
 def get_bq_schema():
-    schema_list = []
+
+
+
     field_dict =  {
         "cob": "DATE",  "symbol": "STRING", "price": "FLOAT", "change": "FLOAT", "yearHigh": "FLOAT",
         "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
@@ -41,13 +44,16 @@ def get_bq_schema():
         "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "TIMESTAMP", "52weekChange": "FLOAT", "label": "STRING"
     }
 
-    for fields, types in field_dict.items():
-        schema = bigquery.SchemaField(fields, types)
-        schema_list.append(schema)
-    return bigquery.TableSchema(schema_list)
+    schemaFields = []
+    for fname, ftype in field_dict:
+        schemaFields.append({"name" : fname, "type" : ftype})
+
+    schema = {
+        "fields": schemaFields
+    }
 
 
-
+    return schema
 
 def run_obb_pipeline(p, fmpkey, pat):
     logging.info('Running OBB ppln')
