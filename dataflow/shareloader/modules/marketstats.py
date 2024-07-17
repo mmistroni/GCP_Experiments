@@ -559,7 +559,9 @@ def run(argv=None, save_main_session=True):
 
         cramer_result = run_cramer_pipeline(p)
 
-        cramer_result | cramer_sink
+        debug_sink = beam.Map(logging.info)
+
+        cramer_result | debug_sink
 
 
 
