@@ -15,7 +15,7 @@ steps:
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
           , '--region=$_REGION'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
     id: 'build-flex-template-economic'
 

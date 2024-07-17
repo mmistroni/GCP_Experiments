@@ -4,14 +4,27 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="trying out new finviz">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="testing launcher">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/dataflow_tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/dataflow_tester.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperf_metrics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/mypackage/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/setup_dftester.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/setup_dftester.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form13.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form13.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form4.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/cloudbuild_edgar_daily_form4.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/run_edgar_form13.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/run_edgar_form13.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edgar_flow/run_edgar_form4.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/edgar_flow/run_edgar_form4.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_economics_email.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_economics_email.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_marketstats.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_marketstats.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_shareloader.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_stateofeconomy.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_stateofeconomy.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_adr.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_adr.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_economics_email.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_economics_email.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_marketstats.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_marketstats.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_sectors_loader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_sectors_loader.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_stateofeconomy.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_stateofeconomy.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_stockpicks.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_stockpicks.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,22 +61,32 @@
     &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test.test_marketstats.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
@@ -90,8 +113,8 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps">
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_canslim" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline">
+    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_finvizloader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -102,11 +125,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_canslim&quot;" />
+      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_finvizloader&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -117,11 +140,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_extra_watchlist&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_cramer_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_leaps" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_highlowpipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -132,11 +155,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_leaps&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_highlowpipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_new_high" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_junkbonddemand" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -147,32 +170,32 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_new_high&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_junkbonddemand&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Unittests for test_marketstats.TestMarketStats.test_Nasdap" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="C:\Users\Marco\envs\obb-dataflow\python.exe" />
+      <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_Nasdap&quot;" />
+      <option name="_new_target" value="&quot;test_stock_pick.TestEdgarUtils.test_cramer_inverse&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist" />
-        <item itemvalue="Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand" />
+        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline" />
       </list>
     </recent_temporary>
   </component>
@@ -191,270 +214,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00016" summary="fixing typo in yaml">
-      <option name="closed" value="true" />
-      <created>1716358644720</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1716358644720</updated>
-    </task>
-    <task id="LOCAL-00017" summary="writing to real bucket">
-      <option name="closed" value="true" />
-      <created>1716389155131</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1716389155131</updated>
-    </task>
-    <task id="LOCAL-00018" summary="adding more logic">
-      <option name="closed" value="true" />
-      <created>1716720499220</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1716720499220</updated>
-    </task>
-    <task id="LOCAL-00019" summary="storing csv">
-      <option name="closed" value="true" />
-      <created>1717650051284</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1717650051284</updated>
-    </task>
-    <task id="LOCAL-00020" summary="adding obb">
-      <option name="closed" value="true" />
-      <created>1717651119196</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1717651119196</updated>
-    </task>
-    <task id="LOCAL-00021" summary="adding obb">
-      <option name="closed" value="true" />
-      <created>1717651235699</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1717651235699</updated>
-    </task>
-    <task id="LOCAL-00022" summary="adding obb dependencies">
-      <option name="closed" value="true" />
-      <created>1717857708007</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1717857708007</updated>
-    </task>
-    <task id="LOCAL-00023" summary="adding obb dependencies">
-      <option name="closed" value="true" />
-      <created>1717921626593</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1717921626593</updated>
-    </task>
-    <task id="LOCAL-00024" summary="installing obb first">
-      <option name="closed" value="true" />
-      <created>1717930389758</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1717930389758</updated>
-    </task>
-    <task id="LOCAL-00025" summary="fixed  tyhpo">
-      <option name="closed" value="true" />
-      <created>1717997381287</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1717997381287</updated>
-    </task>
-    <task id="LOCAL-00026" summary="added datareader">
-      <option name="closed" value="true" />
-      <created>1718000351059</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1718000351059</updated>
-    </task>
-    <task id="LOCAL-00027" summary="resurrected openbb">
-      <option name="closed" value="true" />
-      <created>1718170235702</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1718170235702</updated>
-    </task>
-    <task id="LOCAL-00028" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718173455025</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1718173455025</updated>
-    </task>
-    <task id="LOCAL-00029" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718253946948</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1718253946948</updated>
-    </task>
-    <task id="LOCAL-00030" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718254985670</created>
-      <option name="number" value="00030" />
-      <option name="presentableId" value="LOCAL-00030" />
-      <option name="project" value="LOCAL" />
-      <updated>1718254985670</updated>
-    </task>
-    <task id="LOCAL-00031" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718341847975</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1718341847975</updated>
-    </task>
-    <task id="LOCAL-00032" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718341887709</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1718341887709</updated>
-    </task>
-    <task id="LOCAL-00033" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718442353919</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1718442353919</updated>
-    </task>
-    <task id="LOCAL-00034" summary="more research endpoints">
-      <option name="closed" value="true" />
-      <created>1718445042566</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1718445042566</updated>
-    </task>
-    <task id="LOCAL-00035" summary="amended dockerfile">
-      <option name="closed" value="true" />
-      <created>1718447744333</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1718447744333</updated>
-    </task>
-    <task id="LOCAL-00036" summary="amended dockerfile">
-      <option name="closed" value="true" />
-      <created>1718448531742</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1718448531742</updated>
-    </task>
-    <task id="LOCAL-00037" summary="amended dockerfile">
-      <option name="closed" value="true" />
-      <created>1718450364603</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1718450364603</updated>
-    </task>
-    <task id="LOCAL-00038" summary="amended setup copy">
-      <option name="closed" value="true" />
-      <created>1718457129297</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1718457129297</updated>
-    </task>
-    <task id="LOCAL-00039" summary="amended setup copy">
-      <option name="closed" value="true" />
-      <created>1718457586172</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1718457586172</updated>
-    </task>
-    <task id="LOCAL-00040" summary="amended setup copy">
-      <option name="closed" value="true" />
-      <created>1718458866785</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1718458866785</updated>
-    </task>
-    <task id="LOCAL-00041" summary="amended setup copy">
-      <option name="closed" value="true" />
-      <created>1718465892091</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1718465892091</updated>
-    </task>
-    <task id="LOCAL-00042" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718473893068</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1718473893068</updated>
-    </task>
-    <task id="LOCAL-00043" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718475376756</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1718475376756</updated>
-    </task>
-    <task id="LOCAL-00044" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718475533365</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1718475533365</updated>
-    </task>
-    <task id="LOCAL-00045" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718475742805</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1718475742805</updated>
-    </task>
-    <task id="LOCAL-00046" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718475823295</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1718475823295</updated>
-    </task>
-    <task id="LOCAL-00047" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718476026277</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1718476026277</updated>
-    </task>
-    <task id="LOCAL-00048" summary="another try">
-      <option name="closed" value="true" />
-      <created>1718527598172</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1718527598172</updated>
     </task>
     <task id="LOCAL-00049" summary="another try">
       <option name="closed" value="true" />
@@ -584,7 +343,271 @@
       <option name="project" value="LOCAL" />
       <updated>1718807999728</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718810304062</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1718810304062</updated>
+    </task>
+    <task id="LOCAL-00066" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718810363081</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1718810363081</updated>
+    </task>
+    <task id="LOCAL-00067" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718812825141</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1718812825141</updated>
+    </task>
+    <task id="LOCAL-00068" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718817278545</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1718817278546</updated>
+    </task>
+    <task id="LOCAL-00069" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718818055333</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1718818055333</updated>
+    </task>
+    <task id="LOCAL-00070" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718818811142</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1718818811142</updated>
+    </task>
+    <task id="LOCAL-00071" summary="trying out new finviz">
+      <option name="closed" value="true" />
+      <created>1718858301702</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1718858301702</updated>
+    </task>
+    <task id="LOCAL-00072" summary="FIXING COMMITMENT OF TRADERS">
+      <option name="closed" value="true" />
+      <created>1719051608411</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1719051608411</updated>
+    </task>
+    <task id="LOCAL-00073" summary="FIXING COMMITMENT OF TRADERS">
+      <option name="closed" value="true" />
+      <created>1719388661342</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1719388661342</updated>
+    </task>
+    <task id="LOCAL-00074" summary="FIXING COMMITMENT OF TRADERS">
+      <option name="closed" value="true" />
+      <created>1719390094742</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1719390094742</updated>
+    </task>
+    <task id="LOCAL-00075" summary="FIXING COMMITMENT OF TRADERS">
+      <option name="closed" value="true" />
+      <created>1719405079348</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1719405079349</updated>
+    </task>
+    <task id="LOCAL-00076" summary="added new high new low">
+      <option name="closed" value="true" />
+      <created>1719422955710</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1719422955710</updated>
+    </task>
+    <task id="LOCAL-00077" summary="added new high new low - added junk bond demand">
+      <option name="closed" value="true" />
+      <created>1719423679716</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1719423679716</updated>
+    </task>
+    <task id="LOCAL-00078" summary="added new high new low - added junk bond demand">
+      <option name="closed" value="true" />
+      <created>1719467376476</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1719467376476</updated>
+    </task>
+    <task id="LOCAL-00079" summary="added new high new low - added junk bond demand">
+      <option name="closed" value="true" />
+      <created>1719477780680</created>
+      <option name="number" value="00079" />
+      <option name="presentableId" value="LOCAL-00079" />
+      <option name="project" value="LOCAL" />
+      <updated>1719477780680</updated>
+    </task>
+    <task id="LOCAL-00080" summary="added new high new low - added junk bond demand">
+      <option name="closed" value="true" />
+      <created>1719482408620</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1719482408620</updated>
+    </task>
+    <task id="LOCAL-00081" summary="added new high new low - added junk bond demand">
+      <option name="closed" value="true" />
+      <created>1719507331915</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1719507331915</updated>
+    </task>
+    <task id="LOCAL-00082" summary="fixing erro rin premarekt loader">
+      <option name="closed" value="true" />
+      <created>1719550771457</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1719550771457</updated>
+    </task>
+    <task id="LOCAL-00083" summary="storing in bq">
+      <option name="closed" value="true" />
+      <created>1719650889490</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1719650889491</updated>
+    </task>
+    <task id="LOCAL-00084" summary="rearranging keys">
+      <option name="closed" value="true" />
+      <created>1719651174420</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1719651174420</updated>
+    </task>
+    <task id="LOCAL-00085" summary="added finvizfinance">
+      <option name="closed" value="true" />
+      <created>1719737050177</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1719737050178</updated>
+    </task>
+    <task id="LOCAL-00086" summary="finviz writibng to schema">
+      <option name="closed" value="true" />
+      <created>1719745707386</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1719745707386</updated>
+    </task>
+    <task id="LOCAL-00087" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719751947707</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1719751947707</updated>
+    </task>
+    <task id="LOCAL-00088" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719899086325</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1719899086326</updated>
+    </task>
+    <task id="LOCAL-00089" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719901656931</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1719901656931</updated>
+    </task>
+    <task id="LOCAL-00090" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719905993516</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1719905993516</updated>
+    </task>
+    <task id="LOCAL-00091" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719907748498</created>
+      <option name="number" value="00091" />
+      <option name="presentableId" value="LOCAL-00091" />
+      <option name="project" value="LOCAL" />
+      <updated>1719907748498</updated>
+    </task>
+    <task id="LOCAL-00092" summary="tentative accss subregion">
+      <option name="closed" value="true" />
+      <created>1719917595668</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1719917595668</updated>
+    </task>
+    <task id="LOCAL-00093" summary="fixed freds">
+      <option name="closed" value="true" />
+      <created>1720174255172</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1720174255172</updated>
+    </task>
+    <task id="LOCAL-00094" summary="added staging location">
+      <option name="closed" value="true" />
+      <created>1720417920812</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1720417920812</updated>
+    </task>
+    <task id="LOCAL-00095" summary="added staging location">
+      <option name="closed" value="true" />
+      <created>1721022062002</created>
+      <option name="number" value="00095" />
+      <option name="presentableId" value="LOCAL-00095" />
+      <option name="project" value="LOCAL" />
+      <updated>1721022062003</updated>
+    </task>
+    <task id="LOCAL-00096" summary="added cramer">
+      <option name="closed" value="true" />
+      <created>1721023382092</created>
+      <option name="number" value="00096" />
+      <option name="presentableId" value="LOCAL-00096" />
+      <option name="project" value="LOCAL" />
+      <updated>1721023382092</updated>
+    </task>
+    <task id="LOCAL-00097" summary="testing launcher">
+      <option name="closed" value="true" />
+      <created>1721064380170</created>
+      <option name="number" value="00097" />
+      <option name="presentableId" value="LOCAL-00097" />
+      <option name="project" value="LOCAL" />
+      <updated>1721064380170</updated>
+    </task>
+    <option name="localTasksCounter" value="98" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -599,15 +622,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="excluding workspace from commits" />
-    <MESSAGE value="fixed get latest jobs" />
-    <MESSAGE value="temporary escaping csi till we fix it" />
-    <MESSAGE value="fix for mstats" />
-    <MESSAGE value="replaced output bucket" />
-    <MESSAGE value="added logic to finvizz. added cramer tracker" />
-    <MESSAGE value="fixing typo in yaml" />
-    <MESSAGE value="writing to real bucket" />
-    <MESSAGE value="adding more logic" />
     <MESSAGE value="storing csv" />
     <MESSAGE value="adding obb" />
     <MESSAGE value="adding obb dependencies" />
@@ -620,44 +634,42 @@
     <MESSAGE value="amended setup copy" />
     <MESSAGE value="another try" />
     <MESSAGE value="trying out new finviz" />
-    <option name="LAST_COMMIT_MESSAGE" value="trying out new finviz" />
+    <MESSAGE value="FIXING COMMITMENT OF TRADERS" />
+    <MESSAGE value="added new high new low" />
+    <MESSAGE value="added new high new low - added junk bond demand" />
+    <MESSAGE value="fixing erro rin premarekt loader" />
+    <MESSAGE value="storing in bq" />
+    <MESSAGE value="rearranging keys" />
+    <MESSAGE value="added finvizfinance" />
+    <MESSAGE value="finviz writibng to schema" />
+    <MESSAGE value="tentative accss subregion" />
+    <MESSAGE value="fixed freds" />
+    <MESSAGE value="added staging location" />
+    <MESSAGE value="added cramer" />
+    <MESSAGE value="testing launcher" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing launcher" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>278</line>
+          <line>271</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>280</line>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>270</line>
+          <line>263</line>
           <option name="timeStamp" value="6" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>483</line>
+          <line>501</line>
           <option name="timeStamp" value="7" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_stock_pick.py</url>
-          <line>74</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_stock_pick.py</url>
-          <line>78</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>49</line>
+          <line>59</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -672,13 +684,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>20</line>
+          <line>15</line>
           <option name="timeStamp" value="44" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>18</line>
-          <option name="timeStamp" value="45" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_fred_utils.py</url>
@@ -686,8 +693,59 @@
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperformers.py</url>
-          <option name="timeStamp" value="49" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>876</line>
+          <option name="timeStamp" value="58" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_superperformers.py</url>
+          <line>878</line>
+          <option name="timeStamp" value="59" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>410</line>
+          <option name="timeStamp" value="61" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_fred_utils.py</url>
+          <line>57</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats.py</url>
+          <line>221</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
+          <line>74</line>
+          <option name="timeStamp" value="68" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/fred_utils.py</url>
+          <line>14</line>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/fred_utils.py</url>
+          <line>13</line>
+          <option name="timeStamp" value="74" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>471</line>
+          <option name="timeStamp" value="75" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>469</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>671</line>
+          <option name="timeStamp" value="77" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

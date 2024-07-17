@@ -21,7 +21,7 @@ steps:
           , '$_ECONOMY_TEMPLATE_GCS_LOCATION'
           , '--image'
           , 'gcr.io/$_PROJECT_ID/$_ECONOMY_IMAGE_NAME'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           , '--sdk-language'
           , 'PYTHON'
           , '--metadata-file'

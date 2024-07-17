@@ -25,7 +25,7 @@ steps:
         , '--sdk-language'
         , 'PYTHON'
         , '--staging-location'
-        , 'gs://datascience-projects_cloudbuild'
+        , 'gs://datascience-projects_cloudbuild/staging'
         , '--metadata-file'
         , '$_DFTESTER_METADATA_FILE' ]
 

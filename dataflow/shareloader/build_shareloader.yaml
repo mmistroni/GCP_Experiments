@@ -22,12 +22,11 @@ steps:
           , '$_SHARELOADER_TEMPLATE_GCS_LOCATION'
           , '--image'
           , 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           , '--sdk-language'
           , 'PYTHON'
           , '--metadata-file'
           , '$_SHARELOADER_METADATA_FILE'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
       ]
     id: 'build-shareloader-flex-template'
   - name: gcr.io/cloud-builders/docker
@@ -52,7 +51,7 @@ steps:
           , 'PYTHON'
           , '--metadata-file'
           , '$_MARKETSTATS_METADATA_FILE'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
       ]
     id: 'build-marketstats-flex-template'
 

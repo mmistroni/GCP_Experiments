@@ -15,8 +15,8 @@ steps:
           , '--parameters'
           , 'key=$_SENDGRIDKEY'
           , '--region=$_REGION'
-          , '--staging-location=gs://datascience-projects_cloudbuild'
-          ]  
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
+          ]
     id: 'build-flex-template-via-cloudsdk'
 
 
