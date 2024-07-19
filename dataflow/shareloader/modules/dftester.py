@@ -33,7 +33,7 @@ Big Query Table needs to have following fields
 'positiveEps', 
 'positiveEpsLast5Yrs', 
 'netIncome', 
-'income_statement_date', 
+'net_income_statement_date', 
 'debtOverCapital', 
 'enterpriseDebt', 
 'totalAssets', 
