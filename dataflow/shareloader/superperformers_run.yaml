@@ -21,6 +21,7 @@ steps:
         , '--parameters'
         , 'split=$_SPLIT'
         , '--region=$_REGION'
+        , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 
