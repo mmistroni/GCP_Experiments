@@ -25,9 +25,6 @@ class XyzOptions(PipelineOptions):
 
 
 def get_bq_schema():
-
-
-
     field_dict =  {
         "cob": "DATE",  "symbol": "STRING", "price": "FLOAT", "change": "FLOAT", "yearHigh": "FLOAT",
         "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
@@ -36,7 +33,7 @@ def get_bq_schema():
         "positiveEps": "INTEGER", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "income_statement_date": "STRING",
         "debtOverCapital": "FLOAT", "enterpriseDebt": "FLOAT", "totalAssets": "FLOAT", "inventory": "FLOAT",
         "totalCurrentAssets": "FLOAT", "totalCurrentLiabilities": "FLOAT", "dividendPaid": "BOOLEAN", "dividendPaidEnterprise": "BOOLEAN",
-        "dividendPayoutRatio": "FLOAT", "numOfDividendsPaid": "FLOAT", "returnOnCapital": "FLOAT",
+        "dividendPayoutRatio": "FLOAT", "numOfDividendsPaid": "INTEGER", "returnOnCapital": "FLOAT",
         "peRatio": "FLOAT", "netProfitMargin": "FLOAT", "currentRatio": "FLOAT", "priceToBookRatio": "FLOAT",
         "grossProfitMargin": "FLOAT", "returnOnEquity": "FLOAT", "dividendYield": "FLOAT", "pegRatio": "FLOAT",
         "tangibleBookValuePerShare": "FLOAT", "netCurrentAssetValue": "FLOAT", "freeCashFlowPerShare": "FLOAT",
@@ -46,7 +43,7 @@ def get_bq_schema():
 
     schemaFields = []
     for fname, ftype in field_dict.items():
-        schemaFields.append({"name" : fname, "type" : ftype})
+        schemaFields.append({"name" : fname, "type" : ftype, "mode": "NULLABLE"})
 
     schema = {
         "fields": schemaFields
