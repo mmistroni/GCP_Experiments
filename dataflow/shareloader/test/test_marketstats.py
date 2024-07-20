@@ -541,8 +541,9 @@ class TestMarketStats(unittest.TestCase):
 
 
     def test_cramer_pipeline(self):
+        fmp_key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            res = run_cramer_pipeline(p, 7)
+            res = run_cramer_pipeline(p, fmp_key, 7)
             debugSink = beam.Map(print)
 
             res | debugSink

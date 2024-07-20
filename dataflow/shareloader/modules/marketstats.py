@@ -132,9 +132,9 @@ def run_consumer_sentiment_index(p):
             )
 
 
-def run_cramer_pipeline(p, numdays=5):
+def run_cramer_pipeline(p, fmpKey, numdays=5):
     return (p | 'cramer starter' >> beam.Create(['20240101'])
-              | 'getting picks'  >> beam.FlatMap(lambda d: get_cramer_picks(numdays))
+              | 'getting picks'  >> beam.FlatMap(lambda d: get_cramer_picks(fmpKey, numdays))
               )
 
 def run_putcall_ratio(p):
@@ -557,7 +557,7 @@ def run(argv=None, save_main_session=True):
         cres_left_joined | 'CRES to sink' >> debugSink
         cres_left_joined | 'CRES to BQsink' >> bq_sink
 
-        cramer_result = run_cramer_pipeline(p)
+        cramer_result = run_cramer_pipeline(p, iexapi_key)
 
         debug_sink = beam.Map(logging.info)
 

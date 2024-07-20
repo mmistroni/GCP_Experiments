@@ -130,6 +130,12 @@ def get_latest_consumer_sentiment_from_bq(p):
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
             )
 
+def get_latest_price(fmpKey, ticker):
+    # get yesterday price
+    stat_url = f'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={fmpKey}'
+    return  requests.get(stat_url).json()
+
+
 
 class PMIJoinerFn(beam.DoFn):
     def __init__(self):
@@ -643,7 +649,7 @@ class Market52Week(beam.CombineFn):
         return (hi, lo)
 
 
-def get_cramer_picks(numdays):
+def get_cramer_picks(fmpkey, numdays):
 
     baseUrl = 'https://www.quiverquant.com/cramertracker/'
 
@@ -661,13 +667,23 @@ def get_cramer_picks(numdays):
             continue
         else:
             ticker  = tds[0].text
+
+            quote = get_latest_price(fmpkey, ticker)
+
+            if quote:
+                price = quote[0]['price']
+            else:
+                price = 0
+
+
+
             direction = tds[1].text
             cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
             # need to fetch current price
             if (date.today() - cob).days > numdays:
                 continue
             else:
-                holder.append(dict(DATE=cob.strftime('%Y%m%d'), TICKER=ticker, RECOMMENDATION=direction))
+                holder.append(dict(DATE=cob.strftime('%Y%m%d'), TICKER=ticker, RECOMMENDATION=direction, PRICE=price))
 
     return holder
 
