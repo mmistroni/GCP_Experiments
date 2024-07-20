@@ -33,7 +33,7 @@ def get_bq_schema():
         "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
         "price": "FLOAT", "avgVolume": "FLOAT", "open": "FLOAT", "eps": "FLOAT", "sharesOutstanding": "FLOAT",
         "institutionalOwnershipPercentage": "FLOAT", "epsGrowth": "FLOAT", "epsGrowth5yrs": "FLOAT", "OPERATING_INCOME_CAGR": "FLOAT",
-        "positiveEps": "FLOAT", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "net_income_statement_date": "STRING",
+        "positiveEps": "INTEGER", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "net_income_statement_date": "STRING",
         "debtOverCapital": "FLOAT", "enterpriseDebt": "FLOAT", "totalAssets": "FLOAT", "inventory": "FLOAT",
         "totalCurrentAssets": "FLOAT", "totalCurrentLiabilities": "FLOAT", "dividendPaid": "BOOLEAN", "dividendPaidEnterprise": "BOOLEAN",
         "dividendPayoutRatio": "FLOAT", "numOfDividendsPaid": "FLOAT", "returnOnCapital": "FLOAT",
@@ -41,7 +41,7 @@ def get_bq_schema():
         "grossProfitMargin": "FLOAT", "returnOnEquity": "FLOAT", "dividendYield": "FLOAT", "pegRatio": "FLOAT",
         "tangibleBookValuePerShare": "FLOAT", "netCurrentAssetValue": "FLOAT", "freeCashFlowPerShare": "FLOAT",
         "earningYield": "FLOAT", "bookValuePerShare": "FLOAT", "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
-        "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "TIMESTAMP", "52weekChange": "FLOAT", "label": "STRING"
+        "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "String", "52weekChange": "FLOAT", "label": "STRING"
     }
 
     schemaFields = []
