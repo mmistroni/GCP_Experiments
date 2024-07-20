@@ -31,7 +31,7 @@ def get_bq_schema():
         "yearLow": "FLOAT", "marketCap": "INTEGER", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
         "avgVolume": "INTEGER", "open": "FLOAT", "eps": "FLOAT",  "pe" : "FLOAT", "sharesOutstanding": "INTEGER",
         "institutionalOwnershipPercentage": "FLOAT", "epsGrowth": "FLOAT", "epsGrowth5yrs": "FLOAT",
-        "OPERATING_INCOME_CAGR": "FLOAT",
+        "OPERATING_INCOME_CAGR": "STRING",
         "positiveEps": "INTEGER", "positiveEpsLast5Yrs": "INTEGER",
         "netIncome": "INTEGER", "income_statement_date": "STRING",
         "debtOverCapital": "INTEGER", "enterpriseDebt": "FLOAT",
