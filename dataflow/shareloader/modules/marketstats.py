@@ -557,12 +557,13 @@ def run(argv=None, save_main_session=True):
         cres_left_joined | 'CRES to sink' >> debugSink
         cres_left_joined | 'CRES to BQsink' >> bq_sink
 
-        cramer_result = run_cramer_pipeline(p, iexapi_key)
+        if run_weekday == 5:
+            cramer_result = run_cramer_pipeline(p, iexapi_key)
 
-        debug_sink = beam.Map(logging.info)
+            debug_sink = beam.Map(logging.info)
 
-        cramer_result | debug_sink
-        cramer_result | cramer_sink
+            cramer_result | debug_sink
+            cramer_result | cramer_sink
 
 
 
