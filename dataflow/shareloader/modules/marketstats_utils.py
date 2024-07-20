@@ -670,11 +670,13 @@ def get_cramer_picks(fmpkey, numdays):
 
             quote = get_latest_price(fmpkey, ticker)
 
-            if quote and len(quote) > 0:
-                price = quote[0]['price']
-            else:
-                price = 0
-
+            try:
+                if quote and len(quote) > 0:
+                    price = quote[0]['price']
+                else:
+                    price = 0
+            except Exception as e:
+                logging.info(f'Coul,d no retrieve quote for {ticker}:{quote}')
 
 
             direction = tds[1].text
