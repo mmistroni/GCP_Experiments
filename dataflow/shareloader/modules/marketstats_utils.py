@@ -670,7 +670,7 @@ def get_cramer_picks(fmpkey, numdays):
 
             quote = get_latest_price(fmpkey, ticker)
 
-            if quote:
+            if quote and len(quote) > 0:
                 price = quote[0]['price']
             else:
                 price = 0
