@@ -31,9 +31,9 @@ def get_bq_schema():
     field_dict =  {
         "cob": "DATE",  "symbol": "STRING", "price": "FLOAT", "change": "FLOAT", "yearHigh": "FLOAT",
         "yearLow": "FLOAT", "marketCap": "FLOAT", "priceAvg50": "FLOAT", "priceAvg200": "FLOAT", "exchange": "STRING",
-        "price": "FLOAT", "avgVolume": "FLOAT", "open": "FLOAT", "eps": "FLOAT", "sharesOutstanding": "FLOAT",
+        "avgVolume": "FLOAT", "open": "FLOAT", "eps": "FLOAT", "sharesOutstanding": "FLOAT",
         "institutionalOwnershipPercentage": "FLOAT", "epsGrowth": "FLOAT", "epsGrowth5yrs": "FLOAT", "OPERATING_INCOME_CAGR": "FLOAT",
-        "positiveEps": "INTEGER", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "net_income_statement_date": "STRING",
+        "positiveEps": "INTEGER", "positiveEpsLast5Yrs": "FLOAT", "netIncome": "FLOAT", "income_statement_date": "STRING",
         "debtOverCapital": "FLOAT", "enterpriseDebt": "FLOAT", "totalAssets": "FLOAT", "inventory": "FLOAT",
         "totalCurrentAssets": "FLOAT", "totalCurrentLiabilities": "FLOAT", "dividendPaid": "BOOLEAN", "dividendPaidEnterprise": "BOOLEAN",
         "dividendPayoutRatio": "FLOAT", "numOfDividendsPaid": "FLOAT", "returnOnCapital": "FLOAT",
