@@ -47,7 +47,7 @@ def get_bq_schema():
         "payoutRatio" : "FLOAT",
         "tangibleBookValuePerShare": "FLOAT", "netCurrentAssetValue": "FLOAT",
         "freeCashFlowPerShare": "FLOAT",
-        "earningYield": "FLOAT", "bookValuePerShare": "FLOAT",
+        "earningsYield": "FLOAT", "bookValuePerShare": "FLOAT",
         "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
         "rsi": "FLOAT", "piotroskyScore": "INTEGER", "ticker": "String",
         "52weekChange": "FLOAT", "label": "STRING"
