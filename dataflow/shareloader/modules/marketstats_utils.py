@@ -685,7 +685,7 @@ def get_cramer_picks(fmpkey, numdays):
             if (date.today() - cob).days > numdays:
                 continue
             else:
-                holder.append(dict(DATE=cob.strftime('%d/%m/%Y'), TICKER=ticker, RECOMMENDATION=direction, PRICE=price))
+                holder.append(dict(DATE=cob.strftime('%d/%m/%y'), TICKER=ticker, RECOMMENDATION=direction, PRICE=price))
 
     return holder
 
