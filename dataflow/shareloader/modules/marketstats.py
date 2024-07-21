@@ -557,7 +557,7 @@ def run(argv=None, save_main_session=True):
         cres_left_joined | 'CRES to sink' >> debugSink
         cres_left_joined | 'CRES to BQsink' >> bq_sink
 
-        if run_weekday == 5:
+        if run_weekday == 6:
             cramer_result = run_cramer_pipeline(p, iexapi_key)
 
             debug_sink = beam.Map(logging.info)
