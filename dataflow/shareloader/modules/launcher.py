@@ -49,7 +49,7 @@ def get_bq_schema():
         "freeCashFlowPerShare": "FLOAT",
         "earningYield": "FLOAT", "bookValuePerShare": "FLOAT",
         "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
-        "rsi": "FLOAT", "piotroskyScore": "FLOAT", "ticker": "String",
+        "rsi": "FLOAT", "piotroskyScore": "INTEGER", "ticker": "String",
         "52weekChange": "FLOAT", "label": "STRING"
     }
 
