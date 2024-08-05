@@ -649,6 +649,34 @@ class Market52Week(beam.CombineFn):
         return (hi, lo)
 
 
+def parse_date(date_string):
+  """Parses a date string in the format "Aug. 1, 2024" or "Aug. 10, 2024".
+
+  Args:
+    date_string: The date string to parse.
+
+  Returns:
+    A datetime object.
+  """
+  try:
+      month_dict = {'Jan' : 1, 'Feb' : 2, 'Mar' : 3, 'Apr' : 4, 'May' : 5,
+                    'Jun' : 6, 'Jul' : 7, 'Aug' : 8, 'Sep' : 9, 'Oct' : 10,
+                    'Nov' : 11, 'Dec' : 12
+                    }
+
+      month_and_day = date_string.split(',')[0]
+      year = int(date_string.split(',')[1].strip())
+      month, day = month_and_day.split()
+      day = int(day)
+      month_int = month_dict.get(month[0:3], date.today().month)
+
+      return date(year, month_int, day)
+  except Exception as  e:
+      logging.info(f'exception in parsing date:{str(e)}')
+      return (date.today() - BDay(5)).date()
+
+
+
 def get_cramer_picks(fmpkey, numdays):
 
     baseUrl = 'https://www.quiverquant.com/cramertracker/'
@@ -680,7 +708,8 @@ def get_cramer_picks(fmpkey, numdays):
 
 
             direction = tds[1].text
-            cob = datetime.strptime(tds[2].text, '%B %d, %Y').date()
+
+            cob = parse_date(tds[2].text)
             # need to fetch current price
             if (date.today() - cob).days > numdays:
                 continue

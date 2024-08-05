@@ -344,7 +344,7 @@ Change from Open: Up
     '''
 
     desc_filters = {
-        'Market Cap.': '+Small (over $300mln)',
+        'Market Cap.': 'xxxx+Small (over $300mln)',
         'Average Volume': 'Over 200K',
         'Relative Volume': 'Over 1',
     }
