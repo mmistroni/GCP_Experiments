@@ -32,8 +32,6 @@ DATA_DICT = {
     'Profile'          : [('Company Profile', '{}/api/v1/equity/profile?provider=fmp&symbol={}'),
                           ('Competitors', '{}/api/v1/equity/profile?provider=fmp&symbol={}'),
                           ('Insider Trading', '{}/api/v1/equity/ownership/insider_trading?provider=fmp&symbol={}&limit=500&start_date={}&sort_by=updated_on')
-
-
                           ],
     'News'             :  '{}/api/v1/news/world?provider=fmp&limit={}&display=full&sort=created&order=desc&offset=0',
     'Ratios'           : '{}/api/v1/equity/fundamental/ratios?provider=fmp&symbol={}&limit={}&period={}'
@@ -42,16 +40,16 @@ DATA_DICT = {
 
 
 class OBBRester:
-    def __init__(self, base_url='http://locahost:8000'):
+    def __init__(self, base_url='http://127.0.0.1:8000'):
         self.base_url = base_url
 
     def fundamentals(self, ticker, period='annual', limit=5):
-        fundamental_urls = DATA_DICT['Markets']
+        fundamental_urls = DATA_DICT['Fundamentals']
         holder = {}
 
         try:
             for key, url in fundamental_urls:
-                formatted_url = fundamental_urls.format(self.base_url, ticker, period, limit)
+                formatted_url = url.format(self.base_url, ticker, limit, period)
                 logging.info(f'Calling:{formatted_url}')
                 holder[key] = requests.get(formatted_url).json()
         except Exception as e:
@@ -60,11 +58,11 @@ class OBBRester:
 
     def ratios(self, ticker, period='annual', limit=5):
         overview_urls = DATA_DICT['Ratios']
-        formatted_url = overview_urls.format(self.base_url, ticker, period, limit)
+        formatted_url = overview_urls.format(self.base_url, ticker, limit, period)
         logging.info(f'Opening:{formatted_url}')
         return requests.get(formatted_url).json()
 
-    def economy(self, ticker, annual=True, max_period=5):
+    def economy(self):
         market_urls = DATA_DICT['Markets']
         holder = {}
 
@@ -99,10 +97,10 @@ class OBBRester:
 
     def overview(self, ticker):
         overview_urls = DATA_DICT['Profile']
-        holder = []
+        holder = {}
         try:
-            for key, url in overview_urls:
-                formatted_url = overview_urls.format(self.base_url, ticker)
+            for key, url in overview_urls[0:-1]:
+                formatted_url = url.format(self.base_url, ticker)
                 logging.info(f'Opening:{formatted_url}')
                 holder[key] =  requests.get(formatted_url).json()
 
@@ -121,6 +119,9 @@ class OBBRester:
         formattedUrl = overviewUrls.format(self.base_url, limit)
         logging.info(f'Opening:{formattedUrl}')
         return requests.get(formattedUrl).json()
+
+
+
 
 
 

@@ -331,15 +331,15 @@ class ParseNonManufacturingPMI(beam.DoFn):
         keys = chain(*dt)
         values = chain(*vals)
         pmiDict = dict((k, v) for k, v in zip(keys, values))
-        pmiDict['Last'] = pmiDict.get('Actual', -1)
+        pmiDict['Last'] = pmiDict.get('Last', -1)
         return pmiDict
 
     def get_latest_pmi(self):
         r = requests.get('https://tradingeconomics.com/united-states/non-manufacturing-pmi',
                          headers={'user-agent': 'my-app/0.0.1'})
         bs = BeautifulSoup(r.content, 'html.parser')
-        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl02_Panel1"})[0]  #
-        tbl = div_item.find_all('table', {"class": "table"})[0]
+        div_item = bs.find_all('div', {"id": "ctl00_ContentPlaceHolder1_ctl00_ctl01_PanelComponents"})[0]  #
+        tbl = div_item.find_all('table')[0]
         return self.process_pmi(tbl)
 
     def process(self, element):
