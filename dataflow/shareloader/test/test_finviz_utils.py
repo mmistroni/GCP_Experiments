@@ -11,6 +11,11 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
+import requests
+import zipfile
+import xml.etree.ElementTree as ET
+from io import  BytesIO
+import camelot
 
 
 class MyTestCase(unittest.TestCase):
@@ -90,6 +95,102 @@ class MyTestCase(unittest.TestCase):
     def test_highlow(self):
         res = get_high_low()
         print(res)
+
+
+    def parse_xml_from_zip_http(self, url):
+        """Parses XML from a ZIP file accessed via HTTP.
+
+        Args:
+            url: The URL of the ZIP file.
+
+        Returns:
+            The parsed XML root element.
+        """
+
+        try:
+            # Download the ZIP file
+            response = requests.get(url)
+            response.raise_for_status()
+
+            # Create a BytesIO object to store the ZIP file content
+            zip_data = BytesIO(response.content)
+
+            # Open the ZIP file
+            with zipfile.ZipFile(zip_data) as zip_file:
+                # Extract the XML file (assuming the first file is the XML)
+                xml_file_name = zip_file.namelist()[1]
+                xml_data = zip_file.read(xml_file_name)
+
+            # Parse the XML data
+            root = ET.fromstring(xml_data)
+
+            return root
+
+        except Exception as e:
+            print(f"Error parsing XML from ZIP file: {e}")
+            return None
+
+
+    def extract_tables_from_pdf(self , url):
+        """Extracts tables from a PDF URL using Camelot.
+
+        Args:
+            url: The URL of the PDF file.
+
+        Returns:
+            A list of Camelot Table objects representing the extracted tables.
+        """
+
+        try:
+            tables = camelot.read_pdf(url)
+            return tables
+        except Exception as e:
+            print(f"Error extracting tables: {e}")
+            return []
+
+    def test_disclosures(self):
+        # Example usage
+        url = "https://disclosures-clerk.house.gov/public_disc/financial-pdfs/2024FD.zip"
+        root = self.parse_xml_from_zip_http(url)
+
+        if root:
+            # Process the parsed XML elements
+            doc_id_elements = root.findall(".//Member/DocID")
+            doc_ids = [member.findtext("DocID")
+                       for member in root.findall(".//Member")
+                       if member.findtext("FilingType") == "P"]
+
+            discl_urls = []
+            for doc_id in doc_ids:
+                base_url = f'https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/{doc_id}.pdf'
+                discl_urls.append(base_url)
+            from pprint import pprint
+            pprint(discl_urls)
+
+            df = self.extract_tables_from_pdf('c:/Users/Marco/20025679.pdf')
+            print(df)
+
+    def test_pdfplumber(self):
+        import pdfplumber
+        from pprint import pprint
+        file = 'c:/Users/Marco/20025679.pdf'
+        with pdfplumber.open(file) as pdf:
+            page = pdf.pages[0]
+            tables = page.extract_tables()
+            holder_dict = []
+            for table in tables:
+                for row in table[1:]:
+                    holder_dict.append(dict(Owner=row[1], Ticker=row[2], Transaction=row[3], Date=row[4],
+                                       Amount=row[5],CapGains=row[6]))
+            pprint(holder_dict)
+
+
+    def test_tabula(self):
+        import tabula
+        pdf_path = 'https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20025679.pdf'
+        df = tabula.read_pdf(pdf_path, pages='1', lattice=True)
+        print(df[0].dropna(subset='ID'))
+
 
 if __name__ == '__main__':
     unittest.main()

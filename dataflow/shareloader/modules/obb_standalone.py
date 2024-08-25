@@ -39,56 +39,25 @@ DATA_DICT = {
 
 
 
-class OBBWebClient:
-    def __init__(self, base_url='http://127.0.0.1:8000'):
-        self.base_url = base_url
+
+
+
+
+class OBBStandaloneClient:
+
+    def __init__(self, keys_dict):
+        self.keys_dict = keys_dict
 
     def fundamentals(self, ticker, period='annual', limit=5):
-        fundamental_urls = DATA_DICT['Fundamentals']
-        holder = {}
-
-        try:
-            for key, url in fundamental_urls:
-                formatted_url = url.format(self.base_url, ticker, limit, period)
-                logging.info(f'Calling:{formatted_url}')
-                holder[key] = requests.get(formatted_url).json()
-        except Exception as e:
-            logging.info(f'Exception in querying :{str(e)}')
-        return holder
-
+        pass
     def ratios(self, ticker, period='annual', limit=5):
-        overview_urls = DATA_DICT['Ratios']
-        formatted_url = overview_urls.format(self.base_url, ticker, limit, period)
-        logging.info(f'Opening:{formatted_url}')
-        return requests.get(formatted_url).json()
+        pass
 
     def economy(self):
-        market_urls = DATA_DICT['Markets']
-        holder = {}
-
-        start_date = date(date.today().year, 1, 1) # we collect economic indic from beginning of year
-        start_date_str = start_date.strftime('%Y-%m-%d')
-
-        try:
-            for key, url in market_urls:
-                formatted_url = url.format(self.base_url, start_date_str)
-                logging.info(f'Calling:{formatted_url}')
-                holder[key] = requests.get(formatted_url).json()
-        except Exception as e:
-            logging.info(f'Exception in querying :{str(e)}')
-        return holder
-
+        pass
     def markets(self):
-        market_urls = DATA_DICT['Markets']
-        holder = {}
-        try:
-            for key, url in market_urls:
-                formatted_url = url.format(self.base_url)
-                logging.info(f'Calling:{formatted_url}')
-                holder[key] = requests.get(formatted_url).json()
-        except Exception as e:
-            logging.info(f'Exception in querying :{str(e)}')
-        return holder
+        pass
+
     def quote(self, ticker):
         pass
 
@@ -96,30 +65,11 @@ class OBBWebClient:
         pass
 
     def overview(self, ticker):
-        overview_urls = DATA_DICT['Profile']
-        holder = {}
-        try:
-            for key, url in overview_urls[0:-1]:
-                formatted_url = url.format(self.base_url, ticker)
-                logging.info(f'Opening:{formatted_url}')
-                holder[key] =  requests.get(formatted_url).json()
-
-            insiders = overview_urls[-1]
-            start_date = (date.today() - BDay(60)).strftime('%Y-%m-%d')
-            insiders_url = insiders.format(self.base_url, ticker, start_date)
-            holder['Insider Trading'] = requests.get(insiders_url).json()
-        except Exception as e:
-            logging.info(f'Exception in querying :{str(e)}')
-        return holder
-    def screener(self, preset):
         pass
 
-    def news(self, limit=20):
-        overviewUrls = DATA_DICT['News']
-        formattedUrl = overviewUrls.format(self.base_url, limit)
-        logging.info(f'Opening:{formattedUrl}')
-        return requests.get(formattedUrl).json()
 
+    def news(self, limit=20):
+        pass
 
 
 

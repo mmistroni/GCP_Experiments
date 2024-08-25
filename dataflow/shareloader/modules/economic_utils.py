@@ -171,108 +171,125 @@ def get_card_spending():
 def get_gas_prices():
     time.sleep(60)
 
-    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas'
+    try:
 
-    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    soup = BeautifulSoup(req.text, "html.parser")
-    hrefs = soup.find_all('a')
-    latest = [link.get('href').split('?')[1] for link in hrefs if
-              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
-    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+        url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systemaveragepricesapofgas'
 
-    latest = pd.read_excel(dataset_url,
-                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
-    colnames = latest.columns[0:3]
-    last_record = latest[colnames].tail(1).to_dict('records')[0]
+        req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        soup = BeautifulSoup(req.text, "html.parser")
+        hrefs = soup.find_all('a')
+        latest = [link.get('href').split('?')[1] for link in hrefs if
+                  link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+        dataset_url = f'https://www.ons.gov.uk/file?{latest}'
 
-    cob = last_record['Date'].strftime('%Y-%m-%d')
-    latest = last_record['SAP actual day\n(p/kWh)']
-    rolling = last_record['SAP preceding seven-day rolling average\n(p/kWh)']
+        latest = pd.read_excel(dataset_url,
+                               storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
+        colnames = latest.columns[0:3]
+        last_record = latest[colnames].tail(1).to_dict('records')[0]
 
-    return [{'label': 'GAS-PRICES',
-     'asOfDate': cob,
-     'value': latest}]
+        cob = last_record['Date'].strftime('%Y-%m-%d')
+        latest = last_record['SAP actual day\n(p/kWh)']
+        rolling = last_record['SAP preceding seven-day rolling average\n(p/kWh)']
+
+        return [{'label': 'GAS-PRICES',
+         'asOfDate': cob,
+         'value': latest}]
+    except Exception as e:
+        logging.info(f'error gettiing gas prices:{str(e)}')
+        return []
 
 
 def get_electricity_prices():
     time.sleep(60)
 
-    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systempriceofelectricity'
+    try:
+        url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/systempriceofelectricity'
 
-    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    soup = BeautifulSoup(req.text, "html.parser")
-    hrefs = soup.find_all('a')
-    latest = [link.get('href').split('?')[1] for link in hrefs if
-              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
-    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+        req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        soup = BeautifulSoup(req.text, "html.parser")
+        hrefs = soup.find_all('a')
+        latest = [link.get('href').split('?')[1] for link in hrefs if
+                  link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+        dataset_url = f'https://www.ons.gov.uk/file?{latest}'
 
-    latest = pd.read_excel(dataset_url,
-                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=3)
-    colnames = latest.columns[0:3]
+        latest = pd.read_excel(dataset_url,
+                               storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=3)
+        colnames = latest.columns[0:3]
 
-    print(colnames)
-    last_record = latest[colnames].tail(1).to_dict('records')[0]
+        print(colnames)
+        last_record = latest[colnames].tail(1).to_dict('records')[0]
 
-    cob = last_record['Date'].strftime('%Y-%m-%d')
-    latest = last_record['Daily average']
+        cob = last_record['Date'].strftime('%Y-%m-%d')
+        latest = last_record['Daily average']
 
-    return [{'label': 'ELECTRICITY-PRICES',
-     'asOfDate': cob,
-     'value': latest}]
+        return [{'label': 'ELECTRICITY-PRICES',
+         'asOfDate': cob,
+         'value': latest}]
+    except Exception as e:
+        logging.info(f'error gettiing electricity prices:{str(e)}')
+        return []
 
 
 def get_redundancies_notifications():
     time.sleep(60)
 
-    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
+    try:
+        url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/advancednotificationofpotentialredundancies'
 
-    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    soup = BeautifulSoup(req.text, "html.parser")
-    hrefs = soup.find_all('a')
-    latest = [link.get('href').split('?')[1] for link in hrefs if
-              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
-    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+        req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        soup = BeautifulSoup(req.text, "html.parser")
+        hrefs = soup.find_all('a')
+        latest = [link.get('href').split('?')[1] for link in hrefs if
+                  link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+        dataset_url = f'https://www.ons.gov.uk/file?{latest}'
 
-    latest = pd.read_excel(dataset_url,
-                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
-    colnames = latest.columns[0:3]
+        latest = pd.read_excel(dataset_url,
+                               storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Data', header=4)
+        colnames = latest.columns[0:3]
 
-    print(colnames)
-    last_record = latest[colnames].tail(1).to_dict('records')[0]
+        print(colnames)
+        last_record = latest[colnames].tail(1).to_dict('records')[0]
 
-    cob = last_record['Date'].strftime('%Y-%m-%d')
-    latest = last_record['Potential redundancies']
+        cob = last_record['Date'].strftime('%Y-%m-%d')
+        latest = last_record['Potential redundancies']
 
-    return [{'label': 'POTENTIAL-REDUNDANCIES',
-     'asOfDate': cob,
-     'value': latest}]
+        return [{'label': 'POTENTIAL-REDUNDANCIES',
+         'asOfDate': cob,
+         'value': latest}]
+    except Exception as e:
+        logging.info(f'error gettiing redundancies:{str(e)}')
+        return []
 
 
 def get_company_dissolutions():
     time.sleep(60)
 
-    url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/companyincorporationsandvoluntarydissolutions'
+    try:
+        url = 'https://www.ons.gov.uk/economy/economicoutputandproductivity/output/datasets/companyincorporationsandvoluntarydissolutions'
 
-    req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
-    soup = BeautifulSoup(req.text, "html.parser")
-    hrefs = soup.find_all('a')
-    latest = [link.get('href').split('?')[1] for link in hrefs if
-              link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
-    dataset_url = f'https://www.ons.gov.uk/file?{latest}'
+        req = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        soup = BeautifulSoup(req.text, "html.parser")
+        hrefs = soup.find_all('a')
+        latest = [link.get('href').split('?')[1] for link in hrefs if
+                  link.get('aria-label') is not None and 'Download' in link.get('aria-label')][0]
+        dataset_url = f'https://www.ons.gov.uk/file?{latest}'
 
-    latest = pd.read_excel(dataset_url,
-                           storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Compulsory Dissolutions', header=4)
-    colnames = latest.columns[0:3]
+        latest = pd.read_excel(dataset_url,
+                               storage_options={'User-Agent': 'Mozilla/5.0'}, sheet_name='Compulsory Dissolutions', header=4)
+        colnames = latest.columns[0:3]
 
-    print(colnames)
-    last_record = latest[colnames].tail(1).to_dict('records')[0]
+        print(colnames)
+        last_record = latest[colnames].tail(1).to_dict('records')[0]
 
-    cob = last_record['Week ending to'].strftime('%Y-%m-%d')
-    latest = last_record['Weekly']
+        cob = last_record['Week ending to'].strftime('%Y-%m-%d')
+        latest = last_record['Weekly']
 
-    return [{'label': 'COMPANY-DISSOLUTIONS',
-     'asOfDate': cob,
-     'value': latest}]
+        return [{'label': 'COMPANY-DISSOLUTIONS',
+         'asOfDate': cob,
+         'value': latest}]
+    except Exception as e:
+        logging.info(f'error gettiing disolution:{str(e)}')
+        return []
 
 
 
