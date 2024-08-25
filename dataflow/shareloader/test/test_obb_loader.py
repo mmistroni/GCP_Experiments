@@ -42,6 +42,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_sample(self):
 
+
         records = self.fetch_obb()
         print(records)
 
