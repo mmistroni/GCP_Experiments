@@ -23,10 +23,12 @@ res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolum
 '''
 
 def _run_screener(filters):
+    from numpy import nan
     foverview = Overview()
     foverview.set_filter(filters_dict=filters)
     df = foverview.screener_view()
-    return df.to_dict('records') if df is not None else []
+    return df.convert_dtypes().replace({nan: None}).to_dict(orient="records")
+    #return df.to_dict('records') if df is not None else []
 
 def get_universe_filter():
 
@@ -344,7 +346,7 @@ Change from Open: Up
     '''
 
     desc_filters = {
-        'Market Cap.': 'xxxx+Small (over $300mln)',
+        'Market Cap.': '+Small (over $300mln)',
         'Average Volume': 'Over 200K',
         'Relative Volume': 'Over 1',
     }
@@ -435,16 +437,6 @@ class FinvizLoader(beam.DoFn):
                 data = self._get_data(ticker, self.key, 'NEWHIGH')
                 if data:
                     holder.append(data)
-
-            extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
-            for ticker in extra_watchlist:
-                data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
-                if data:
-                    holder.append(data)
-
-            logging.info('Attempting to connect to interal LVM')
-
-            self._connectToVM()
 
             return holder
         except Exception as e :

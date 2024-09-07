@@ -3,7 +3,14 @@ import json
 import logging
 from pandas.tseries.offsets import BDay
 from datetime import date
-
+from openbb_fmp.models.equity_quote import FMPEquityQuoteFetcher as quote_fetcher
+from openbb_fmp.models.equity_profile import FMPEquityProfileFetcher as profile_fetcher
+from openbb_fmp.models.balance_sheet import FMPBalanceSheetFetcher as balance_fetcher
+from openbb_fmp.models.income_statement import FMPIncomeStatementFetcher as income_fetcher
+from openbb_fmp.models.cash_flow import FMPCashFlowStatementFetcher as cashflow_fetcher
+from openbb_fmp.models.financial_ratios import FMPFinancialRatiosFetcher as ratio_fetcher
+from openbb_fmp.models.company_news import FMPCompanyNewsData as news_fetcher
+import asyncio
 
 DATA_DICT = {
     'Fundamentals' :  [('Balance', '{}/api/v1/equity/fundamental/balance?provider=fmp&symbol={}&limit={}&period={}'),
@@ -38,37 +45,41 @@ DATA_DICT = {
 }
 
 
-
-
-
-
-
 class OBBStandaloneClient:
 
     def __init__(self, keys_dict):
-        self.keys_dict = keys_dict
+        self.credentials = keys_dict
 
-    def fundamentals(self, ticker, period='annual', limit=5):
-        pass
-    def ratios(self, ticker, period='annual', limit=5):
-        pass
+    async def fundamentals(self, ticker, period='annual', limit=5):
 
-    def economy(self):
+
         pass
-    def markets(self):
+    async def ratios(self, ticker, period='annual', limit=5):
         pass
 
-    def quote(self, ticker):
+    async def economy(self):
+        pass
+    async def markets(self):
         pass
 
-    def senate(self):
+    async def quote(self, ticker):
+        params = {'symbol': ticker}
+        quote = await quote_fetcher.fetch_data(params, self.credentials)
+        return [d.model_dump(exclude_none=True) for d in quote]
+
+    async def senate(self):
         pass
 
     def overview(self, ticker):
-        pass
+        params = {'symbol': ticker}
+        return  profile_fetcher.fetch_data(params, self.credentials)
 
+    async def company_news(self, ticker, limit=20):
+        params =  {'symbol' : ticker, 'limit' : limit }
+        news_data = await news_fetcher.fetch_data(params, self.credentials)
+        return  [d.model_dump(exclude_none=True) for d in news_data]
 
-    def news(self, limit=20):
+    async def market_news(self, ticker, limit=20):
         pass
 
 

@@ -1,5 +1,6 @@
 import os
 import unittest
+import scrapy
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, is_not_empty
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -547,6 +548,48 @@ class TestMarketStats(unittest.TestCase):
             debugSink = beam.Map(print)
 
             res | debugSink
+
+
+    def test_scrapy(self):
+        from scrapy.http import FormRequest
+        from scrapy.crawler import CrawlerProcess
+        class MySpider(scrapy.Spider):
+            name = 'my_spider'
+            start_urls = ['https://efdsearch.senate.gov/']
+
+            def parse(self, response):
+                # Extract the hidden token
+                token = response.xpath('//input[@name="csrfmiddlewaretoken"]/@value').get()
+
+                # Construct the form data
+                formdata = {
+                    'csrfmiddlewaretoken': token,
+                    'reportTypes' : '11',
+                    'submitted_start_date' : '2024-08-15',
+                    'submitted_end_date': '2024-08-21'
+
+                    # Add other form fields here
+                }
+
+                # Submit the form
+                yield FormRequest(
+                    url=response.url,
+                    method='POST',
+                    formdata=formdata,
+                    callback=self.parse_response
+                )
+
+            def parse_response(self, response):
+                # Process the response here
+                print(f'Got:{response}')
+                pass
+
+        process = CrawlerProcess()
+        process.crawl(MySpider)
+        process.start()
+
+
+
 
 
 
