@@ -2,7 +2,7 @@ import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
-                                            get_high_low
+                                            get_high_low, overnight_return
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -15,7 +15,7 @@ import requests
 import zipfile
 import xml.etree.ElementTree as ET
 from io import  BytesIO
-import camelot
+
 
 
 class MyTestCase(unittest.TestCase):
@@ -184,12 +184,9 @@ class MyTestCase(unittest.TestCase):
                                        Amount=row[5],CapGains=row[6]))
             pprint(holder_dict)
 
-
-    def test_tabula(self):
-        import tabula
-        pdf_path = 'https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/2024/20025679.pdf'
-        df = tabula.read_pdf(pdf_path, pages='1', lattice=True)
-        print(df[0].dropna(subset='ID'))
+    def test_overnight_return(self):
+        res = overnight_return()
+        print(res)
 
 
 if __name__ == '__main__':

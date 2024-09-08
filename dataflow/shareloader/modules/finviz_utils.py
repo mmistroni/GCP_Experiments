@@ -391,6 +391,21 @@ def get_high_low():
     return {'VALUE' : len(highs) - len(lows), 'NEW_HIGH' : len(highs), 'NEW_LOW' : len(lows),
             'HIGH_TICKERS' : high_ticks, 'LOW_TICKERS' : low_ticks}
 
+def overnight_return():
+    '''
+    Hello Marco,
+
+    %change - %difference between the current close vs previous session's close
+    %change_from_open - %difference between the current close vs today's open
+
+
+    :return:
+    '''
+    overnight_filter_dict = {'Change': "Up 10%"}
+
+    return _run_screener(overnight_filter_dict)
+
+
 class FinvizLoader(beam.DoFn):
     def __init__(self, key, microcap_flag=False, split_flag=None):
         self.key = key
@@ -434,6 +449,12 @@ class FinvizLoader(beam.DoFn):
             extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
             for ticker in extra_watchlist:
                 data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
+                if data:
+                    holder.append(data)
+
+            overnight_watchlist = [d['Ticker'] for d in overnight_return()]
+            for ticker in overnight_watchlist:
+                data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN')
                 if data:
                     holder.append(data)
 
