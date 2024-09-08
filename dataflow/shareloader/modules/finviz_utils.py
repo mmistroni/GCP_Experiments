@@ -406,15 +406,6 @@ class FinvizLoader(beam.DoFn):
         except Exception as e:
             logging.info(f'Failed to get data for {ticker}:{str(e)}')
 
-    def _connectToVM(self):
-        url = 'http://10.128.0.87:8000/api/v1/equity/discovery/gainers?provider=yfinance&sort=desc'
-        logging.info(f'Connecting to  {url}')
-        try:
-            data = requests.get(url).json()
-            logging.info(f'Obtained:{data}')
-            logging.info('Out of here')
-        except Exception as e:
-            logging.info(f'Failed to  fetch data:{str(e)}')
 
     def process(self, elements):
         holder = []
@@ -437,6 +428,12 @@ class FinvizLoader(beam.DoFn):
             newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
             for ticker in newhighm_tickers:
                 data = self._get_data(ticker, self.key, 'NEWHIGH')
+                if data:
+                    holder.append(data)
+
+            extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
+            for ticker in extra_watchlist:
+                data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
                 if data:
                     holder.append(data)
 
