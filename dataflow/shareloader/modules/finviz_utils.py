@@ -27,7 +27,9 @@ def _run_screener(filters):
     foverview = Overview()
     foverview.set_filter(filters_dict=filters)
     df = foverview.screener_view()
-    return df.convert_dtypes().replace({nan: None}).to_dict(orient="records")
+    if df is not None and df.shape[0] > 0:
+        return df.convert_dtypes().replace({nan: None}).to_dict(orient="records")
+    return []
     #return df.to_dict('records') if df is not None else []
 
 def get_universe_filter():

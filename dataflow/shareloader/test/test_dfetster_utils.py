@@ -11,6 +11,7 @@ import os
 from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
 from shareloader.modules.obb_utils import OBBLoader
+from shareloader.modules.launcher import run_obb_pipeline
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -81,6 +82,13 @@ class TestDfTesterLoader(unittest.TestCase):
                      | 'Run Loader' >> beam.ParDo(OBBLoader(pat))
                      | self.debugSink
                      )
+    def test_launcher(self):
+        key = os.environ['FMPREPKEY']
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = run_obb_pipeline(p, key, '')
+            input | self.debugSink
+
+
 
 
 
