@@ -452,9 +452,10 @@ class FinvizLoader(beam.DoFn):
                 if data:
                     holder.append(data)
 
-            overnight_watchlist = [d['Ticker'] for d in overnight_return()]
-            for ticker in overnight_watchlist:
+            overnight_watchlist = [(d['Ticker'], d['Country']) for d in overnight_return()]
+            for ticker, country in overnight_watchlist:
                 data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN')
+                data['country'] = country
                 if data:
                     holder.append(data)
 

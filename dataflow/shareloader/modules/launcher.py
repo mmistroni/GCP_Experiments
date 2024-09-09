@@ -50,7 +50,7 @@ def get_bq_schema():
         "earningsYield": "FLOAT", "bookValuePerShare": "FLOAT",
         "canBuyAllItsStock": "FLOAT", "netQuickAssetPerShare": "FLOAT",
         "rsi": "FLOAT", "piotroskyScore": "INTEGER", "ticker": "String",
-        "52weekChange": "FLOAT", "label": "STRING"
+        "52weekChange": "FLOAT", "label": "STRING", "country": "STRING",
     }
 
     schemaFields = []
