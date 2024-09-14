@@ -9,6 +9,7 @@ import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from .superperf_metrics import  load_bennchmark_data
 import requests
+import numpy as np
 import logging
 
 '''
@@ -416,6 +417,12 @@ class FinvizLoader(beam.DoFn):
     def _get_data(self, ticker, key, label):
         try :
             result = load_bennchmark_data(ticker, key)
+            for k, v in result:
+                if np.isnan(v) or np.isinf(v):
+                    result[k] = 0
+
+
+
             result['label'] = label
             return result
         except Exception as e:
