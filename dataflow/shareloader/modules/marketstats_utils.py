@@ -431,7 +431,12 @@ def get_mcclellan(ticker):
           YEARS = 25
           URL = f'https://stockcharts.com/c-sc/sc?s={ticker}&p=D&yr={YEARS}&mn=0&dy=0&i=t3757734781c&img=text&inspector=yes'
           data = requests.get(URL, headers={'user-agent': get_user_agent()}).text
-          data = data.split('<pricedata>')[1].replace('</pricedata>', '')
+
+          tmpdata = data.split('<pricedata>')
+          if tmpdata:
+            data = tmpdata[1].replace('</pricedata>', '')
+          else:
+              raise Exception('Data from request does not have enough info')
           lines = data.split('|')
           data = []
           for line in lines:
