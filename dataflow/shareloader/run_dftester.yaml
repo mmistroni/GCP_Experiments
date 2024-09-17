@@ -24,6 +24,8 @@ steps:
           , '--parameters'
           ,'pat=$_PAT'
           , '--parameters'
+          ,'runtype=$_RUNTYPE'
+          , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
           ,'--subnetwork=regions/us-central1/subnetworks/default'
@@ -39,6 +41,7 @@ substitutions:
   _PERIOD: 'annual'
   _LIMIT: '10'
   _PAT: ''
+  _RUNTYPE: ''
   _PROJECT_ID: datascience-projects
   _DFTESTER_IMAGE_NAME: dftester:latest3
   _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest3

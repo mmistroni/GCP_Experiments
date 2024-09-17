@@ -32,6 +32,12 @@
       "helpText": "Pat id to log in to obb",
       "label": "pat",
       "isOptional" : true
+    },
+    {
+      "name": "runtype",
+      "helpText": "Type of run",
+      "label": "runtype",
+      "isOptional" : true
     }
 
   ]

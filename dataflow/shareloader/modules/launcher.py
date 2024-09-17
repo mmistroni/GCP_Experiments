@@ -21,7 +21,7 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--period')
         parser.add_argument('--limit')
         parser.add_argument('--pat')
-
+        parser.add_argument('--runtype')
 
 
 def get_bq_schema():
@@ -64,7 +64,7 @@ def get_bq_schema():
 
     return schema
 
-def run_obb_pipeline(p, fmpkey, pat):
+def run_obb_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
     return ( p
              | 'Start' >> beam.Create(['AAPL,AMZN'])
@@ -72,6 +72,16 @@ def run_obb_pipeline(p, fmpkey, pat):
              | 'Map to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
 
     )
+
+def run_premarket_pipeline(p, fmpkey):
+    logging.info('Running OBB ppln')
+    return ( p
+             | 'Start' >> beam.Create(['AAPL'])
+             | 'Get all List' >> beam.ParDo(FinvizLoader(fmpkey, runtype='premarket'))
+             | 'Map to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
+
+    )
+
 
 def map_to_bq_dict(input_dict):
 
@@ -117,13 +127,17 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        if bool(pipeline_options.pat):
+        if not pipeline_options.runtype:
             logging.info('running OBB....')
             obb = run_obb_pipeline(p, pipeline_options.fmprepkey, pipeline_options.pat)
             logging.info('printing to sink.....')
             obb | sink
             #logging.info('Storing to BQ')
             obb | bq_sink
+        else:
+            logging.info('Running premarket loader')
+            obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
+            obb | sink
 
 
 

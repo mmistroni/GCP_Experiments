@@ -685,10 +685,12 @@ def get_price_change(ticker, key):
         dataDict['52weekChange'] = -1
     return dataDict
 
-def get_quote_benchmark(ticker, key):
+def get_quote_benchmark(ticker, key, prevClose=False):
     resUrl = 'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={key}'.format(ticker=ticker, key=key)
     keys = ['marketCap', 'price', 'avgVolume', 'priceAvg50', 'priceAvg200', 'eps', 'pe', 'sharesOutstanding',
             'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
+    if prevClose:
+        keys.append('previousClose')
     dataDict = {}
 
     try:
@@ -702,8 +704,8 @@ def get_quote_benchmark(ticker, key):
     except Exception as e:
         logging.info(f'Exception in getting quote daqta for :{ticker}:{str(e)}')
 
-def load_bennchmark_data(ticker, key):
-    quotes_data = get_quote_benchmark(ticker, key)
+def load_bennchmark_data(ticker, key, prevClose=False):
+    quotes_data = get_quote_benchmark(ticker, key, prevClose=prevClose)
     if quotes_data:
         income_data = get_income_benchmark(ticker, key)
         if income_data:

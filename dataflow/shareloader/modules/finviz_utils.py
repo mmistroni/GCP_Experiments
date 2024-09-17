@@ -408,67 +408,88 @@ def overnight_return():
 
 
 class FinvizLoader(beam.DoFn):
-    def __init__(self, key, microcap_flag=False, split_flag=None):
+    def __init__(self, key, runtype='all'):
         self.key = key
-        self.microcap_flag = microcap_flag
-        self.split = split_flag
+        self.runtype = runtype
 
 
-    def _get_data(self, ticker, key, label):
+    def _get_data(self, ticker, key, label, prevClose=False):
         try :
-            result = load_bennchmark_data(ticker, key)
-            for k, v in result:
-                if np.isnan(v) or np.isinf(v):
-                    result[k] = 0
-
-
-
-            result['label'] = label
-            return result
+            result = load_bennchmark_data(ticker, key, prevClose=prevClose)
+            if result:
+                for k, v in result.items():
+                    if isinstance(v, float):
+                        if np.isnan(v) or np.isinf(v):
+                            result[k] = 0
+                result['label'] = label
+                return result
+            return []
         except Exception as e:
             logging.info(f'Failed to get data for {ticker}:{str(e)}')
+            return []
 
+    def run_premarket(self):
+        holder = []
+        overnight_watchlist = [(d['Ticker'], d['Country']) for d in overnight_return()]
+        for ticker, country in overnight_watchlist:
+            try:
+                data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN', prevClose=True)
+                if data:
+                    data['country'] = country
+                    # we are only interested in selected fields
+                    interested_fields = keys = ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
+                    reduced_dict = dict((k, data.get(k)) for k in interested_fields )
+
+                    holder.append(reduced_dict)
+            except Exception as e:
+                logging.info(f'Unable to get data for {ticker}:{str(e)}')
+
+        return holder
 
     def process(self, elements):
         holder = []
         logging.info('Getting XXXLEAPS')
         leaps_tickers = [d['Ticker'] for d in get_leaps()]
-        try:
-            for ticker in leaps_tickers:
-                data = self._get_data(ticker, self.key, 'LEAPS')
-                if data:
-                    holder.append(data)
-            logging.info('Getting CANSLIM')
-            canslim_tickers = [d['Ticker'] for d in get_canslim()]
-            for ticker in canslim_tickers:
-                data = self._get_data(ticker, self.key, 'CANSLIM')
-                if data:
-                    holder.append(data)
+        logging.info(f'Running nwtih mode {self.runtype}')
+        if self.runtype == 'premarket':
+            return self.run_premarket()
+        else:
+            try:
+                for ticker in leaps_tickers:
+                    data = self._get_data(ticker, self.key, 'LEAPS')
+                    if data:
+                        holder.append(data)
+                logging.info('Getting CANSLIM')
+                canslim_tickers = [d['Ticker'] for d in get_canslim()]
+                for ticker in canslim_tickers:
+                    data = self._get_data(ticker, self.key, 'CANSLIM')
+                    if data:
+                        holder.append(data)
 
-            logging.info('Getting newhigh')
+                logging.info('Getting newhigh')
 
-            newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
-            for ticker in newhighm_tickers:
-                data = self._get_data(ticker, self.key, 'NEWHIGH')
-                if data:
-                    holder.append(data)
+                newhighm_tickers = [d['Ticker'] for d in get_new_highs()]
+                for ticker in newhighm_tickers:
+                    data = self._get_data(ticker, self.key, 'NEWHIGH')
+                    if data:
+                        holder.append(data)
 
-            extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
-            for ticker in extra_watchlist:
-                data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
-                if data:
-                    holder.append(data)
+                extra_watchlist = [d['Ticker'] for d in get_extra_watchlist()]
+                for ticker in extra_watchlist:
+                    data = self._get_data(ticker, self.key, 'EXTRA_WATCHLIST')
+                    if data:
+                        holder.append(data)
 
-            overnight_watchlist = [(d['Ticker'], d['Country']) for d in overnight_return()]
-            for ticker, country in overnight_watchlist:
-                data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN')
-                data['country'] = country
-                if data:
-                    holder.append(data)
+                overnight_watchlist = [(d['Ticker'], d['Country']) for d in overnight_return()]
+                for ticker, country in overnight_watchlist:
+                    data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN')
+                    data['country'] = country
+                    if data:
+                        holder.append(data)
 
-            return holder
-        except Exception as e :
-            logging.info(f'Exception in running:{str(e)}')
+                return holder
+            except Exception as e :
+                logging.info(f'Exception in running:{str(e)}')
 
 
 
