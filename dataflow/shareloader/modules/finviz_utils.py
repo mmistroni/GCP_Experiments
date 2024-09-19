@@ -434,7 +434,7 @@ class FinvizLoader(beam.DoFn):
         for ticker, country in overnight_watchlist:
             try:
                 data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN', prevClose=True)
-                if data:
+                if data and data.get('country', 'UK') == 'USA':
                     data['country'] = country
                     # we are only interested in selected fields
                     interested_fields = keys = ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
