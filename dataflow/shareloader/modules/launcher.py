@@ -129,7 +129,7 @@ def run(argv=None, save_main_session=True):
 
         if not pipeline_options.runtype:
             logging.info('running OBB....')
-            obb = run_obb_pipeline(p, pipeline_options.fmprepkey, pipeline_options.pat)
+            obb = run_obb_pipeline(p, pipeline_options.fmprepkey)
             logging.info('printing to sink.....')
             obb | sink
             #logging.info('Storing to BQ')
