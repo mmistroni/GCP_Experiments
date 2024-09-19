@@ -691,6 +691,7 @@ def get_quote_benchmark(ticker, key, prevClose=False):
             'yearHigh', 'yearLow', 'exchange', 'change', 'open', 'symbol']
     if prevClose:
         keys.append('previousClose')
+
     dataDict = {}
 
     try:
