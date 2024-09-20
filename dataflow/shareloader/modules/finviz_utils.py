@@ -501,12 +501,3 @@ class FinvizLoader(beam.DoFn):
 
 
 
-
-
-
-
-
-
-
-
-

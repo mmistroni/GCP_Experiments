@@ -64,6 +64,29 @@ def get_bq_schema():
 
     return schema
 
+def get_finviz_schema():
+    field_dict = {
+        "symbol": "STRING",
+        "marketCap": "FLOAT",
+        "price": "FLOAT",
+        "open": "FLOAT",
+        "change": "FLOAT",
+        "previousClose": "FLOAT",
+        "exchange": "STRING",
+        "country": "STRING",
+        "ticker": "STRING"
+    }
+
+    schemaFields = []
+    for fname, ftype in field_dict.items():
+        schemaFields.append({"name": fname, "type": ftype, "mode": "NULLABLE"})
+
+    schema = {
+        "fields": schemaFields
+    }
+
+    return schema
+
 def run_obb_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
     return ( p
@@ -124,6 +147,15 @@ def run(argv=None, save_main_session=True):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
+    finviz_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='finviz-premarket'),
+        schema=get_finviz_schema(),
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
@@ -138,6 +170,7 @@ def run(argv=None, save_main_session=True):
             logging.info('Running premarket loader')
             obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
             obb | sink
+            obb | finviz_sink
 
 
 
