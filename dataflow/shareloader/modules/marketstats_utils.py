@@ -427,6 +427,8 @@ def get_sp500():
     return sp500_df.to_dict('records')
 
 def get_mcclellan(ticker):
+    from datetime import date
+    today = date.today()
     try:
           YEARS = 25
           URL = f'https://stockcharts.com/c-sc/sc?s={ticker}&p=D&yr={YEARS}&mn=0&dy=0&i=t3757734781c&img=text&inspector=yes'
@@ -455,7 +457,7 @@ def get_mcclellan(ticker):
                   }
     except Exception as e:
         logging.info(f'Failed to get data for {ticker}:{str(e)}')
-        {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'),
+        return {'AS_OF_DATE': today,
          'LABEL': ticker,
          'VALUE': 0.0
          }
