@@ -457,7 +457,7 @@ def get_mcclellan(ticker):
                   }
     except Exception as e:
         logging.info(f'Failed to get data for {ticker}:{str(e)}')
-        return {'AS_OF_DATE': today,
+        return {'AS_OF_DATE': today.strftime('%Y-%m-%d'),
          'LABEL': ticker,
          'VALUE': 0.0
          }
