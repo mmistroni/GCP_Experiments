@@ -11,6 +11,7 @@ from .superperf_metrics import  load_bennchmark_data
 import requests
 import numpy as np
 import logging
+from datetime import date
 
 '''
 res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
@@ -439,7 +440,7 @@ class FinvizLoader(beam.DoFn):
                     # we are only interested in selected fields
                     interested_fields = keys = ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
                     reduced_dict = dict((k, data.get(k)) for k in interested_fields )
-
+                    reduced_dict['asodate'] = date.today()
                     holder.append(reduced_dict)
             except Exception as e:
                 logging.info(f'Unable to get data for {ticker}:{str(e)}')
