@@ -437,10 +437,10 @@ class FinvizLoader(beam.DoFn):
             try:
                 data = self._get_data(ticker, self.key, 'OVERNIGHT_RETURN', prevClose=True)
                 logging.info(f'Obtianed:{len(data)} itesm')
-                if data and data.get('country', 'UK') == 'USA':
+                if data and country == 'USA':
                     data['country'] = country
                     # we are only interested in selected fields
-                    interested_fields = keys = ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
+                    interested_fields =  ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
                     reduced_dict = dict((k, data.get(k)) for k in interested_fields )
                     reduced_dict['asodate'] = date.today()
                     holder.append(reduced_dict)
