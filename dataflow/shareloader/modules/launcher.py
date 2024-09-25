@@ -74,7 +74,9 @@ def get_finviz_schema():
         "previousClose": "FLOAT",
         "exchange": "STRING",
         "country": "STRING",
-        "ticker": "STRING"
+        "ticker": "STRING",
+        "cob"   : "DATE",
+        "aodate" : "DATE"
     }
 
     schemaFields = []
