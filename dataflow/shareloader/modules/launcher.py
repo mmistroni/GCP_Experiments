@@ -76,7 +76,7 @@ def get_finviz_schema():
         "country": "STRING",
         "ticker": "STRING",
         "cob"   : "DATE",
-        "aodate" : "DATE"
+        "asodate" : "DATE"
     }
 
     schemaFields = []
