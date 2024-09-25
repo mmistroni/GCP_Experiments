@@ -440,9 +440,10 @@ class FinvizLoader(beam.DoFn):
                 if data and country == 'USA':
                     data['country'] = country
                     # we are only interested in selected fields
-                    interested_fields =  ['symbol', 'marketCap', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
+                    interested_fields =  ['symbol', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
                     reduced_dict = dict((k, data.get(k)) for k in interested_fields )
                     reduced_dict['asodate'] = date.today()
+                    reduced_dict['marketCap'] = float(data['marketCap'])
                     holder.append(reduced_dict)
             except Exception as e:
                 logging.info(f'Unable to get data for {ticker}:{str(e)}')
