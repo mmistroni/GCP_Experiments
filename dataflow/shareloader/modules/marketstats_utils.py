@@ -414,8 +414,11 @@ def get_cftc_spfutures(key):
     # Investigate this URL https://www.cftc.gov/files/dea/history/dea_fut_xls_2022.zip
     base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VX?apikey={key}'
     all_data = requests.get(base_url).json()
-    data = all_data[0]
-    return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
+    if len(all_data) > 0:
+        data = all_data[0]
+        return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
+    else:
+        return "ChangeInNetPosition:N/A, Sentiment:N/A"
 
 
 def get_sp500():
