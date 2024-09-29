@@ -4,9 +4,12 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
+
+from main_tester import run
 from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
 from apache_beam.io.gcp.bigquery import TableRowJsonCoder
+from shareloader.modules.obb_utils import AsyncProcess
 
 from datetime import date
 
@@ -116,6 +119,11 @@ def map_to_bq_dict(input_dict):
     return custom_dict
 
 
+def run_yfinance_pipeline(p):
+    cob = date(2024, 9, 25)
+    return  (p | 'Start' >> beam.Create(['AAPL'])
+             | 'Run Loader' >> beam.ParDo(AsyncProcess({}, cob))
+             )
 
 
 def run(argv=None, save_main_session=True):
@@ -173,6 +181,15 @@ def run(argv=None, save_main_session=True):
             obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
             obb | sink
             obb | finviz_sink
+
+        yfinance = run_yfinance_pipeline(p)
+        yfinance | sink
+
+
+
+
+
+
 
 
 

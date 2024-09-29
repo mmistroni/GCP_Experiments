@@ -8,6 +8,7 @@
 import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from .superperf_metrics import  load_bennchmark_data
+from openbb_yfinance.models.equity_historical import YFinanceEquityHistoricalFetcher
 import requests
 import numpy as np
 import logging
