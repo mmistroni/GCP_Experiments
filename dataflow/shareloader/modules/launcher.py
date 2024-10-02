@@ -4,13 +4,9 @@ import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
-
-from main_tester import run
 from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
-from apache_beam.io.gcp.bigquery import TableRowJsonCoder
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
-
 from datetime import date
 
 
