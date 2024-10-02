@@ -176,21 +176,21 @@ def run(argv=None, save_main_session=True):
             logging.info('running OBB....')
             obb = run_obb_pipeline(p, pipeline_options.fmprepkey)
             logging.info('printing to sink.....')
-            obb | sink
+            obb | 'oBB TO SINK' >> sink
             #logging.info('Storing to BQ')
-            obb | bq_sink
+            obb | 'oBBBQ TO SINK' >>bq_sink
         else:
             logging.info('Running premarket loader')
             obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
-            obb | sink
-            obb | finviz_sink
+            obb | 'oBB2 TO SINK' >>sink
+            obb | 'oBB FINGIZTO SINK' >>finviz_sink
 
         yfinance = run_yfinance_pipeline(p)
-        yfinance | sink
+        yfinance | 'yf To SINK' >>sink
 
 
         tester = run_test_pipeline()
-        tester |sink
+        tester | 'tester TO SINK' >>sink
 
 
 
