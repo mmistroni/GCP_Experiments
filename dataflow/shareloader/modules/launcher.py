@@ -91,18 +91,18 @@ def get_finviz_schema():
 def run_obb_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
     return ( p
-             | 'Start' >> beam.Create(['AAPL,AMZN'])
-             | 'Get all List' >> beam.ParDo(FinvizLoader(fmpkey))
-             | 'Map to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
+             | 'OBBStart' >> beam.Create(['AAPL,AMZN'])
+             | 'OBBGet all List' >> beam.ParDo(FinvizLoader(fmpkey))
+             | 'OBBMap to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
 
     )
 
 def run_premarket_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
     return ( p
-             | 'Start' >> beam.Create(['AAPL'])
-             | 'Get all List' >> beam.ParDo(FinvizLoader(fmpkey, runtype='premarket'))
-             | 'Map to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
+             | 'PMStart' >> beam.Create(['AAPL'])
+             | 'PMGet all List' >> beam.ParDo(FinvizLoader(fmpkey, runtype='premarket'))
+             | 'PMMap to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
 
     )
 
@@ -117,8 +117,8 @@ def map_to_bq_dict(input_dict):
 
 def run_yfinance_pipeline(p):
     cob = date(2024, 9, 25)
-    return  (p | 'Start' >> beam.Create(['AAPL'])
-             | 'Run Loader' >> beam.ParDo(AsyncProcess({}, cob))
+    return  (p | 'yfStart' >> beam.Create(['AAPL'])
+             | 'YFRun Loader' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
 def run_test_pipeline(p):
