@@ -86,7 +86,7 @@ steps:
         , '--config'
         , '$_WEEKLYSELECTION_BUILD_FILE' ]
     id: 'build-weeklyselection-template'
-timeout: 50000s
+timeout: 150000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
   _SHARESDATASETLOADER_BUILD_FILE: ./dataflow/shareloader/shares_datset_build.yaml
