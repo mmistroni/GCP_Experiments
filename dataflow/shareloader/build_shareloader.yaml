@@ -58,7 +58,7 @@ steps:
 
 images: ['gcr.io/$_PROJECT_ID/$_IMAGE_NAME', 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME']
 
-
+timeout: 7200s
 substitutions:
   _PROJECT_ID: datascience-projects
   _IMAGE_NAME: shareloader:latest2

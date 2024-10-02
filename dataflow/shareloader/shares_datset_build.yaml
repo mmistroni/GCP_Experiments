@@ -30,7 +30,7 @@ steps:
           , '--metadata-file'
           , '$_METADATA_FILE']  
     id: 'build-flex-template'
-timeout: 1200s
+timeout: 3600s
 substitutions:
   _PROJECT_ID: datascience-projects
   _IMAGE_NAME: shares_dataset:latest
