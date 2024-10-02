@@ -123,8 +123,8 @@ def run_yfinance_pipeline(p):
 
 def run_test_pipeline(p):
     cob = date(2024, 9, 25)
-    return  (p | 'Start' >> beam.Create(create_bigquery_ppln(p))
-             | 'Maping ticker' >> beam.Map(lambda d: d['TICKER'])
+    return  (p | 'Start BQ' >> beam.Create(create_bigquery_ppln(p))
+             | 'Maping BP ticker' >> beam.Map(lambda d: d['TICKER'])
              )
 
 
