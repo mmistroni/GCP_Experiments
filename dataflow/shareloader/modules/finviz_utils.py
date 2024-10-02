@@ -12,6 +12,8 @@ import numpy as np
 import logging
 from datetime import date
 
+
+
 '''
 res = (input_dict.get('marketCap', 0) > 300000000) and (input_dict.get('avgVolume', 0) > 200000) \
         and (input_dict.get('price', 0) > 10) and (input_dict.get('eps_growth_this_year', 0) > 0.2) \
