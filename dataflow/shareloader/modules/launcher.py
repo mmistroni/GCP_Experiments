@@ -9,7 +9,7 @@ from main_tester import run
 from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
 from apache_beam.io.gcp.bigquery import TableRowJsonCoder
-from shareloader.modules.obb_utils import AsyncProcess
+from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
 
 from datetime import date
 
@@ -125,6 +125,13 @@ def run_yfinance_pipeline(p):
              | 'Run Loader' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
+def run_test_pipeline(p):
+    cob = date(2024, 9, 25)
+    return  (p | 'Start' >> beam.Create(create_bigquery_ppln(p))
+             | 'Maping ticker' >> beam.Map(lambda d: d['TICKER'])
+             )
+
+
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -184,6 +191,11 @@ def run(argv=None, save_main_session=True):
 
         yfinance = run_yfinance_pipeline(p)
         yfinance | sink
+
+
+        tester = run_test_pipeline()
+        tester |sink
+
 
 
 
