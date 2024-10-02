@@ -189,7 +189,7 @@ def run(argv=None, save_main_session=True):
         yfinance | 'yf To SINK' >>sink
 
 
-        tester = run_test_pipeline()
+        tester = run_test_pipeline(p)
         tester | 'tester TO SINK' >>sink
 
 
