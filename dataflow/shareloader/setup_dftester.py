@@ -16,7 +16,7 @@ REQUIRED_PACKAGES = [
     'pandas_datareader',
     'beautifulsoup4',
     'xlrd',
-    'openpyxl'
+    'openpyxl',
     'openbb-yfinance'
     ]
 
