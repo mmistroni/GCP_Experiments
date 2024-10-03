@@ -116,7 +116,7 @@ def map_to_bq_dict(input_dict):
 
 
 def run_yfinance_pipeline(p):
-    cob = date(2024, 9, 25)
+    cob = date.today()
     return  (p | 'yfStart' >> beam.Create(['AAPL'])
              | 'YFRun Loader' >> beam.ParDo(AsyncProcess({}, cob))
              )
