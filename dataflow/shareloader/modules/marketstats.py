@@ -536,7 +536,7 @@ def run(argv=None, save_main_session=True):
 
         nm_left_joined | 'NPMI to sink' >> debugSink
 
-        nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
+        #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
         # Consumer sentiment index
         consumerSentimentmiSourced = consumer_res | 'Mapping consumer res from Web ' >> beam.Map(
