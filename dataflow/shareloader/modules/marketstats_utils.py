@@ -14,9 +14,6 @@ from .finviz_utils import get_high_low
 import math
 from bs4 import BeautifulSoup
 
-
-
-
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date))
