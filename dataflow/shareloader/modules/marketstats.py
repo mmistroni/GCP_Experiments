@@ -423,7 +423,7 @@ def run(argv=None, save_main_session=True):
 
         pmi_hist = run_prev_dates_statistics_manuf_pmi(p)
 
-        non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
+        #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
 
 
@@ -460,7 +460,7 @@ def run(argv=None, save_main_session=True):
         # we need a global combiner to write to sink
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (30, d))
 
-        non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beam.Map(lambda d: (40, d))
+        #non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beam.Map(lambda d: (40, d))
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
@@ -469,7 +469,8 @@ def run(argv=None, save_main_session=True):
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
-                        pmi_hist_key, non_manuf_pmi_hist_key,
+                        pmi_hist_key,
+                        #non_manuf_pmi_hist_key,
                         )
                 | 'FlattenCombine all' >> beam.Flatten()
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
