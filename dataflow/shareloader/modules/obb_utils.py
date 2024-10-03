@@ -9,7 +9,7 @@ from pandas.tseries.offsets import BDay
 import asyncio
 
 def create_bigquery_ppln(p):
-    plus500_sql = """SELECT TICKER  FROM `datascience-projects.gcp_shareloader.plus500'"""
+    plus500_sql = """SELECT TICKER  FROM `datascience-projects.gcp_shareloader.plus500`"""
     logging.info('executing SQL :{}'.format(plus500_sql))
     return (p | 'Reading-plus500}' >> beam.io.Read(
         beam.io.BigQuerySource(query=plus500_sql, use_standard_sql=True))
