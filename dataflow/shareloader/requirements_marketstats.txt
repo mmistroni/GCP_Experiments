@@ -1,0 +1,11 @@
+apache-beam[gcp]
+avro-python3
+pyarrow
+pandas-datareader
+sendgrid
+lxml
+beautifulsoup4
+vaderSentiment
+openbb-yfinance
+finvizfinance
+

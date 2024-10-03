@@ -17,6 +17,7 @@ REQUIRED_PACKAGES = [
     'beautifulsoup4',
     'xlrd',
     'openpyxl'
+    'openbb-yfinance'
     ]
 
 
