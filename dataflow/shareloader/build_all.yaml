@@ -7,29 +7,6 @@
 steps:
   # Build the container image with the Python version of our choice.
   # Kick off shareloader
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_SHARELOADER_BUILD_FILE']  
-    id: 'build-shareloader-template'
-  # Kick off shares dataset
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_SHARESDATASETLOADER_BUILD_FILE']  
-    id: 'build-datasetloader-template'
   # Kick off superperformers
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
@@ -42,28 +19,6 @@ steps:
           , '--config'
           , '$_SUPERPERFORMERS_BUILD_FILE']  
     id: 'build-superperformers-template'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_ECONOMY_BUILD_FILE']  
-    id: 'build-stateofeconomy-template'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args:
-      [
-          'builds'
-        , 'submit'
-        , '--verbosity'
-        , 'debug'
-        , '--config'
-        , '$_ECONOMY_EMAIL_BUILD_FILE' ]
-    id: 'build-economy_email-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
