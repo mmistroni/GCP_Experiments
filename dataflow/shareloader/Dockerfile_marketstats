@@ -20,7 +20,7 @@ WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}/shareloader
 COPY requirements_marketstats.txt  ./requirements.txt
-COPY setup.py setup.py
+COPY setup_mktstats.py setup.py
 COPY marketstats_main.py .
 COPY modules ${WORKDIR}/shareloader/modules
 COPY __init__.py ${WORKDIR}/__init__.py
