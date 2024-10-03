@@ -7,16 +7,16 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
-    'sendgrid==6.2.1',
+    'sendgrid',
     'pandas_datareader',
     'vaderSentiment',
     'numpy',
     'bs4',
     'lxml',
     'pandas_datareader',
-    'beautifulsoup4==4.10.0',
-    'xlrd==2.0.1',
-    'openpyxl==3.0.10',
+    'beautifulsoup4',
+    'xlrd',
+    'openpyxl',
     'finvizfinance'
     ]
 
