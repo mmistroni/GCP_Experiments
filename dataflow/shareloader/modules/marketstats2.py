@@ -17,86 +17,7 @@ from functools import reduce
 import time
 
 
-class MarketStatsCombineFn(beam.CombineFn):
-    def create_accumulator(self):
-        return []
-
-    def add_input(self, sum_count, input_data):
-        holder = sum_count
-        logging.info('Adding:{}'.format(input_data))
-        holder.append(input_data)
-        return holder
-
-    def merge_accumulators(self, accumulators):
-        return chain(*accumulators)
-
-    def extract_output(self, sum_count):
-        all_data = sum_count
-        sorted_els = sorted(all_data, key=lambda t: t[0])
-        mapped = list(map (lambda tpl: tpl[1], sorted_els))
-        
-        stringified = list(map(lambda x: '|{}|{}|{}|'.format(x['AS_OF_DATE'],
-                                                           x['LABEL'],
-                                                           x['VALUE']), mapped))
-                
-        
-        logging.info('MAPPED IS :{}'.format(mapped))
-        return stringified
-
-
-class MarketStatsSinkCombineFn(beam.CombineFn):
-    def create_accumulator(self):
-        return []
-
-    def add_input(self, sum_count, input_data):
-        holder = sum_count
-        holder.append(input_data)
-        return holder
-
-    def merge_accumulators(self, accumulators):
-        return chain(*accumulators)
-
-    def extract_output(self, all_data):
-        return [i for i in all_data]
-
-class EmailSender(beam.DoFn):
-    def __init__(self, recipients, key):
-        self.recipients = recipients.split(',')
-        self.key = key
-
-
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-
-    def process(self, element):
-        logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
-        template = "<html><body>{}</body></html>"
-        content = template.format(element)
-        print('Sending \n {}'.format(content))
-        message = Mail(
-            from_email='gcp_cloud_mm@outlook.com',
-            to_emails=self.recipients,
-            subject='Market Stats',
-            html_content=content)
-
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
-        sg = SendGridAPIClient(self.key)
-
-        response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
-
-
-class XyzOptions(PipelineOptions):
+class AbcOptions(PipelineOptions):
 
     @classmethod
     def _add_argparse_args(cls, parser):
@@ -131,7 +52,7 @@ def run(argv=None, save_main_session=True):
     # Check  this https://medium.datadriveninvestor.com/markets-is-a-correction-coming-aa609fba3e34
 
 
-    pipeline_options = XyzOptions()
+    pipeline_options = AbcOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
     debugSink =  beam.Map(logging.info)
@@ -151,7 +72,5 @@ def run(argv=None, save_main_session=True):
 
         debugSink = beam.Map(logging.info)
 
-        vix_res = run_vix(p, iexapi_key)
-
-        vix_res | debugSink
+        
 
