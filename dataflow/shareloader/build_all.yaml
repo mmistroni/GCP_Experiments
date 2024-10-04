@@ -41,6 +41,17 @@ steps:
         , '--config'
         , '$_WEEKLYSELECTION_BUILD_FILE' ]
     id: 'build-weeklyselection-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '$_SHARELOADER_BUILD_FILE' ]
+    id: 'build-shareloader-template'
 timeout: 7200s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
