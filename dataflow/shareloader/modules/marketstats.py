@@ -566,6 +566,4 @@ def run(argv=None, save_main_session=True):
             cramer_result | debug_sink
             cramer_result | cramer_sink
 
-if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
-    run()
+
