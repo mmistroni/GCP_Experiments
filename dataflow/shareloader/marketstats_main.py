@@ -1,5 +1,5 @@
-from shareloader.modules.marketstats2 import run
+from shareloader.modules import marketstats
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run()
+  marketstats.run()
