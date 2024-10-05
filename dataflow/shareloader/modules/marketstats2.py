@@ -11,11 +11,6 @@ from datetime import datetime, date
 import requests
 
 
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
-from functools import reduce
-import time
-
 
 class AbcOptions(PipelineOptions):
 
@@ -60,7 +55,7 @@ def run(argv=None, save_main_session=True):
 
     with beam.Pipeline(options=pipeline_options) as p:
 
-        iexapi_key = pipeline_options.key
+        fmp_key = pipeline_options.key
         fred_key = pipeline_options.fredkey
         logging.info(pipeline_options.get_all_options())
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
@@ -71,6 +66,10 @@ def run(argv=None, save_main_session=True):
         logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
 
         debugSink = beam.Map(logging.info)
+
+        p = run_vix(p, fmp_key )
+
+        p | 'Writing to sink' >> debugSink
 
         
 
