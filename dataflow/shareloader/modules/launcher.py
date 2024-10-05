@@ -134,7 +134,7 @@ def run_test_pipeline(p):
 
 
 
-def run(argv:list[str], save_main_session=True):
+def run(argv: list[str] | None = None):
     """Main entry point; defines and runs the wordcount pipeline."""
 
     logging.info(f'running with arguments:{argv}')
