@@ -138,17 +138,11 @@ def run(argv: list[str] | None = None):
     """Main entry point; defines and runs the wordcount pipeline."""
 
     logging.info(f'running with arguments:{argv}')
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--fmprepkey')
-    parser.add_argument('--input')
-    parser.add_argument('--output')
-    parser.add_argument('--period')
-    parser.add_argument('--limit')
-    parser.add_argument('--pat')
-    parser.add_argument('--runtype')
 
-    pipeline_options, other_args = parser.parse_known_args(argv)
+    pipeline_options = XyzOptions()
+    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session 
 
+    
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
