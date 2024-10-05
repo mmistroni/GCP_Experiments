@@ -123,8 +123,9 @@ def run_yfinance_pipeline(p):
 
 def run_test_pipeline(p):
     cob = date.today()
-    test_ppln = (create_bigquery_ppln(p))
-    return  (test_ppln | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
+    test_ppln = create_bigquery_ppln(p)
+    return  (test_ppln
+                | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
@@ -173,26 +174,18 @@ def run(argv=None, save_main_session=True):
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
-        if not pipeline_options.runtype:
-            logging.info('running OBB....')
-            obb = run_obb_pipeline(p, pipeline_options.fmprepkey)
-            logging.info('printing to sink.....')
-            obb | 'oBB TO SINK' >> sink
-            #logging.info('Storing to BQ')
-            obb | 'oBBBQ TO SINK' >>bq_sink
-        else:
-            logging.info('Running premarket loader')
-            obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
-            obb | 'oBB2 TO SINK' >>sink
-            obb | 'oBB FINGIZTO SINK' >>finviz_sink
+        logging.info('Running premarket loader')
+        obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
+        obb | 'oBB2 TO SINK' >>sink
+        obb | 'oBB FINGIZTO SINK' >>finviz_sink
 
         yfinance = run_yfinance_pipeline(p)
         yfinance | 'yf To SINK' >>sink
 
-
+        '''
         tester = run_test_pipeline(p)
         tester | 'tester TO SINK' >>sink
-
+        '''
 
 
 
