@@ -8,6 +8,7 @@ from shareloader.modules.finviz_utils import FinvizLoader
 from apache_beam.io.gcp.internal.clients import bigquery
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
 from datetime import date
+from shareloader.modules.superperformers import combine_tickers
 
 
 class XyzOptions(PipelineOptions):
@@ -126,6 +127,7 @@ def run_test_pipeline(p):
     test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
                 | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
+                | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
@@ -177,7 +179,7 @@ def run(argv=None, save_main_session=True):
         logging.info('Running premarket loader')
         obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
         obb | 'oBB2 TO SINK' >>sink
-        obb | 'oBB FINGIZTO SINK' >>finviz_sink
+        #obb | 'oBB FINGIZTO SINK' >>finviz_sink
 
         yfinance = run_yfinance_pipeline(p)
         yfinance | 'yf To SINK' >>sink
