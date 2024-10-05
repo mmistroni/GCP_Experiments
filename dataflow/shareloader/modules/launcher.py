@@ -177,7 +177,7 @@ def run(argv: list[str] | None = None):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline() as p:
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
