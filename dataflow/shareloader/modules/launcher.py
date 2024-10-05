@@ -9,6 +9,7 @@ from apache_beam.io.gcp.internal.clients import bigquery
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
+import argparse
 
 
 class XyzOptions(PipelineOptions):
@@ -133,16 +134,25 @@ def run_test_pipeline(p):
 
 
 
-def run(argv=None, save_main_session=True):
+def run(argv:list[str], save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
+
+    logging.info(f'running with arguments:{argv}')
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fmprepkey')
+    parser.add_argument('--input')
+    parser.add_argument('--output')
+    parser.add_argument('--period')
+    parser.add_argument('--limit')
+    parser.add_argument('--pat')
+    parser.add_argument('--runtype')
+
+    pipeline_options, other_args = parser.parse_known_args(argv)
+
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-
-    logging.info('Starting tester pipeline')
+    logging.info(f'Starting tester pipeline:{pipeline_options.fmprepkey}')
 
     # connecting dataflow to http running on gcp
     # https://www.trycatchdebug.net/news/1314929/gcp-dataflow-and-http-server#:~:text=To%20connect%20a%20GCP%20Dataflow%20job%20to%20the,transform%20to%20fetch%20data%20from%20the%20HTTP%20server.
