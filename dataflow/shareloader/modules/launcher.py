@@ -140,7 +140,7 @@ def run(argv: list[str] | None = None):
     logging.info(f'running with arguments:{argv}')
 
     pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session 
+    pipeline_options.view_as(SetupOptions).save_main_session = True
 
     
 
