@@ -124,7 +124,7 @@ def run_yfinance_pipeline(p):
 def run_test_pipeline(p):
     cob = date.today()
     test_ppln = (create_bigquery_ppln(p))
-    return  (test_ppln | 'Maping BP ticker' >> beam.Map(lambda d: d['TICKER'])
+    return  (test_ppln | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
