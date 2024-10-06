@@ -451,7 +451,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key,highlow_key, junk_bond_key,
+                        nysi_key, nymo_key, junk_bond_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
