@@ -25,7 +25,7 @@ class AsyncProcess(beam.DoFn):
         self.end_date = (start_date - BDay(1)).date()
 
     async def fetch_data(self, element: str):
-        logging.info(f'element is:{element}')
+        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
 
         ticks = element.split(',')
         all_records = []
@@ -38,7 +38,7 @@ class AsyncProcess(beam.DoFn):
                 if all_records:
                     all_records += result
             except Exception as e:
-                logging.info('Failed to fetch data for {t}:{str(e)}')
+                logging.info(f'Failed to fetch data for {t}:{str(e)}')
         return all_records
 
     def process(self, element: str):
