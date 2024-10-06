@@ -153,9 +153,12 @@ def run(argv = None, save_main_session=True):
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
+    all_opts = pipeline_options.get_all_options()
+    logging.info(f'All opts aer:\n{all_opts}')
+
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    logging.info(f"Starting tester pipeline:{pipeline_options.get('fmprepkey')}")
+    logging.info(f"Starting tester pipeline:{all_opts.get('fmprepkey')}")
 
     # connecting dataflow to http running on gcp
     # https://www.trycatchdebug.net/news/1314929/gcp-dataflow-and-http-server#:~:text=To%20connect%20a%20GCP%20Dataflow%20job%20to%20the,transform%20to%20fetch%20data%20from%20the%20HTTP%20server.
