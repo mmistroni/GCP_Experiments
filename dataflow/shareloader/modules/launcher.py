@@ -155,7 +155,7 @@ def run(argv = None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    logging.info(f'Starting tester pipeline:{pipeline_options.fmprepkey}')
+    logging.info(f"Starting tester pipeline:{pipeline_options.get('fmprepkey')}")
 
     # connecting dataflow to http running on gcp
     # https://www.trycatchdebug.net/news/1314929/gcp-dataflow-and-http-server#:~:text=To%20connect%20a%20GCP%20Dataflow%20job%20to%20the,transform%20to%20fetch%20data%20from%20the%20HTTP%20server.
@@ -190,9 +190,8 @@ def run(argv = None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
-        obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
+        obb = run_premarket_pipeline(p, pipeline_options.get('fmprepkey'))
         obb | 'oBB2 TO SINK' >>sink
-        #obb | 'oBB FINGIZTO SINK' >>finviz_sink
 
         yfinance = run_yfinance_pipeline(p)
         yfinance | 'yf To SINK' >>sink
