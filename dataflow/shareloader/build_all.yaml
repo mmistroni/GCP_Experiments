@@ -6,7 +6,18 @@
 # to be amended. this should invoke build file for each subproject
 steps:
   # Build the container image with the Python version of our choice.
-  # Kick off shareloader
+  # Kick off shares dataset
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_SHARESDATASETLOADER_BUILD_FILE']  
+    id: 'build-datasetloader-template'
   # Kick off superperformers
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
@@ -19,6 +30,28 @@ steps:
           , '--config'
           , '$_SUPERPERFORMERS_BUILD_FILE']  
     id: 'build-superperformers-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'builds'
+          , 'submit'
+          , '--verbosity'
+          , 'debug'
+          , '--config'
+          , '$_ECONOMY_BUILD_FILE']  
+    id: 'build-stateofeconomy-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '$_ECONOMY_EMAIL_BUILD_FILE' ]
+    id: 'build-economy_email-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -41,6 +74,7 @@ steps:
         , '--config'
         , '$_WEEKLYSELECTION_BUILD_FILE' ]
     id: 'build-weeklyselection-template'
+  # Kick off shareloader
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args:
@@ -52,7 +86,7 @@ steps:
         , '--config'
         , '$_SHARELOADER_BUILD_FILE' ]
     id: 'build-shareloader-template'
-timeout: 7200s
+timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
   _SHARESDATASETLOADER_BUILD_FILE: ./dataflow/shareloader/shares_datset_build.yaml
