@@ -144,6 +144,7 @@ def parse_known_args(argv):
   return parser.parse_known_args(argv)
 
 
+
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -153,8 +154,7 @@ def run(argv = None, save_main_session=True):
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
-    all_opts = pipeline_options.get_all_options()
-    logging.info(f'All opts aer:\n{all_opts}')
+    logging.info(f'All opts aer:\n{known_args}')
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
