@@ -338,7 +338,7 @@ def write_to_bucket(lines, sink):
     )
 
 def combine_tickers(input):
-    return ','.join(input)
+    return ','.join([i for i in input if  bool(i)])
 
 def combine_dict(input):
     return [d for d in input]
