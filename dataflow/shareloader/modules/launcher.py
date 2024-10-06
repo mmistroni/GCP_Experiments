@@ -144,7 +144,7 @@ def parse_known_args(argv):
   return parser.parse_known_args(argv)
 
 
-def run(argv: None, save_main_session=True):
+def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
     logging.info(f'running with arguments:{argv}')
