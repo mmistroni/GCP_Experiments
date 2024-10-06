@@ -5,7 +5,6 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
-from apache_beam.io.gcp.internal.clients import bigquery
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
@@ -148,17 +147,16 @@ def parse_known_args(argv):
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
-    logging.info(f'running with arguments:{argv}')
-    args = PipelineOptions.from_args(argv)
-    pipeline_options = args.view_as(MyPipelineOptions)
-
-    logging.info(f'fmp key:{pipeline_options.fmprepkey}')
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_options = PipelineOptions(pipeline_args)
+    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+    logging.info(f'fmp key:{known_args.fmprepkey}')
 
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
-        obb = run_premarket_pipeline(p, pipeline_options.fmprepkey)
+        obb = run_premarket_pipeline(p, known_args.fmprepkey)
         obb | 'oBB2 TO SINK' >>sink
 
         yfinance = run_yfinance_pipeline(p)
