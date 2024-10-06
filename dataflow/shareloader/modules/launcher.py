@@ -6,6 +6,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
+from apache_beam.io.gcp.internal.clients import bigquery
+
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
 import argparse
@@ -152,20 +154,38 @@ def run(argv = None, save_main_session=True):
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     logging.info(f'fmp key:{known_args.fmprepkey}')
 
+    bq_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='finviz_selection'),
+        schema=get_bq_schema(),
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
+    finviz_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='finviz-premarket'),
+        schema=get_finviz_schema(),
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
         obb = run_premarket_pipeline(p, known_args.fmprepkey)
         obb | 'oBB2 TO SINK' >>sink
+        obb | ' to finvbiz' >> finviz_sink
 
         yfinance = run_yfinance_pipeline(p)
         yfinance | 'yf To SINK' >>sink
 
-        '''
         tester = run_test_pipeline(p)
         tester | 'tester TO SINK' >>sink
-        '''
+
 
 
 
