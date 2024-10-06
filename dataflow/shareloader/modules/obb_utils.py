@@ -9,7 +9,7 @@ from pandas.tseries.offsets import BDay
 import asyncio
 
 def create_bigquery_ppln(p):
-    plus500_sql = """SELECT TICKER  FROM `datascience-projects.gcp_shareloader.plus500`"""
+    plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
     logging.info('executing SQL :{}'.format(plus500_sql))
     return (p | 'Reading-plus500}' >> beam.io.Read(
         beam.io.BigQuerySource(query=plus500_sql, use_standard_sql=True))
@@ -21,8 +21,8 @@ class AsyncProcess(beam.DoFn):
     def __init__(self, credentials, start_date):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
-        self.start_date = start_date
-        self.end_date = (start_date - BDay(1)).date()
+        self.end_date = start_date
+        self.start_date = (end_date - BDay(1)).date()
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
