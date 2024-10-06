@@ -12,18 +12,18 @@ from shareloader.modules.superperformers import combine_tickers
 import argparse
 
 
-class XyzOptions(PipelineOptions):
-
+class MyPipelineOptions(PipelineOptions):
     @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--fmprepkey')
-        parser.add_argument('--input')
-        parser.add_argument('--output')
-        parser.add_argument('--period')
-        parser.add_argument('--limit')
-        parser.add_argument('--pat')
-        parser.add_argument('--runtype')
-
+    def from_dictionary(cls, options):
+        pipeline_options = super().from_dictionary(options)
+        pipeline_options.view_as(cls).fmprepkey = options.get('fmprepkey')
+        pipeline_options.view_as(cls).input = options.get('input')
+        pipeline_options.view_as(cls).output = options.get('output')
+        pipeline_options.view_as(cls).period = options.get('period')
+        pipeline_options.view_as(cls).limit = options.get('limit')
+        pipeline_options.view_as(cls).pat = options.get('pat')  # Default to 4 workers
+        pipeline_options.view_as(cls).runtype = options.get('runtype')
+        return pipeline_options
 
 def get_bq_schema():
     field_dict =  {
@@ -150,12 +150,12 @@ def run(argv = None, save_main_session=True):
 
     logging.info(f'running with arguments:{argv}')
 
-    known_args, pipeline_args = parse_known_args(argv)
-    pipeline_options = PipelineOptions(pipeline_args)
+    args = PipelineOptions.from_args(argv)
+    pipeline_options = args.view_as(MyPipelineOptions)
+
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
-    logging.info(f'All opts aer:\n{known_args}')
-    logging.info(f'fmp key:{known_args.fmprepkey}')
+    logging.info(f'fmp key:{pipeline_options.fmprepkey}')
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
