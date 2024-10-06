@@ -24,6 +24,7 @@ COPY setup_dftester.py setup.py
 COPY dataflow_tester.py .
 COPY modules ${WORKDIR}/shareloader/modules
 COPY __init__.py ${WORKDIR}/__init__.py
+COPY __init__.py ${WORKDIR}/shareloader/__init__.py
 
 
 RUN echo '----- listing workdir'

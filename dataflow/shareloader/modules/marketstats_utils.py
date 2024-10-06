@@ -10,7 +10,6 @@ from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
-from .finviz_utils import get_high_low
 import math
 from bs4 import BeautifulSoup
 
@@ -169,22 +168,6 @@ class PMIJoinerFn(beam.DoFn):
                 logging.info('REturning {left_key} {left}')
                 yield  (left_key, left)
 
-class NewHighNewLowLoader(beam.DoFn):
-    def __init__(self, key):
-        self.key = key
-
-    def get_quote(self, ticker):
-        # get yesterday price
-        stat_url = f'https://financialmodelingprep.com/api/v3/quote/{ticker}?apikey={self.key}'
-        return requests.get(stat_url).json()[0]
-
-    def process(self, elements):
-
-        high_low_dict = get_high_low()
-
-        logging.info(f'------\n{high_low_dict}' )
-
-        return [high_low_dict]
 
 
 class InnerJoinerFn(beam.DoFn):

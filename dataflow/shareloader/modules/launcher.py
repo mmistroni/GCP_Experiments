@@ -132,17 +132,26 @@ def run_test_pipeline(p):
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
+def parse_known_args(argv):
+  """Parses args for the workflow."""
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--fmprepkey')
+  parser.add_argument('--input')
+  parser.add_argument('--output')
+  parser.add_argument('--period')
+  parser.add_argument('--limit')
+  parser.add_argument('--pat')
+  return parser.parse_known_args(argv)
 
 
-def run(argv: list[str] | None = None):
+def run(argv: None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
     logging.info(f'running with arguments:{argv}')
 
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = True
-
-    
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_options = PipelineOptions(pipeline_args)
+    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
@@ -177,7 +186,7 @@ def run(argv: list[str] | None = None):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
-    with beam.Pipeline() as p:
+    with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')

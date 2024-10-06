@@ -18,7 +18,7 @@ from modules.marketstats_utils import MarketBreadthCombineFn, \
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
-                            get_mcclellan, NewHighNewLowLoader, get_all_us_stocks, get_junkbonddemand, \
+                            get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
                             get_cramer_picks
 
 
@@ -216,17 +216,6 @@ def run_mcclellan_pipeline(p, ticker):
      | f'Get mmcl_{ticker}' >> beam.Map(get_mcclellan)
      )
 
-def run_newhigh_new_low(p, fmpKey):
-    full_ticks = ','.join(get_all_us_stocks(fmpKey))
-
-    return  (p
-           | 'Start' >> beam.Create([full_ticks])
-           | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpKey))
-           | 'Mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
-                                              'LABEL' : 'NEW_HIGH_NEW_LOW',
-                                              'VALUE' : f"{d['VALUE']}"
-                                              })
-           )
 
 def run_exchange_pipeline(p, key, exchange):
     all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
@@ -404,8 +393,6 @@ def run(argv=None, save_main_session=True):
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
-        high_low = run_newhigh_new_low(p, iexapi_key)
-
         junk_bond = run_junk_bond_demand(p, fred_key)
 
         staticStart = (p | 'Create static start' >> beam.Create(
@@ -445,7 +432,6 @@ def run(argv=None, save_main_session=True):
         nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (10, d))
         nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (11, d))
 
-        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d:(12, d))
         junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
 
 
@@ -482,7 +468,7 @@ def run(argv=None, save_main_session=True):
 
         final_sink_results = [
                  vix_res, mmomentum_res, growth_vs_val_res, nyse,
-                 nasdaq, equity_pcratio, fed_funds, junk_bond, high_low
+                 nasdaq, equity_pcratio, fed_funds, junk_bond
                 ]
 
         # Writing everything to sink
@@ -536,7 +522,6 @@ def run(argv=None, save_main_session=True):
 
         nm_left_joined | 'NPMI to sink' >> debugSink
 
-        #nm_left_joined | 'NPPMI TO BQ Sink' >> bq_sink
 
         # Consumer sentiment index
         consumerSentimentmiSourced = consumer_res | 'Mapping consumer res from Web ' >> beam.Map(
