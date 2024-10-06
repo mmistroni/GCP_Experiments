@@ -33,7 +33,12 @@ class AsyncProcess(beam.DoFn):
             params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
             try:
-                # We need to get latest from yesterday, latest from today and prev close to see impact
+                # 1. We need to get the close price of the day by just querying for 1d interval
+                # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
+                #    today
+                # 3. we aggregate and store in bq
+                # 4 .send email for everything that increased over 10% overnight
+                # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
                 data = await self.fetcher.fetch_data(params, {})
                 result =  [d.model_dump(exclude_none=True) for d in data]
                 if all_records:
