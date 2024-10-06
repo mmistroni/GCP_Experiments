@@ -22,7 +22,7 @@ class AsyncProcess(beam.DoFn):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
         self.end_date = start_date
-        self.start_date = (end_date - BDay(1)).date()
+        self.start_date = (self.end_date - BDay(1)).date()
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
