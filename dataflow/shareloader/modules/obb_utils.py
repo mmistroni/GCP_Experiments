@@ -39,12 +39,16 @@ class AsyncProcess(beam.DoFn):
                 # 3. we aggregate and store in bq
                 # 4 .send email for everything that increased over 10% overnight
                 # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
+
                 data = await self.fetcher.fetch_data(params, {})
                 result =  [d.model_dump(exclude_none=True) for d in data]
+
+
                 if all_records:
                     all_records += result
             except Exception as e:
                 logging.info(f'Failed to fetch data for {t}:{str(e)}')
+        logging.info('Returningn records with :{len(all_records)}}')
         return all_records
 
     def process(self, element: str):
