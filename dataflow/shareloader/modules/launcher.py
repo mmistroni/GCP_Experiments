@@ -124,6 +124,7 @@ def run_yfinance_pipeline(p):
              | 'YFRun Loader' >> beam.ParDo(AsyncProcess({}, cob))
              )
 
+
 def run_test_pipeline(p):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)

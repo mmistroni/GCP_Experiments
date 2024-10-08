@@ -27,7 +27,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_sample_pipeline(self):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
-        cob = date(2024,10, 3)
+        cob = date.today()
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create(['AAPL'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob))
