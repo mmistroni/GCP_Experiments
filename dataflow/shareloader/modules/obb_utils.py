@@ -42,10 +42,10 @@ class AsyncProcess(beam.DoFn):
 
                 data = await self.fetcher.fetch_data(params, {})
                 result =  [d.model_dump(exclude_none=True) for d in data]
+                logging.info(f'Result is :{result}')
 
-
-                if all_records:
-                    all_records += result
+                if result:
+                    all_records += result[-1:]
             except Exception as e:
                 logging.info(f'Failed to fetch data for {t}:{str(e)}')
         logging.info('Returningn records with :{len(all_records)}}')
