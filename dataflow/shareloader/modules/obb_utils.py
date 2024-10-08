@@ -49,16 +49,18 @@ class AsyncProcess(beam.DoFn):
                     logging.info(f'Result is :{result}')
                     last_close = [d for d in result if d['date'] == datetime(2024,10,7,16,0)][0]
                     latest = result[-1]
-                    if latest['close'] / last_close['close'] > (1 + self.price_change):
+                    increase = latest['close'] / last_close['close']
+                    if increase > (1 + self.price_change):
                         logging.info('Adding:{latest')
+                        latest['ticker'] = t
                         all_records.append(latest)
                     else:
-                        logging.info(f'{t} change below tolerance:{self.price_change}')
+                        logging.info(f'{t} increase ({increase}) change below tolerance:{self.price_change}')
                 else:
-                    logging.info('No result sfor {t}')
+                    logging.info(f'No result sfor {t}')
             except Exception as e:
                 logging.info(f'Failed to fetch data for {t}:{str(e)}')
-        logging.info('Returningn records with :{len(all_records)}}')
+        logging.info(f'Returningn records with :{len(all_records)}')
         return all_records
 
     def process(self, element: str):
