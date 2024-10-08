@@ -18,11 +18,12 @@ def create_bigquery_ppln(p):
 
 class AsyncProcess(beam.DoFn):
 
-    def __init__(self, credentials, start_date):
+    def __init__(self, credentials, start_date, price_change=0.07):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
         self.end_date = start_date
         self.start_date = (self.end_date - BDay(1)).date()
+        self.price_change = price_change
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
@@ -42,10 +43,19 @@ class AsyncProcess(beam.DoFn):
 
                 data = await self.fetcher.fetch_data(params, {})
                 result =  [d.model_dump(exclude_none=True) for d in data]
-                logging.info(f'Result is :{result}')
+
 
                 if result:
-                    all_records += result[-1:]
+                    logging.info(f'Result is :{result}')
+                    last_close = [d for d in result if d['date'] == datetime(2024,10,7,16,0)][0]
+                    latest = result[-1]
+                    if latest['close'] / last_close['close'] > (1 + self.price_change):
+                        logging.info('Adding:{latest')
+                        all_records.append(latest)
+                    else:
+                        logging.info(f'{t} change below tolerance:{self.price_change}')
+                else:
+                    logging.info('No result sfor {t}')
             except Exception as e:
                 logging.info(f'Failed to fetch data for {t}:{str(e)}')
         logging.info('Returningn records with :{len(all_records)}}')
