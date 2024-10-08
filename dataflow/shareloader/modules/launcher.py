@@ -129,7 +129,7 @@ def run_test_pipeline(p):
     test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
                 | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
-                | 'Filtering' >> beam.Filter(lambda tick: '.' not in tick and '-' not in tick)
+                | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob))
              )
