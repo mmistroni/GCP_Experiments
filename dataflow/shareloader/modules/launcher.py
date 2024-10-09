@@ -147,8 +147,8 @@ class EmailSender(beam.DoFn):
         return personalizations
 
     def process(self, element):
-        msg, ptf_diff = element
-        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
+        msg = element
+        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients))
         template = \
             "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th>{}</table></body></html>"
         content = template.format(msg)
@@ -174,11 +174,12 @@ class StockSelectionCombineFn(beam.CombineFn):
     return []
 
   def add_input(self, accumulator, input):
-    ROW_TEMPLATE = f"""<tr><td>{input['ticker']}</td><td>{input['prev_date']}</td>
-                        <td>{input['prev_close']}</td>
-                        <td>{input['date']}</td>
-                        <td>{input['close']}</td>
-                        <td>{input['change']}</td>
+    ROW_TEMPLATE = f"""<tr><td>{input['ticker']}</td>
+                          <td>{input['prev_date']}</td>
+                          <td>{input['prev_close']}</td>
+                          <td>{input['date']}</td>
+                          <td>{input['close']}</td>
+                          <td>{input['change']}</td>
                         </tr>"""
 
     row_acc = accumulator

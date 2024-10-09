@@ -59,7 +59,7 @@ class AsyncProcess(beam.DoFn):
                         latest['change'] = increase
                         all_records.append(latest)
                     else:
-                        logging.info(f'{t} increase ({increase}) change below tolerance:{self.price_change}')
+                        logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
                 else:
                     logging.info(f'No result sfor {t}')
             except Exception as e:
