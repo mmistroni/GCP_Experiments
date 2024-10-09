@@ -148,7 +148,7 @@ class EmailSender(beam.DoFn):
 
     def process(self, element):
         msg = element
-        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients))
+        logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
             "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th>{}</table></body></html>"
         content = template.format(msg)
