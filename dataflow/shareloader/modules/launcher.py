@@ -11,20 +11,10 @@ from apache_beam.io.gcp.internal.clients import bigquery
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
 import argparse
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
+import itertools
 
-
-class MyPipelineOptions(PipelineOptions):
-    @classmethod
-    def from_dictionary(cls, options):
-        pipeline_options = super().from_dictionary(options)
-        pipeline_options.view_as(cls).fmprepkey = options.get('fmprepkey')
-        pipeline_options.view_as(cls).input = options.get('input')
-        pipeline_options.view_as(cls).output = options.get('output')
-        pipeline_options.view_as(cls).period = options.get('period')
-        pipeline_options.view_as(cls).limit = options.get('limit')
-        pipeline_options.view_as(cls).pat = options.get('pat')  # Default to 4 workers
-        pipeline_options.view_as(cls).runtype = options.get('runtype')
-        return pipeline_options
 
 def get_bq_schema():
     field_dict =  {
@@ -118,12 +108,6 @@ def map_to_bq_dict(input_dict):
     return custom_dict
 
 
-def run_yfinance_pipeline(p):
-    cob = date.today()
-    return  (p | 'yfStart' >> beam.Create(['AAPL'])
-             | 'YFRun Loader' >> beam.ParDo(AsyncProcess({}, cob))
-             )
-
 
 def run_test_pipeline(p):
     cob = date.today()
@@ -144,7 +128,73 @@ def parse_known_args(argv):
   parser.add_argument('--period')
   parser.add_argument('--limit')
   parser.add_argument('--pat')
+  parser.add_argument('--sendgridkey')
   return parser.parse_known_args(argv)
+
+
+class EmailSender(beam.DoFn):
+    def __init__(self, key):
+        self.recipients = ['mmistroni@gmail.com']
+        self.key = key
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+    def process(self, element):
+        msg, ptf_diff = element
+        logging.info('Attepmting to send emamil to:{} with diff {}'.format(self.recipients, ptf_diff))
+        template = \
+            "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th>{}</table></body></html>"
+        content = template.format(msg)
+        logging.info('Sending \n {}'.format(content))
+        message = Mail(
+            from_email='gcp_cloud_mm@outlook.com',
+            subject='Pre-Market Movers',
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        sg = SendGridAPIClient(self.key)
+
+        response = sg.send(message)
+        logging.info('Mail Sent:{}'.format(response.status_code))
+        logging.info('Body:{}'.format(response.body))
+
+
+class StockSelectionCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, input):
+    ROW_TEMPLATE = f"""<tr><td>{input['ticker']}</td><td>{input['prev_date']}</td>
+                        <td>{input['prev_close']}</td>
+                        <td>{input['date']}</td>
+                        <td>{input['close']}</td>
+                        <td>{input['change']}</td>
+                        </tr>"""
+
+    row_acc = accumulator
+    row_acc.append(ROW_TEMPLATE)
+    return row_acc
+
+  def merge_accumulators(self, accumulators):
+    return list(itertools.chain(*accumulators))
+
+  def extract_output(self, sum_count):
+    return ''.join(sum_count)
+
+
+def send_email(pipeline, sendgridkey):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
+             )
 
 
 
@@ -182,13 +232,13 @@ def run(argv = None, save_main_session=True):
         obb | 'oBB2 TO SINK' >>sink
         obb | ' to finvbiz' >> finviz_sink
 
-        yfinance = run_yfinance_pipeline(p)
-        yfinance | 'yf To SINK' >>sink
-
         tester = run_test_pipeline(p)
-        tester | 'tester TO SINK' >>sink
 
+        premarket_results = (tester | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
+        send_email(premarket_results, known_args.sendgridkey)
+
+        premarket_results   | 'tester TO SINK' >> sink
 
 
 

@@ -46,13 +46,17 @@ class AsyncProcess(beam.DoFn):
 
 
                 if result:
-                    logging.info(f'Result is :{result}')
-                    last_close = [d for d in result if d['date'] == datetime(2024,10,7,16,0)][0]
+                    logging.info(f'Result is :{result}. Looking for latest close @{self.start_date}')
+                    last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
+                                                                            self.start_date.day,16, 0)][0]
                     latest = result[-1]
                     increase = latest['close'] / last_close['close']
                     if increase > (1 + self.price_change):
                         logging.info('Adding:{latest')
                         latest['ticker'] = t
+                        latest['prev_date'] = last_close['date']
+                        latest['prev_close'] = last_close['close']
+                        latest['change'] = increase
                         all_records.append(latest)
                     else:
                         logging.info(f'{t} increase ({increase}) change below tolerance:{self.price_change}')

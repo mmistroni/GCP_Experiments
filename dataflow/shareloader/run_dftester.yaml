@@ -22,9 +22,9 @@ steps:
           , '--parameters'
           ,'limit=$_LIMIT'
           , '--parameters'
-          ,'pat=$_PAT'
-          , '--parameters'
           ,'runtype=$_RUNTYPE'
+          , '--parameters'
+          ,'sendgridkey=$_SENDGRIDKEY'
           , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
@@ -40,10 +40,11 @@ substitutions:
   _OUTPUT: ''
   _PERIOD: 'annual'
   _LIMIT: '10'
-  _PAT: ''
+  _SENDGRIDKEY: ''
   _RUNTYPE: ''
   _PROJECT_ID: datascience-projects
   _DFTESTER_IMAGE_NAME: dftester:latest3
   _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest3
+
 
 

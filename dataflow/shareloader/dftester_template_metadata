@@ -38,6 +38,12 @@
       "helpText": "Type of run",
       "label": "runtype",
       "isOptional" : true
+    },
+    {
+      "name": "sendgridkey",
+      "helpText": "SendGridKey",
+      "label": "sendgrid key",
+      "isOptional" : false
     }
 
   ]

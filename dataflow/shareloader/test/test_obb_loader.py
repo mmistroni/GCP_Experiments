@@ -13,6 +13,7 @@ import apache_beam as beam
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
 from shareloader.modules.obb_utils import AsyncProcess
+from shareloader.modules.launcher import StockSelectionCombineFn
 
 
 
@@ -27,10 +28,11 @@ class MyTestCase(unittest.TestCase):
 
     def test_sample_pipeline(self):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
-        cob = date.today()
+        cob = date(2024, 10, 4)
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(['AAPL'])
-                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob))
+            input = (p | 'Start' >> beam.Create(['AAPL,NVDA,AMZN,T'])
+                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.001))
+                     | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
                      | self.debugSink
                      )
 
