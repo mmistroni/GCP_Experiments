@@ -19,7 +19,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks
+                            get_cramer_picks, NewHighNewLowLoader
 
 
 from sendgrid import SendGridAPIClient
