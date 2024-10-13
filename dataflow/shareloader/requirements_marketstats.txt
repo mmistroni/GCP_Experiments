@@ -6,6 +6,5 @@ sendgrid
 lxml
 beautifulsoup4
 vaderSentiment
-openbb-yfinance
 finvizfinance
 
