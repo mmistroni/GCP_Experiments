@@ -4,12 +4,12 @@ import logging
 from pandas.tseries.offsets import BDay
 from itertools import chain
 from apache_beam.io.gcp.internal.clients import bigquery
-
+import argparse
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import datetime, date
-from modules.marketstats_utils import MarketBreadthCombineFn, \
+from shareloader.modules.marketstats_utils import MarketBreadthCombineFn, \
                             get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
@@ -107,16 +107,6 @@ class EmailSender(beam.DoFn):
         print(response.status_code, response.body, response.headers)
 
 
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--key')
-        parser.add_argument('--fredkey')
-        parser.add_argument('--sendgridkey')
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-
-
 def run_non_manufacturing_pmi(p):
     nmPmiDate = date(date.today().year, date.today().month, 1)
     return (p | 'startstart' >> beam.Create(['20210101'])
@@ -176,9 +166,6 @@ def run_junk_bond_demand(p, fredkey):
                     | 'junk' >>   beam.Map(lambda d:  get_junkbonddemand(fredkey))
                     | 'remap junk' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'JUNK_BOND_DEMAND', 'VALUE' : str(d)})
             )
-
-
-
 
 def run_senate_disclosures(p, key):
     return (p | 'start run_sd' >> beam.Create(['20210101'])
@@ -308,6 +295,16 @@ def write_all_to_sink(results_to_write, sink):
 
     )
 
+
+def parse_known_args(argv):
+  """Parses args for the workflow."""
+  parser = argparse.ArgumentParser()
+  parser.add_argument('--key')
+  parser.add_argument('--fredkey')
+  parser.add_argument('--sendgridkey')
+  parser.add_argument('--recipients', default='mmistroni@gmail.com')
+  return parser.parse_known_args(argv)
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -316,8 +313,8 @@ def run(argv=None, save_main_session=True):
 
     # Check  this https://medium.datadriveninvestor.com/markets-is-a-correction-coming-aa609fba3e34
 
-
-    pipeline_options = XyzOptions()
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
     debugSink =  beam.Map(logging.info)
@@ -325,15 +322,14 @@ def run(argv=None, save_main_session=True):
 
     with beam.Pipeline(options=pipeline_options) as p:
 
-        iexapi_key = pipeline_options.key
-        fred_key = pipeline_options.fredkey
-        logging.info(pipeline_options.get_all_options())
+        iexapi_key = known_args.key
+        fred_key = known_args.fredkey
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
         
         destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
 
         logging.info('====== Destination is :{}'.format(destination))
-        logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
+        logging.info('SendgridKey=={}'.format(known_args.sendgridkey))
         
         bq_sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
@@ -462,7 +458,7 @@ def run(argv=None, save_main_session=True):
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
+                | 'SendEmail' >> beam.ParDo(EmailSender(known_args.recipients, known_args.sendgridkey))
 
         )
 
