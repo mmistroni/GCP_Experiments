@@ -5,33 +5,36 @@
 # Use consistent versions of Python interpreter in the project.
 FROM python:3.11-slim
 
-FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
+# Copy SDK entrypoint binary from Apache Beam image, which makes it possible to
+# use the image as SDK container image. If you explicitly depend on
+# apache-beam in setup.py, use the same version of Beam in both files.
+COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
+
+# Copy Flex Template launcher binary from the launcher image, which makes it
+# possible to use the image as a Flex Template base image.
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
 
 # Location to store the pipeline artifacts.
 ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
-RUN mkdir -p ${WORKDIR}/shareloader
+
 COPY requirements.txt .
-COPY setup_dftester.py setup.py
+COPY setup_mktstats.py setup.py
 COPY marketstats_main.py .
-COPY modules ${WORKDIR}/shareloader/modules
+COPY modules ${WORKDIR}/modules
 COPY __init__.py ${WORKDIR}/__init__.py
-COPY __init__.py ${WORKDIR}/shareloader/__init__.py
 
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
 RUN echo '--- listing shareloader -----'
-RUN ls -la  ${WORKDIR}/shareloader
-
-RUN echo '--- listing modules -----'
-RUN ls -la  ${WORKDIR}/shareloader/modules
+RUN ls -la  ${WORKDIR}/modules
 
 
 RUN echo '----- cat ting  main--'
-RUN cat dataflow_tester.py
+RUN cat marketstats_main.py
 RUN echo '----- INSTALLING REQS ----'
 RUN pip install --no-cache-dir -r requirements.txt
 
