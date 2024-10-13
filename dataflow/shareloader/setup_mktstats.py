@@ -22,9 +22,9 @@ REQUIRED_PACKAGES = [
 
 
 setuptools.setup(
-    name='shareloader',
+    name='modules',
     version='0.0.1',
-    description='Shres Runner Package.',
+    description='Modules MkrStats Runner Package.',
     install_requires=REQUIRED_PACKAGES,
     packages=setuptools.find_packages()
     )
