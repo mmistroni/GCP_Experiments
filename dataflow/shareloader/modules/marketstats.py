@@ -9,7 +9,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import datetime, date
-from modules.marketstats_utils import MarketBreadthCombineFn, \
+from .marketstats_utils import MarketBreadthCombineFn, \
                             get_vix, ParseNonManufacturingPMI, get_all_us_stocks2,\
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
@@ -308,6 +308,19 @@ def write_all_to_sink(results_to_write, sink):
 
     )
 
+def run_newhigh_new_low(p, fmpKey):
+    full_ticks = ','.join(get_all_us_stocks(fmpKey))
+
+    return  (p
+           | 'Start' >> beam.Create([full_ticks])
+           | 'Get all List' >> beam.ParDo(NewHighNewLowLoader(fmpKey))
+           | 'Mapping' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
+                                              'LABEL' : 'NEW_HIGH_NEW_LOW',
+                                              'VALUE' : f"{d['VALUE']}"
+                                              })
+           )
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -393,6 +406,8 @@ def run(argv=None, save_main_session=True):
 
         econ_calendar = run_economic_calendar(p, iexapi_key)
 
+        high_low = run_newhigh_new_low(p, iexapi_key)
+
         junk_bond = run_junk_bond_demand(p, fred_key)
 
         staticStart = (p | 'Create static start' >> beam.Create(
@@ -432,6 +447,8 @@ def run(argv=None, save_main_session=True):
         nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (10, d))
         nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (11, d))
 
+        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (12, d))
+
         junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
 
 
@@ -451,7 +468,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key, junk_bond_key,
+                        nysi_key, nymo_key, junk_bond_key, highlow_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
