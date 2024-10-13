@@ -20,11 +20,17 @@ REQUIRED_PACKAGES = [
     'openbb-yfinance'
     ]
 
+PROJECT_NAME = 'your_project_name'  # Replace with your project name
+VERSION = '0.0.1'
+
+# Find packages automatically
+PACKAGES = setuptools.find_packages(where='modules')
+
+# No external dependencies in this example (adjust if needed)
 
 setuptools.setup(
-    name='modules',
-    version='0.0.1',
-    description='Modules MkrStats Runner Package.',
+    name=PROJECT_NAME,
+    version=VERSION,
+    packages=PACKAGES,
     install_requires=REQUIRED_PACKAGES,
-    packages=setuptools.find_packages()
-    )
+)
