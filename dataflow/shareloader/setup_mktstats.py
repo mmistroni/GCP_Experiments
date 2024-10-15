@@ -6,7 +6,7 @@ import setuptools
 # so this dependency will not trigger anything to be installed unless a version
 # restriction is specified.
 REQUIRED_PACKAGES = [
-    "apache-beam[gcp]",  # Must match the version in `Dockerfile``.
+    "apache-beam[gcp]==2.58.0",  # Must match the version in `Dockerfile``.
     'sendgrid',
     'pandas_datareader',
     'vaderSentiment',
@@ -17,7 +17,6 @@ REQUIRED_PACKAGES = [
     'beautifulsoup4',
     'xlrd',
     'openpyxl',
-    'openbb-yfinance'
     ]
 
 PROJECT_NAME = 'your_project_name'  # Replace with your project name
