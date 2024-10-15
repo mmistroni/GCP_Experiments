@@ -37,7 +37,7 @@ RUN ls -la  ${WORKDIR}/shareloader/modules
 
 
 RUN echo '----- cat ting  main--'
-RUN cat dataflow_tester.py
+RUN cat marketstats_main2.py
 RUN echo '----- INSTALLING REQS ----'
 RUN pip install --no-cache-dir -r requirements.txt
 
