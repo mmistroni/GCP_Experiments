@@ -1,0 +1,33 @@
+steps:
+# Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_MARKETSTATS_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'key=$_FMPREP_KEY'
+          , '--parameters'
+          , 'sendgridkey=$_SENDGRID_KEY'
+          , '--parameters'
+          , 'recipients=$_RECIPIENTS'
+          , '--parameters'
+          , 'fredkey=$_FRED_KEY'
+          , '--region=$_REGION'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
+
+substitutions:
+  _JOB_NAME: 'fake-marketstatscloudbuild'
+  _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template2.json
+  _REGION: us-central1
+  _FMPREP_KEY: ''
+  _SENDGRID_KEY : ''
+  _RECIPIENTS : 'mmistroni@gmail.com'
+  _FRED_KEY: ''
