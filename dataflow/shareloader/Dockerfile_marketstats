@@ -13,7 +13,7 @@ WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/shareloader
-COPY setup_mktstats.py ${WORKDIR}/setup.py
+COPY setup.py ${WORKDIR}
 COPY marketstats_main.py ${WORKDIR}/marketstats_main.py
 COPY requirements.txt .
 COPY modules ${WORKDIR}/shareloader/modules
