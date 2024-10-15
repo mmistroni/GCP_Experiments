@@ -12,21 +12,16 @@ ARG WORKDIR=/template
 RUN mkdir -p ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/modules
 WORKDIR ${WORKDIR}
-COPY modules ${WORKDIR}/modules
-COPY requirements_marketstats.txt ${WORKDIR}/requirements.txt
-
+COPY modules ${WORKDIR}/shareloader/modules
 COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup.py ${WORKDIR}/setup.py
+COPY __init__.py ${WORKDIR}/shareloader/__init__.py
+COPY __init__.py ${WORKDIR}/__init__.py
+COPY setup_dftester.py ${WORKDIR}/setup.py
 COPY marketstats_main.py ${WORKDIR}/marketstats_main.py
-
-
-# Super important to add these lines.
-#ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
-
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN pip install -e .
