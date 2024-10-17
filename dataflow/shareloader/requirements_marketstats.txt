@@ -7,4 +7,7 @@ lxml
 beautifulsoup4
 vaderSentiment
 finvizfinance
+numpy
+xlrd
+openpyxl
 
