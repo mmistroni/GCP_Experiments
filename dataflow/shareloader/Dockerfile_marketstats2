@@ -54,7 +54,8 @@ ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
 # the FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE directive here
 # to reduce pipeline submission time.
 # Similarly, since we already installed the pipeline package,
-# we don't have to specify the FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
+# we don't have to specify the
+FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
 
 # Optionally, verify that dependencies are not conflicting.
 # A conflict may or may not be significant for your pipeline.
