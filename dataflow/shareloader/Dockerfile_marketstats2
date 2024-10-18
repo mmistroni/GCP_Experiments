@@ -18,23 +18,23 @@ COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:2023
 ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
-RUN mkdir -p ${WORKDIR}/shareloader
+RUN mkdir -p ${WORKDIR}/src
+RUN mkdir -p ${WORKDIR}/src/shareloader
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
 COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
-COPY modules ${WORKDIR}/shareloader/modules
-COPY __init__.py ${WORKDIR}/__init__.py
+COPY modules ${WORKDIR}/src/shareloader/modules
 COPY __init__.py ${WORKDIR}/shareloader/__init__.py
 
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
 RUN echo '--- listing shareloader -----'
-RUN ls -la  ${WORKDIR}/shareloader
+RUN ls -la  ${WORKDIR}/src/shareloader
 
 RUN echo '--- listing modules -----'
-RUN ls -la  ${WORKDIR}/shareloader/modules
+RUN ls -la  ${WORKDIR}/src/shareloader/modules
 
 
 RUN echo '----- cat ting  main--'
@@ -47,8 +47,6 @@ RUN pip install -e .
 
 # Super important to add these lines.
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
-
-
 
 # Because this image will be used as custom sdk container image, and it already
 # installs the dependencies from the requirements.txt, we can omit
