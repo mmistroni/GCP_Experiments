@@ -21,6 +21,7 @@ WORKDIR ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/shareloader
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
+COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
 COPY modules ${WORKDIR}/shareloader/modules
 COPY __init__.py ${WORKDIR}/__init__.py
@@ -55,7 +56,7 @@ ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
 # to reduce pipeline submission time.
 # Similarly, since we already installed the pipeline package,
 # we don't have to specify the
-FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
+#ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
 
 # Optionally, verify that dependencies are not conflicting.
 # A conflict may or may not be significant for your pipeline.
