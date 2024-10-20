@@ -20,8 +20,8 @@ WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}/src
 RUN mkdir -p ${WORKDIR}/src/shareloader
-COPY requirements.txt .
-COPY setup_dftester.py setup.py
+COPY requirements_marketstats.txt ./requirements.txt
+COPY setup_mktstats.py setup.py
 COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
 COPY modules ${WORKDIR}/src/shareloader/modules
