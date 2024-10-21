@@ -7,7 +7,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import datetime, date
-from shareloader.modules.marketstats_utils import MarketBreadthCombineFn, get_vix
+from .marketstats_utils import MarketBreadthCombineFn, get_vix
 
 import requests
 
