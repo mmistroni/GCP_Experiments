@@ -29,8 +29,6 @@ COPY shareloader ${WORKDIR}/src/shareloader
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
-RUN echo '--- listing shareloader -----'
-RUN ls -la  ${WORKDIR}/src/shareloader
 
 RUN echo '--- listing modules -----'
 RUN ls -la  ${WORKDIR}/src/shareloader/modules
