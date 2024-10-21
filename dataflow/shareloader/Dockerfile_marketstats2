@@ -24,11 +24,15 @@ COPY requirements_marketstats.txt ./requirements.txt
 COPY setup_mktstats.py setup.py
 COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
-COPY shareloader ${WORKDIR}/src/shareloader
-
+COPY modules ${WORKDIR}/src/shareloader/modules
+COPY __init__.py ${WORKDIR}/src/shareloader
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
+
+RUN echo '----- listing src'
+RUN ls -la ${WORKDIR}/src
+
 
 RUN echo '--- listing modules -----'
 RUN ls -la  ${WORKDIR}/src/shareloader/modules
