@@ -24,8 +24,8 @@ COPY requirements_marketstats.txt ./requirements.txt
 COPY setup_mktstats.py setup.py
 COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
-COPY modules ${WORKDIR}/src/shareloader/modules
-COPY __init__.py ${WORKDIR}/src/shareloader
+COPY src src
+
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
