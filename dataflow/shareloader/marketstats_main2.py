@@ -1,4 +1,4 @@
-from mypackage import launcher
+import mypackage.launcher
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
