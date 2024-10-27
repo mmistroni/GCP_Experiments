@@ -19,7 +19,6 @@ ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}/src
-RUN mkdir -p ${WORKDIR}/src/shareloader
 COPY requirements_marketstats.txt ./requirements.txt
 COPY setup_mktstats.py setup.py
 COPY marketstats.toml pyproject.toml
