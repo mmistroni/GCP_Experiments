@@ -35,7 +35,7 @@ RUN ls -la ${WORKDIR}/src
 
 
 RUN echo '--- listing modules -----'
-RUN ls -la  ${WORKDIR}/src/shareloader/modules
+RUN ls -la  ${WORKDIR}/src/mypackage
 
 
 RUN echo '----- cat ting  main--'
