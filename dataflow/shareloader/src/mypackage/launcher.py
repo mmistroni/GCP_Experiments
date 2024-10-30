@@ -6,9 +6,6 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from datetime import datetime, date
-from mypackage import marketstats_utils
-
-import requests
 
 
 class AbcOptions(PipelineOptions):
@@ -24,7 +21,6 @@ class AbcOptions(PipelineOptions):
 
 def run_vix(p, key):
     return (p | 'start run_vix' >> beam.Create(['20210101'])
-            | 'vix' >> beam.Map(lambda d: marketstats_utils.get_vix(key))
             | 'remap vix' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': 'VIX', 'VALUE': str(d)})
             )
@@ -33,11 +29,6 @@ def run_vix(p, key):
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
-    # We use the save_main_session option because one or more DoFn's in this
-    # workflow rely on global context (e.g., a module imported at module level).
-
-    # Check  this https://medium.datadriveninvestor.com/markets-is-a-correction-coming-aa609fba3e34
-
     pipeline_options = AbcOptions()
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
 
@@ -45,16 +36,11 @@ def run(argv=None, save_main_session=True):
 
     with beam.Pipeline(options=pipeline_options) as p:
         fmp_key = pipeline_options.key
-        fred_key = pipeline_options.fredkey
         logging.info(pipeline_options.get_all_options())
-        current_dt = datetime.now().strftime('%Y%m%d-%H%M')
-
         destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
 
         logging.info('====== Destination is :{}'.format(destination))
         logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
-
-        debugSink = beam.Map(logging.info)
 
         p = run_vix(p, fmp_key)
 

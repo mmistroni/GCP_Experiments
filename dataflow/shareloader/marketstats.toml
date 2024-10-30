@@ -20,17 +20,6 @@ build-backend = "setuptools.build_meta"
 name = "mypackage"
 version = "0.1.0"
 dependencies = [
-  "apache-beam[gcp]==2.58.0",  # Must match the version in `Dockerfile``.
-  "avro-python3",
-  "pyarrow",
-  "pandas-datareader",
-  "sendgrid",
-  "lxml",
-  "beautifulsoup4",
-  "vaderSentiment",
-  "finvizfinance",
-  "numpy",
-  "xlrd",
-  "openpyxl",
+  "apache-beam[gcp]==2.54.0",  # Must match the version in `Dockerfile``.
 ]
 
