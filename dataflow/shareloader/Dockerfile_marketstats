@@ -5,41 +5,21 @@ ARG WORKDIR=/dataflow/template
 RUN mkdir -p ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/modules
 WORKDIR ${WORKDIR}
-COPY src ${WORKDIR}/s
+COPY modules ${WORKDIR}/modules
 
 
 RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp] sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0 beautifulsoup4==4.10.0 vaderSentiment==3.3.2 finvizfinance
 RUN apt-get update && apt-get install -y iputils-ping dnsutils
 
-COPY setup_mktstats.py  ./setup.py
-COPY marketstats_main.py  ./main.py
-COPY requirements_marketstats.txt ./requirements.txt
-
-RUN echo '----- listing workdir'
-RUN ls -la .
-
-RUN echo '----- listing src'
-RUN ls -la ./src
-
-RUN echo '----- listing mypackages'
-RUN ls -la ./src/mypackages
-
-
-
-RUN pip install --no-cache-dir -r requirements.txt
-
-RUN pip install -e .
+COPY __init__.py ${WORKDIR}/__init__.py
+COPY setup.py ${WORKDIR}/setup.py
+COPY marketstats_main.py ${WORKDIR}/marketstats_main.py
 
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/main.py"
+ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main.py"
 
-RUN pip check
 
-# Optionally, list all installed dependencies.
-# The output can be used to seed requirements.txt for reproducible builds.
-RUN pip freeze
-
-# Set the entrypoint to Apache Beam SDK launcher, which allows this image
-# to be used as an SDK container image.
-ENTRYPOINT ["/opt/apache/beam/boot"]
+RUN echo '----- listing workdir'
+RUN ls -la ${WORKDIR}
