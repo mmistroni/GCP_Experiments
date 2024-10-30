@@ -33,7 +33,7 @@ images: [ 'gcr.io/$_PROJECT_ID/$_MARKETSTATS_IMAGE_NAME' ]
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _MARKETSTATS_IMAGE_NAME: marketstats2:latest
-  _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template2.json
+  _MARKETSTATS_IMAGE_NAME: marketstats2:latest_new
+  _MARKETSTATS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/marketstats_flex_template3.json
   _MARKETSTATS_METADATA_FILE: ./dataflow/shareloader/marketstats_template_metadata
 
