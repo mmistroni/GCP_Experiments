@@ -1,5 +1,5 @@
-import mypackage.launcher
+from mypackage import launcher
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  mypackage.launcher.run()
+  launcher.run()
