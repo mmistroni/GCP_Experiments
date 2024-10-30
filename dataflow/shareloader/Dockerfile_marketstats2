@@ -21,7 +21,7 @@ WORKDIR ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/src
 COPY requirements_marketstats.txt ./requirements.txt
 COPY setup_mktstats.py setup.py
-COPY marketstats.toml pyproject.toml
+#COPY marketstats.toml pyproject.toml
 COPY marketstats_main2.py .
 COPY src src
 
@@ -39,30 +39,11 @@ RUN ls -la  ${WORKDIR}/src/mypackage
 
 RUN echo '----- cat ting  main--'
 RUN cat marketstats_main2.py
-RUN echo '----- INSTALLING REQS ----'
-RUN pip install --no-cache-dir -r requirements.txt
-
-
-RUN pip install -e .
 
 # Super important to add these lines.
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
 
-# Because this image will be used as custom sdk container image, and it already
-# installs the dependencies from the requirements.txt, we can omit
-# the FLEX_TEMPLATE_PYTHON_REQUIREMENTS_FILE directive here
-# to reduce pipeline submission time.
-# Similarly, since we already installed the pipeline package,
-# we don't have to specify the
-#ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py" configuration option.
-
-# Optionally, verify that dependencies are not conflicting.
-# A conflict may or may not be significant for your pipeline.
-RUN pip check
-
-# Optionally, list all installed dependencies.
-# The output can be used to seed requirements.txt for reproducible builds.
-RUN pip freeze
+ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 
 # Set the entrypoint to Apache Beam SDK launcher, which allows this image
 # to be used as an SDK container image.
