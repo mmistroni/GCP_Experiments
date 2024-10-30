@@ -20,10 +20,10 @@ WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}/src
 COPY requirements_marketstats.txt ./requirements.txt
-COPY setup_mktstats.py setup.py
+COPY setup_mktstats.py ./setup.py
 #COPY marketstats.toml pyproject.toml
-COPY marketstats_main2.py .
-COPY src src
+COPY marketstats_main2.py ./main.py
+COPY src                src
 
 
 RUN echo '----- listing workdir'
@@ -38,12 +38,17 @@ RUN ls -la  ${WORKDIR}/src/mypackage
 
 
 RUN echo '----- cat ting  main--'
-RUN cat marketstats_main2.py
+RUN cat main.py
+
+RUN echo '----- INSTALLING REQS ----'
+RUN pip install --no-cache-dir -r requirements.txt
+
+
+RUN pip install -e .
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/main.py"
 
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 
 # Set the entrypoint to Apache Beam SDK launcher, which allows this image
 # to be used as an SDK container image.
