@@ -21,7 +21,7 @@ WORKDIR ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/shareloader
 COPY requirements.txt .
 COPY setup_dftester.py setup.py
-COPY marketstats_main2.py .
+COPY dataflow_tester.py .
 COPY modules ${WORKDIR}/shareloader/modules
 COPY __init__.py ${WORKDIR}/__init__.py
 COPY __init__.py ${WORKDIR}/shareloader/__init__.py
@@ -37,7 +37,7 @@ RUN ls -la  ${WORKDIR}/shareloader/modules
 
 
 RUN echo '----- cat ting  main--'
-RUN cat marketstats_main2.py
+RUN cat dataflow_tester.py
 RUN echo '----- INSTALLING REQS ----'
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -45,7 +45,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install -e .
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/dataflow_tester.py"
 
 
 
