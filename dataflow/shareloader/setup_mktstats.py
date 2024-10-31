@@ -13,7 +13,7 @@ setup(
     author="Your Name",
     author_email="your_email@example.com",
     install_requires=REQUIRED_PACKAGES,
-    packages=find_packages(where="src"),
-    package_dir={"": "src"},  # Specify the base directory for packages
+    packages=find_packages()
+
 
 )
