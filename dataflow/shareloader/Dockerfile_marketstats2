@@ -20,7 +20,8 @@ WORKDIR ${WORKDIR}
 
 
 COPY requirements_marketstats.txt ./requirements.txt
-COPY setup_mktstats.py ./setup.py
+#COPY setup_mktstats.py ./setup.py
+COPY marketstats.toml ./pyproject.toml
 COPY marketstats_main2.py  .
 COPY src  src
 

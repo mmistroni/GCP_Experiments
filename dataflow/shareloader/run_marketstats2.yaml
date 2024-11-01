@@ -26,7 +26,7 @@ steps:
           , '--staging-location=gs://datascience-projects_cloudbuild'
           ]
 substitutions:
-  _JOB_NAME: 'dftester'
+  _JOB_NAME: 'marketstats2'
   _MKTSTATS2_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/mktstats2_flex_template_33.json
   _REGION: us-central1
   _FMPREP_KEY: ''
