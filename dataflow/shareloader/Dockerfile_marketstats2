@@ -19,7 +19,7 @@ ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
 
-COPY requirements_mktstats.txt ./requirements.txt
+COPY requirements_marketstats.txt ./requirements.txt
 COPY setup_mktstats.py ./setup.py
 COPY marketstats_main2.py  .
 COPY src  src
