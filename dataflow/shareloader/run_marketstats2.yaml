@@ -10,21 +10,13 @@ steps:
           , 'run'
           , '$_JOB_NAME'
           , '--template-file-gcs-location'
-          , '$_DFTESTER_TEMPLATE_GCS_LOCATION'
+          , '$_MKTSTATS2_TEMPLATE_GCS_LOCATION'
           , '--parameters'
           , 'fmprepkey=$_FMPREP_KEY'
           , '--parameters'
-          , 'input=$_INPUT'
+          , 'recipients=$_RECIPIENTS'
           , '--parameters'
-          , 'output=$_OUTPUT'
-          , '--parameters'
-          , 'period=$_PERIOD'
-          , '--parameters'
-          ,'limit=$_LIMIT'
-          , '--parameters'
-          ,'runtype=$_RUNTYPE'
-          , '--parameters'
-          ,'sendgridkey=$_SENDGRIDKEY'
+          , 'fredkey=$_FREDKEY'
           , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
@@ -33,18 +25,14 @@ steps:
           ]
 substitutions:
   _JOB_NAME: 'dftester'
-  _DFTESTER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/dftester_flex_template_33.json
+  _MKTSTATS2_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/mktstats2_flex_template_33.json
   _REGION: us-central1
   _FMPREP_KEY: ''
-  _INPUT: ''
-  _OUTPUT: ''
-  _PERIOD: 'annual'
-  _LIMIT: '10'
-  _SENDGRIDKEY: ''
-  _RUNTYPE: ''
+  _FREDKEY: ''
+  _RECIPIENTS: 'mmistroni@gmail.com'
   _PROJECT_ID: datascience-projects
-  _DFTESTER_IMAGE_NAME: dftester:latest_33
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest_33
+  _MKTSTATS2_IMAGE_NAME: mkstats2:latest_33
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/mkstats2:latest_33
 
 
 
