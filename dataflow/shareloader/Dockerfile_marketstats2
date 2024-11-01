@@ -44,7 +44,6 @@ RUN cat marketstats_main2.py
 
 
 RUN echo '----- INSTALLING REQS ----'
-RUN pip install --no-cache-dir -r requirements.txt
 
 
 RUN pip install -e .
