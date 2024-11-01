@@ -20,6 +20,19 @@ build-backend = "setuptools.build_meta"
 name = "shareloader"
 version = "0.1.0"
 dependencies = [
-  "apache-beam[gcp]",  # Must match the version in `Dockerfile``.
+  "apache-beam[gcp]",
+  "apache-beam[gcp]",
+  "avro-python3",
+  "pyarrow",
+  "pandas-datareader",
+  "sendgrid",
+  "lxml",
+  "beautifulsoup4",
+  "vaderSentiment",
+  "finvizfinance",
+  "numpy",
+  "xlrd",
+  "openpyxl",
+
 ]
 
