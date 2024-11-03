@@ -10,6 +10,7 @@ from apache_beam.io.gcp.internal.clients import bigquery
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
+from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps
 import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -118,6 +119,17 @@ def run_test_pipeline(p):
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.05))
              )
+def run_etoro_pipeline(p):
+    cob = date.today()
+    test_ppln = get_leaps()
+    return  (test_ppln
+                | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all extratickers' >> beam.CombineGlobally(combine_tickers)
+               | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
+             )
+
+
 
 def parse_known_args(argv):
   """Parses args for the workflow."""
@@ -150,7 +162,7 @@ class EmailSender(beam.DoFn):
         msg = element
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
-            "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th>{}</table></body></html>"
+            "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Broker</th>{}</table></body></html>"
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
@@ -180,6 +192,7 @@ class StockSelectionCombineFn(beam.CombineFn):
                           <td>{input['date']}</td>
                           <td>{input['close']}</td>
                           <td>{input['change']}</td>
+                          <td>{input['selection']}</td>
                         </tr>"""
 
     row_acc = accumulator
@@ -234,8 +247,10 @@ def run(argv = None, save_main_session=True):
         obb | ' to finvbiz' >> finviz_sink
 
         tester = run_test_pipeline(p)
+        etoro = run_etoro_pipeline(p)
 
-        premarket_results = (tester | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn()))
+        premarket_results = ( (tester, etoro)
+                  | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
         send_email(premarket_results, known_args.sendgridkey)
 

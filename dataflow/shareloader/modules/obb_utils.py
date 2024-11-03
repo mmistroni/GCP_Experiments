@@ -18,13 +18,13 @@ def create_bigquery_ppln(p):
 
 class AsyncProcess(beam.DoFn):
 
-    def __init__(self, credentials, start_date, price_change=0.07):
+    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500'):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
         self.end_date = start_date
         self.start_date = (self.end_date - BDay(1)).date()
         self.price_change = price_change
-
+        self.selection = selection
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
 
@@ -57,6 +57,8 @@ class AsyncProcess(beam.DoFn):
                         latest['prev_date'] = last_close['date']
                         latest['prev_close'] = last_close['close']
                         latest['change'] = increase
+                        latest['selection'] = self.selection
+
                         all_records.append(latest)
                     else:
                         logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
