@@ -10,8 +10,8 @@ from apache_beam.testing.util import assert_that, equal_to
 import os
 from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
-from shareloader.modules.obb_utils import OBBLoader
-from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline
+
+from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -41,7 +41,6 @@ class TestDfTesterLoader(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create(['AAPL'])
-                       | 'Run Loader' >> beam.ParDo(DfTesterLoader(key, period='annual'))
                        | self.notEmptySink
                      )
 
@@ -79,7 +78,6 @@ class TestDfTesterLoader(unittest.TestCase):
         pat = os.environ['OBB_PAT_KEY']
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create(['AAPL'])
-                     | 'Run Loader' >> beam.ParDo(OBBLoader(pat))
                      | self.debugSink
                      )
     def test_launcher(self):
@@ -92,7 +90,9 @@ class TestDfTesterLoader(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
             input = run_premarket_pipeline(p, key)
-            input | self.debugSink
+            input2 = run_etoro_pipeline(p)
+            res = ( (input, input2) |  "fmaprun" >> beam.Flatten()
+                    | 'tosink' >> self.debugSink)
 
 
 

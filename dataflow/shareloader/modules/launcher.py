@@ -249,7 +249,7 @@ def run(argv = None, save_main_session=True):
         tester = run_test_pipeline(p)
         etoro = run_etoro_pipeline(p)
 
-        premarket_results = ( (tester, etoro)
+        premarket_results = ( (tester, etoro)| "flatten run" >> beam.Flatten()
                   | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
         send_email(premarket_results, known_args.sendgridkey)
