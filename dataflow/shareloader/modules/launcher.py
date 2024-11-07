@@ -126,7 +126,7 @@ def run_etoro_pipeline(p):
                 | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
+               | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.07, selection='EToro'))
              )
 
 
