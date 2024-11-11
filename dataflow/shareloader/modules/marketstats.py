@@ -88,7 +88,7 @@ class EmailSender(beam.DoFn):
             {
                 "to": [
                     {
-                        "email": "mrc_none@yahoo.com"
+                        "email": "mmapplausetest2@gmail.com"
                     }
                 ]
             }
@@ -105,13 +105,12 @@ class EmailSender(beam.DoFn):
         print('Sending \n {}'.format(content))
         message = Mail(
             from_email=Email('gcp_cloud_mm@outlook.com'),
-            to_emails=To(['mmistroni@gmail.com', 'mrc_none@yahoo.com']),
+            to_emails=To(['mmistroni@gmail.com', 'mmapplausetest2@gmail.com']),
             subject='Market Stats',
             html_content=content)
 
-        #personalizations = self._build_personalization(self.recipients)
-        #for pers in personalizations:
-        #    message.add_personalization(pers)
+        personalizations = self._build_personalization(self.recipients)
+        message.add_personalization(personalizations)
 
         sg = SendGridAPIClient(self.key)
 
