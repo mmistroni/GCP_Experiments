@@ -113,9 +113,9 @@ class EmailSender(beam.DoFn):
         #message.add_personalization(personalizations)
 
         sg = SendGridAPIClient(self.key)
-        mail_send_job = sg.client.mail.send.post(request_body=message.dict())
-        #esponse = sg.send(message)
-        logging.info(mail_send_job)
+
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
 
 
 class XyzOptions(PipelineOptions):
