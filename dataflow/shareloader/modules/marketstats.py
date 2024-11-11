@@ -109,13 +109,13 @@ class EmailSender(beam.DoFn):
             subject='Market Stats',
             html_content=content)
 
-        personalizations = self._build_personalization(self.recipients)
-        message.add_personalization(personalizations)
+        #personalizations = self._build_personalization(self.recipients)
+        #message.add_personalization(personalizations)
 
         sg = SendGridAPIClient(self.key)
-
-        response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        mail_send_job = sg.client.mail.send.post(request_body=message.dict())
+        #esponse = sg.send(message)
+        logging.info(mail_send_job)
 
 
 class XyzOptions(PipelineOptions):
