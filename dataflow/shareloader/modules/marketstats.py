@@ -102,7 +102,7 @@ class EmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
         template = "<html><body>{}</body></html>"
         content = template.format(element)
-        print('Sending \n {}'.format(content))
+        logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email=Email('gcp_cloud_mm@outlook.com'),
             to_emails=To(['mmistroni@gmail.com', 'mmapplausetest2@gmail.com']),
@@ -115,7 +115,7 @@ class EmailSender(beam.DoFn):
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        logging.info(response.status_code, response.body, response.headers)
 
 
 class XyzOptions(PipelineOptions):
