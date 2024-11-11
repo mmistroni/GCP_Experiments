@@ -105,7 +105,7 @@ class EmailSender(beam.DoFn):
         print('Sending \n {}'.format(content))
         message = Mail(
             from_email=Email('gcp_cloud_mm@outlook.com'),
-            to_emails=To('mmistroni@gmail.com'),
+            to_emails=To(['mmistroni@gmail.com', 'mrc_none@yahoo.com']),
             subject='Market Stats',
             html_content=content)
 
