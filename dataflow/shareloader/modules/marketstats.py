@@ -87,10 +87,6 @@ class EmailSender(beam.DoFn):
             subject='Market Stats',
             html_content=content)
 
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
         sg = SendGridAPIClient(self.key)
 
         response = sg.send(message)
