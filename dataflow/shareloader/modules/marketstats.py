@@ -105,7 +105,7 @@ class EmailSender(beam.DoFn):
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email=Email('gcp_cloud_mm@outlook.com'),
-            to_emails=To(['mmistroni@gmail.com', 'mmapplausetest2@gmail.com']),
+            to_emails=To(self.recipients),
             subject='Market Stats',
             html_content=content)
 
