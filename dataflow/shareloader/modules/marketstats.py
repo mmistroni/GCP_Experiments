@@ -23,7 +23,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
 
 
 from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
+from sendgrid.helpers.mail import Mail, Email, To
 from functools import reduce
 import time
 
@@ -76,16 +76,6 @@ class EmailSender(beam.DoFn):
         self.key = key
 
 
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-
     def process(self, element):
         logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
         template = "<html><body>{}</body></html>"
@@ -93,7 +83,7 @@ class EmailSender(beam.DoFn):
         print('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
-            to_emails=self.recipients,
+            to_emails=To(self.recipients),
             subject='Market Stats',
             html_content=content)
 
