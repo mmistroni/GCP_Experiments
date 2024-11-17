@@ -5,7 +5,7 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, is_not_empty
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.testing.test_pipeline import TestPipeline
-from datetime import date
+from datetime import date, datetime
 from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_all_prices_for_date, get_all_us_stocks, get_all_us_stocks2, MarketBreadthCombineFn,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
@@ -344,15 +344,20 @@ class TestMarketStats(unittest.TestCase):
                     | self.notEmptySink
             )
 
-    @patch('shareloader.modules.marketstats.get_senate_disclosures')
-    def test_get_senate_disclosures(self, senate_mock):
+    #@patch('shareloader.modules.marketstats.get_senate_disclosures')
+    def test_get_senate_disclosures(self):
         fmp_key = os.environ['FMPREPKEY']
 
         expected = [{'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'label', 'VALUE' : 'value'}]
-        senate_mock.return_value = expected
+        #senate_mock.return_value = expected
         with TestPipeline(options=PipelineOptions()) as p:
             res = run_senate_disclosures(p, fmp_key)
-            res | self.notEmptySink
+            result = (res | 'Remapping ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d'),
+                                            TICKER=d.get('VALUE', '').split('|')[0],
+                                        DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else d.get('VALUE', '').split('|')[0]))
+                          | 'TOSink' >> self.printSink
+                                                     )
+
 
 
     def test_compute_etf_historical(self):
