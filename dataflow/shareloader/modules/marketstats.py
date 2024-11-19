@@ -583,10 +583,10 @@ def run(argv=None, save_main_session=True):
 
         logging.info('Writing senate disclosures to sink')
 
-        (senate_disc | 'Remapping SD ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d'),
+        (senate_disc | 'Remapping SD ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d').date(),
                                                     TICKER=d.get('VALUE', '').split('|')[0],
                                                     DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else
                                                     d.get('VALUE', '').split('|')[0]))
-                      | 'To Senate Sink' >> debugSink)
+                      | 'To Senate Sink' >> senate_disclosures_sink)
 
 
