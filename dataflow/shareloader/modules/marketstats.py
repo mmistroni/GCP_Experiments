@@ -80,7 +80,7 @@ class EmailSender(beam.DoFn):
         personalizations= []
 
         for recipient in recipients:
-            personalizations.add({
+            personalizations.append({
                     "to": [
                         {
                             "email": recipient
