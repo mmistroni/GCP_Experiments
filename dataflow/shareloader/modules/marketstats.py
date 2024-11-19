@@ -587,6 +587,6 @@ def run(argv=None, save_main_session=True):
                                                     TICKER=d.get('VALUE', '').split('|')[0],
                                                     DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else
                                                     d.get('VALUE', '').split('|')[0]))
-                      | 'To Senate Sink' >> senate_disclosures_sink)
+                      | 'To Senate Sink' >> debug_sink)
 
 
