@@ -375,7 +375,7 @@ def run(argv=None, save_main_session=True):
                 projectId="datascience-projects",
                 datasetId='gcp_shareloader',
                 tableId='senate_disclosures'),
-            schema='DATE:DATE,TICKER:STRING,DISCLOSURE:STRING',
+            schema='AS_OF_DATE:DATE,TICKER:STRING,DISCLOSURE:STRING',
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
