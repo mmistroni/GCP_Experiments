@@ -77,23 +77,16 @@ class EmailSender(beam.DoFn):
 
 
     def _build_personalization(self, recipients):
-        personalizations = [
-            {
-                "to": [
-                    {
-                        "email": "mmistroni@gmail.com"
-                    }
-                ]
-            },
-            {
-                "to": [
-                    {
-                        "email": "mmapplausetest2@gmail.com"
-                    }
-                ]
-            }
-        ]
+        personalizations= []
 
+        for recipient in recipients:
+            personalizations.add({
+                    "to": [
+                        {
+                            "email": recipient
+                        }
+                ]}
+            )
 
         return personalizations
 
@@ -109,8 +102,8 @@ class EmailSender(beam.DoFn):
             subject='Market Stats',
             html_content=content)
 
-        #personalizations = self._build_personalization(self.recipients)
-        #message.add_personalization(personalizations)
+        personalizations = self._build_personalization(self.recipients)
+        message.add_personalization(personalizations)
 
         sg = SendGridAPIClient(self.key)
 
