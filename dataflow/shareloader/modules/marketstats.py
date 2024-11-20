@@ -77,17 +77,9 @@ class EmailSender(beam.DoFn):
 
 
     def _build_personalization(self, recipients):
-        personalizations= []
-
-        for recipient in recipients:
-            personalizations.append({
-                    "to": [
-                        {
-                            "email": recipient
-                        }
-                ]}
-            )
-
+        personalization = Personalization()
+        for email in recipients:
+          personalization.add_to(To(email))
         return personalizations
 
 
