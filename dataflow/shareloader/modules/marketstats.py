@@ -80,7 +80,7 @@ class EmailSender(beam.DoFn):
         personalization = Personalization()
         for email in recipients:
           personalization.add_to(To(email))
-        return personalizations
+        return personalization
 
 
     def process(self, element):
