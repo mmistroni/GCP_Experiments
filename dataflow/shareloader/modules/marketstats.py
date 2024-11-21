@@ -77,10 +77,16 @@ class EmailSender(beam.DoFn):
 
 
     def _build_personalization(self, recipients):
-        personalization = Personalization()
+        to_dict = []
         for email in recipients:
-          personalization.add_to(To(email))
-        return personalization
+          to_dict.append(
+              { "email" : email,
+                "name"  : email
+                })
+
+        pers_dict = dict(to=to_dict)
+        return [pers_dict]
+
 
 
     def process(self, element):
