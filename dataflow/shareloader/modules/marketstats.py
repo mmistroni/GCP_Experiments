@@ -94,14 +94,16 @@ class EmailSender(beam.DoFn):
         template = "<html><body>{}</body></html>"
         content = template.format(element)
         logging.info('Sending \n {}'.format(content))
+
+        to_emails = []
+        for recipient in self.recipients:
+            to_emails.append((recipient, recipient.split('@')[0]))
+
         message = Mail(
             from_email=Email('gcp_cloud_mm@outlook.com'),
-            to_emails=To(self.recipients),
+            to_emails=to_emails,
             subject='Market Stats',
             html_content=content)
-
-        personalizations = self._build_personalization(self.recipients)
-        message.add_personalization(personalizations)
 
         sg = SendGridAPIClient(self.key)
 
