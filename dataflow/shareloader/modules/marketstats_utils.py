@@ -710,6 +710,30 @@ def get_cramer_picks(fmpkey, numdays):
 
     return holder
 
+def get_shiller__indexes():
+    shillers = []
+    pd_1yc = pd.read_csv('https://shiller-data-public.s3.amazonaws.com/icf_stock_market_confidence_index_table.csv', header=0)\
+                .to_dict('records')[1:3]
+
+    latest_data = pd_1yc[0]
+    prev_data = pd_1yc[1]
+
+    cob = latest_data['Unnamed: 0']
+    value = latest_data['Index Value']
+    prev = prev_data['Index Value']
+
+    shillers.add({'AS_OF_DATE': cob,
+                  'LABEL': 'SHILLER_1Y_CONFIDENCE',
+                  'VALUE':  f'{value} (Prev:{prev}'
+                  })
+
+    pd_crash = pd.read_csv('https://shiller-data-public.s3.amazonaws.com/icf_stock_market_crash_index_table.csv')\
+                .to_dict('records')[-2]
+
+
+
+
+
 class NewHighNewLowLoader(beam.DoFn):
     def __init__(self, key):
         self.key = key
