@@ -11,7 +11,8 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         ParseManufacturingPMI, get_economic_calendar, get_equity_putcall_ratio,\
                         get_market_momentum,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
-                        get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index
+                        get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
+                        get_shiller__indexes
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -593,7 +594,11 @@ class TestMarketStats(unittest.TestCase):
         process.crawl(MySpider)
         process.start()
 
+    def test_shillers(self):
 
+        data = get_shiller__indexes()
+        from pprint import pprint
+        pprint(data)
 
 
 
