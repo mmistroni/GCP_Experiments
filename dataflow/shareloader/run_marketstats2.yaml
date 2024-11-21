@@ -14,7 +14,7 @@ steps:
           , '--parameters'
           , 'key=$_FMPREP_KEY'
           , '--parameters'
-          , 'sendgridkey=abc'
+          , 'sendgridkey=$_SENDGRID_KEY'
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
           , '--parameters'
@@ -30,10 +30,10 @@ substitutions:
   _MKTSTATS2_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/mktstats2_flex_template_33.json
   _REGION: us-central1
   _FMPREP_KEY: ''
-  _FREDKEY: ''
+  _SENDGRID_KEY: ''
   _RECIPIENTS: 'mmistroni@gmail.com'
+  _FRED_KEY: ''
   _PROJECT_ID: datascience-projects
-  _MKTSTATS2_IMAGE_NAME: mkstats2:latest_33
   _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/mkstats2:latest_33
 
 

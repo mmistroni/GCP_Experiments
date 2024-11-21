@@ -13,6 +13,7 @@ from .fred_utils import get_high_yields_spreads
 from .finviz_utils import get_high_low
 import math
 from bs4 import BeautifulSoup
+from collections import OrderedDict
 
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
@@ -712,27 +713,33 @@ def get_cramer_picks(fmpkey, numdays):
 
 def get_shiller__indexes():
     shillers = []
-    pd_1yc = pd.read_csv('https://shiller-data-public.s3.amazonaws.com/icf_stock_market_confidence_index_table.csv', header=0)\
-                .to_dict('records')[1:3]
 
-    latest_data = pd_1yc[0]
-    prev_data = pd_1yc[1]
-
-    cob = latest_data['Unnamed: 0']
-    value = latest_data['Index Value']
-    prev = prev_data['Index Value']
-
-    shillers.add({'AS_OF_DATE': cob,
-                  'LABEL': 'SHILLER_1Y_CONFIDENCE',
-                  'VALUE':  f'{value} (Prev:{prev}'
-                  })
-
-    pd_crash = pd.read_csv('https://shiller-data-public.s3.amazonaws.com/icf_stock_market_crash_index_table.csv')\
-                .to_dict('records')[-2]
+    shiller_dict = OrderedDict()
+    shiller_dict['SHILLER_1Y_CONFIDENCE'] = 'https://shiller-data-public.s3.amazonaws.com/icf_stock_market_confidence_index_table.csv'
+    shiller_dict['CRASH_CONFIDENCE_INDEX'] = 'https://shiller-data-public.s3.amazonaws.com/icf_stock_market_crash_index_table.csv'
+    shiller_dict[
+        'BUY_ON_DIP_CONFIDENCE'] = 'https://shiller-data-public.s3.amazonaws.com/icf_stock_market_dips_index_table.csv'
+    shiller_dict[
+        'VALUATION_CONFIDENCE_INDEX'] = 'https://shiller-data-public.s3.amazonaws.com/icf_stock_market_valuation_index_table.csv'
 
 
 
+    for label, url in shiller_dict.items():
+        data  = pd.read_csv(url, header=1).to_dict('records')[0:2]
 
+        latest_data = data[0]
+        prev_data = data[1]
+
+        cob = latest_data['Unnamed: 0']
+        value = latest_data['Index Value']
+        prev = prev_data['Index Value']
+
+        shillers.append({'AS_OF_DATE': cob,
+                      'LABEL': label,
+                      'VALUE':  f'{value} (Prev:{prev}'
+                      })
+
+    return shillers
 
 class NewHighNewLowLoader(beam.DoFn):
     def __init__(self, key):
