@@ -2,7 +2,7 @@ import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
-                                            get_high_low, overnight_return
+                                            get_high_low, overnight_return, get_advance_decline
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -187,6 +187,11 @@ class MyTestCase(unittest.TestCase):
     def test_overnight_return(self):
         res = overnight_return()
         print(res)
+
+    def test_advancedecline(self):
+        res = get_advance_decline()
+        print(res)
+
 
 
 if __name__ == '__main__':
