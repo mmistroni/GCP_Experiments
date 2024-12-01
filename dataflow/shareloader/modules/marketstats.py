@@ -20,7 +20,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
                             get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes
-
+from shareloader.modules.finviz_utils import  get_advance_decline
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization, To
@@ -320,6 +320,13 @@ def run_newhigh_new_low(p, fmpKey):
                                               'VALUE' : f"{d['VALUE']}"
                                               })
            )
+
+def run_advance_decline(p):
+    return  (p
+           | 'Start' >> beam.Create(['Test'])
+           | 'calling  ad' >> beam.Map(get_advance_decline())
+           )
+
 
 
 def run_shillers(p):

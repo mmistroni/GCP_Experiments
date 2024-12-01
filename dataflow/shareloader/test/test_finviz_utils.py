@@ -189,6 +189,15 @@ class MyTestCase(unittest.TestCase):
         print(res)
 
     def test_advancedecline(self):
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Run adLoader' >> beam.ParDo(get_advance_decline())
+                     | 'Mapp ad' >> beam.Map(lambda d: dict())
+                     | self.debugSink
+                     )
+
+
         res = get_advance_decline()
         print(res)
 

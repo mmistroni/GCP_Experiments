@@ -20,7 +20,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
-                                            run_cramer_pipeline
+                                            run_cramer_pipeline, run_advance_decline
 
 from shareloader.modules.sector_loader import run_my_pipeline
 
@@ -604,6 +604,13 @@ class TestMarketStats(unittest.TestCase):
              )
 
         # QuiverQuants top funds https://www.quiverquant.com/sec13f/
+
+    def test_advance_decline(self):
+        debugSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            res = run_advance_decline(p)
+            res |  debugSink
 
 
 
