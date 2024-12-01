@@ -711,7 +711,7 @@ def get_cramer_picks(fmpkey, numdays):
 
     return holder
 
-def get_shiller__indexes():
+def get_shiller_indexes():
     shillers = []
 
     shiller_dict = OrderedDict()

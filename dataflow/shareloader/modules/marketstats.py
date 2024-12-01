@@ -19,7 +19,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks, NewHighNewLowLoader
+                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes
 
 
 from sendgrid import SendGridAPIClient
@@ -181,9 +181,6 @@ def run_junk_bond_demand(p, fredkey):
                     | 'remap junk' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'JUNK_BOND_DEMAND', 'VALUE' : str(d)})
             )
 
-
-
-
 def run_senate_disclosures(p, key):
     return (p | 'start run_sd' >> beam.Create(['20210101'])
               | 'run sendisclos' >> beam.FlatMap(lambda d : get_senate_disclosures(key))
@@ -325,6 +322,12 @@ def run_newhigh_new_low(p, fmpKey):
            )
 
 
+def run_shillers(p):
+    return (p | 'shiller starter' >> beam.Create(['20240101'])
+             | 'getting shillers' >> beam.FlatMap(lambda d: get_shiller_indexes())
+             )
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -438,6 +441,8 @@ def run(argv=None, save_main_session=True):
 
         pmi_hist = run_prev_dates_statistics_manuf_pmi(p)
 
+        shillers = run_shillers(p)
+
         #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
 
@@ -464,6 +469,7 @@ def run(argv=None, save_main_session=True):
 
         junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
 
+        shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (14, d))
 
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (21, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
@@ -481,7 +487,7 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key, junk_bond_key, highlow_key,
+                        nysi_key, nymo_key, junk_bond_key, shillers_key, highlow_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,

@@ -12,7 +12,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_market_momentum,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
-                        get_shiller__indexes
+                        get_shiller_indexes
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
@@ -595,11 +595,13 @@ class TestMarketStats(unittest.TestCase):
         process.start()
 
     def test_shillers(self):
+        debugSink = beam.Map(print)
 
-        data = get_shiller__indexes()
-        from pprint import pprint
-        pprint(data)
-
+        with TestPipeline() as p:
+            (p | 'shiller starter' >> beam.Create(['20240101'])
+             | 'getting shillers' >> beam.FlatMap(lambda d: get_shiller_indexes())
+             | 'todbg' >> debugSink
+             )
 
         # QuiverQuants top funds https://www.quiverquant.com/sec13f/
 
