@@ -1,25 +1,28 @@
-FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
+FROM python:3.11-slim
+COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
-ARG WORKDIR=/dataflow/template
-RUN mkdir -p ${WORKDIR}
-RUN mkdir -p ${WORKDIR}/modules
+# Location to store the pipeline artifacts.
+ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
-COPY modules ${WORKDIR}/modules
 
-
-RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp] sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0 beautifulsoup4==4.10.0 vaderSentiment==3.3.2 finvizfinance
-RUN apt-get update && apt-get install -y iputils-ping dnsutils 
-
-COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup.py ${WORKDIR}/setup.py
+RUN mkdir -p ${WORKDIR}/src
+RUN mkdir -p ${WORKDIR}/src/shareloader
+RUN mkdir -p ${WORKDIR}/src/shareloader/modules
+COPY marketstats.toml ./pyproject.toml
 COPY economics_main.py ${WORKDIR}/economics_main.py
+COPY modules  ${WORKDIR}/src/shareloader/modules
+COPY __init__.py ${WORKDIR}/src/shareloader/__init__.py
 
+
+RUN echo '----- INSTALLING REQS ----'
+RUN pip install -e .
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/economics_main.py"
 
+RUN pip check
 
-RUN echo '----- listing workdir'
-RUN ls -la ${WORKDIR}
+RUN pip freeze
 
+ENTRYPOINT ["/opt/apache/beam/boot"]
