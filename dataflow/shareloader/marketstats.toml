@@ -33,6 +33,10 @@ dependencies = [
   "numpy",
   "xlrd",
   "openpyxl",
+  "openbb-yfinance",
+  "openbb-multpl",
+  "openbb-fmp",
+  "openbb-finviz"
 
 ]
 

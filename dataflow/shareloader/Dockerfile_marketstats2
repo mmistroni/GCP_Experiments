@@ -21,8 +21,6 @@ WORKDIR ${WORKDIR}
 RUN mkdir -p ${WORKDIR}/src
 RUN mkdir -p ${WORKDIR}/src/shareloader
 RUN mkdir -p ${WORKDIR}/src/shareloader/modules
-#COPY requirements_marketstats.txt ./requirements.txt
-#COPY setup_mktstats.py ./setup.py
 COPY marketstats.toml ./pyproject.toml
 COPY marketstats_main2.py  .
 COPY modules  ${WORKDIR}/src/shareloader/modules
@@ -45,13 +43,10 @@ RUN cat marketstats_main2.py
 
 RUN echo '----- INSTALLING REQS ----'
 
-
 RUN pip install -e .
 
 # Super important to add these lines.
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/marketstats_main2.py"
-
-
 
 # Because this image will be used as custom sdk container image, and it already
 # installs the dependencies from the requirements.txt, we can omit
