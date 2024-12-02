@@ -7,6 +7,7 @@ from pandas.tseries.offsets import BDay
 from datetime import date
 from pandas.tseries.offsets import BDay
 import asyncio
+from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -73,6 +74,44 @@ class AsyncProcess(beam.DoFn):
         logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
+
+
+
+class AsyncProcessSP500Multiples(beam.DoFn):
+
+    def __init__(self, credentials):
+        self.credentials = credentials
+        self.fetcher = MultplSP500MultiplesFetcher
+        
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
+
+        params = dict(series_name=element)
+        try:
+            # 1. We need to get the close price of the day by just querying for 1d interval
+            # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
+            #    today
+            # 3. we aggregate and store in bq
+            # 4 .send email for everything that increased over 10% overnight
+            # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
+
+            data = await self.fetcher.fetch_data(params, {})
+            result =  [d.model_dump(exclude_none=True) for d in data]
+            if result:
+                logging.info(f'Result is :{result}. Looking for latest close @{self.start_date}')
+                latest = result[-1]
+                return latest
+            else:
+                return -1
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return -1
+        
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
 
 
 

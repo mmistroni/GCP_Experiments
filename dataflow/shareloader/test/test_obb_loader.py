@@ -12,7 +12,7 @@ from apache_beam.testing.util import assert_that, equal_to
 import apache_beam as beam
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
-from shareloader.modules.obb_utils import AsyncProcess
+from shareloader.modules.obb_utils import AsyncProcess, AsyncProcessSP500Multiples
 from shareloader.modules.launcher import StockSelectionCombineFn
 
 
@@ -33,6 +33,15 @@ class MyTestCase(unittest.TestCase):
             input = (p | 'Start' >> beam.Create(['AAPL,NVDA,AMZN,T'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.001))
                      | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
+                     | self.debugSink
+                     )
+
+    def test_sample_pipeline(self):
+        credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
+        cob = date(2024, 10, 4)
+        with TestPipeline() as p:
+            input = (p | 'Start' >> beam.Create(['shiller_pe_month'])
+                     | 'Run Loader' >> beam.ParDo(AsyncProcessSP500Multiples(credentials))
                      | self.debugSink
                      )
 

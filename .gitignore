@@ -3,3 +3,4 @@
 **/*pycache
 **/*pytest_cache*
 **/workspace.xml
+**/*cpython*
