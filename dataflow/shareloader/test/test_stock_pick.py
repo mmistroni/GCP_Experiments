@@ -9,7 +9,10 @@ from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date, datetime
 from unittest.mock import patch
-
+import apache_beam as beam
+from apache_beam.testing.test_pipeline import TestPipeline
+import argparse
+from apache_beam.options.pipeline_options import PipelineOptions
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -18,6 +21,16 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
+
+class XyzOptions(PipelineOptions):
+
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_argument('--key', required=False)
+        parser.add_argument('--fredkey', required=False)
+        parser.add_argument('--sendgridkey', required=False)
+        parser.add_argument('--recipients', required=False, default='mmistroni@gmail.com')
+
 
 
 class TestEdgarUtils(unittest.TestCase):
@@ -54,6 +67,31 @@ class TestEdgarUtils(unittest.TestCase):
                                   'ACTION' : 'BUY',
                                 'LINK' : 'xxx'}))
             run_my_pipeline(p)
+
+
+
+    def test_word_count(self):
+        
+        parser = argparse.ArgumentParser() 
+
+        
+
+        argv = ['your_script.py', '--input_file', 'my_file.txt']
+
+
+        known_args, pipeline_args = parser.parse_known_args(argv)
+        pipeline_options = PipelineOptions(pipeline_args)
+        with TestPipeline(options=pipeline_options) as p:
+            input_data = p | 'Start' >> beam.Create(['hello world', 'hello beam'])
+            counts = (
+                input_data
+                | 'One' >>beam.FlatMap(lambda x: x.split(' '))
+                | 'Two' >> beam.Map(lambda x: (x, 1))
+                | 'Three' >> beam.CombinePerKey(sum)
+            )
+            
+            debugSink = beam.Map(print)
+            counts | debugSink
 
 
 
