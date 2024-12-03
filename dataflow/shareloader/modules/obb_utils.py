@@ -112,9 +112,37 @@ class AsyncProcessSP500Multiples(beam.DoFn):
         logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
+    #https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-streamlit-5d3a7bc42b89
 
 
+class AsyncProcessCorporate(beam.DoFn):
 
+    def __init__(self, credentials):
+        self.credentials = credentials
+        self.fetcher = MultplSP500MultiplesFetcher
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+
+        params = dict(series_name=element)
+        try:
+            data = await self.fetcher.fetch_data(params, {})
+            result = [d.model_dump(exclude_none=True) for d in data]
+            if result:
+                logging.info(f'Result is :{result}. Looking for latest close ')
+                latest = result[-1]
+                return [{'AS_OF_DATE': latest['date'].strftime('%Y-%m-%d'),
+                         'LABEL': element.upper(), 'VALUE': latest['value']}]
+            else:
+                return -1
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return -1
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
 
 
 

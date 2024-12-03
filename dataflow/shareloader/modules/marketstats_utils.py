@@ -734,12 +734,9 @@ def get_shiller_indexes():
         value = latest_data['Index Value']
         prev = prev_data['Index Value']
 
-        shillers.append({'AS_OF_DATE': cob,
-                      'LABEL': label,
-                      'VALUE':  f'{value} (Prev:{prev}'
-                      })
+        shillers.append(f'{label}:{value} (Prev:{prev}')
 
-    return shillers
+    return [{'AS_OF_DATE' : cob,'LABEL' : 'SHILLERS', 'VALUE' : '|'.join(shillers)}]
 
 class NewHighNewLowLoader(beam.DoFn):
     def __init__(self, key):
