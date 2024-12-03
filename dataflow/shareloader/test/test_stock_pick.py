@@ -32,6 +32,12 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', required=False, default='mmistroni@gmail.com')
 
 
+class MyOptions(PipelineOptions):
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_argument('--input',  dest='input_file', required=True, help='Input file path')
+        parser.add_argument('--output', dest='output_file', required=True, help='Output file path')
+
 
 class TestEdgarUtils(unittest.TestCase):
 
@@ -72,14 +78,8 @@ class TestEdgarUtils(unittest.TestCase):
 
     def test_word_count(self):
         
-        parser = argparse.ArgumentParser() 
-
-        
-
-        argv = ['your_script.py', '--input_file', 'my_file.txt']
-
-
-        known_args, pipeline_args = parser.parse_known_args(argv)
+        parser = argparse.ArgumentParser()
+        known_args, pipeline_args = parser.parse_known_args(None)
         pipeline_options = PipelineOptions(pipeline_args)
         with TestPipeline(options=pipeline_options) as p:
             input_data = p | 'Start' >> beam.Create(['hello world', 'hello beam'])
