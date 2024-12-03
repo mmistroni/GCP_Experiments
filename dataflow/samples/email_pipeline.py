@@ -43,8 +43,7 @@ def get_prices(ticker, start_date, end_date):
 class XyzOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
-        parser.add_value_provider_argument('--input_file', type=str,
-                                           default_value='gs://dataflow-samples/shakespeare/kinglear.txt')
+        parser.add_value_provider_argument('--input_file', type=str)
 
 
 class EmailSender(beam.DoFn):

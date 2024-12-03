@@ -16,7 +16,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_exchange_pipeline, run_putcall_ratio,\
-                                            run_cftc_spfutures, run_senate_disclosures,\
+                                            run_cftc_spfutures, \
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
@@ -338,6 +338,7 @@ class TestMarketStats(unittest.TestCase):
 
     def test_get_vix(self):
         fmp_key = os.environ['FMPREPKEY']
+        from shareloader.modules.marketstats import run_senate_disclosures
         with TestPipeline() as p:
             vix = run_vix(p, fmp_key)
             sd = run_senate_disclosures(p, fmp_key)
