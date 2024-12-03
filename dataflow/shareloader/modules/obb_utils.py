@@ -84,7 +84,7 @@ class AsyncProcessSP500Multiples(beam.DoFn):
         self.fetcher = MultplSP500MultiplesFetcher
         
     async def fetch_data(self, element: str):
-        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
+        logging.info(f'element is:{element}')
 
         params = dict(series_name=element)
         try:
@@ -98,9 +98,10 @@ class AsyncProcessSP500Multiples(beam.DoFn):
             data = await self.fetcher.fetch_data(params, {})
             result =  [d.model_dump(exclude_none=True) for d in data]
             if result:
-                logging.info(f'Result is :{result}. Looking for latest close @{self.start_date}')
+                logging.info(f'Result is :{result}. Looking for latest close ')
                 latest = result[-1]
-                return latest
+                return [{'AS_OF_DATE' : latest['date'].strftime('%Y-%m-%d'),
+                        'LABEL' : element.upper(), 'VALUE': latest['value']}]
             else:
                 return -1
         except Exception as e:

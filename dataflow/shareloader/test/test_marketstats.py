@@ -612,6 +612,13 @@ class TestMarketStats(unittest.TestCase):
             res = run_advance_decline(p)
             res |  debugSink
 
+    def test_pips(self):
+        debugSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            (p | 'start' >> beam.Create(['foo'])
+               |  'out' >> debugSink
+             )
 
 
 

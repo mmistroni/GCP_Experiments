@@ -40,7 +40,7 @@ class MyTestCase(unittest.TestCase):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
         with TestPipeline() as p:
-            input = (p | 'Start' >> beam.Create(['shiller_pe_month'])
+            input = (p | 'Start' >> beam.Create(['shiller_pe_month', 'pe_month'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcessSP500Multiples(credentials))
                      | self.debugSink
                      )

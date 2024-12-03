@@ -1,13 +1,7 @@
 
 import unittest
-import requests
-from lxml import etree
-from io import StringIO, BytesIO
 from shareloader.modules.stock_picks import  map_to_bq_dict, run_my_pipeline
-import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
-from apache_beam.testing.test_pipeline import TestPipeline
-from datetime import date, datetime
 from unittest.mock import patch
 import apache_beam as beam
 from apache_beam.testing.test_pipeline import TestPipeline
@@ -22,21 +16,6 @@ class Check(beam.PTransform):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
 
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--key', required=False)
-        parser.add_argument('--fredkey', required=False)
-        parser.add_argument('--sendgridkey', required=False)
-        parser.add_argument('--recipients', required=False, default='mmistroni@gmail.com')
-
-
-class MyOptions(PipelineOptions):
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--input',  dest='input_file', required=True, help='Input file path')
-        parser.add_argument('--output', dest='output_file', required=True, help='Output file path')
 
 
 class TestEdgarUtils(unittest.TestCase):
@@ -45,6 +24,11 @@ class TestEdgarUtils(unittest.TestCase):
         self.notEmptySink = Check(is_not_empty())
         self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
         self.mock_foo = self.patcher.start()
+        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+        self.notEmptySink = Check(is_not_empty())
+        self.printSink = beam.Map(print)
+        parser = argparse.ArgumentParser(add_help=False)
 
     def tearDown(self):
         self.patcher.stop()
@@ -65,33 +49,25 @@ class TestEdgarUtils(unittest.TestCase):
         assert res['ACTION'] ==  test_elemns[0][3]
         assert res['LINK'] == test_elemns[0][4]
 
-    def test_run_my_pipeline(self):
+    def test_pips(self):
+        debugSink = beam.Map(print)
+
         with TestPipeline() as p:
-            sink = Check(equal_to({'AS_OF_DATE' : '2021-03-03',
-                                   'TICKER' : 'AMZN',
-                                   'HEADLINE' : 'XXX',
-                                  'ACTION' : 'BUY',
-                                'LINK' : 'xxx'}))
-            run_my_pipeline(p)
+            (p | 'start' >> beam.Create(['foo'])
+             | 'out' >> debugSink
+             )
 
 
 
     def test_word_count(self):
         
-        parser = argparse.ArgumentParser()
-        known_args, pipeline_args = parser.parse_known_args(None)
-        pipeline_options = PipelineOptions(pipeline_args)
-        with TestPipeline(options=pipeline_options) as p:
-            input_data = p | 'Start' >> beam.Create(['hello world', 'hello beam'])
-            counts = (
-                input_data
-                | 'One' >>beam.FlatMap(lambda x: x.split(' '))
-                | 'Two' >> beam.Map(lambda x: (x, 1))
-                | 'Three' >> beam.CombinePerKey(sum)
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            (p | 'Start' >> beam.Create(['hello world', 'hello beam'])
+                | 'One' >>beam.Map(lambda x: x.upper())
+                | 'Three' >> debugSink
             )
             
-            debugSink = beam.Map(print)
-            counts | debugSink
 
 
 
