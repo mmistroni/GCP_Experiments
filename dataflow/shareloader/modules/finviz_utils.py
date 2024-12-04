@@ -537,6 +537,8 @@ def get_swing_trader_value():
     pass
 
 def get_swing_trader_technical():
+    # https://financialmodelingprep.com/api/v3/technical_indicator/5min/AAPL?type=adx&period=10&apikey=79d4f398184fb636fa32ac1f95ed67e6
+    # https://financialmodelingprep.com/api/v3/technical_indicator/5min/AAPL?type=rsi&period=10&apikey=79d4f398184fb636fa32ac1f95ed67e6 
     pass
 
 
