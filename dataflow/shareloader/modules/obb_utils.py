@@ -181,8 +181,8 @@ class AsyncProcessHistorical(beam.DoFn):
                 if result:
                     df = pd.DataFrame(data=result)
 
-                    df['RSI'] = ta.rsi(close=df['Close'], length=14)
-                    df['ADX'] = ta.adx(high=df['High'], low=df['Low'], close=df['Close'], length=14)
+                    df['RSI'] = ta.rsi(close=df['close'], length=14)
+                    df['ADX'] = ta.adx(high=df['high'], low=df['Low'], close=df['close'], length=14)
 
                     latest = df[-1].to_dict('records')[0]
 
