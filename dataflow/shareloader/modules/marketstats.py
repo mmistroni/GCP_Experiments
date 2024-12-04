@@ -59,7 +59,7 @@ class MarketStatsSinkCombineFn(beam.CombineFn):
     def create_accumulator(self):
         return []
 
-    def add_input(self, sum_count, input_data):
+    def add_input(self, sum_cou7nt, input_data):
         holder = sum_count
         holder.append(input_data)
         return holder
@@ -109,16 +109,6 @@ class EmailSender(beam.DoFn):
 
         response = sg.send(message)
         logging.info(response.status_code, response.body, response.headers)
-
-
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--key')
-        parser.add_argument('--fredkey')
-        parser.add_argument('--sendgridkey')
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
 
 
 def run_non_manufacturing_pmi(p):
@@ -347,8 +337,6 @@ def parse_known_args(argv):
     parser.add_argument('--sendgridkey')
     parser.add_argument('--recipients', default='mmistroni@gmail.com')
     return parser.parse_known_args(argv)
-
-
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""

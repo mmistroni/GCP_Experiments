@@ -6,7 +6,7 @@ import logging
 import apache_beam as beam
 import pandas as pd
 from datetime import date
-from apache_beam.options.pipeline_options import PipelineOptions
+import argparse
 from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
                                             get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
                                             get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
@@ -14,20 +14,13 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
                                             get_peter_lynch_ratio
 from apache_beam.io.gcp.internal.clients import bigquery
+from apache_beam.options.pipeline_options import PipelineOptions
+from apache_beam.options.pipeline_options import SetupOptions
 
 '''
 Further source of infos
 https://medium.com/@mancuso34/building-all-in-one-stock-economic-data-repository-6246dde5ce02
 '''
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--fmprepkey')
-        parser.add_argument('--iistocks')
-        parser.add_argument('--microcap')
-        parser.add_argument('--probe')
-        parser.add_argument('--split')
 
 def asset_play_filter(input_dict):
     if not input_dict:
@@ -581,6 +574,17 @@ def store_superperformers_benchmark(benchmark_data, bq_sink):
                      | 'Writing to sink ENT2' >> bq_sink)
 
 
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fmprepkey')
+    parser.add_argument('--iistocks')
+    parser.add_argument('--microcap')
+    parser.add_argument('--probe')
+    parser.add_argument('--split')
+    return parser.parse_known_args(argv)
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -598,35 +602,36 @@ def run(argv=None, save_main_session=True):
             write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
             create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
-    pipeline_options = XyzOptions()
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+
 
     timeout_secs = 18400
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
-    pipeline_options.view_as(SetupOptions).save_main_session = True
-    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
     test_sink =beam.io.WriteToText(destination, num_shards=1)
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
         tickers = extract_data_pipeline(p, input_file)
 
-        if (pipeline_options.iistocks):
-            benchmark_data = load_benchmark_data(tickers, pipeline_options.fmprepkey,
-                                                 pipeline_options.split)
+        if (known_args.iistocks):
+            benchmark_data = load_benchmark_data(tickers, known_args.fmprepkey,
+                                                 known_args.split)
 
-            if (pipeline_options.probe):
+            if (known_args.probe):
                 run_probe(benchmark_data)
                 return
             else:
                 store_superperformers_benchmark(benchmark_data, bq_sink)
 
-        elif (pipeline_options.microcap):
-            microcap_data = load_microcap_data(tickers, pipeline_options.fmprepkey)
+        elif (known_args.microcap):
+            microcap_data = load_microcap_data(tickers, known_args.fmprepkey)
             store_microcap(microcap_data, bq_sink)
         else:
-            fundamental_data = load_fundamental_data(tickers, pipeline_options.fmprepkey,
-                                                    pipeline_options.split)
-            if (pipeline_options.probe):
+            fundamental_data = load_fundamental_data(tickers, known_args.fmprepkey,
+                                                    known_args.split)
+            if (known_args.probe):
                 run_probe(fundamental_data)
                 return
             else:
