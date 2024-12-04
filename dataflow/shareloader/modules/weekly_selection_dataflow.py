@@ -137,12 +137,14 @@ class EmailSender(beam.DoFn):
         print(response.status_code, response.body, response.headers)
 
 
-class XyzOptions(PipelineOptions):
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--sendgridkey')
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--sendgridkey')
+    parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    return parser.parse_known_args(argv)
+
 
 
 def send_email(pipeline, options):
@@ -184,9 +186,11 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    with beam.Pipeline(options=pipeline_options) as p:
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+
+    with beam.Pipeline(options=pipeline_optionss) as p:
         weeklyPipeline = create_weekly_data_ppln(p)
         monthlyPipeline = create_monthly_data_ppln(p)
 
@@ -202,7 +206,7 @@ def run(argv=None, save_main_session=True):
                                 | bqSink)
 
         ## Send email now
-        send_email(weeklySelectionPipeline, pipeline_options)
+        send_email(weeklySelectionPipeline, known_args)
 
 
 

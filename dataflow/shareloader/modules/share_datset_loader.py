@@ -20,12 +20,13 @@ import apache_beam.io.gcp.gcsfilesystem as gcs
 from apache_beam.options.pipeline_options import PipelineOptions
 import re
 
-class XyzOptions(PipelineOptions):
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--fmprepkey')
-		
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fmprepkey')
+    return parser.parse_known_args(argv)
+
 class GetAllTickers(beam.DoFn):
     def __init__(self, fmprepkey):
         self.fmprepkey = fmprepkey
@@ -104,18 +105,17 @@ def run(argv=None, save_main_session=True):
     # workflow rely on global context (e.g., a module imported at module level).
     destination = 'gs://mm_dataflow_bucket/inputs/shares_dataset.csv'
     sink = beam.io.WriteToText(destination,num_shards=1)
-    pipeline_options = XyzOptions()
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
 
     timeout_secs = 16200
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = True
-    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
-    gfs = gcs.GCSFileSystem(pipeline_options)
+    gfs = gcs.GCSFileSystem(known_args)
     pattern = 'gs://mm_dataflow_bucket/inputs/shares_dataset*'
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
         result = run_delete_pipeline(p, pattern, gfs)
-        tickers = run_my_pipeline(result, pipeline_options.fmprepkey)
+        tickers = run_my_pipeline(result, known_args.fmprepkey)
         write_to_bucket(tickers, sink)

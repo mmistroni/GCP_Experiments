@@ -73,15 +73,13 @@ class EmailSender(beam.DoFn):
         logging.info('Body:{}'.format(response.body))
 
 
-
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--key')
-        parser.add_argument('--fmprepkey')
-
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    parser.add_argument('--key')
+    parser.add_argument('--fmprepkey')
+    return parser.parse_known_args(argv)
 
 def get_prices(tpl, fmprepkey):
     try:
@@ -125,22 +123,23 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
     input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
     destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
     logging.info(pipeline_options.get_all_options())
     logging.info("=== readign from textfile:{}".format(input_file))
     logging.info('====== Destination is :{}'.format(destination))
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
         input = (p | 'Start' >> beam.io.textio.ReadFromText(input_file)
                    |' Split each line' >> beam.Map(lambda f: tuple(f.split(",")))
                    | 'Deduplicate elements_{}' >> beam.Distinct()
                    | 'Filter only elements wtih length 3' >> beam.Filter(lambda l: len(l) == 3)
                  )
 
-        run_my_pipeline(input, pipeline_options)
+        run_my_pipeline(input, known_args)
 
 
 if __name__ == '__main__':

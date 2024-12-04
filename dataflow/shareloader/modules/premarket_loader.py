@@ -12,7 +12,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from .superperf_metrics import get_descriptive_and_technical, get_latest_stock_news, get_mm_trend_template, get_fmprep_historical
 from .marketstats_utils import get_all_stocks
 from apache_beam.io.gcp.internal.clients import bigquery
-import requests
+import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 
@@ -94,15 +94,16 @@ class PremarketEmailSender(beam.DoFn):
         logging.info('Response is:{response}')
 
 
-class XyzOptions(PipelineOptions):
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--fmprepkey')
-        parser.add_argument('--mmrun')
-        parser.add_argument('--numdays')
-        parser.add_argument('--sendgridkey')
-        parser.add_argument('--inputfile')
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--fmprepkey')
+    parser.add_argument('--mmrun')
+    parser.add_argument('--numdays')
+    parser.add_argument('--sendgridkey')
+    parser.add_argument('--inputfile')
+    return parser.parse_known_args(argv)
 
 
 class TrendTemplateLoader(beam.DoFn):
@@ -462,12 +463,12 @@ def run(argv=None, save_main_session=True):
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
 
-    pipeline_options = XyzOptions()
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
 
     timeout_secs = 18400
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
-    pipeline_options.view_as(SetupOptions).save_main_session = True
-    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
 
     test_sink = beam.Map(logging.info)
     bq_sink = beam.io.WriteToBigQuery(
@@ -479,12 +480,12 @@ def run(argv=None, save_main_session=True):
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
         create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
 
-        if pipeline_options.mmrun:
-            if 'historical' in pipeline_options.mmrun:
+        if known_args.mmrun:
+            if 'historical' in known_args.mmrun:
                 logging.info('Running historical ppln..')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays)
+                data = extract_trend_pipeline(p, known_args.fmprepkey, known_args.numdays)
                 destination = 'gs://mm_dataflow_bucket/datasets/supertrend_{}'.format(
                                         date.today().strftime('%Y-%m-%d %H:%M'))
 
@@ -494,17 +495,17 @@ def run(argv=None, save_main_session=True):
 
                 data | bucket_sink
 
-                send_email_pipeline(data, pipeline_options.sendgridkey)
+                send_email_pipeline(data, known_args.sendgridkey)
 
                 write_to_bigquery(data, bq_sink)
 
-            elif 'full_run' in pipeline_options.mmrun:
-                logging.info(f'Running historical ppln for:{pipeline_options.inputfile}')
+            elif 'full_run' in known_args.mmrun:
+                logging.info(f'Running historical ppln for:{known_args.inputfile}')
 
-                all_tickers_5y = pipeline_options.inputfile
+                all_tickers_5y = known_args.inputfile
 
 
-                data = extract_full_run_pipeline(p, pipeline_options.fmprepkey, all_tickers_5y, pipeline_options.numdays, )
+                data = extract_full_run_pipeline(p, known_args.fmprepkey, all_tickers_5y, known_args.numdays, )
                 destination = 'gs://mm_dataflow_bucket/datasets/historical_prices_5y_{}.csv'.format(
                     date.today().strftime('%Y-%m-%d %H:%M'))
 
@@ -517,11 +518,11 @@ def run(argv=None, save_main_session=True):
 
             else:
                 logging.info('Extracting trend pipeline')
-                data = extract_trend_pipeline(p, pipeline_options.fmprepkey, pipeline_options.numdays)
+                data = extract_trend_pipeline(p, known_args.fmprepkey, known_args.numdays)
                 find_dropped_tickers(p, data, test_sink )
 
         else:
-            data = extract_data_pipeline(p, pipeline_options.fmprepkey)
+            data = extract_data_pipeline(p, known_args.fmprepkey)
 
 
 
