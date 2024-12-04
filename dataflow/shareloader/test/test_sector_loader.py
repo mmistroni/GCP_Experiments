@@ -9,6 +9,8 @@ from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from shareloader.modules.sectors_utils import SectorRankGenerator
 from unittest.mock import patch
+from shareloader.modules.sector_loader import run_my_pipeline
+
 from datetime import date
 import os
 
@@ -48,3 +50,12 @@ class TestSectorLoader(unittest.TestCase):
         res = s.get_rank()
 
         print(res)
+
+    def test_compute_etf_historical(self):
+        key = os.environ['FMPREPKEY']
+
+        with TestPipeline() as p:
+            res = run_my_pipeline(p, key)
+            res   | self.notEmptySink
+
+

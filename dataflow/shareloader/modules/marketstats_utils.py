@@ -723,6 +723,7 @@ def get_shiller_indexes():
         'VALUATION_CONFIDENCE_INDEX'] = 'https://shiller-data-public.s3.amazonaws.com/icf_stock_market_valuation_index_table.csv'
 
 
+    shillers = []
 
     for label, url in shiller_dict.items():
         data  = pd.read_csv(url, header=1).to_dict('records')[0:2]
@@ -734,9 +735,10 @@ def get_shiller_indexes():
         value = latest_data['Index Value']
         prev = prev_data['Index Value']
 
-        shillers.append(f'{label}:{value} (Prev:{prev}')
+        shillers.append({'AS_OF_DATE' : cob,'LABEL' : label, 'VALUE' : f'{value}-Prev({prev})'})
 
-    return [{'AS_OF_DATE' : cob,'LABEL' : 'SHILLERS', 'VALUE' : '|'.join(shillers)}]
+
+    return shillers
 
 class NewHighNewLowLoader(beam.DoFn):
     def __init__(self, key):

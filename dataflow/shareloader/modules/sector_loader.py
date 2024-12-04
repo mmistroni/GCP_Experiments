@@ -8,7 +8,7 @@ from collections import OrderedDict
 from datetime import datetime, date
 from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, fetch_performance
 from .marketstats_utils import get_senate_disclosures
-import requests
+import argparse
 
 sectorsETF = OrderedDict ({
             'Technology' : 'XLK',
@@ -26,13 +26,6 @@ sectorsETF = OrderedDict ({
         })
 
 
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--key')
-        parser.add_argument('--sendgridkey')
 
 #https://www.tradingview.com/chart/AAPL/pmHMR643-Investors-Holy-Grail-The-Business-Economic-Cycle/?utm_source=Weekly&utm_medium=email&utm_campaign=TradingView+Weekly+188+%28EN%29
 def run_my_pipeline(p, fmprepkey):
@@ -47,9 +40,13 @@ def run_senate_disclosures(p, key):
               | ' log out' >> beam.Map(logging.info)
             )
 
-
-
-
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipients')
+    parser.add_argument('--key')
+    parser.add_argument('--sendgridkey')
+    return parser.parse_known_args(argv)
 
 
 def run(argv=None, save_main_session=True):
@@ -57,18 +54,19 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    logging.info(pipeline_options.get_all_options())
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
 
-    with beam.Pipeline(options=pipeline_options) as p:
-        result = run_my_pipeline(p, pipeline_options.key)
+
+    with beam.Pipeline(options=pipeline_optionss) as p:
+        result = run_my_pipeline(p, known_args.key)
 
         result | 'Mapping to String' >> beam.Map(logging.info)
 
 
-        result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(pipeline_options.recipients,
-                                                                 pipeline_options.sendgridkey))
+        result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
+                                                                 known_args.sendgridkey))
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.INFO)

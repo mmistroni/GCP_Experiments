@@ -26,7 +26,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization, To
 from functools import reduce
 import time
-
+import argparse
 
 class MarketStatsCombineFn(beam.CombineFn):
     def create_accumulator(self):
@@ -338,6 +338,18 @@ def run_shillers(p):
              )
 
 
+
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--key')
+    parser.add_argument('--fredkey')
+    parser.add_argument('--sendgridkey')
+    parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    return parser.parse_known_args(argv)
+
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -346,24 +358,24 @@ def run(argv=None, save_main_session=True):
 
     # Check  this https://medium.datadriveninvestor.com/markets-is-a-correction-coming-aa609fba3e34
 
-
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+    logging.info(f'fmp key:{known_args.fmprepkey}')
 
     debugSink =  beam.Map(logging.info)
 
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
 
-        iexapi_key = pipeline_options.key
-        fred_key = pipeline_options.fredkey
-        logging.info(pipeline_options.get_all_options())
+        iexapi_key = known_args.key
+        fred_key = known_args.fredkey
         current_dt = datetime.now().strftime('%Y%m%d-%H%M')
         
         destination = 'gs://mm_dataflow_bucket/outputs/shareloader/{}_run_{}.csv'
 
         logging.info('====== Destination is :{}'.format(destination))
-        logging.info('SendgridKey=={}'.format(pipeline_options.sendgridkey))
+        logging.info('SendgridKey=={}'.format(known_args.sendgridkey))
         
         bq_sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
@@ -508,7 +520,7 @@ def run(argv=None, save_main_session=True):
                 | ' do A PARDO combner:' >> beam.CombineGlobally(MarketStatsCombineFn())
                 | ' FlatMapping' >> beam.FlatMap(lambda x: x)
                 | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.sendgridkey))
+                | 'SendEmail' >> beam.ParDo(EmailSender(known_args.recipients, known_args.sendgridkey))
 
         )
 

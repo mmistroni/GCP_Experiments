@@ -22,7 +22,6 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
                                             run_cramer_pipeline, run_advance_decline
 
-from shareloader.modules.sector_loader import run_my_pipeline
 
 import requests
 from itertools import chain
@@ -59,21 +58,30 @@ class MissedJoinerFn(beam.DoFn):
             yield (left_key, left)
 
 
+class AppendN(beam.CombineFn):
+    def create_accumulator(self):
+        return []
 
+    def add_input(self, accumulator, input):
+        val = f"AS_OF_DATE:{input['AS_OF_DATE']}|{input['LABEL']} {input['VALUE']}"
+        accumulator.append(f'{val}')
+        return accumulator
+
+    def merge_accumulators(self, accumulators):
+        merged = []
+        for acc in accumulators:
+            merged.extend(acc)
+        return merged
+
+    def extract_output(self, accumulator):
+        return '\n'.join(accumulator)
 
 
 class TestMarketStats(unittest.TestCase):
 
     def setUp(self):
-        self.patcher = patch('shareloader.modules.sector_loader.XyzOptions._add_argparse_args')
-        self.mock_foo = self.patcher.start()
         self.notEmptySink = Check(is_not_empty())
         self.printSink = beam.Map(print)
-        parser = argparse.ArgumentParser(add_help=False)
-
-    def tearDown(self):
-        self.patcher.stop()
-
 
     def test_run_vix(self):
         key = os.environ['FMPREPKEY']
@@ -361,13 +369,6 @@ class TestMarketStats(unittest.TestCase):
 
 
 
-    def test_compute_etf_historical(self):
-        key = os.environ['FMPREPKEY']
-
-        with TestPipeline() as p:
-            res = run_my_pipeline(p, key)
-            res   | self.notEmptySink
-
 
     def test_get_raw_cftc(self):
         key = os.environ['FMPREPKEY']
@@ -600,6 +601,7 @@ class TestMarketStats(unittest.TestCase):
         with TestPipeline() as p:
             (p | 'shiller starter' >> beam.Create(['20240101'])
              | 'getting shillers' >> beam.FlatMap(lambda d: get_shiller_indexes())
+             | 'combining' >> beam.CombineGlobally(AppendN())
              | 'todbg' >> debugSink
              )
 
