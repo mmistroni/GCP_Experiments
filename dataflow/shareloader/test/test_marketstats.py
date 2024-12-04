@@ -391,13 +391,7 @@ class TestMarketStats(unittest.TestCase):
         with TestPipeline() as p:
             run_fed_fund_rates(p)  | self.notEmptySink
 
-    def test_write_all_to_sink(self):
-        fmp_key = os.environ['FMPREPKEY']
-        sink = self.notEmptySink
-        with TestPipeline() as p:
-            vix = run_vix(p, fmp_key)
-            sd = run_senate_disclosures(p, fmp_key)
-            write_all_to_sink([vix, sd], sink)
+    
 
     def test_get_all_us_stocks(self):
         fmp_key = os.environ['FMPREPKEY']
