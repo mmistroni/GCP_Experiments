@@ -514,22 +514,30 @@ def get_advance_decline():
 
 def get_buffett_six():
     filter_dict = {
-                    'Return on Assets' : 'Over +10%',
-                   'Return on Equity' : 'Over +10%',
-                   'Debt/Equity' : 'Under 0.5',
-                   'Current Ratio' : 'Over 1.5',
+                    'Return on Assets' : 'Over +10%',#
+                   'Return on Equity' : 'Over +10%',#
+                   'Debt/Equity' : 'Under 0.5', #  debt over capital
+                   'Current Ratio' : 'Over 1.5',#
                    'Average Volume' : 'Over 100K',
-                   'Price': 'Over $10',
-                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6',
-                   'positiveEps' : 'positiveEps > 0',
-                   'peRatio' : 'peRatio <= 15',
-                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   'Price': 'Over $10',#
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6',#
+                   'positiveEps' : 'positiveEps > 0',#
+                   'peRatio' : 'peRatio <= 15',#
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5', #
                    }
 
     buffetts = _run_screener(filter_dict)
     return [d['Ticker'] for d in buffetts]
     
-    
+def get_swing_trader_growth():
+    pass
+
+
+def get_swing_trader_value():
+    pass
+
+def get_swing_trader_technical():
+    pass
 
 
 

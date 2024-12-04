@@ -331,7 +331,7 @@ def get_fundamental_parameters(ticker, key, asOfDate=None):
             'https://financialmodelingprep.com/api/v3/income-statement/{ticker}?limit=5&apikey={key}'.format(ticker=ticker,
                                                                                                              key=key)).json()
         # THESE ARE MEASURED FOR TRAILING TWELWEMONTHS. EPS = Total Earnings / Total Common Shares Outstanding (trailing twelve months) So we need a ttm for current..
-
+        # we need to fetch interest coverage ratio, debtToCapitalization and
         if len(income_statement) > 2:
             latest = income_statement[0]
             fundamental_dict['cost_of_research_and_dev'] = latest['researchAndDevelopmentExpenses']
