@@ -2,7 +2,8 @@ import unittest
 from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, get_leaps,\
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
-                                            get_high_low, overnight_return, get_advance_decline
+                                            get_high_low, overnight_return, get_advance_decline,\
+                                            get_buffett_six
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -201,7 +202,13 @@ class MyTestCase(unittest.TestCase):
         res = get_advance_decline()
         print(res)
 
+    def test_buffettsix(self):
 
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Run adLoader' >> beam.ParDo(get_buffett_six())
+                     | self.debugSink
+                     )
 
 if __name__ == '__main__':
     unittest.main()

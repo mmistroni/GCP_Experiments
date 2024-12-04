@@ -7,7 +7,7 @@ from pandas.tseries.offsets import BDay
 from datetime import date
 from pandas.tseries.offsets import BDay
 import asyncio
-import pandas_ta as ta
+
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 
@@ -181,8 +181,8 @@ class AsyncProcessHistorical(beam.DoFn):
                 if result:
                     df = pd.DataFrame(data=result)
 
-                    df['RSI'] = ta.rsi(close=df['close'], length=14)
-                    df['ADX'] = ta.adx(high=df['high'], low=df['Low'], close=df['close'], length=14)
+                    #df['RSI'] = ta.rsi(close=df['close'], length=14)
+                    #df['ADX'] = ta.adx(high=df['high'], low=df['Low'], close=df['close'], length=14)
 
                     latest = df[-1].to_dict('records')[0]
 

@@ -512,8 +512,24 @@ def get_advance_decline():
             'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
 
 
+def get_buffett_six():
+    filter_dict = {
+                    'Return on Assets' : 'Over +10%',
+                   'Return on Equity' : 'Over +10%',
+                   'Debt/Equity' : 'Under 0.5',
+                   'Current Ratio' : 'Over 1.5',
+                   'Average Volume' : 'Over 100K',
+                   'Price': 'Over $10',
+                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6',
+                   'positiveEps' : 'positiveEps > 0',
+                   'peRatio' : 'peRatio <= 15',
+                   'priceToBookRatio' : 'priceToBookRatio < 1.5',
+                   }
 
-
+    buffetts = _run_screener(filter_dict)
+    return [d['Ticker'] for d in buffetts]
+    
+    
 
 
 

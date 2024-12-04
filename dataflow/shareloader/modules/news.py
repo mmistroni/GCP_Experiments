@@ -11,18 +11,7 @@ from datetime import date
 from .news_util import find_news_scores_for_ticker, df_to_dict, NewsEmailSender, combine_news, stringify_news, \
             enhance_with_price
 from .bq_utils import get_news_table_schema, get_news_table_spec
-
-
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com,alexmistroni@gmail.com')
-        parser.add_argument('--sector', default='Utilities,Consumer Cyclical,Energy')
-        parser.add_argument('--business_days', default=1)
-        parser.add_argument('--key')
-        parser.add_argument('--iexkey')
-
+import argparse
 
 
 
@@ -79,18 +68,29 @@ def run_my_pipeline(source, options):
                 | 'Filter , we dont want suffixes' >> beam.Filter(lambda t: len(t.split('.')) < 2)
                 )
 
+
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipients', default='mmistroni@gmail.com,alexmistroni@gmail.com')
+    parser.add_argument('--sector', default='Utilities,Consumer Cyclical,Energy')
+    parser.add_argument('--business_days', default=1)
+    parser.add_argument('--key')
+    parser.add_argument('--iexkey')
+
+    return parser.parse_known_args(argv)
+
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-
-    logging.info('Fetching data for sectors {} '.format(pipeline_options.sector))
-
-    with beam.Pipeline(options=pipeline_options) as p:
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+    with beam.Pipeline(options=pipeline_optionss) as p:
         source = p  | 'Read Source File' >> ReadFromText('gs://datascience-bucket-mm/all_sectors.csv')
         sink = beam.io.WriteToBigQuery(
             bigquery.TableReference(
@@ -107,14 +107,14 @@ def run(argv=None, save_main_session=True):
         bucket_sink = beam.io.WriteToText(news_dest, num_shards=1)
 
 
-        tickers = run_my_pipeline(source, pipeline_options)
-        news = find_news_for_ticker(tickers, pipeline_options.business_days)
-        bq_data = prepare_for_big_query(news, pipeline_options.iexkey)
+        tickers = run_my_pipeline(source, known_args)
+        news = find_news_for_ticker(tickers, known_args.business_days)
+        bq_data = prepare_for_big_query(news, known_args.iexkey)
         source | 'Writng to news sink' >> bucket_sink
-        positive_news = filter_positive(bq_data, pipeline_options.iexkey)
+        positive_news = filter_positive(bq_data, known_args.iexkey)
 
         write_data(positive_news, sink)
-        send_notification(positive_news, pipeline_options)
+        send_notification(positive_news, known_args)
 
 
 if __name__ == '__main__':
