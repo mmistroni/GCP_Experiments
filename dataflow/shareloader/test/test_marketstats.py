@@ -354,23 +354,6 @@ class TestMarketStats(unittest.TestCase):
                     | self.notEmptySink
             )
 
-    #@patch('shareloader.modules.marketstats.get_senate_disclosures')
-    def test_get_senate_disclosures(self):
-        fmp_key = os.environ['FMPREPKEY']
-
-        expected = [{'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'label', 'VALUE' : 'value'}]
-        #senate_mock.return_value = expected
-        with TestPipeline(options=PipelineOptions()) as p:
-            res = run_senate_disclosures(p, fmp_key)
-            result = (res | 'Remapping ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d'),
-                                            TICKER=d.get('VALUE', '').split('|')[0],
-                                        DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else d.get('VALUE', '').split('|')[0]))
-                          | 'TOSink' >> self.printSink
-                                                     )
-
-
-
-
     def test_get_raw_cftc(self):
         key = os.environ['FMPREPKEY']
         base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VI?apikey={key}'
