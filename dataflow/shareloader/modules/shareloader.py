@@ -128,7 +128,6 @@ def run(argv=None, save_main_session=True):
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
     input_file = 'gs://mm_dataflow_bucket/inputs/shares.txt'
     destination = 'gs://mm_dataflow_bucket/outputs/shareloader/pipeline_{}.csv'.format(datetime.now().strftime('%Y%m%d-%H%M'))
-    logging.info(pipeline_options.get_all_options())
     logging.info("=== readign from textfile:{}".format(input_file))
     logging.info('====== Destination is :{}'.format(destination))
 

@@ -36,7 +36,7 @@ class MyTestCase(unittest.TestCase):
                      | self.debugSink
                      )
 
-    def test_sample_pipeline(self):
+    def test_sample_pipeline2(self):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
         with TestPipeline() as p:

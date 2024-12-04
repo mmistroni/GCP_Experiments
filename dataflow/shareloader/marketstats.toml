@@ -36,7 +36,8 @@ dependencies = [
   "openbb-yfinance",
   "openbb-multpl",
   "openbb-fmp",
-  "openbb-finviz"
+  "openbb-finviz",
+  'pandas-ta'
 
 ]
 
