@@ -2,15 +2,8 @@ from __future__ import absolute_import
 
 import argparse
 import logging
-import re
 
-from past.builtins import unicode
-from datetime import datetime
 import apache_beam as beam
-from apache_beam.io import ReadFromText
-from apache_beam.io import WriteToText
-from apache_beam.metrics import Metrics
-from apache_beam.metrics.metric import MetricsFilter
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import re, requests
@@ -66,13 +59,15 @@ class ADREmailSender(beam.DoFn):
             logging.info('Not Sending email...nothing to do')
 
 
-class XyzOptions(PipelineOptions):
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--key')
-        parser.add_argument('--fmprepkey')
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    parser.add_argument('--key')
+    parser.add_argument('--fmprepkey')
+    return parser.parse_known_args(argv)
+
 
 
 def extract_data_pipeline(p, input_file):
@@ -125,16 +120,16 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    logging.info(pipeline_options.get_all_options())
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
     input_file = 'gs://mm_dataflow_bucket/inputs/fmprep_adrs.csv'
     stock_filter = lambda d: d['changesPercentage'] > 15
 
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
         tickers = extract_data_pipeline(p, input_file)
-        result =  run_my_pipeline(tickers, pipeline_options.fmprepkey, stock_filter)
-        email_pipeline(result, pipeline_options)
+        result =  run_my_pipeline(tickers, known_args.fmprepkey, stock_filter)
+        email_pipeline(result, known_args)
 
 
 if __name__ == '__main__':
