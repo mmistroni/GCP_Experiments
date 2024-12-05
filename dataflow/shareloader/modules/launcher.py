@@ -5,7 +5,7 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
-from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln
+from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical
 from apache_beam.io.gcp.internal.clients import bigquery
 
 from datetime import date
@@ -211,6 +211,13 @@ def send_email(pipeline, sendgridkey):
              )
 
 
+def combine_tickers(p, etoro, tester, fmpkey):
+    return ((tester, etoro) | "fmaprun" >> beam.Flatten()
+                         | 'Mapping' >> beam.Map(lambda d: d['ticker'])
+                         | 'Combine' >> beam.CombineGlobally(lambda x: ''.join(x))
+                         | 'Find ADXand RSI' >> beam.ParDo(AsyncProcess(fmpkey, date.today()))
+
+    )
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -259,6 +266,11 @@ def run(argv = None, save_main_session=True):
         send_email(premarket_results, known_args.sendgridkey)
 
         premarket_results   | 'tester TO SINK' >> sink
+
+
+        techs = combine_tickers(p, etoro, tester)
+
+        techs |'to debug' >> sink
 
 
 

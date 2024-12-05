@@ -149,56 +149,41 @@ class AsyncProcessCorporate(beam.DoFn):
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
 
-class AsyncProcessHistorical(beam.DoFn):
+class ProcessHistorical(beam.DoFn):
 
-    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500'):
-        self.credentials = credentials
-        self.fetcher = YFinanceEquityHistoricalFetcher
-        self.end_date = start_date
-        self.start_date = (self.end_date - BDay(27)).date()
-        self.price_change = price_change
-        self.selection = selection
-    async def fetch_data(self, element: str):
+    def __init__(self, fmpKey, end_date):
+        self.fmpKey = fmpKey
+        self.end_date = end_date
+        self.start_date = (end_date -BDay(30)).date()
+
+    def get_adx_and_rsi(self, ticker):
+        adx = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
+        rsi = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
+
+        try:
+            adx = requests.get(adx).json()[0]['adx']
+            rsi = requests.get(adx).json()[0]['rsi']
+            return  {ticker : {'ADX' : adx,'RSI' : rsi}}
+        except Exception as e:
+            logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
+            return {'Ticker': ticker, 'ADX': 0, 'RSI': 0}
+
+
+
+
+
+    def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
-
         ticks = element.split(',')
         all_records = []
         for t in ticks:
-            params = dict(symbol=t, interval='1d', extended_hours=True, start_date=self.start_date,
-                            end_date=self.end_date)
-            try:
-                # 1. We need to get the close price of the day by just querying for 1d interval
-                # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
-                #    today
-                # 3. we aggregate and store in bq
-                # 4 .send email for everything that increased over 10% overnight
-                # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
-
-                data = await self.fetcher.fetch_data(params, {})
-                result =  [d.model_dump(exclude_none=True) for d in data]
-
-                # we can include adx and rsi,but we need to fetch it from a different run
-                if result:
-                    df = pd.DataFrame(data=result)
-
-                    #df['RSI'] = ta.rsi(close=df['close'], length=14)
-                    #df['ADX'] = ta.adx(high=df['high'], low=df['Low'], close=df['close'], length=14)
-
-                    latest = df[-1].to_dict('records')[0]
-
-                    all_records.append({'ticker' : latest['ticker'], 'rsi' :latest['rsi'],'adx' : latest['adx']})
-
-                else:
-                    logging.info(f'No result sfor {t}')
-            except Exception as e:
-                logging.info(f'Failed to fetch data for {t}:{str(e)}')
-        logging.info(f'Returningn records with :{len(all_records)}')
+            data = self.get_adx_and_rsi(t)
+            all_records.append(data)
         return all_records
 
     def process(self, element: str):
         logging.info(f'Input elements:{element}')
-        with asyncio.Runner() as runner:
-            return runner.run(self.fetch_data(element))
+        return self.fetch_data(element)
 
 
 

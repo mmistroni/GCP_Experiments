@@ -756,3 +756,4 @@ class NewHighNewLowLoader(beam.DoFn):
         logging.info(f'------\n{high_low_dict}' )
 
         return [high_low_dict]
+

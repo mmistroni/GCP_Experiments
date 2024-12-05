@@ -415,6 +415,7 @@ class FinvizLoader(beam.DoFn):
         self.runtype = runtype
 
 
+
     def _get_data(self, ticker, key, label, prevClose=False):
         try :
             result = load_bennchmark_data(ticker, key, prevClose=prevClose)
