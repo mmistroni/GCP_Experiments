@@ -157,13 +157,15 @@ class ProcessHistorical(beam.DoFn):
         self.start_date = (end_date -BDay(30)).date()
 
     def get_adx_and_rsi(self, ticker):
-        adx = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
-        rsi = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
+        adx_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
+        rsi_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
 
         try:
-            adx = requests.get(adx).json()[0]['adx']
-            rsi = requests.get(adx).json()[0]['rsi']
-            return  {ticker : {'ADX' : adx,'RSI' : rsi}}
+            adx = requests.get(adx_url).json()
+            latest = adx[0]
+            rsi = requests.get(rsi_url).json()
+            latest_rsi= rsi[0]
+            return  {ticker : {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']}}
         except Exception as e:
             logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
             return {'Ticker': ticker, 'ADX': 0, 'RSI': 0}
