@@ -256,6 +256,9 @@ def run(argv = None, save_main_session=True):
         tester = run_test_pipeline(p)
         etoro = run_etoro_pipeline(p)
 
+        mapped_tester = (tester | 'Mapping to ticker' >> beam.Map(lambda d: d['ticker']))
+
+
 
         logging.info('----combining ------')
 

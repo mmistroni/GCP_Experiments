@@ -51,6 +51,16 @@ class MyTestCase(unittest.TestCase):
                      | 'Run Loader' >> beam.ParDo(ProcessHistorical(os.environ['FMPREPKEY'], date.today()))
                      | self.debugSink
                      )
+    def test_combine_pipeline(self):
+        credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
+        cob = date(2024, 10, 4)
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL,NVDA,AMZN,T'])
+                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.001))
+                     | 'maps' >> beam.Map(lambda d: d['ticker'])
+                     | 'combiining' >> beam.CombineGlobally(lambda x: ','.join(x))
+                     | 'Run LoaderHist' >> beam.ParDo(ProcessHistorical(os.environ['FMPREPKEY'], date.today()))
+                     | self.debugSink)
 
 
 if __name__ == '__main__':
