@@ -349,7 +349,7 @@ def run(argv=None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_optionss = PipelineOptions(pipeline_args)
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
-    logging.info(f'fmp key:{known_args.fmprepkey}')
+    logging.info(f'fmp key:{known_args.key}')
 
     debugSink =  beam.Map(logging.info)
 
