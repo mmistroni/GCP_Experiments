@@ -14,6 +14,8 @@ steps:
           , 'key=$_SENDGRID_KEY'
           , '--parameters'
           , 'fmprepkey=$_FMPREP_KEY'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           , '--region=$_REGION'
           , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
@@ -27,6 +29,8 @@ substitutions:
   _REGION : 'us-central1'
   _FMPREP_KEY : ''
   _SENDGRID_KEY: ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/shareloader:latest2
+
 
 #options:
 #  logging: CLOUD_LOGGING_ONLY

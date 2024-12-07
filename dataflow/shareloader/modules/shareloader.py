@@ -139,8 +139,3 @@ def run(argv=None, save_main_session=True):
                  )
 
         run_my_pipeline(input, known_args)
-
-
-if __name__ == '__main__':
-    logging.getLogger().setLevel(logging.INFO)
-    run()
