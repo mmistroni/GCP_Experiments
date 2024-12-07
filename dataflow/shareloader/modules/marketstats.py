@@ -453,6 +453,8 @@ def run(argv=None, save_main_session=True):
 
         shillers = run_shillers(p)
 
+        adv_decline = run_advance_decline(p)
+
         #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
 
@@ -478,26 +480,28 @@ def run(argv=None, save_main_session=True):
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (12, d))
 
         junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
+        adv_decline_key = adv_decline | 'add adv decl' >> beam.Map(lambda d: (14, d))
 
-        shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (14, d))
 
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (21, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
         cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (23, d))
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (24, d))
+        shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (24, d))
 
-        static_key = static | 'Add 10' >> beam.Map(lambda d: (25, d))
-        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (26, d))
-        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (27, d))
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (34, d))
+
+        static_key = static | 'Add 10' >> beam.Map(lambda d: (45, d))
+        stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (46, d))
+        cftc_key = cftc_historical | 'Add 12' >> beam.Map(lambda d: (57, d))
         # we need a global combiner to write to sink
-        pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (30, d))
+        pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (60, d))
 
         #non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beam.Map(lambda d: (40, d))
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key, junk_bond_key, shillers_key, highlow_key,
+                        nysi_key, nymo_key, junk_bond_key,adv_decline_key, shillers_key, highlow_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,

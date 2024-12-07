@@ -20,6 +20,7 @@ from apache_beam.options.pipeline_options import SetupOptions
 '''
 Further source of infos
 https://medium.com/@mancuso34/building-all-in-one-stock-economic-data-repository-6246dde5ce02
+https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-streamlit-5d3a7bc42b89
 '''
 
 def asset_play_filter(input_dict):
@@ -40,6 +41,24 @@ def canslim_filter(input_dict):
     and (input_dict.get('grossProfitMargin', 0) > 0) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3) \
     and (input_dict.get('price',0) > input_dict.get('priceAvg20', 0)) and (input_dict.get('price',0) > input_dict.get('priceAvg50',0)) \
     and (input_dict.get('price', 0) > input_dict.get('priceAvg200',0)) and (input_dict.get('sharesOutstanding',0) > 50000000)
+
+
+def buffett_six(input_dict):
+    '''
+    debt/equity > 0.5                   key metrics
+    current ratio 1.5 < x < 2.5  ratios
+    price/book < 1.5    ratios
+    roe > 8%        ratios
+    roa > 6%         ratuis
+    interestCoverageRatio > 5  # from keymetrics
+
+    :param input_dict:
+    :return:
+    '''
+    return (input_dict.get('debtToEquity',0) < 0.5) and (input_dict.get('currentRatio',0) <  2.5)\
+         and (input_dict.get('currentRatio',0) <  1.5) \
+    and (input_dict.get('priceToBookRatio', 0) < 1.5) and (input_dict.get('returnOnEquity',0) > 0.08) \
+    and (input_dict.get('interestCoverageRatio',0) > 5) and (input_dict.get('institutionalOwnershipPercentage', 0) > 0.3)
 
 def canslim_potential_filter(input_dict):
     return (input_dict.get('avgVolume',0) > 200000) and (input_dict.get('eps_growth_this_year',0) > 0.2)\
@@ -572,6 +591,12 @@ def store_superperformers_benchmark(benchmark_data, bq_sink):
                      | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
                                                                        map_to_bq_dict(d, 'OUT_OF_FAVOUR_ENTERPRISE'))
                      | 'Writing to sink ENT2' >> bq_sink)
+
+    (benchmark_data | 'Filtering for buiffett six ' >> beam.Filter(benchmark_filter)
+     | 'Filtering for buffett six' >> beam.Filter(buffett_six)
+     | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
+                                                       map_to_bq_dict(d, 'BUFFETT_SIX'))
+     | 'Writing to sink ENT2' >> bq_sink)
 
 
 def parse_known_args(argv):

@@ -236,7 +236,8 @@ def get_asset_play_parameters(ticker, key):
             dataDict['bookValuePerShare'] = current.get('bookValuePerShareTTM') or 0
             dataDict['tangibleBookValuePerShare'] = current.get('tangibleBookValuePerShareTTM') or 0
             dataDict['freeCashFlowPerShare'] = current.get('freeCashFlowPerShareTTM') or 0
-
+            dataDict['debtToEquity'] = current.get('debtToEquity') or 0
+            dataDict['interestCoverageRatio'] = current.get('interestCoverageRatio') or 0
     except Exception as e:
         pass
     return dataDict
@@ -431,7 +432,11 @@ def get_financial_ratios(ticker, key):
                     returnOnCapital = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else latest.get('returnOnCapitalEmployedTTM'),
                     netProfitMargin = 0 if latest.get('netProfitMarginTTM') is None else latest.get('netProfitMarginTTM'),
                     currentRatio = 0 if latest.get('currentRatioTTM') is None else latest.get('currentRatioTTM'),
-                    peRatio = 0 if latest.get('peRatioTTM') is None else latest.get('peRatioTTM'))
+                    peRatio = 0 if latest.get('peRatioTTM') is None else latest.get('peRatioTTM'),
+                    returnOnAssets = 0 if latest.get('returnOnAssetsTTM') is None else latest.get('returnOnAssetsTTM'),
+                    priceToBookRatio=0 if latest.get('priceToBookRatioTTM') is None else latest.get(
+                                'priceToBookRatioTTM'),
+                            )
             ratioDict.update(dataDict)
         except Exception as e:
             return {}
@@ -598,11 +603,12 @@ def get_key_metrics_benchmark(ticker, key):
             'https://financialmodelingprep.com/api/v3/key-metrics-ttm/{}?limit=2&apikey={}'.format(ticker, key)).json()
 
         if keyMetrics:
-
             dataDict['tangibleBookValuePerShare'] = keyMetrics[0].get('tangibleBookValuePerShareTTM') or 0
             dataDict['netCurrentAssetValue'] = keyMetrics[0].get('netCurrentAssetValueTTM') or 0
             dataDict['freeCashFlowPerShare'] = keyMetrics[0].get('freeCashFlowPerShareTTM') or 0
             dataDict['earningsYield'] = keyMetrics[0].get('earningsYieldTTM') or 0
+            dataDict['debtToEquity'] = current.get('debtToEquity') or 0
+            dataDict['interestCoverageRatio'] = current.get('interestCoverageRatio') or 0
     except Exception as e:
         logging.info(f'Exception in gettng keymeetrics for {ticker}:{str(e)}')
     return dataDict
@@ -650,6 +656,13 @@ def get_financial_ratios_benchmark(ticker, key):
                 dataDict['numOfDividendsPaid'] = len([d for d in all_divis if d > 0])
                 dataDict['returnOnCapital'] = 0 if latest.get('returnOnCapitalEmployedTTM', 0) is None else \
                     latest.get('returnOnCapitalEmployedTTM')
+                dataDict['returnOnAssets'] = 0 if latest.get('returnOnAssetsTTM') is None else latest.get('returnOnAssetsTTM'),
+                dataDict['returnOnEquity'] = 0 if latest.get('returnOnEquityTTM') is None else latest.get(
+                    'returnOnEquityTTM'),
+                dataDict['priceToBookRatio'] = 0 if latest.get('priceToBookRatioTTM') is None else latest.get(
+                    'priceToBookRatioTTM'),
+                dataDict['currentRatio'] = 0 if latest.get('currentRatioTTM') is None else latest.get(
+                    'currentRatioTTM'),
 
             except Exception as e:
                 pass

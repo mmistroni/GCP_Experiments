@@ -149,6 +149,17 @@ STOCK_EMAIL_TEMPLATE = """<html>
                                     <li>52 Week Change between 0 and 0.5</li>
                                 </ul>
                             </li>
+                            <li>BUFFETT SIX: Criteria
+                                <ul>
+                                    <li>Debt/Equity Ratio (< 0.5)</li>
+                                    <li>Current Ratio (1.5–2.5)</li>
+                                    <li>Price/Book Ratio (< 1.5)</li>
+                                    <li>Return on Equity (ROE > 8%)</li>
+                                    <li>Return on Assets (ROA > 6%)</li>
+                                    <li>Interest Coverage Ratio (> 5)</li>
+                                    
+                                </ul>
+                            </li>
                         </uls>
                         <br>
                         <br>

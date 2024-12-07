@@ -211,6 +211,10 @@ class TestSuperPerformers(unittest.TestCase):
         # dividend yield here
         res = get_financial_ratios('AAPL', key)
         self.assertTrue(res)
+        self.assertTrue(res['currentRatio'] !=0)
+        self.assertTrue(res['priceToBookRatio'] != 0)
+        self.assertTrue(res['returnOnEquity'] != 0)
+        self.assertTrue(res['returnOnAssets'] != 0)
 
     def test_get_stock_dividends(self):
         import requests
@@ -309,8 +313,29 @@ class TestSuperPerformers(unittest.TestCase):
         counter = 0
         for ticker in mapped:
             res = get_financial_ratios_benchmark(ticker, key)
+
             if res:
-                print(res)
+                self.assertTrue(res['currentRatio'] != 0, f'{counter} Failed for {ticker}')
+                self.assertTrue(res['priceToBookRatio'] != 0)
+                self.assertTrue(res['returnOnEquity'] != 0)
+                self.assertTrue(res['returnOnAssets'] != 0)
+                counter +=1
+
+            if counter > 50:
+                break
+
+    def test_get_financial_ratios_benchmark_brokenm(self):
+        import pandas as pd
+        key = os.environ['FMPREPKEY']
+
+        for ticker in ['MS']:
+            res = get_financial_ratios_benchmark(ticker, key)
+
+            if res:
+                self.assertTrue(res['currentRatio'] != 0, f'{counter} Failed for {ticker}')
+                self.assertTrue(res['priceToBookRatio'] != 0)
+                self.assertTrue(res['returnOnEquity'] != 0)
+                self.assertTrue(res['returnOnAssets'] != 0)
                 counter +=1
 
             if counter > 50:
