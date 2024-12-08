@@ -8,8 +8,6 @@ steps:
       , './dataflow/edgar_flow'
       ]
     id : 'build-edgarform4-image'
-
-# Build flex template
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
@@ -28,7 +26,7 @@ steps:
       ]
     id: 'build-edgarform4-flex-template'
 
-images: [ 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'' ]
+images: [ 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME' ]
 
 timeout: 3600s
 
