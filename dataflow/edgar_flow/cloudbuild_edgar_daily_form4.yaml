@@ -1,3 +1,6 @@
+
+# chec1kout this  link https://github.com/davidcavazos/python-docs-samples/blob/master/dataflow/gpu-workers/cloudbuild.yaml
+
 steps:
   # Build the container image with the Python version of our choice.
   - name: gcr.io/cloud-builders/docker
