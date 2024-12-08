@@ -26,3 +26,25 @@ COPY __init__.py ${WORKDIR}/__init__.py
 COPY edgar_daily_form4_main.py ${WORKDIR}/edgar_daily_form4_main.py
 
 
+RUN pwd
+RUN echo '----- listing workdir'
+RUN ls -la ${WORKDIR}
+RUN echo '---- LISTING moduls-----'
+RUN ls -la ${WORKDIR}/modules
+RUN echo 'Dockerfile completed'
+
+RUN echo '----- INSTALLING REQS ----'
+RUN pip install -e .
+
+# Super important to add these lines.
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/edgar_daily_form4_main.py"
+
+RUN pip check
+# Optionally, list all installed dependencies.
+# The output can be used to seed requirements.txt for reproducible builds.
+RUN pip freeze
+# Set the entrypoint to Apache Beam SDK launcher, which allows this image
+# to be used as an SDK container image.
+ENTRYPOINT ["/opt/apache/beam/boot"]
+
+
