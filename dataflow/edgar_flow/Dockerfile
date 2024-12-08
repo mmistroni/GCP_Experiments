@@ -30,7 +30,7 @@ RUN pwd
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
 RUN echo '---- LISTING moduls-----'
-RUN ls -la ${WORKDIR}/modules
+RUN ls -la ${WORKDIR}/src/modules
 RUN echo 'Dockerfile completed'
 
 RUN echo '----- INSTALLING REQS ----'
