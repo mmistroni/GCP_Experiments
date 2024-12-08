@@ -27,5 +27,5 @@ substitutions:
   _REGION : 'us-central1'
   _RECIPIENTS : ''
   _SENDGRID_KEY: ''
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/edgar-daily4-form4-cbuild:latest
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/edgar-daily4-form4-cbuild:latest2
   
