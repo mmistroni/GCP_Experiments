@@ -195,7 +195,3 @@ def run(argv=None, save_main_session=True):
         with_extra_info | 'WRite to BQ' >> sink
         sink_data = reformat_for_custom_bucket(enhanced_data)
         sink_data | 'Writing to Bucket' >>  detailed_sink
-
-if __name__ == '__main__':
-  logging.getLogger().setLevel(logging.INFO)
-  run()

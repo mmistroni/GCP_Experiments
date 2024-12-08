@@ -1,22 +1,19 @@
-FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
+COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
+# Copy Flex Template launcher binary from the launcher image, which makes it
+# possible to use the image as a Flex Template base image.
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
 
-ARG WORKDIR=/dataflow/template
-RUN mkdir -p ${WORKDIR}
-RUN mkdir -p ${WORKDIR}/modules
+# Location to store the pipeline artifacts.
+ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
-COPY modules ${WORKDIR}/modules
+RUN mkdir -p ${WORKDIR}
+RUN mkdir -p ${WORKDIR}/src
+RUN mkdir -p ${WORKDIR}/src/modules
 
-
-RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp]==2.46.0 sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0
-
+COPY pyproject.toml ./pyproject.toml
 COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup.py ${WORKDIR}/setup.py
 COPY edgar_daily_form4_main.py ${WORKDIR}/edgar_daily_form4_main.py
 
-
-# Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
-ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/edgar_daily_form4_main.py"
 
 RUN pwd
 RUN echo '----- listing workdir'
@@ -24,3 +21,19 @@ RUN ls -la ${WORKDIR}
 RUN echo '---- LISTING moduls-----'
 RUN ls -la ${WORKDIR}/modules
 RUN echo 'Dockerfile completed'
+
+RUN echo '----- INSTALLING REQS ----'
+RUN pip install -e .
+
+# Super important to add these lines.
+ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/edgar_daily_form4_main.py"
+
+RUN pip check
+# Optionally, list all installed dependencies.
+# The output can be used to seed requirements.txt for reproducible builds.
+RUN pip freeze
+# Set the entrypoint to Apache Beam SDK launcher, which allows this image
+# to be used as an SDK container image.
+ENTRYPOINT ["/opt/apache/beam/boot"]
+
+

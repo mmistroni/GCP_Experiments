@@ -14,6 +14,8 @@ steps:
           , 'recipients=$_RECIPIENTS'
           , '--parameters'
           , 'key=$_SENDGRID_KEY'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           , '--region=$_REGION'
           , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
@@ -25,4 +27,5 @@ substitutions:
   _REGION : 'us-central1'
   _RECIPIENTS : ''
   _SENDGRID_KEY: ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/edgar-daily4-form4-cbuild:latest
   
