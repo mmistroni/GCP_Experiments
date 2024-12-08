@@ -11,7 +11,7 @@ steps:
       , '--file=./dataflow/edgar_flow/Dockerfile'
       , './dataflow/edgar_flow'
       ]
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     id: 'build-edgarform4-flex-template'
     entrypoint: 'gcloud'
     args: 
