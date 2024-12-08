@@ -12,19 +12,7 @@ steps:
           , '--config'
           , '$_EDGAR_FORM4_BUILD_FILE']
     id: 'build-form4-template'
-  # Kick off edgar form 13
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args:
-      [
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_EDGAR_FORM13_BUILD_FILE']
-    id: 'build-form13-template'
-timeout: 50000s
+  timeout: 50000s
 substitutions:
   _EDGAR_FORM4_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form4.yaml
   _EDGAR_FORM13_BUILD_FILE: ./dataflow/edgar_flow/cloudbuild_edgar_daily_form13.yaml
