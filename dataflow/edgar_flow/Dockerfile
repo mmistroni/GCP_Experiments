@@ -23,6 +23,7 @@ RUN mkdir -p ${WORKDIR}/src/modules
 
 COPY pyproject.toml ./pyproject.toml
 COPY __init__.py ${WORKDIR}/__init__.py
+COPY modules  ${WORKDIR}/src/modules
 COPY edgar_daily_form4_main.py ${WORKDIR}/edgar_daily_form4_main.py
 
 
