@@ -470,18 +470,18 @@ def run(argv=None, save_main_session=True):
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         adv_decline_key = adv_decline | 'add adv decl' >> beam.Map(lambda d: (6, d))
-        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (7, d))
-        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (8, d))
-        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (9, d))
-        rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (10, d))
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (11, d))
+        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (7, d))
 
-        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (12, d))
-        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (13, d))
+        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (9, d))
+        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (10, d))
+        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (11, d))
+        rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (12, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (13, d))
 
-        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (14, d))
+        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (15, d))
+        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (16, d))
 
-        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (15, d))
+        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (17, d))
 
 
 
