@@ -21,6 +21,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
                             get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes
 from shareloader.modules.finviz_utils import  get_advance_decline
+from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization, To
@@ -327,7 +328,10 @@ def run_shillers(p):
              | 'getting shillers' >> beam.FlatMap(lambda d: get_shiller_indexes())
              )
 
-
+def run_sp500multiples(p):
+    return (p | 'Start sp500' >> beam.Create(['shiller_pe_month', 'pe_month', 'earnings_growth_year'])
+                     | 'Run Loader sp500' >> beam.ParDo(AsyncProcessSP500Multiples({}))
+                     )
 
 def parse_known_args(argv):
     """Parses args for the workflow."""
@@ -453,6 +457,9 @@ def run(argv=None, save_main_session=True):
 
         shillers = run_shillers(p)
 
+        sp500_multi = run_sp500multiples(p)
+
+
         adv_decline = run_advance_decline(p)
 
         #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
@@ -488,6 +495,7 @@ def run(argv=None, save_main_session=True):
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
         cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (23, d))
         shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (24, d))
+        sp500_key = sp500_multi | 'add sp500 multi' >> beam.Map(lambda d: (26, d))
 
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (34, d))
 
@@ -503,6 +511,7 @@ def run(argv=None, save_main_session=True):
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
                         nysi_key, nymo_key, junk_bond_key,adv_decline_key, shillers_key, highlow_key,
+                        sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
