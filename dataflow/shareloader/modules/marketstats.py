@@ -473,17 +473,17 @@ def run(argv=None, save_main_session=True):
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (7, d))
         qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (8, d))
         rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (9, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (10, d))
 
-        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (10, d))
-        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (11, d))
+        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (12, d))
+        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (13, d))
 
-        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (12, d))
+        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (14, d))
 
-        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (13, d))
-        adv_decline_key = adv_decline | 'add adv decl' >> beam.Map(lambda d: (14, d))
+        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (15, d))
+        adv_decline_key = adv_decline | 'add adv decl' >> beam.Map(lambda d: (16, d))
 
 
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (21, d))
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
         cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (23, d))
         shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (24, d))
