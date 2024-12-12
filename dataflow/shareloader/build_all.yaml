@@ -18,18 +18,6 @@ steps:
           , '--config'
           , '$_SHARESDATASETLOADER_BUILD_FILE']  
     id: 'build-datasetloader-template'
-  # Kick off superperformers
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
-          , '$_SUPERPERFORMERS_BUILD_FILE']  
-    id: 'build-superperformers-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'gcloud'
     args: 
