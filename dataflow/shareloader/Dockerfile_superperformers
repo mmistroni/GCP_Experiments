@@ -1,24 +1,61 @@
-FROM gcr.io/dataflow-templates-base/python3-template-launcher-base
+# This Dockerfile illustrates how to use a custom base image when building
+# a custom contaier images for Dataflow. A 'slim' base image is smaller in size,
+# but does not include some preinstalled libraries, like google-cloud-debugger.
+# To use a standard image, use apache/beam_python3.11_sdk:2.54.0 instead.
+# Use consistent versions of Python interpreter in the project.
+FROM python:3.11-slim
 
-ARG WORKDIR=/dataflow/template
-RUN mkdir -p ${WORKDIR}
-RUN mkdir -p ${WORKDIR}/modules
+# Copy SDK entrypoint binary from Apache Beam image, which makes it possible to
+# use the image as SDK container image. If you explicitly depend on
+# apache-beam in setup.py, use the same version of Beam in both files.
+COPY --from=apache/beam_python3.11_sdk:2.54.0 /opt/apache/beam /opt/apache/beam
+
+# Copy Flex Template launcher binary from the launcher image, which makes it
+# possible to use the image as a Flex Template base image.
+COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:20230622_RC00 /opt/google/dataflow/python_template_launcher /opt/google/dataflow/python_template_launcher
+
+# Location to store the pipeline artifacts.
+ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
-COPY modules ${WORKDIR}/modules
 
-
-RUN pip install avro-python3 pyarrow==9.0.0 apache-beam[gcp] sendgrid==6.7.1 lxml==4.6.3 pandas-datareader==0.9.0 vaderSentiment==3.3.2  finvizfinance
-
-COPY __init__.py ${WORKDIR}/__init__.py
-COPY setup.py ${WORKDIR}/setup.py
+RUN mkdir -p ${WORKDIR}/src
+RUN mkdir -p ${WORKDIR}/src/shareloader
+RUN mkdir -p ${WORKDIR}/src/shareloader/modules
+COPY marketstats.toml ./pyproject.toml
 COPY superperformers_main.py ${WORKDIR}/superperformers_main.py
-
+COPY modules  ${WORKDIR}/src/shareloader/modules
+COPY __init__.py ${WORKDIR}/src/shareloader/__init__.py
 
 # Super important to add these lines.
-ENV FLEX_TEMPLATE_PYTHON_SETUP_FILE="${WORKDIR}/setup.py"
 ENV FLEX_TEMPLATE_PYTHON_PY_FILE="${WORKDIR}/superperformers_main.py"
 
 
 RUN echo '----- listing workdir'
 RUN ls -la ${WORKDIR}
+RUN echo '--- listing src -----'
+RUN ls -la  ${WORKDIR}/src
+
+RUN echo '--- listing shareloader  -----'
+RUN ls -la  ${WORKDIR}/src/shareloader
+RUN echo '--- listing modules -----'
+RUN ls -la  ${WORKDIR}/src/shareloader/modules
+
+RUN echo '----- INSTALLING REQS ----'
+
+RUN pip install -e .
+
+# Optionally, verify that dependencies are not conflicting.
+# A conflict may or may not be significant for your pipeline.
+RUN pip check
+
+# Optionally, list all installed dependencies.
+# The output can be used to seed requirements.txt for reproducible builds.
+RUN pip freeze
+
+# Set the entrypoint to Apache Beam SDK launcher, which allows this image
+# to be used as an SDK container image.
+ENTRYPOINT ["/opt/apache/beam/boot"]
+
+
+
 

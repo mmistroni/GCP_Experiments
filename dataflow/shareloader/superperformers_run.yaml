@@ -20,6 +20,8 @@ steps:
         , 'probe=$_PROBE'
         , '--parameters'
         , 'split=$_SPLIT'
+        , '--parameters'
+        , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
         , '--region=$_REGION'
         , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
@@ -34,3 +36,5 @@ substitutions:
   _MICROCAP: ''
   _PROBE: ''
   _SPLIT: ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformers:latest
+
