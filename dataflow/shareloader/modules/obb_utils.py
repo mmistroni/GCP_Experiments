@@ -172,8 +172,6 @@ class ProcessHistorical(beam.DoFn):
 
 
 
-
-
     def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
         ticks = element.split(',')

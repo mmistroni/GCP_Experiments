@@ -125,7 +125,7 @@ def run_etoro_pipeline(p):
     return  (test_ppln
                 | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                | 'Combine all extratickers' >> beam.CombineGlobally(combine_tickers)
+                | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
                | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.07, selection='EToro'))
              )
 
@@ -211,7 +211,7 @@ def send_email(pipeline, sendgridkey):
              )
 
 
-def combine_tickers(p, etoro, tester, fmpkey):
+def combine_tickers(elems):
     return ((tester, etoro) | "fmaprun" >> beam.Flatten()
                          | 'Mapping' >> beam.Map(lambda d: d['ticker'])
                          | 'Combine' >> beam.CombineGlobally(lambda x: ''.join(x))

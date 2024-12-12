@@ -10,6 +10,7 @@ from apache_beam.testing.util import assert_that, equal_to
 import os
 from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
+from datetime import daet
 
 from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline
 
@@ -93,6 +94,16 @@ class TestDfTesterLoader(unittest.TestCase):
             input2 = run_etoro_pipeline(p)
             res = ( (input, input2) |  "fmaprun" >> beam.Flatten()
                     | 'tosink' >> self.debugSink)
+
+    def test_etoro(self):
+        key = os.environ['FMPREPKEY']
+        cob = date.today()
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_etoro_pipeline(p)
+            (input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
+                    | 'combinea ll ' >> beam.CombineGlobally(lambda x: ','.join(x))
+                    | 'run rpocess'  >> beam.ParDo(ProcessHistorical(key, cob)
+                    | 'to sink' >> self.debugSink)
 
 
 
