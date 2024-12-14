@@ -101,17 +101,11 @@ class TestDfTesterLoader(unittest.TestCase):
         from datetime import date
         cob = date.today()
         with TestPipeline(options=PipelineOptions()) as p:
-            ''' sample ppln'''
-            cob = date.today()
-            test_ppln = get_extra_watchlist()
-            input2 =  (test_ppln
-                    | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
-                    | 'Filtering extra' >> beam.Filter(
-                        lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                    | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-                    | 'Tester' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
-                    )
-            etoro = run_etoro_pipeline(p)
+            input2 = run_etoro_pipeline(p, 0.001)
+
+            mapped = (input2 | 'Mapping' >> beam.Map(lambda d: (d['ticker'], d))
+            )
+
 
             result = combine_tester_and_etoro(key, input2, etoro )
 
@@ -123,12 +117,14 @@ class TestDfTesterLoader(unittest.TestCase):
                     input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
                     | 'combinea ll ' >> beam.CombineGlobally(lambda x: ','.join(x))
                     | 'run rpocess'  >> beam.ParDo(ProcessHistorical(key, cob))
+                    | 'mappign to tpl' >> beam.Map(lambda d: (d['ticker'], d))
             )
 
             mapped = (input2 |'remapping ' >> beam.Map(lambda d: (d['ticker'], d))
                       )
 
             left_joined = (
+                    mapped
                     mapped
                     | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
                                                 right_list=tech_indicators)
