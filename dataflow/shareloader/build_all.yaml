@@ -16,17 +16,6 @@ steps:
           , '--verbosity'
           , 'debug'
           , '--config'
-          , '$_SHARESDATASETLOADER_BUILD_FILE']  
-    id: 'build-datasetloader-template'
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'gcloud'
-    args: 
-      [ 
-          'builds'
-          , 'submit'
-          , '--verbosity'
-          , 'debug'
-          , '--config'
           , '$_ECONOMY_BUILD_FILE']  
     id: 'build-stateofeconomy-template'
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -74,6 +63,18 @@ steps:
         , '--config'
         , '$_SHARELOADER_BUILD_FILE' ]
     id: 'build-shareloader-template'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args:
+      [
+          'builds'
+        , 'submit'
+        , '--verbosity'
+        , 'debug'
+        , '--config'
+        , '$_SHARESDATASETLOADER_BUILD_FILE' ]
+    id: 'build-datasetloader-template'
+
 timeout: 50000s
 substitutions:
   _SHARELOADER_BUILD_FILE: ./dataflow/shareloader/build_shareloader.yaml
