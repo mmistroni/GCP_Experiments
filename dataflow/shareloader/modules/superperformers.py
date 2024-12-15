@@ -594,9 +594,9 @@ def store_superperformers_benchmark(benchmark_data, bq_sink):
 
     (benchmark_data | 'Filtering for buiffett six ' >> beam.Filter(benchmark_filter)
      | 'Filtering for buffett six' >> beam.Filter(buffett_six)
-     | 'Mapping only Relevant fields ENT2' >> beam.Map(lambda d:
+     | 'Mapping only Relevant fields buffet six' >> beam.Map(lambda d:
                                                        map_to_bq_dict(d, 'BUFFETT_SIX'))
-     | 'Writing to sink ENT2' >> bq_sink)
+     | 'Writing to sink buffett six' >> bq_sink)
 
 
 def parse_known_args(argv):
