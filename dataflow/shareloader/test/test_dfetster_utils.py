@@ -10,6 +10,8 @@ from apache_beam.testing.util import assert_that, equal_to
 import os
 from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
+from datetime import date
+from shareloader.modules.obb_utils import ProcessHistorical
 
 from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline
 
@@ -20,6 +22,23 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
+
+class AnotherLeftJoinerFn(beam.DoFn):
+
+    def __init__(self):
+        super(AnotherLeftJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        print('Left is of tpe:{}'.format(type(left)))
+        if left_key in right_dict:
+            print('Row is:{}'.format(row))
+            right = right_dict[left_key]
+            left.update(right)
+            yield (left_key, left)
 
 
 
@@ -93,6 +112,27 @@ class TestDfTesterLoader(unittest.TestCase):
             input2 = run_etoro_pipeline(p)
             res = ( (input, input2) |  "fmaprun" >> beam.Flatten()
                     | 'tosink' >> self.debugSink)
+
+    def test_etoro(self):
+        key = os.environ['FMPREPKEY']
+        from datetime import date
+        cob = date.today()
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_etoro_pipeline(p)
+
+            tech_indicators = (
+                    input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
+                    | 'combinea ll ' >> beam.CombineGlobally(lambda x: ','.join(x))
+                    | 'run rpocess'  >> beam.ParDo(ProcessHistorical(key, cob))
+            )
+
+
+            left_joined = (
+                    input2
+                    | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                right_list=tech_indicators)
+                    | 'Display' >> beam.Map(print)
+            )
 
 
 
