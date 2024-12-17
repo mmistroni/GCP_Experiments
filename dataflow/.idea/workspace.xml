@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="committign shareloader">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="testing run with extra tech params">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,6 +36,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor": "Run",
@@ -89,6 +89,9 @@
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor": "Debug",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor": "Debug",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor": "Debug",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor": "Debug",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor": "Debug",
     "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor": "Debug",
     "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor": "Run",
     "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor": "Run",
@@ -132,7 +135,22 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro">
+  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance">
+    <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -148,7 +166,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_sp500" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -159,11 +177,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_sp500&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_run_my_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -174,11 +192,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_sample_pipeline2&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_sector_ranking&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_yfinance" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -189,32 +207,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_yfinance&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance" />
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking" />
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500" />
-        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm" />
-        <item itemvalue="Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark" />
       </list>
     </recent_temporary>
   </component>
@@ -233,22 +236,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00311" summary="storing senate discl">
-      <option name="closed" value="true" />
-      <created>1732196285295</created>
-      <option name="number" value="00311" />
-      <option name="presentableId" value="LOCAL-00311" />
-      <option name="project" value="LOCAL" />
-      <updated>1732196285296</updated>
-    </task>
-    <task id="LOCAL-00312" summary="storing senate discl">
-      <option name="closed" value="true" />
-      <created>1732199663932</created>
-      <option name="number" value="00312" />
-      <option name="presentableId" value="LOCAL-00312" />
-      <option name="project" value="LOCAL" />
-      <updated>1732199663932</updated>
     </task>
     <task id="LOCAL-00313" summary="storing senate discl">
       <option name="closed" value="true" />
@@ -626,7 +613,23 @@
       <option name="project" value="LOCAL" />
       <updated>1734419916393</updated>
     </task>
-    <option name="localTasksCounter" value="360" />
+    <task id="LOCAL-00360" summary="joined adx and premraket loaders">
+      <option name="closed" value="true" />
+      <created>1734421012455</created>
+      <option name="number" value="00360" />
+      <option name="presentableId" value="LOCAL-00360" />
+      <option name="project" value="LOCAL" />
+      <updated>1734421012455</updated>
+    </task>
+    <task id="LOCAL-00361" summary="testing run with extra tech params">
+      <option name="closed" value="true" />
+      <created>1734451462765</created>
+      <option name="number" value="00361" />
+      <option name="presentableId" value="LOCAL-00361" />
+      <option name="project" value="LOCAL" />
+      <updated>1734451462765</updated>
+    </task>
+    <option name="localTasksCounter" value="362" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -641,8 +644,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixing nans" />
-    <MESSAGE value="adding yfinance fetcher" />
     <MESSAGE value="moving marketfetcher to standard docker deployoment" />
     <MESSAGE value="reverted market stats" />
     <MESSAGE value="resurrecting highl ow" />
@@ -666,7 +667,9 @@
     <MESSAGE value="moving superperf to standard build" />
     <MESSAGE value="fixiing buffett sx" />
     <MESSAGE value="committign shareloader" />
-    <option name="LAST_COMMIT_MESSAGE" value="committign shareloader" />
+    <MESSAGE value="joined adx and premraket loaders" />
+    <MESSAGE value="testing run with extra tech params" />
+    <option name="LAST_COMMIT_MESSAGE" value="testing run with extra tech params" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -858,18 +861,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
-          <line>34</line>
-          <option name="timeStamp" value="181" />
+          <line>130</line>
+          <option name="timeStamp" value="184" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="182" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>22</line>
+          <option name="timeStamp" value="187" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
-          <line>141</line>
-          <option name="timeStamp" value="183" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
+          <line>96</line>
+          <option name="timeStamp" value="188" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
+          <line>113</line>
+          <option name="timeStamp" value="189" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
+          <line>107</line>
+          <option name="timeStamp" value="190" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
