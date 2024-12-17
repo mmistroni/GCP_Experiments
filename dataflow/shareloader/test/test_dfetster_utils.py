@@ -12,7 +12,7 @@ from unittest.mock import patch
 from apache_beam.options.pipeline_options import PipelineOptions
 from datetime import date
 from shareloader.modules.obb_utils import ProcessHistorical
-
+from shareloader.modules.finviz_utils import get_extra_watchlist
 from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline
 
 class Check(beam.PTransform):
@@ -114,11 +114,21 @@ class TestDfTesterLoader(unittest.TestCase):
                     | 'tosink' >> self.debugSink)
 
     def test_etoro(self):
+        from shareloader.modules.obb_utils import AsyncProcess
         key = os.environ['FMPREPKEY']
         from datetime import date
         cob = date.today()
         with TestPipeline(options=PipelineOptions()) as p:
-            input2 = run_etoro_pipeline(p)
+            ''' sample ppln'''
+            cob = date.today()
+            test_ppln = get_extra_watchlist()
+            input2 =  (test_ppln
+                    | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
+                    | 'Filtering extra' >> beam.Filter(
+                        lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                    | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
+                    | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
+                    )
 
             tech_indicators = (
                     input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
@@ -126,9 +136,11 @@ class TestDfTesterLoader(unittest.TestCase):
                     | 'run rpocess'  >> beam.ParDo(ProcessHistorical(key, cob))
             )
 
+            mapped = (input2 |'remapping ' >> beam.Map(lambda d: (d['ticker'], d))
+                      )
 
             left_joined = (
-                    input2
+                    mapped
                     | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
                                                 right_list=tech_indicators)
                     | 'Display' >> beam.Map(print)

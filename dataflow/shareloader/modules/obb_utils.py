@@ -165,7 +165,7 @@ class ProcessHistorical(beam.DoFn):
             latest = adx[0]
             rsi = requests.get(rsi_url).json()
             latest_rsi= rsi[0]
-            return  {ticker : {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']}}
+            return  (ticker , {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']})
         except Exception as e:
             logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
             return {ticker : {'ADX': 0, 'RSI': 0}}
