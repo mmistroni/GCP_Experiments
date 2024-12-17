@@ -13,7 +13,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from datetime import date
 from shareloader.modules.obb_utils import ProcessHistorical
 from shareloader.modules.finviz_utils import get_extra_watchlist
-from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline
+from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline,\
+                                    AnotherLeftJoinerFn, combine_tester_and_etoro
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -22,25 +23,6 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
-
-class AnotherLeftJoinerFn(beam.DoFn):
-
-    def __init__(self):
-        super(AnotherLeftJoinerFn, self).__init__()
-
-    def process(self, row, **kwargs):
-
-        right_dict = dict(kwargs['right_list'])
-        left_key = row[0]
-        left = row[1]
-        print('Left is of tpe:{}'.format(type(left)))
-        if left_key in right_dict:
-            print('Row is:{}'.format(row))
-            right = right_dict[left_key]
-            left.update(right)
-            yield (left_key, left)
-
-
 
 class TestDfTesterLoader(unittest.TestCase):
 
@@ -113,7 +95,7 @@ class TestDfTesterLoader(unittest.TestCase):
             res = ( (input, input2) |  "fmaprun" >> beam.Flatten()
                     | 'tosink' >> self.debugSink)
 
-    def test_etoro(self):
+    def test_combine_tester_and_etoro(self):
         from shareloader.modules.obb_utils import AsyncProcess
         key = os.environ['FMPREPKEY']
         from datetime import date
@@ -127,9 +109,16 @@ class TestDfTesterLoader(unittest.TestCase):
                     | 'Filtering extra' >> beam.Filter(
                         lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                     | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-                    | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
+                    | 'Tester' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.0001, selection='EToro'))
                     )
+            etoro = run_etoro_pipeline(p)
 
+            result = combine_tester_and_etoro(key, input2, etoro )
+
+            result | 'Outtt' >> beam.Map(print)
+
+
+            '''
             tech_indicators = (
                     input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
                     | 'combinea ll ' >> beam.CombineGlobally(lambda x: ','.join(x))
@@ -146,7 +135,7 @@ class TestDfTesterLoader(unittest.TestCase):
                     | 'Display' >> beam.Map(print)
             )
 
-
+            '''
 
 
 

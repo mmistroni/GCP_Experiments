@@ -17,6 +17,26 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 import itertools
 
 
+class AnotherLeftJoinerFn(beam.DoFn):
+
+    def __init__(self):
+        super(AnotherLeftJoinerFn, self).__init__()
+
+    def process(self, row, **kwargs):
+
+        right_dict = dict(kwargs['right_list'])
+        left_key = row[0]
+        left = row[1]
+        print('Left is of tpe:{}'.format(type(left)))
+        if left_key in right_dict:
+            print('Row is:{}'.format(row))
+            right = right_dict[left_key]
+            left.update(right)
+            yield (left_key, left)
+
+
+
+
 def get_bq_schema():
     field_dict =  {
         "cob": "DATE",
@@ -211,13 +231,24 @@ def send_email(pipeline, sendgridkey):
              )
 
 
-def combine_tickers(elems):
-    return ((tester, etoro) | "fmaprun" >> beam.Flatten()
+def combine_tester_and_etoro(fmpKey, tester,etoro):
+    premarket_results_mapped = ((tester, etoro) | "fmaprun" >> beam.Flatten()
+                         | 'Remap to tuple' >> beam.Map(lambda dct: (dct['ticker'], dct))
+                         )
+
+    historicals =  ((tester, etoro) | "fmaprun" >> beam.Flatten()
                          | 'Mapping' >> beam.Map(lambda d: d['ticker'])
                          | 'Combine' >> beam.CombineGlobally(lambda x: ''.join(x))
-                         | 'Find ADXand RSI' >> beam.ParDo(AsyncProcess(fmpkey, date.today()))
+                         | 'Find ADXand RSI' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
 
     )
+
+    return (
+            premarket_results_mapped
+            | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                      right_list=historicals)
+    )
+
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -256,12 +287,7 @@ def run(argv = None, save_main_session=True):
         tester = run_test_pipeline(p)
         etoro = run_etoro_pipeline(p)
 
-        mapped_tester = (tester | 'Mapping to ticker' >> beam.Map(lambda d: d['ticker']))
-
-
-
         logging.info('----combining ------')
-
 
         premarket_results =  ( (tester, etoro) |  "fmaprun" >> beam.Flatten()
                   | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn()))
@@ -270,10 +296,11 @@ def run(argv = None, save_main_session=True):
 
         premarket_results   | 'tester TO SINK' >> sink
 
+        logging.info('final pipeline')
 
-        techs = combine_tickers(p, etoro, tester)
+        mapped_tester = combine_tester_and_etoro(known_args.fmprepkey, tester, etoro)
 
-        techs |'to debug' >> sink
+
 
 
 
