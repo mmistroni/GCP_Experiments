@@ -56,7 +56,7 @@ class TestSectorLoader(unittest.TestCase):
 
     def fetch_performance(self, sector, ticker, key):
         endDate = date.today()
-        startDate = (endDate - BDay(140)).date()
+        startDate = (endDate - BDay(252)).date()
         url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
         historical = requests.get(url).json().get('historical')
         df = pd.DataFrame(data=historical[::-1])
@@ -104,12 +104,36 @@ class TestSectorLoader(unittest.TestCase):
         import numpy as np
 
         # Define sector ETFs and benchmark
-        sector_tickers = ['XLK','XLV', 'XLF', 'XLE', 'XLB', 'XLY', 'VIS', 'VPU', 'XLP', 'XLC']
+        sector_tickers = ['XLK',
+                          'XLF',
+                          'XLE',
+                          'XLV',
+                          'XLI',
+                          'XLP',
+                          'XLU',
+                          'XLY',
+                          'XLB',
+                          'XLRE',
+                          'XLC',
+                          '^GSPC']
+        sector_names = ['Technology',
+                        'Financials',
+                        'Energy',
+                        'Health Care',
+                        'Industrials',
+                        'Consumer Staples',
+                        'Utilities',
+                        'Consumer Discretionary',
+                        'Materials',
+                        'Real Estate',
+                        'Communication Services']
+
+
         all_tickers = sector_tickers
 
         # Download historical data starting from January 2019
-        data = yf.download(all_tickers, start='2019-01-01', end='2024-01-01')['Adj Close']
-
+        data = yf.download(all_tickers, start='2023-01-01', end=date.today().strftime('%Y-%m-%d'))['Adj Close']
+        rename_dict = dict((k, v) for k, v in zip(all_tickers, sector_names))
         # Calculate daily returns
         daily_returns = data.pct_change().dropna()
         daily_returns = daily_returns.loc['2020-01-01':]
@@ -131,6 +155,12 @@ class TestSectorLoader(unittest.TestCase):
             momentum_rank = momentum_rank.shift(1)
             momentum_data[period_name] = momentum_rank
 
-        print('foo')
-
+        holder = []
+        for key in momentum_periods.keys():
+            data = momentum_data[key]
+            data['Period'] = key
+            print(f'---------------------{key}')
+            holder.append(data.tail(1))
+        alldf = pd.concat(holder)
+        print(alldf)
 
