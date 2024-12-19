@@ -4,3 +4,4 @@ pyarrow
 pandas-datareader
 openbb-yfinance
 finvizfinance
+openbb-multpl
