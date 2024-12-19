@@ -126,17 +126,21 @@ class TestSectorLoader(unittest.TestCase):
                         'Consumer Discretionary',
                         'Materials',
                         'Real Estate',
-                        'Communication Services']
+                        'Communication Services',
+                        'S&P500']
 
 
         all_tickers = sector_tickers
 
+        sector_dict = dict(zip(sector_tickers, sector_names))
+
+        start_date = '2023-01-01'
+
         # Download historical data starting from January 2019
-        data = yf.download(all_tickers, start='2023-01-01', end=date.today().strftime('%Y-%m-%d'))['Adj Close']
+        data = yf.download(all_tickers, start=start_date, end=date.today().strftime('%Y-%m-%d'))['Adj Close']
         rename_dict = dict((k, v) for k, v in zip(all_tickers, sector_names))
         # Calculate daily returns
         daily_returns = data.pct_change().dropna()
-        daily_returns = daily_returns.loc['2020-01-01':]
 
         # Define momentum periods
         momentum_periods = {
@@ -150,7 +154,7 @@ class TestSectorLoader(unittest.TestCase):
         momentum_data = {}
         for period_name, period_days in momentum_periods.items():
             momentum = data[sector_tickers].pct_change(period_days)
-            momentum = momentum.loc['2020-01-01':]
+            momentum = momentum.loc[start_date:]
             momentum_rank = momentum.rank(axis=1, ascending=False, method='first')
             momentum_rank = momentum_rank.shift(1)
             momentum_data[period_name] = momentum_rank
@@ -158,9 +162,19 @@ class TestSectorLoader(unittest.TestCase):
         holder = []
         for key in momentum_periods.keys():
             data = momentum_data[key]
-            data['Period'] = key
-            print(f'---------------------{key}')
+            data = data.rename(index=sector_dict)
             holder.append(data.tail(1))
         alldf = pd.concat(holder)
-        print(alldf)
+
+        index_map = { 0 : '1M', 1 : '3M', 2   :'6M', 3 : '1Y'}
+
+
+        alldf = alldf.reset_index(drop=True).rename(columns=sector_dict)
+
+
+        transposed = alldf.T.rename(columns=index_map)
+
+        cols = transposed.columns
+
+        print(transposed[cols[::-1]])
 
