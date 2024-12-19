@@ -7,7 +7,7 @@ from shareloader.modules.sector_loader import run_my_pipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
-from shareloader.modules.sectors_utils import SectorRankGenerator
+from shareloader.modules.sectors_utils import SectorRankGenerator, get_sector_rankings
 from unittest.mock import patch
 from shareloader.modules.sector_loader import run_my_pipeline
 from pandas.tseries.offsets import BDay
@@ -58,76 +58,16 @@ class TestSectorLoader(unittest.TestCase):
             res = run_my_pipeline(p, key)
             res   | self.notEmptySink
 
-    def fetch_performance(self, sector, ticker, key):
-        start_date = '2023-01-01'
-        end_date = date.today().strftime('%Y-%m-%d')
-        url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={start_date}&to={end_date}&apikey={key}"
-        historical = requests.get(url).json().get('historical')
-        df = pd.DataFrame(data=historical[::-1])[['date', 'adjClose']]
-        df['date'] = pd.to_datetime(df.date)
-        df = df.rename(columns={'adjClose' : ticker})
-        df = df.set_index('date')
-        return df
-
     def test_sector_ranking(self):
         # sample from https://wire.insiderfinance.io/unlocking-sector-based-momentum-strategies-in-asset-allocation-8560187f3ae3
         key = os.environ['FMPREPKEY']
-        from collections import OrderedDict
-        sector_tickers = OrderedDict([('XLK', 'Technology'),
-                                      ('XLF', 'Financials'),
-                                      ('XLE', 'Energy'),
-                                      ('XLV', 'Health Care'),
-                                      ('XLI', 'Industrials'),
-                                      ('XLP', 'Consumer Staples'),
-                                      ('XLU', 'Utilities'),
-                                      ('XLY', 'Consumer Discretionary'),
-                                      ('XLB', 'Materials'),
-                                      ('XLRE', 'Real Estate'),
-                                      ('XLC', 'Communication Services'),
-                                      ('^GSPC', 'S&P500')
-                                      ])
-        holder = []
-        for ticker, sec in sector_tickers.items():
-             data = self.fetch_performance(sec, ticker, key)
-             holder.append(data)
 
-        data = pd.concat(holder, axis=1)
+        res = get_sector_rankings(key)
 
-        # Define momentum periods
-        momentum_periods = {
-            '1M': 21,  # 1 month
-            '3M': 63,  # 3 months
-            '6M': 126,  # 6 months
-            '12M': 252  # 12 months
-        }
+        from pprint import pprint
+        pprint(res)
 
-        start_date = '2023-01-01'
 
-        # Calculate momentum and rankings
-        momentum_data = {}
-        for period_name, period_days in momentum_periods.items():
-            momentum = data[sector_tickers].pct_change(period_days)
-            momentum = momentum.loc[start_date:]
-            momentum_rank = momentum.rank(axis=1, ascending=False, method='first')
-            momentum_rank = momentum_rank.shift(1)
-            momentum_data[period_name] = momentum_rank
-
-        holder = []
-        for key in momentum_periods.keys():
-            data = momentum_data[key]
-            data = data.rename(index=sector_dict)
-            holder.append(data.tail(1))
-        alldf = pd.concat(holder)
-
-        index_map = {0: '1M', 1: '3M', 2: '6M', 3: '1Y'}
-
-        alldf = alldf.reset_index(drop=True).rename(columns=sector_dict)
-
-        transposed = alldf.T.rename(columns=index_map)
-
-        cols = transposed.columns
-
-        print(transposed[cols[::-1]])
 
 
     def download_from_yf(self, tickers, start_date, end_date):

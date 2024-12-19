@@ -1,8 +1,5 @@
-import requests
 import apache_beam as beam
 import logging
-from itertools import chain
-from bs4 import BeautifulSoup
 import requests
 from itertools import chain
 from io import StringIO
@@ -13,26 +10,76 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 from .marketstats_utils import get_senate_disclosures
 from functools import reduce
+from collections import OrderedDict
 
 
-def fetch_performance(sector, ticker, key):
-    endDate = date.today()
-    startDate = (endDate - BDay(90)).date()
-    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
+def fetch_performance(sector, ticker, key, start_date):
+    end_date = date.today().strftime('%Y-%m-%d')
+    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={start_date}&to={end_date}&apikey={key}"
     historical = requests.get(url).json().get('historical')
-    df = pd.DataFrame(data=historical[::-1])
+    df = pd.DataFrame(data=historical[::-1])[['date', 'adjClose']]
     df['date'] = pd.to_datetime(df.date)
-    df['ticker'] = ticker
+    df = df.rename(columns={'adjClose': sector})
     df = df.set_index('date')
-    resampled = df.resample('1M').mean()
-    resampled[sector] = resampled.close / resampled.close.shift(1) - 1
-    records = resampled[[sector]].dropna().T.to_dict('records')
+    return df
+def get_sector_rankings(key):
+    # sample from https://wire.insiderfinance.io/unlocking-sector-based-momentum-strategies-in-asset-allocation-8560187f3ae3
+    sector_tickers = OrderedDict([('XLK', 'Technology'), ('XLF', 'Financials'), ('XLE', 'Energy'),
+                                  ('XLV', 'Health Care'), ('XLI', 'Industrials'), ('XLP', 'Consumer Staples'),
+                                  ('XLU', 'Utilities'), ('XLY', 'Consumer Discretionary'), ('XLB', 'Materials'),
+                                  ('XLRE', 'Real Estate'), ('XLC', 'Communication Services'), ('^GSPC', 'S&P500')
+                                  ])
+    holder = []
 
-    data = []
-    for k, v in records[0].items():
-        data.append((k.strftime('%Y-%m-%d'), v))
+    start_date  = (date.today() - BDay(300)).date().strftime('%Y-%m-%d')
 
-    return (sector, data)
+    for ticker, sec in sector_tickers.items():
+         data = fetch_performance(sec, ticker, key, start_date=start_date)
+         holder.append(data)
+
+    data = pd.concat(holder, axis=1)
+
+    # Define momentum periods
+    momentum_periods = {
+        '1M': 21,  # 1 month
+        '3M': 63,  # 3 months
+        '6M': 126,  # 6 months
+        '12M': 252  # 12 months
+    }
+
+    # Calculate momentum and rankings
+    momentum_data = {}
+    sector_names = list(sector_tickers.values())
+    for period_name, period_days in momentum_periods.items():
+        momentum = data[sector_names].pct_change(period_days)
+        momentum = momentum.loc[start_date:]
+        momentum_rank = momentum.rank(axis=1, ascending=False, method='first')
+        momentum_rank = momentum_rank.shift(1)
+        momentum_data[period_name] = momentum_rank
+
+    holder = []
+    for key in momentum_periods.keys():
+        data = momentum_data[key]
+        #data = data.rename(index=sector_tickers)
+        holder.append(data.tail(1))
+    alldf = pd.concat(holder)
+
+    index_map = {0: '1M', 1: '3M', 2: '6M', 3: '1Y'}
+
+    alldf = alldf.reset_index(drop=True)
+
+    transposed = alldf.T.rename(columns=index_map)
+
+    cols = transposed.columns
+
+    return transposed[cols[::-1]]
+
+
+
+
+
+
+
 
 
 
