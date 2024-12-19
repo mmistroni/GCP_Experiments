@@ -237,15 +237,15 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
                          )
 
     historicals =  ((tester, etoro) | "fmaprun hist" >> beam.Flatten()
-                         | 'Mapping t and e' >> beam.Map(lambda d: d['ticker'])
-                         | 'Combine both' >> beam.CombineGlobally(lambda x: ''.join(x))
+                         | 'Mapping t and e x' >> beam.Map(lambda d: d['ticker'])
+                         | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x))
                          | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
 
     )
 
     return (
             premarket_results_mapped
-            | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
+            | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
                                                       right_list=historicals)
     )
 
@@ -299,6 +299,9 @@ def run(argv = None, save_main_session=True):
         logging.info('final pipeline')
 
         mapped_tester = combine_tester_and_etoro(known_args.fmprepkey, tester, etoro)
+
+        mapped_tester | 'combined to sink tester TO SINK' >> sink
+
 
 
 
