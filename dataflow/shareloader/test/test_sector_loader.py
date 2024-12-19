@@ -91,9 +91,43 @@ class TestSectorLoader(unittest.TestCase):
              data = self.fetch_performance(sec, ticker, key)
              holder.append(data)
 
-        full = pd.concat(holder, axis=1)
+        data = pd.concat(holder, axis=1)
 
-        print(full)
+        # Define momentum periods
+        momentum_periods = {
+            '1M': 21,  # 1 month
+            '3M': 63,  # 3 months
+            '6M': 126,  # 6 months
+            '12M': 252  # 12 months
+        }
+
+        start_date = '2023-01-01'
+
+        # Calculate momentum and rankings
+        momentum_data = {}
+        for period_name, period_days in momentum_periods.items():
+            momentum = data[sector_tickers].pct_change(period_days)
+            momentum = momentum.loc[start_date:]
+            momentum_rank = momentum.rank(axis=1, ascending=False, method='first')
+            momentum_rank = momentum_rank.shift(1)
+            momentum_data[period_name] = momentum_rank
+
+        holder = []
+        for key in momentum_periods.keys():
+            data = momentum_data[key]
+            data = data.rename(index=sector_dict)
+            holder.append(data.tail(1))
+        alldf = pd.concat(holder)
+
+        index_map = {0: '1M', 1: '3M', 2: '6M', 3: '1Y'}
+
+        alldf = alldf.reset_index(drop=True).rename(columns=sector_dict)
+
+        transposed = alldf.T.rename(columns=index_map)
+
+        cols = transposed.columns
+
+        print(transposed[cols[::-1]])
 
 
     def download_from_yf(self, tickers, start_date, end_date):

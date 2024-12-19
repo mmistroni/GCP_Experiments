@@ -232,7 +232,7 @@ def send_email(pipeline, sendgridkey):
 
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
-    premarket_results_mapped = ((tester, etoro) | "fmaprun" >> beam.Flatten()
+    premarket_results_mapped = ((tester, etoro) | "etoro combined fmaprun" >> beam.Flatten()
                          | 'Remap to tuple' >> beam.Map(lambda dct: (dct['ticker'], dct))
                          )
 
