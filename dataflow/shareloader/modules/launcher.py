@@ -236,10 +236,10 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
                          | 'Remap to tuple' >> beam.Map(lambda dct: (dct['ticker'], dct))
                          )
 
-    historicals =  ((tester, etoro) | "fmaprun" >> beam.Flatten()
-                         | 'Mapping' >> beam.Map(lambda d: d['ticker'])
-                         | 'Combine' >> beam.CombineGlobally(lambda x: ''.join(x))
-                         | 'Find ADXand RSI' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
+    historicals =  ((tester, etoro) | "fmaprun hist" >> beam.Flatten()
+                         | 'Mapping t and e' >> beam.Map(lambda d: d['ticker'])
+                         | 'Combine both' >> beam.CombineGlobally(lambda x: ''.join(x))
+                         | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
 
     )
 
