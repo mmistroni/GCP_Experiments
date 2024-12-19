@@ -11,6 +11,10 @@ from shareloader.modules.sectors_utils import SectorRankGenerator
 from unittest.mock import patch
 from shareloader.modules.sector_loader import run_my_pipeline
 from pandas.tseries.offsets import BDay
+import yfinance as yf
+import pandas as pd
+import numpy as np
+from collections import  OrderedDict
 
 from datetime import date
 import os
@@ -55,13 +59,13 @@ class TestSectorLoader(unittest.TestCase):
             res   | self.notEmptySink
 
     def fetch_performance(self, sector, ticker, key):
-        endDate = date.today()
-        startDate = (endDate - BDay(252)).date()
-        url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={startDate.strftime('%Y-%m-%d')}&to={endDate.strftime('%Y-%m-%d')}&apikey={key}"
+        start_date = '2023-01-01'
+        end_date = date.today().strftime('%Y-%m-%d')
+        url = f"https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={start_date}&to={end_date}&apikey={key}"
         historical = requests.get(url).json().get('historical')
-        df = pd.DataFrame(data=historical[::-1])
+        df = pd.DataFrame(data=historical[::-1])[['date', 'adjClose']]
         df['date'] = pd.to_datetime(df.date)
-        df['ticker'] = ticker
+        df = df.rename(columns={'adjClose' : ticker})
         df = df.set_index('date')
         return df
 
@@ -69,78 +73,60 @@ class TestSectorLoader(unittest.TestCase):
         # sample from https://wire.insiderfinance.io/unlocking-sector-based-momentum-strategies-in-asset-allocation-8560187f3ae3
         key = os.environ['FMPREPKEY']
         from collections import OrderedDict
-        sectorsETF = OrderedDict({
-            'Technology': 'XLK',
-            'Health Care': 'XLV',
-            'Financials': 'XLF',
-            'Real Estate': 'SCHH',
-            'Energy': 'XLE',
-            'Materials': 'XLB',
-            'Consumer Discretionary': 'XLY',
-            'Industrials': 'VIS',
-            'Utilities': 'VPU',
-            'Consumer Staples': 'XLP',
-            'Telecommunications': 'XLC',
-            'S&P 500': '^GSPC'
-        })
-
-        momentum_periods = {
-         '1M': 21,    # 1 month
-         '3M': 63,    # 3 months
-         '6M': 126,   # 6 months
-         #    '12M': 252   # 12 months
-         }
-
-        holder = {}
-        for sec, ticker in sectorsETF.items():
+        sector_tickers = OrderedDict([('XLK', 'Technology'),
+                                      ('XLF', 'Financials'),
+                                      ('XLE', 'Energy'),
+                                      ('XLV', 'Health Care'),
+                                      ('XLI', 'Industrials'),
+                                      ('XLP', 'Consumer Staples'),
+                                      ('XLU', 'Utilities'),
+                                      ('XLY', 'Consumer Discretionary'),
+                                      ('XLB', 'Materials'),
+                                      ('XLRE', 'Real Estate'),
+                                      ('XLC', 'Communication Services'),
+                                      ('^GSPC', 'S&P500')
+                                      ])
+        holder = []
+        for ticker, sec in sector_tickers.items():
              data = self.fetch_performance(sec, ticker, key)
-             holder[ticker] = data
+             holder.append(data)
 
-        print('out')
+        full = pd.concat(holder, axis=1)
+
+        print(full)
+
+
+    def download_from_yf(self, tickers, start_date, end_date):
+        return yf.download(tickers, start=start_date, end=end_date)['Adj Close']
+
 
     def test_yfinance(self):
-        import yfinance as yf
-        import pandas as pd
-        import numpy as np
 
         # Define sector ETFs and benchmark
-        sector_tickers = ['XLK',
-                          'XLF',
-                          'XLE',
-                          'XLV',
-                          'XLI',
-                          'XLP',
-                          'XLU',
-                          'XLY',
-                          'XLB',
-                          'XLRE',
-                          'XLC',
-                          '^GSPC']
-        sector_names = ['Technology',
-                        'Financials',
-                        'Energy',
-                        'Health Care',
-                        'Industrials',
-                        'Consumer Staples',
-                        'Utilities',
-                        'Consumer Discretionary',
-                        'Materials',
-                        'Real Estate',
-                        'Communication Services',
-                        'S&P500']
+        sector_tickers = OrderedDict([('XLK', 'Technology'),
+                                      ('XLF','Financials'),
+                                      ('XLE', 'Energy'),
+                                      ('XLV', 'Health Care'),
+                                      ('XLI',  'Industrials'),
+                                      ('XLP', 'Consumer Staples'),
+                                      ('XLU', 'Utilities'),
+                                      ('XLY', 'Consumer Discretionary'),
+                                      ('XLB', 'Materials'),
+                                      ('XLRE', 'Real Estate'),
+                                      ('XLC', 'Communication Services'),
+                                      ('^GSPC' , 'S&P500')
+                                      ])
+        all_tickers = list(sector_tickers.keys())
 
-
-        all_tickers = sector_tickers
-
-        sector_dict = dict(zip(sector_tickers, sector_names))
+        sector_dict = sector_tickers
 
         start_date = '2023-01-01'
+        end_date = date.today().strftime('%Y-%m-%d')
 
         # Download historical data starting from January 2019
-        data = yf.download(all_tickers, start=start_date, end=date.today().strftime('%Y-%m-%d'))['Adj Close']
-        rename_dict = dict((k, v) for k, v in zip(all_tickers, sector_names))
-        # Calculate daily returns
-        daily_returns = data.pct_change().dropna()
+
+        data = self.download_from_yf(all_tickers, start_date, end_date)
+
 
         # Define momentum periods
         momentum_periods = {

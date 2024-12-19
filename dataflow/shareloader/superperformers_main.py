@@ -1,5 +1,5 @@
-from modules.superperformers import run
+from shareloader.modules import superperformers
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run()
+  superperformers.run()
