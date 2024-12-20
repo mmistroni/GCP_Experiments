@@ -34,7 +34,7 @@ steps:
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _IMAGE_NAME: superperformers:latest
+  _IMAGE_NAME: superperformers:latest2
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/superperformers_flex_template.json
   _METADATA_FILE: ./dataflow/shareloader/superperformers_metadata
   

@@ -36,5 +36,5 @@ substitutions:
   _MICROCAP: ''
   _PROBE: ''
   _SPLIT: ''
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformers:latest
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformers:latest2
 
