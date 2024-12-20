@@ -250,7 +250,7 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
             | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
                                                       right_list=historicals)
     )
-    ''''''
+    '''
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
