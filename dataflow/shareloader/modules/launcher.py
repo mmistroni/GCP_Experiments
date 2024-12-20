@@ -232,10 +232,12 @@ def send_email(pipeline, sendgridkey):
 
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
-    premarket_results_mapped = ((tester, etoro) | "etorox combined fmaprun" >> beam.Flatten()
+    return ((tester, etoro) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
                          )
 
+
+    '''
     historicals =  ((tester, etoro) | "fmaprun hist" >> beam.Flatten()
                          | 'Mapping t and e x' >> beam.Map(lambda d: d['ticker'])
                          | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x))
@@ -248,7 +250,7 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
             | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
                                                       right_list=historicals)
     )
-
+    ''''''
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
