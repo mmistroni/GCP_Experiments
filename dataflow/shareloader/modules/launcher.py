@@ -232,14 +232,20 @@ def send_email(pipeline, sendgridkey):
 
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
+    '''
+    Redo.
+    :param fmpKey:
+    :param tester:
+    :param etoro:
+    :return:
+    '''
     mapped =  ((tester, etoro) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
                          )
 
 
 
-    historicals =  ((tester, etoro) | "fmaprun hist" >> beam.Flatten()
-                         | 'Mapping t and e x' >> beam.Map(lambda d: d['ticker'])
+    historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
                          | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x))
                          | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
 
