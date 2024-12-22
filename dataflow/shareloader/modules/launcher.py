@@ -254,7 +254,7 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
     return (
             mapped
             | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
-                                                      right_list=historicals)
+                                                      right_list=beam.pvalue.AsIter(historicals))
     )
 
 

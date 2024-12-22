@@ -83,6 +83,7 @@ def parse_known_args(argv):
 
 def get_prices(tpl, fmprepkey):
     try:
+        logging.info('Tpl is {tpl}')
         ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
         stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
                                                                                                    token=fmprepkey)
