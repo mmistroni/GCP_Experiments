@@ -28,7 +28,7 @@ class TestDfTesterLoader(unittest.TestCase):
 
     def setUp(self) -> None:
         self.notEmptySink = Check(is_not_empty())
-        self.debugSink = beam.Map(lambda item: print(f'------------------ {item}'))
+        self.debugSink = beam.Map(print)
         #self.patcher = patch('shareloader.modules.share_datset_loader.XyzOptions._add_argparse_args')
         #self.mock_foo = self.patcher.start()
         parser = argparse.ArgumentParser(add_help=False)
@@ -108,6 +108,30 @@ class TestDfTesterLoader(unittest.TestCase):
             mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'to sink' >> self.debugSink)
 
+<<<<<<< HEAD
+=======
+            historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
+                                | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x if x is not None else ''))
+                                | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(key, date.today()))
+
+            )
+
+            res = (historicals | 'Filtering wrong length' >> beam.Filter(lambda tpl: len(tpl) < 2)
+                        
+            )
+
+            res | 'debugging' >> self.debugSink
+
+            '''
+            res =  (
+                    mapped
+                    | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                            right_list=beam.pvalue.AsIter(historicals))
+            )
+
+            res | self.debugSink
+            '''
+>>>>>>> 1b5ab2a (suncing)
             
 
             
