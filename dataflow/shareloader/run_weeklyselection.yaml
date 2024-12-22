@@ -14,6 +14,8 @@ steps:
           , 'sendgridkey=$_SENDGRID_KEY'
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           , '--region=$_REGION'
 
       ]
@@ -25,4 +27,5 @@ substitutions:
   _REGION: us-central1
   _SENDGRID_KEY : ''
   _RECIPIENTS : ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/weeklyselection:latest2
 
