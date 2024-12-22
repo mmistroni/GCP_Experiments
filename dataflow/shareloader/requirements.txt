@@ -1,4 +1,4 @@
-apache-beam[gcp]==2.54.0
+apache-beam[gcp]
 avro-python3
 pyarrow
 pandas-datareader
