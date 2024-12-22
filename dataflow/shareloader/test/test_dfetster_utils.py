@@ -28,7 +28,7 @@ class TestDfTesterLoader(unittest.TestCase):
 
     def setUp(self) -> None:
         self.notEmptySink = Check(is_not_empty())
-        self.debugSink = beam.Map(print)
+        self.debugSink = beam.Map(lambda item: print(f'------------------ {item}'))
         #self.patcher = patch('shareloader.modules.share_datset_loader.XyzOptions._add_argparse_args')
         #self.mock_foo = self.patcher.start()
         parser = argparse.ArgumentParser(add_help=False)
@@ -97,42 +97,40 @@ class TestDfTesterLoader(unittest.TestCase):
 
     def test_combine_tester_and_etoro(self):
         from shareloader.modules.obb_utils import AsyncProcess
-        key = os.environ['FMPREPKEY']
+        key   = os.environ['FMPREPKEY']
         from datetime import date
         cob = date.today()
         with TestPipeline(options=PipelineOptions()) as p:
+            input = run_premarket_pipeline(p, key)
             input2 = run_etoro_pipeline(p, 0.001)
 
-            mapped = (input2 | 'Mapping' >> beam.Map(lambda d: (d['ticker'], d))
+            mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
+                         | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
+                         |  'filtering' >> beam.Filter(lambda tpl: tpl[0] is not None)
+                         )
+
+            historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
+                                | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x if x is not None else ''))
+                                | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(key, date.today()))
+
             )
 
-
-            result = combine_tester_and_etoro(key, input2, etoro )
-
-            result | 'Outtt' >> beam.Map(print)
-
-
-            '''
-            tech_indicators = (
-                    input2 | 'Map To Tick' >> beam.Map(lambda d: d['ticker'])
-                    | 'combinea ll ' >> beam.CombineGlobally(lambda x: ','.join(x))
-                    | 'run rpocess'  >> beam.ParDo(ProcessHistorical(key, cob))
-                    | 'mappign to tpl' >> beam.Map(lambda d: (d['ticker'], d))
-            )
-
-            mapped = (input2 |'remapping ' >> beam.Map(lambda d: (d['ticker'], d))
-                      )
-
-            left_joined = (
-                    mapped
-                    mapped
-                    | 'InnerJoiner: JoinValues' >> beam.ParDo(AnotherLeftJoinerFn(),
-                                                right_list=tech_indicators)
-                    | 'Display' >> beam.Map(print)
+            (historicals | 'Filtering wrong length' >> beam.Filter(lambda tpl: len(tpl) < 2)
+                        | 'debugging' >> self.debugSink
             )
 
             '''
+            res =  (
+                    mapped
+                    | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                            right_list=beam.pvalue.AsIter(historicals))
+            )
 
+            res | self.debugSink
+            '''
+            
+
+            
 
 
 
