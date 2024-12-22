@@ -99,7 +99,11 @@ def get_prices(tpl, fmprepkey):
              pandl, current_pos, total_gain, 'Above 52wk High' if historical_data.get('price', 0) > wk52high else '' ]
     except Exception as e :
         logging.info('Excepiton for {}:{}'.format(tpl[0], str(e)))
-        return None
+        return [ticker, qty,
+                0,
+                0,
+                0,
+                0, 0, 0, '']
 
 def combine_portfolio(elements):
     # Calculating variance, we need it for subject
