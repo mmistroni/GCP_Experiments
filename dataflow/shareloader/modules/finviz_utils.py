@@ -11,6 +11,7 @@ from .superperf_metrics import  load_bennchmark_data
 import numpy as np
 import logging
 from datetime import date
+import requests
 
 
 
@@ -431,6 +432,24 @@ class FinvizLoader(beam.DoFn):
             logging.info(f'Failed to get data for {ticker}:{str(e)}')
             return []
 
+
+    def get_adx_and_rsi(self, ticker):
+        adx_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.key}'
+        rsi_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.key}'
+
+        try:
+            adx = requests.get(adx_url).json()
+            latest = adx[0]
+            rsi = requests.get(rsi_url).json()
+            latest_rsi= rsi[0]
+            return  {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']}
+        except Exception as e:
+            logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
+            return {'ADX': 0, 'RSI': 0}
+
+
+
+
     def run_premarket(self):
         holder = []
         overnight_watchlist = [(d['Ticker'], d['Country']) for d in overnight_return()]
@@ -441,11 +460,14 @@ class FinvizLoader(beam.DoFn):
                 logging.info(f'Obtianed:{len(data)} itesm')
                 if data and country == 'USA':
                     data['country'] = country
+
+                    #rsi = self.get_adx_and_rsi(ticker)
                     # we are only interested in selected fields
                     interested_fields =  ['symbol', 'price', 'open', "previousClose", 'change', 'exchange' , 'country']
                     reduced_dict = dict((k, data.get(k)) for k in interested_fields )
                     reduced_dict['asodate'] = date.today()
                     reduced_dict['marketCap'] = float(data['marketCap'])
+                    #reduced_dict.update(rsi)
                     holder.append(reduced_dict)
             except Exception as e:
                 logging.info(f'Unable to get data for {ticker}:{str(e)}')

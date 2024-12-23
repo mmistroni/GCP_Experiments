@@ -57,6 +57,7 @@ class AsyncProcess(beam.DoFn):
                     if increase > (1 + self.price_change):
                         logging.info(f'Adding ({t}):{latest}')
                         latest['ticker'] = t
+                        latest['symbol'] = t
                         latest['prev_date'] = last_close['date']
                         latest['prev_close'] = last_close['close']
                         latest['change'] = increase

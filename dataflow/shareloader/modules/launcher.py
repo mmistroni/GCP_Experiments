@@ -26,21 +26,12 @@ class AnotherLeftJoinerFn(beam.DoFn):
 
         right_dict = dict(kwargs['right_list'])
 
-        if len(right_dict) == 1:
-            logging.info('Somehow there is no secondn tp l')
-        else:
-            logging.info('We aare ok..')
-
         left_key = row[0]
         left = row[1]
-        print('Left is of tpe:{}'.format(type(left)))
         if left_key in right_dict:
-            print('Row is:{}'.format(row))
             right = right_dict[left_key]
             left.update(right)
             yield (left_key, left)
-
-
 
 
 def get_bq_schema():
@@ -131,7 +122,7 @@ def map_to_bq_dict(input_dict):
 
     custom_dict = input_dict.copy()
     custom_dict['cob']  = date.today()
-    custom_dict['ticker'] = None
+    custom_dict['ticker'] = custom_dict['symbol']
     return custom_dict
 
 
