@@ -60,7 +60,7 @@ def run(argv=None, save_main_session=True):
 
 
     with beam.Pipeline(options=pipeline_optionss) as p:
-        result = run_my_pipeline(p, known_args.key)
+        result = run_sector_loader_pipeline(p, known_args.key)
 
         result | 'Mapping to String' >> beam.Map(logging.info)
 
