@@ -31,7 +31,7 @@ sectorsETF = OrderedDict ({
 def run_sector_loader_pipeline(p, fmprepkey):
     return (p | 'Starting' >> beam.Create(['Start'])
      | 'Fetch data' >> beam.Map(lambda tpl: get_sector_rankings(fmprepkey))
-     | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
+     #| 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
      )
 
 def run_senate_disclosures(p, key):

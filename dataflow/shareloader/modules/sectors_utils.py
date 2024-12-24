@@ -113,11 +113,6 @@ class SectorsEmailSender(beam.DoFn):
       header_row = "<tr><th>Sector</th><th>1Y</th><th>6M</th><th>3M</th><th>1M</th></tr>"
       row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
-      headers = rows[0][1]
-      dates = [tpl[0] for tpl in headers]
-      header_row = header_row.format(*dates)
-      html += header_row
-
       for dct in rows:
           data = [dct['index'], dct['1Y'], dct['6M'], dct['3M'], dct['1M']]
           html += row_template.format(*data)
