@@ -6,7 +6,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 from collections import OrderedDict
 from datetime import datetime, date
-from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, fetch_performance
+from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_rankings
 from .marketstats_utils import get_senate_disclosures
 import argparse
 
@@ -28,9 +28,9 @@ sectorsETF = OrderedDict ({
 
 
 #https://www.tradingview.com/chart/AAPL/pmHMR643-Investors-Holy-Grail-The-Business-Economic-Cycle/?utm_source=Weekly&utm_medium=email&utm_campaign=TradingView+Weekly+188+%28EN%29
-def run_my_pipeline(p, fmprepkey):
-    return (p | 'Starting' >> beam.Create([tpl for tpl in sectorsETF.items()])
-     | 'Fetch data' >> beam.Map(lambda tpl: fetch_performance(tpl[0], tpl[1], fmprepkey))
+def run_sector_loader_pipeline(p, fmprepkey):
+    return (p | 'Starting' >> beam.Create(['Start'])
+     | 'Fetch data' >> beam.Map(lambda tpl: get_sector_rankings(fmprepkey))
      | 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
      )
 

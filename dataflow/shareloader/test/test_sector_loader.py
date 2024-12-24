@@ -3,13 +3,12 @@ import unittest
 import requests
 from lxml import etree
 from io import StringIO, BytesIO
-from shareloader.modules.sector_loader import run_my_pipeline
+from shareloader.modules.sector_loader import run_sector_loader_pipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from shareloader.modules.sectors_utils import SectorRankGenerator, get_sector_rankings
 from unittest.mock import patch
-from shareloader.modules.sector_loader import run_my_pipeline
 from pandas.tseries.offsets import BDay
 import yfinance as yf
 import pandas as pd
@@ -40,7 +39,7 @@ class TestSectorLoader(unittest.TestCase):
     def test_run_my_pipeline(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline() as p:
-            res = run_my_pipeline(p, key)
+            res = run_sector_loader_pipeline(p, key)
             res | self.printSink
 
     def test_sector_ranks(self):
@@ -55,7 +54,7 @@ class TestSectorLoader(unittest.TestCase):
         key = os.environ['FMPREPKEY']
 
         with TestPipeline() as p:
-            res = run_my_pipeline(p, key)
+            res = run_sector_loader_pipeline(p, key)
             res   | self.notEmptySink
 
     def test_sector_ranking(self):

@@ -72,16 +72,8 @@ def get_sector_rankings(key):
 
     cols = transposed.columns
 
-    return transposed[cols[::-1]]
-
-
-
-
-
-
-
-
-
+    data = transposed[cols[::-1]]
+    return data.reset_index().to_dict('records')
 
 
 class ETFHistoryCombineFn(beam.CombineFn):
@@ -118,7 +110,7 @@ class SectorsEmailSender(beam.DoFn):
 
   def _build_html_message(self, rows):
       html = '<table border="1">'
-      header_row = "<tr><th>Sector</th><th>{}</th><th>{}</th><th>{}</th><th>{}</th></tr>"
+      header_row = "<tr><th>Sector</th><th>1Y</th><th>6M</th><th>3M</th><th>1M</th></tr>"
       row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
       headers = rows[0][1]
@@ -126,10 +118,9 @@ class SectorsEmailSender(beam.DoFn):
       header_row = header_row.format(*dates)
       html += header_row
 
-      for sector, dates in rows:
-          returns = ['%.3f' % val[1] for val in dates]
-          sector_data = [sector] + returns
-          html += row_template.format(*sector_data)
+      for dct in rows:
+          data = [dct['index'], dct['1Y'], dct['6M'], dct['3M'], dct['1M']]
+          html += row_template.format(*data)
       html += '</table>'
       return html
 
@@ -138,7 +129,12 @@ class SectorsEmailSender(beam.DoFn):
       logging.info(f'Processing returns:\n{sector_returns}')
       data = self._build_html_message(element)
       content = \
-          "<html><body><p> Compare Results against informations here https://www.investopedia.com/articles/trading/05/020305.asp</p><br><br>{}</body></html>".format(data)
+            '''
+            <html>
+               <body>
+                 <p>Compare Results against informations here https://www.investopedia.com/articles/trading/05/020305.asp</p>
+                 <br><br>{}
+               </body></html>'''.format(data)
 
       message = Mail(
           from_email='gcp_cloud_mm@outlook.com',
