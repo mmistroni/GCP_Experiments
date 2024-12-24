@@ -304,13 +304,13 @@ def run(argv = None, save_main_session=True):
 
         logging.info('----combining ------')
 
-        '''
         premarket_results =  ( (tester, etoro) |  "fmaprun pmrklt" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
         send_email(premarket_results, known_args.sendgridkey)
 
         premarket_results   | 'tester TO SINK' >> sink
+
         '''
         logging.info('final pipeline')
 
@@ -320,7 +320,7 @@ def run(argv = None, save_main_session=True):
 
         mapped_tester | 'combined to sink tester TO SINK' >> sink
 
-
+        '''
 
 
 
