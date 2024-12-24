@@ -179,7 +179,14 @@ class EmailSender(beam.DoFn):
         msg = element
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
-            "<html><body><table><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Broker</th>{}</table></body></html>"
+            '''<html>
+                  <body>
+                    <table>
+                       <th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>Broker</th>
+                       {}
+                    </table>
+                  </body>
+                </html>'''
         content = template.format(msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
@@ -209,6 +216,8 @@ class StockSelectionCombineFn(beam.CombineFn):
                           <td>{input['date']}</td>
                           <td>{input['close']}</td>
                           <td>{input['change']}</td>
+                          <td>{input.get('ADX', -1)}</td>
+                          <td>{input.get('RSI', -1)}</td>
                           <td>{input['selection']}</td>
                         </tr>"""
 
@@ -305,6 +314,8 @@ def run(argv = None, save_main_session=True):
         logging.info('final pipeline')
 
         mapped_tester = combine_tester_and_etoro(known_args.fmprepkey, tester, etoro)
+
+        send_email(mapped_tester, known_args.sendgridkey)
 
         mapped_tester | 'combined to sink tester TO SINK' >> sink
 
