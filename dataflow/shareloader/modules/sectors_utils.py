@@ -111,6 +111,8 @@ class SectorsEmailSender(beam.DoFn):
   def _build_html_message(self, rows):
       html = '<table border="1">'
       header_row = "<tr><th>Sector</th><th>1Y</th><th>6M</th><th>3M</th><th>1M</th></tr>"
+
+      html += header_row
       row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
       for dct in rows:
@@ -133,7 +135,7 @@ class SectorsEmailSender(beam.DoFn):
 
       message = Mail(
           from_email='gcp_cloud_mm@outlook.com',
-          subject='Sectors Return for last 4 Months',
+          subject='Sectors Return Ranking for last year',
           html_content=content)
 
       personalizations = self._build_personalization(self.recipients)

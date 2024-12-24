@@ -147,6 +147,34 @@ def run_etoro_pipeline(p, tolerance=0.07):
              )
 
 
+def combine_tester_and_etoro(fmpKey, tester,etoro):
+    '''
+    Redo.
+    :param fmpKey:
+    :param tester:
+    :param etoro:
+    :return:
+    '''
+    mapped =  ((tester, etoro) | "etorox combined fmaprun" >> beam.Flatten()
+                         | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
+                         | 'filtering' >> beam.Filter(lambda tpl: tpl[0] is not None)
+                         )
+
+
+
+    historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
+                         | 'Combine both x' >> beam.CombineGlobally(lambda x: ','.join(x))
+                         | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
+
+    )
+
+    return (
+            mapped
+            | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
+                                                      right_list=beam.pvalue.AsIter(historicals))
+    )
+
+
 
 def parse_known_args(argv):
   """Parses args for the workflow."""
@@ -235,33 +263,6 @@ class StockSelectionCombineFn(beam.CombineFn):
 def send_email(pipeline, sendgridkey):
     return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
              )
-
-
-def combine_tester_and_etoro(fmpKey, tester,etoro):
-    '''
-    Redo.
-    :param fmpKey:
-    :param tester:
-    :param etoro:
-    :return:
-    '''
-    mapped =  ((tester, etoro) | "etorox combined fmaprun" >> beam.Flatten()
-                         | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
-                         )
-
-
-
-    historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
-                         | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x))
-                         | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(fmpKey, date.today()))
-
-    )
-
-    return (
-            mapped
-            | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
-                                                      right_list=beam.pvalue.AsIter(historicals))
-    )
 
 
 def run(argv = None, save_main_session=True):
