@@ -28,6 +28,24 @@ class AsyncProcess(beam.DoFn):
         self.start_date = (self.end_date - BDay(1)).date()
         self.price_change = price_change
         self.selection = selection
+        self.fmpKey = credentials['key']
+
+
+    def get_adx_and_rsi(self, ticker):
+        adx_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
+        rsi_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
+
+        try:
+            adx = requests.get(adx_url).json()
+            latest = adx[0]
+            rsi = requests.get(rsi_url).json()
+            latest_rsi= rsi[0]
+            return  {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']}
+        except Exception as e:
+            logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
+            return {'ADX': 0, 'RSI': 0}
+
+
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
 
@@ -62,6 +80,8 @@ class AsyncProcess(beam.DoFn):
                         latest['prev_close'] = last_close['close']
                         latest['change'] = increase
                         latest['selection'] = self.selection
+                        tech_dict = self.get_adx_and_rsi(t)
+                        latest.update(tech_dict)
 
                         all_records.append(latest)
                     else:

@@ -106,24 +106,7 @@ class TestDfTesterLoader(unittest.TestCase):
             input2 = run_etoro_pipeline(p, 0.001)
 
             mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
-                         | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['symbol'], dct))
-                         |  'filtering' >> beam.Filter(lambda tpl: tpl[0] is not None)
-                         )
-
-            historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
-                                | 'Combine both x' >> beam.CombineGlobally(lambda x: ','.join(x if x is not None else ''))
-                                | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(key, date.today()))
-
-            )
-
-            
-            res =  (
-                    mapped
-                    | 'InnerJoiner: JoinValues between two pips' >> beam.ParDo(AnotherLeftJoinerFn(),
-                                                            right_list=beam.pvalue.AsIter(historicals))
-            )
-
-            res | self.debugSink
+                         | 'to sink' >> self.debugSink)
 
             
 

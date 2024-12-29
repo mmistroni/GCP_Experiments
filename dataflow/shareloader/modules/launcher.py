@@ -127,23 +127,23 @@ def map_to_bq_dict(input_dict):
 
 
 
-def run_test_pipeline(p):
+def run_test_pipeline(p, fmpkey):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
                 | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({}, cob, price_change=0.05))
+               | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.05))
              )
-def run_etoro_pipeline(p, tolerance=0.07):
+def run_etoro_pipeline(p, fmpkey, tolerance=0.07):
     cob = date.today()
     test_ppln = get_leaps()
     return  (test_ppln
                 | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'Etoro' >> beam.ParDo(AsyncProcess({}, cob, price_change=tolerance, selection='EToro'))
+               | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
              )
 
 
@@ -299,8 +299,8 @@ def run(argv = None, save_main_session=True):
         obb | 'oBB2 TO SINK' >>sink
         obb | ' to finvbiz' >> finviz_sink
 
-        tester = run_test_pipeline(p)
-        etoro = run_etoro_pipeline(p)
+        tester = run_test_pipeline(p, known_args.fmprepkey)
+        etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
         logging.info('----combining ------')
 
