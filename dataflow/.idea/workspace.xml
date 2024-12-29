@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="testing run with extra tech params">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="reverting">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/Dockerfile_weeklyselection" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_weeklyselection.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_weeklyselection.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_weeklyselection.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,86 +36,86 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor": "Debug",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor": "Debug",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor": "Debug",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor": "Run",
-    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor": "Run",
-    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor": "Run",
-    "Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor": "Run",
-    "Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor": "Debug",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor": "Debug",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor": "Debug",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor": "Debug",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor": "Debug",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor": "Debug",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor": "Debug",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor": "Debug",
-    "Python tests.Python tests in test_obb_loader.py.executor": "Run",
-    "Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor": "Run",
-    "Python tests.pytest for test.test_marketstats.executor": "Debug",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader/test",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests in test_obb_loader.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test.test_marketstats.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader/test&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="dataflow" is-module-sdk="true">
@@ -135,7 +137,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance">
+  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline">
     <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -213,10 +215,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro" />
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance" />
         <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro" />
       </list>
     </recent_temporary>
@@ -236,238 +238,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00313" summary="storing senate discl">
-      <option name="closed" value="true" />
-      <created>1732203418215</created>
-      <option name="number" value="00313" />
-      <option name="presentableId" value="LOCAL-00313" />
-      <option name="project" value="LOCAL" />
-      <updated>1732203418215</updated>
-    </task>
-    <task id="LOCAL-00314" summary="storing senate discl">
-      <option name="closed" value="true" />
-      <created>1732212310242</created>
-      <option name="number" value="00314" />
-      <option name="presentableId" value="LOCAL-00314" />
-      <option name="project" value="LOCAL" />
-      <updated>1732212310242</updated>
-    </task>
-    <task id="LOCAL-00315" summary="storing senate discl">
-      <option name="closed" value="true" />
-      <created>1732212568063</created>
-      <option name="number" value="00315" />
-      <option name="presentableId" value="LOCAL-00315" />
-      <option name="project" value="LOCAL" />
-      <updated>1732212568063</updated>
-    </task>
-    <task id="LOCAL-00316" summary="adding extra libs">
-      <option name="closed" value="true" />
-      <created>1733050678914</created>
-      <option name="number" value="00316" />
-      <option name="presentableId" value="LOCAL-00316" />
-      <option name="project" value="LOCAL" />
-      <updated>1733050678914</updated>
-    </task>
-    <task id="LOCAL-00317" summary="adding extra libs">
-      <option name="closed" value="true" />
-      <created>1733051038610</created>
-      <option name="number" value="00317" />
-      <option name="presentableId" value="LOCAL-00317" />
-      <option name="project" value="LOCAL" />
-      <updated>1733051038610</updated>
-    </task>
-    <task id="LOCAL-00318" summary="added shillers">
-      <option name="closed" value="true" />
-      <created>1733053633657</created>
-      <option name="number" value="00318" />
-      <option name="presentableId" value="LOCAL-00318" />
-      <option name="project" value="LOCAL" />
-      <updated>1733053633658</updated>
-    </task>
-    <task id="LOCAL-00319" summary="added advane declne">
-      <option name="closed" value="true" />
-      <created>1733056791878</created>
-      <option name="number" value="00319" />
-      <option name="presentableId" value="LOCAL-00319" />
-      <option name="project" value="LOCAL" />
-      <updated>1733056791878</updated>
-    </task>
-    <task id="LOCAL-00320" summary="added advane declne">
-      <option name="closed" value="true" />
-      <created>1733057240533</created>
-      <option name="number" value="00320" />
-      <option name="presentableId" value="LOCAL-00320" />
-      <option name="project" value="LOCAL" />
-      <updated>1733057240533</updated>
-    </task>
-    <task id="LOCAL-00321" summary="added advane declne">
-      <option name="closed" value="true" />
-      <created>1733211531737</created>
-      <option name="number" value="00321" />
-      <option name="presentableId" value="LOCAL-00321" />
-      <option name="project" value="LOCAL" />
-      <updated>1733211531737</updated>
-    </task>
-    <task id="LOCAL-00322" summary="added advane declne">
-      <option name="closed" value="true" />
-      <created>1733247714718</created>
-      <option name="number" value="00322" />
-      <option name="presentableId" value="LOCAL-00322" />
-      <option name="project" value="LOCAL" />
-      <updated>1733247714718</updated>
-    </task>
-    <task id="LOCAL-00323" summary="removing unused">
-      <option name="closed" value="true" />
-      <created>1733247945116</created>
-      <option name="number" value="00323" />
-      <option name="presentableId" value="LOCAL-00323" />
-      <option name="project" value="LOCAL" />
-      <updated>1733247945117</updated>
-    </task>
-    <task id="LOCAL-00324" summary="replacing argparse">
-      <option name="closed" value="true" />
-      <created>1733295263683</created>
-      <option name="number" value="00324" />
-      <option name="presentableId" value="LOCAL-00324" />
-      <option name="project" value="LOCAL" />
-      <updated>1733295263684</updated>
-    </task>
-    <task id="LOCAL-00325" summary="removing XyzOptins">
-      <option name="closed" value="true" />
-      <created>1733296807910</created>
-      <option name="number" value="00325" />
-      <option name="presentableId" value="LOCAL-00325" />
-      <option name="project" value="LOCAL" />
-      <updated>1733296807910</updated>
-    </task>
-    <task id="LOCAL-00326" summary="removing XyzOptins">
-      <option name="closed" value="true" />
-      <created>1733297001860</created>
-      <option name="number" value="00326" />
-      <option name="presentableId" value="LOCAL-00326" />
-      <option name="project" value="LOCAL" />
-      <updated>1733297001860</updated>
-    </task>
-    <task id="LOCAL-00327" summary="removing XyzOptins">
-      <option name="closed" value="true" />
-      <created>1733297458159</created>
-      <option name="number" value="00327" />
-      <option name="presentableId" value="LOCAL-00327" />
-      <option name="project" value="LOCAL" />
-      <updated>1733297458159</updated>
-    </task>
-    <task id="LOCAL-00328" summary="removing XyzOptins">
-      <option name="closed" value="true" />
-      <created>1733334540350</created>
-      <option name="number" value="00328" />
-      <option name="presentableId" value="LOCAL-00328" />
-      <option name="project" value="LOCAL" />
-      <updated>1733334540350</updated>
-    </task>
-    <task id="LOCAL-00329" summary="removing XyzOptins">
-      <option name="closed" value="true" />
-      <created>1733335176248</created>
-      <option name="number" value="00329" />
-      <option name="presentableId" value="LOCAL-00329" />
-      <option name="project" value="LOCAL" />
-      <updated>1733335176248</updated>
-    </task>
-    <task id="LOCAL-00330" summary="added techs">
-      <option name="closed" value="true" />
-      <created>1733411295733</created>
-      <option name="number" value="00330" />
-      <option name="presentableId" value="LOCAL-00330" />
-      <option name="project" value="LOCAL" />
-      <updated>1733411295733</updated>
-    </task>
-    <task id="LOCAL-00331" summary="moving shareloader to new paradigm">
-      <option name="closed" value="true" />
-      <created>1733567626289</created>
-      <option name="number" value="00331" />
-      <option name="presentableId" value="LOCAL-00331" />
-      <option name="project" value="LOCAL" />
-      <updated>1733567626289</updated>
-    </task>
-    <task id="LOCAL-00332" summary="added buffett six">
-      <option name="closed" value="true" />
-      <created>1733572171060</created>
-      <option name="number" value="00332" />
-      <option name="presentableId" value="LOCAL-00332" />
-      <option name="project" value="LOCAL" />
-      <updated>1733572171060</updated>
-    </task>
-    <task id="LOCAL-00333" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733653710236</created>
-      <option name="number" value="00333" />
-      <option name="presentableId" value="LOCAL-00333" />
-      <option name="project" value="LOCAL" />
-      <updated>1733653710237</updated>
-    </task>
-    <task id="LOCAL-00334" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733655260435</created>
-      <option name="number" value="00334" />
-      <option name="presentableId" value="LOCAL-00334" />
-      <option name="project" value="LOCAL" />
-      <updated>1733655260435</updated>
-    </task>
-    <task id="LOCAL-00335" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733655317599</created>
-      <option name="number" value="00335" />
-      <option name="presentableId" value="LOCAL-00335" />
-      <option name="project" value="LOCAL" />
-      <updated>1733655317599</updated>
-    </task>
-    <task id="LOCAL-00336" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733655458540</created>
-      <option name="number" value="00336" />
-      <option name="presentableId" value="LOCAL-00336" />
-      <option name="project" value="LOCAL" />
-      <updated>1733655458540</updated>
-    </task>
-    <task id="LOCAL-00337" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733656033354</created>
-      <option name="number" value="00337" />
-      <option name="presentableId" value="LOCAL-00337" />
-      <option name="project" value="LOCAL" />
-      <updated>1733656033354</updated>
-    </task>
-    <task id="LOCAL-00338" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733656219176</created>
-      <option name="number" value="00338" />
-      <option name="presentableId" value="LOCAL-00338" />
-      <option name="project" value="LOCAL" />
-      <updated>1733656219176</updated>
-    </task>
-    <task id="LOCAL-00339" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733657175201</created>
-      <option name="number" value="00339" />
-      <option name="presentableId" value="LOCAL-00339" />
-      <option name="project" value="LOCAL" />
-      <updated>1733657175201</updated>
-    </task>
-    <task id="LOCAL-00340" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733657321550</created>
-      <option name="number" value="00340" />
-      <option name="presentableId" value="LOCAL-00340" />
-      <option name="project" value="LOCAL" />
-      <updated>1733657321550</updated>
-    </task>
-    <task id="LOCAL-00341" summary="updating dockers and cloudbuild files for edgar">
-      <option name="closed" value="true" />
-      <created>1733657903800</created>
-      <option name="number" value="00341" />
-      <option name="presentableId" value="LOCAL-00341" />
-      <option name="project" value="LOCAL" />
-      <updated>1733657903800</updated>
     </task>
     <task id="LOCAL-00342" summary="updating dockers and cloudbuild files for edgar">
       <option name="closed" value="true" />
@@ -629,7 +399,239 @@
       <option name="project" value="LOCAL" />
       <updated>1734451462765</updated>
     </task>
-    <option name="localTasksCounter" value="362" />
+    <task id="LOCAL-00362" summary="testing run with extra tech params">
+      <option name="closed" value="true" />
+      <created>1734459694756</created>
+      <option name="number" value="00362" />
+      <option name="presentableId" value="LOCAL-00362" />
+      <option name="project" value="LOCAL" />
+      <updated>1734459694756</updated>
+    </task>
+    <task id="LOCAL-00363" summary="testing run with extra tech params">
+      <option name="closed" value="true" />
+      <created>1734459703902</created>
+      <option name="number" value="00363" />
+      <option name="presentableId" value="LOCAL-00363" />
+      <option name="project" value="LOCAL" />
+      <updated>1734459703902</updated>
+    </task>
+    <task id="LOCAL-00364" summary="testing run with extra tech params">
+      <option name="closed" value="true" />
+      <created>1734521230167</created>
+      <option name="number" value="00364" />
+      <option name="presentableId" value="LOCAL-00364" />
+      <option name="project" value="LOCAL" />
+      <updated>1734521230168</updated>
+    </task>
+    <task id="LOCAL-00365" summary="testing run with extra tech params">
+      <option name="closed" value="true" />
+      <created>1734590305601</created>
+      <option name="number" value="00365" />
+      <option name="presentableId" value="LOCAL-00365" />
+      <option name="project" value="LOCAL" />
+      <updated>1734590305601</updated>
+    </task>
+    <task id="LOCAL-00366" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734593605613</created>
+      <option name="number" value="00366" />
+      <option name="presentableId" value="LOCAL-00366" />
+      <option name="project" value="LOCAL" />
+      <updated>1734593605613</updated>
+    </task>
+    <task id="LOCAL-00367" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734623200987</created>
+      <option name="number" value="00367" />
+      <option name="presentableId" value="LOCAL-00367" />
+      <option name="project" value="LOCAL" />
+      <updated>1734623200987</updated>
+    </task>
+    <task id="LOCAL-00368" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734628830493</created>
+      <option name="number" value="00368" />
+      <option name="presentableId" value="LOCAL-00368" />
+      <option name="project" value="LOCAL" />
+      <updated>1734628830493</updated>
+    </task>
+    <task id="LOCAL-00369" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734631299070</created>
+      <option name="number" value="00369" />
+      <option name="presentableId" value="LOCAL-00369" />
+      <option name="project" value="LOCAL" />
+      <updated>1734631299070</updated>
+    </task>
+    <task id="LOCAL-00370" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734632800816</created>
+      <option name="number" value="00370" />
+      <option name="presentableId" value="LOCAL-00370" />
+      <option name="project" value="LOCAL" />
+      <updated>1734632800816</updated>
+    </task>
+    <task id="LOCAL-00371" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734633696606</created>
+      <option name="number" value="00371" />
+      <option name="presentableId" value="LOCAL-00371" />
+      <option name="project" value="LOCAL" />
+      <updated>1734633696606</updated>
+    </task>
+    <task id="LOCAL-00372" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734633777989</created>
+      <option name="number" value="00372" />
+      <option name="presentableId" value="LOCAL-00372" />
+      <option name="project" value="LOCAL" />
+      <updated>1734633777989</updated>
+    </task>
+    <task id="LOCAL-00373" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734673554527</created>
+      <option name="number" value="00373" />
+      <option name="presentableId" value="LOCAL-00373" />
+      <option name="project" value="LOCAL" />
+      <updated>1734673554527</updated>
+    </task>
+    <task id="LOCAL-00374" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734673653543</created>
+      <option name="number" value="00374" />
+      <option name="presentableId" value="LOCAL-00374" />
+      <option name="project" value="LOCAL" />
+      <updated>1734673653543</updated>
+    </task>
+    <task id="LOCAL-00375" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734674463477</created>
+      <option name="number" value="00375" />
+      <option name="presentableId" value="LOCAL-00375" />
+      <option name="project" value="LOCAL" />
+      <updated>1734674463477</updated>
+    </task>
+    <task id="LOCAL-00376" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734674582077</created>
+      <option name="number" value="00376" />
+      <option name="presentableId" value="LOCAL-00376" />
+      <option name="project" value="LOCAL" />
+      <updated>1734674582077</updated>
+    </task>
+    <task id="LOCAL-00377" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734675140799</created>
+      <option name="number" value="00377" />
+      <option name="presentableId" value="LOCAL-00377" />
+      <option name="project" value="LOCAL" />
+      <updated>1734675140799</updated>
+    </task>
+    <task id="LOCAL-00378" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734775608171</created>
+      <option name="number" value="00378" />
+      <option name="presentableId" value="LOCAL-00378" />
+      <option name="project" value="LOCAL" />
+      <updated>1734775608171</updated>
+    </task>
+    <task id="LOCAL-00379" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734777287611</created>
+      <option name="number" value="00379" />
+      <option name="presentableId" value="LOCAL-00379" />
+      <option name="project" value="LOCAL" />
+      <updated>1734777287611</updated>
+    </task>
+    <task id="LOCAL-00380" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734861678650</created>
+      <option name="number" value="00380" />
+      <option name="presentableId" value="LOCAL-00380" />
+      <option name="project" value="LOCAL" />
+      <updated>1734861678650</updated>
+    </task>
+    <task id="LOCAL-00381" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734862355246</created>
+      <option name="number" value="00381" />
+      <option name="presentableId" value="LOCAL-00381" />
+      <option name="project" value="LOCAL" />
+      <updated>1734862355246</updated>
+    </task>
+    <task id="LOCAL-00382" summary="committing sector">
+      <option name="closed" value="true" />
+      <created>1734863072089</created>
+      <option name="number" value="00382" />
+      <option name="presentableId" value="LOCAL-00382" />
+      <option name="project" value="LOCAL" />
+      <updated>1734863072089</updated>
+    </task>
+    <task id="LOCAL-00383" summary="updating libs">
+      <option name="closed" value="true" />
+      <created>1734865160090</created>
+      <option name="number" value="00383" />
+      <option name="presentableId" value="LOCAL-00383" />
+      <option name="project" value="LOCAL" />
+      <updated>1734865160090</updated>
+    </task>
+    <task id="LOCAL-00384" summary="updating libs">
+      <option name="closed" value="true" />
+      <created>1734971886682</created>
+      <option name="number" value="00384" />
+      <option name="presentableId" value="LOCAL-00384" />
+      <option name="project" value="LOCAL" />
+      <updated>1734971886682</updated>
+    </task>
+    <task id="LOCAL-00385" summary="updating email sender">
+      <option name="closed" value="true" />
+      <created>1735026775422</created>
+      <option name="number" value="00385" />
+      <option name="presentableId" value="LOCAL-00385" />
+      <option name="project" value="LOCAL" />
+      <updated>1735026775423</updated>
+    </task>
+    <task id="LOCAL-00386" summary="updating email sender">
+      <option name="closed" value="true" />
+      <created>1735036472068</created>
+      <option name="number" value="00386" />
+      <option name="presentableId" value="LOCAL-00386" />
+      <option name="project" value="LOCAL" />
+      <updated>1735036472068</updated>
+    </task>
+    <task id="LOCAL-00387" summary="updating email sender">
+      <option name="closed" value="true" />
+      <created>1735041244877</created>
+      <option name="number" value="00387" />
+      <option name="presentableId" value="LOCAL-00387" />
+      <option name="project" value="LOCAL" />
+      <updated>1735041244877</updated>
+    </task>
+    <task id="LOCAL-00388" summary="updating email sender">
+      <option name="closed" value="true" />
+      <created>1735046743854</created>
+      <option name="number" value="00388" />
+      <option name="presentableId" value="LOCAL-00388" />
+      <option name="project" value="LOCAL" />
+      <updated>1735046743854</updated>
+    </task>
+    <task id="LOCAL-00389" summary="updating email sender">
+      <option name="closed" value="true" />
+      <created>1735050528221</created>
+      <option name="number" value="00389" />
+      <option name="presentableId" value="LOCAL-00389" />
+      <option name="project" value="LOCAL" />
+      <updated>1735050528221</updated>
+    </task>
+    <task id="LOCAL-00390" summary="reverting">
+      <option name="closed" value="true" />
+      <created>1735056846311</created>
+      <option name="number" value="00390" />
+      <option name="presentableId" value="LOCAL-00390" />
+      <option name="project" value="LOCAL" />
+      <updated>1735056846311</updated>
+    </task>
+    <option name="localTasksCounter" value="391" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -644,10 +646,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="moving marketfetcher to standard docker deployoment" />
-    <MESSAGE value="reverted market stats" />
-    <MESSAGE value="resurrecting highl ow" />
-    <MESSAGE value="nwe path" />
     <MESSAGE value="amendment" />
     <MESSAGE value="new attempt" />
     <MESSAGE value="added morelogic" />
@@ -669,7 +667,11 @@
     <MESSAGE value="committign shareloader" />
     <MESSAGE value="joined adx and premraket loaders" />
     <MESSAGE value="testing run with extra tech params" />
-    <option name="LAST_COMMIT_MESSAGE" value="testing run with extra tech params" />
+    <MESSAGE value="committing sector" />
+    <MESSAGE value="updating libs" />
+    <MESSAGE value="updating email sender" />
+    <MESSAGE value="reverting" />
+    <option name="LAST_COMMIT_MESSAGE" value="reverting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -806,23 +808,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>474</line>
+          <line>496</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>469</line>
+          <line>491</line>
           <option name="timeStamp" value="107" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>467</line>
+          <line>489</line>
           <option name="timeStamp" value="109" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>452</line>
-          <option name="timeStamp" value="141" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
@@ -850,39 +847,18 @@
           <option name="timeStamp" value="170" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>637</line>
-          <option name="timeStamp" value="171" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/shareloader.py</url>
+          <option name="timeStamp" value="185" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_metrics.py</url>
-          <line>667</line>
-          <option name="timeStamp" value="173" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
+          <line>474</line>
+          <option name="timeStamp" value="193" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
-          <line>130</line>
-          <option name="timeStamp" value="184" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
-          <line>22</line>
-          <option name="timeStamp" value="187" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
-          <line>96</line>
-          <option name="timeStamp" value="188" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
-          <line>113</line>
-          <option name="timeStamp" value="189" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_sector_loader.py</url>
-          <line>107</line>
-          <option name="timeStamp" value="190" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>182</line>
+          <option name="timeStamp" value="194" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -27,5 +27,5 @@ substitutions:
   _REGION: us-central1
   _SENDGRID_KEY : ''
   _RECIPIENTS : ''
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/weeklyselection:latest2
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/weeklyselection:latest3
 
