@@ -103,7 +103,7 @@ class TestDfTesterLoader(unittest.TestCase):
         with TestPipeline(options=PipelineOptions()) as p:
             input = run_premarket_pipeline(p, key)
 
-            input2 = run_etoro_pipeline(p, 0.001)
+            input2 = run_etoro_pipeline(p, key,0.001)
 
             mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'to sink' >> self.debugSink)
