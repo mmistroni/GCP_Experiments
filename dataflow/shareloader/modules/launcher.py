@@ -111,7 +111,7 @@ def run_obb_pipeline(p, fmpkey):
 def run_premarket_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
     return ( p
-             | 'PMStart' >> beam.Create(['AAPL'])
+             | 'PREMARKET PMStart' >> beam.Create(['AAPL'])
              | 'PMGet all List' >> beam.ParDo(FinvizLoader(fmpkey, runtype='premarket'))
              | 'PMMap to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
 
@@ -131,7 +131,7 @@ def run_test_pipeline(p, fmpkey):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
-                | 'Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
+                | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.05))
@@ -140,7 +140,7 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.07):
     cob = date.today()
     test_ppln = get_leaps()
     return  (test_ppln
-                | 'Maping extra ticker' >> beam.Map(lambda d: d['Ticker'])
+                | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
                | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
