@@ -300,9 +300,16 @@ def run(argv = None, save_main_session=True):
         obb | ' to finvbiz' >> finviz_sink
 
         tester = run_test_pipeline(p, known_args.fmprepkey)
+
+        tester | 'tester to sink' >> sink
+
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
-        logging.info('----combining ------')
+        etoro | 'etoro to sink' >> sink
+
+
+        '''
+
 
         premarket_results =  ( (tester, etoro) |  "fmaprun pmrklt" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
@@ -311,7 +318,6 @@ def run(argv = None, save_main_session=True):
 
         premarket_results   | 'tester TO SINK' >> sink
 
-        '''
         logging.info('final pipeline')
 
         mapped_tester = combine_tester_and_etoro(known_args.fmprepkey, tester, etoro)
