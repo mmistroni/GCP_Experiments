@@ -299,9 +299,9 @@ def run(argv = None, save_main_session=True):
         obb | 'oBB2 TO SINK' >>sink
         obb | ' to finvbiz' >> finviz_sink
 
-        #tester = run_test_pipeline(p, known_args.fmprepkey)
+        tester = run_test_pipeline(p, known_args.fmprepkey)
 
-        #tester | 'tester to sink' >> sink
+        tester | 'tester to sink' >> sink
 
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
