@@ -60,7 +60,7 @@ class MarketStatsSinkCombineFn(beam.CombineFn):
     def create_accumulator(self):
         return []
 
-    def add_input(self, sum_cou7nt, input_data):
+    def add_input(self, sum_count, input_data):
         holder = sum_count
         holder.append(input_data)
         return holder
@@ -221,8 +221,10 @@ def run_exchange_pipeline(p, key, exchange):
 
     ydt = get_all_prices_for_date(key, prevDate.strftime('%Y-%m-%d'))
 
-    filtered = [(d['symbol'], d)  for d in dt]
-    y_filtered = [(d['symbol'], {'prevClose': d['close']}) for d in ydt]
+
+
+    filtered = [(d['symbol'], d)  for d in dt]   if 'symbol' in dt[0] else []
+    y_filtered = [(d['symbol'], {'prevClose': d['close']}) for d in ydt] if 'symbol' in ydt[0] else []
 
     tmp = [tpl[0] for tpl in all_us_stocks]
     fallus = [tpl for tpl in filtered if tpl[0] in tmp]
@@ -312,12 +314,12 @@ def run_newhigh_new_low(p, fmpKey):
                                               })
            )
 
-def run_advance_decline(p):
+def run_advance_decline(p, exchange):
     return  (p
-           | 'Start Advance Decline' >> beam.Create(['Test'])
-           | 'calling  ad' >> beam.Map(lambda d :get_advance_decline())
+           | 'Start Advance Decline' >> beam.Create([exchange])
+           | 'calling  ad' >> beam.Map(lambda exc :get_advance_decline(exc))
            | 'remap ad' >> beam.Map(
-                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': 'ADVANCE/DECLINE',
+                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
                            'VALUE': d['VALUE']})
            )
 
@@ -460,7 +462,8 @@ def run(argv=None, save_main_session=True):
         sp500_multi = run_sp500multiples(p)
 
 
-        adv_decline = run_advance_decline(p)
+        adv_decline_nyse = run_advance_decline(p , 'NYSE')
+        adv_decline_nasd = run_advance_decline(p, 'NASDAQ')
 
         #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
@@ -476,8 +479,9 @@ def run(argv=None, save_main_session=True):
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
         nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
-        adv_decline_key = adv_decline | 'add adv decl' >> beam.Map(lambda d: (6, d))
-        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (7, d))
+        adv_decline_key_nys = adv_decline_nyse | 'add adv decl nyse' >> beam.Map(lambda d: (6, d))
+        adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
+        highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
 
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (9, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (10, d))
@@ -510,7 +514,9 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key, junk_bond_key,adv_decline_key, shillers_key, highlow_key,
+                        nysi_key, nymo_key, junk_bond_key,adv_decline_key_nas,
+                        adv_decline_key_nys,
+                        shillers_key, highlow_key,
                         sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,

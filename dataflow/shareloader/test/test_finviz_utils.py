@@ -192,15 +192,13 @@ class MyTestCase(unittest.TestCase):
     def test_advancedecline(self):
 
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(['AAPL'])
-                     | 'Run adLoader' >> beam.ParDo(get_advance_decline())
+            input = (p | 'Start' >> beam.Create(['NASDAQ'])
+                     | 'Run adLoader' >> beam.ParDo(lambda exch: get_advance_decline(exch))
                      | 'Mapp ad' >> beam.Map(lambda d: dict())
                      | self.debugSink
                      )
 
 
-        res = get_advance_decline()
-        print(res)
 
     def test_buffettsix(self):
 

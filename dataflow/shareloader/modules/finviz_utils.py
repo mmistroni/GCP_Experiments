@@ -520,12 +520,14 @@ class FinvizLoader(beam.DoFn):
                 logging.info(f'Exception in running:{str(e)}')
 
 
-def get_advance_decline():
+def get_advance_decline(exchange):
     up_filter = 'Up'
     down_filter = 'Down'
 
-    high_filter_dict = {'Change' : up_filter}
-    low_filter_dict = {'Change' : down_filter}
+    high_filter_dict = {'Change' : up_filter,
+                        'Exchange' :exchange}
+    low_filter_dict = {'Change' : down_filter,
+                       'Exchange' : exchange}
 
     highs = _run_screener(high_filter_dict)
     high_ticks = ','.join([d['Ticker'] for d in highs])
