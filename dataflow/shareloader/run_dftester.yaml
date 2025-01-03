@@ -44,7 +44,7 @@ substitutions:
   _RUNTYPE: ''
   _PROJECT_ID: datascience-projects
   _DFTESTER_IMAGE_NAME: dftester:latest5
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest3
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest5
 
 
 
