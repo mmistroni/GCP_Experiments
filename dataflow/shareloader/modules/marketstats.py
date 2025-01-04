@@ -316,7 +316,7 @@ def run_newhigh_new_low(p, fmpKey):
 
 def run_advance_decline(p, exchange):
     return  (p
-           | 'Start Advance Decline' >> beam.Create([exchange])
+           | f'Start Advance Decline {exchange}' >> beam.Create([exchange])
            | 'calling  ad' >> beam.Map(lambda exc :get_advance_decline(exc))
            | 'remap ad' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
@@ -509,7 +509,7 @@ def run(argv=None, save_main_session=True):
         # we need a global combiner to write to sink
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (60, d))
 
-        #non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beam.Map(lambda d: (40, d))
+        #non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beSam.Map(lambda d: (40, d))
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
