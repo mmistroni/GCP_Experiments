@@ -317,7 +317,7 @@ def run_newhigh_new_low(p, fmpKey):
 def run_advance_decline(p, exchange):
     return  (p
            | f'Start Advance Decline {exchange}' >> beam.Create([exchange])
-           | 'calling  ad' >> beam.Map(lambda exc :get_advance_decline(exc))
+           | f'calling  ad-{exchange}' >> beam.Map(lambda exc :get_advance_decline(exc))
            | 'remap ad' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
                            'VALUE': d['VALUE']})
