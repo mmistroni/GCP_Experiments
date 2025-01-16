@@ -209,46 +209,6 @@ def run_mcclellan_pipeline(p, ticker):
      )
 
 
-def run_exchange_pipeline(p, key, exchange):
-    all_us_stocks = list(map(lambda t: (t, {}), get_all_us_stocks2(key, exchange)))
-    asOfDate = (date.today() - BDay(1)).date()
-    prevDate = (asOfDate - BDay(1)).date()
-
-    dt = get_all_prices_for_date(key, asOfDate.strftime('%Y-%m-%d'))
-
-    time.sleep(60)
-
-
-    ydt = get_all_prices_for_date(key, prevDate.strftime('%Y-%m-%d'))
-
-
-
-    filtered = [(d['symbol'], d)  for d in dt]   if 'symbol' in dt[0] else []
-    y_filtered = [(d['symbol'], {'prevClose': d['close']}) for d in ydt] if 'symbol' in ydt[0] else []
-
-    tmp = [tpl[0] for tpl in all_us_stocks]
-    fallus = [tpl for tpl in filtered if tpl[0] in tmp]
-    yfallus = [tpl for tpl in y_filtered if tpl[0] in tmp]
-
-
-    pcoll1 = p | f'Create coll1={exchange}' >> beam.Create(all_us_stocks)
-    pcoll2 = p | f'Create coll2={exchange}' >> beam.Create(fallus)
-    pcoll3 = p | f'Crete ydaycoll={exchange}' >> beam.Create(yfallus)
-
-    pcollStocks = pcoll2 | f'Joining y{exchange}' >> beam.ParDo(InnerJoinerFn(),
-                                                     right_list=beam.pvalue.AsIter(pcoll3))
-
-    return  (
-                    pcoll1
-                    | f'InnerJoiner: JoinValues {exchange}' >> beam.ParDo(InnerJoinerFn(),
-                                                              right_list=beam.pvalue.AsIter(pcollStocks))
-                    | f'Map to flat tpl {exchange}' >> beam.Map(lambda tpl: (tpl[0], tpl[1]['close'], tpl[1]['close'] - tpl[1]['prevClose']))
-                    | f'Combine MarketBreadth Statistics {exchange}' >> beam.CombineGlobally(MarketBreadthCombineFn())
-                    | f'mapping {exchange}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'),
-                                                        'LABEL' : '{}_{}'.format(exchange.upper(), d[0:d.find(':')]),
-                                                       'VALUE' : d[d.rfind(':')+1:]})
-                    
-            )
 
 
 def run_prev_dates_statistics(p) :
@@ -428,10 +388,6 @@ def run(argv=None, save_main_session=True):
         nysi_res = run_mcclellan_pipeline(p, '$NYSI')
         nymo_res = run_mcclellan_pipeline(p, '$NYMO')
 
-        logging.info('Run NYSE..')
-        nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
-        logging.info('Run Nasdaq..')
-        nasdaq = run_exchange_pipeline(p, iexapi_key, "NASDAQ Global Select")
         equity_pcratio = run_putcall_ratio(p)
 
         fed_funds = run_fed_fund_rates(p)
@@ -477,8 +433,6 @@ def run(argv=None, save_main_session=True):
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
 
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
-        nyse_key = nyse | 'Add 4' >> beam.Map(lambda d: (4, d))
-        nasdaq_key = nasdaq | 'Add 5' >> beam.Map(lambda d: (5, d))
         adv_decline_key_nys = adv_decline_nyse | 'add adv decl nyse' >> beam.Map(lambda d: (6, d))
         adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
@@ -513,7 +467,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key, nyse_key, nasdaq_key,  epcratio_key, mm_key, qqq_key, rut_key,
+                    manuf_pmi_key,  epcratio_key, mm_key, qqq_key, rut_key,
                         nysi_key, nymo_key, junk_bond_key,adv_decline_key_nas,
                         adv_decline_key_nys,
                         shillers_key, highlow_key,
@@ -533,8 +487,8 @@ def run(argv=None, save_main_session=True):
         )
 
         final_sink_results = [
-                 vix_res, mmomentum_res, growth_vs_val_res, nyse,
-                 nasdaq, equity_pcratio, fed_funds, junk_bond
+                 vix_res, mmomentum_res, growth_vs_val_res, adv_decline_key_nys,
+                 adv_decline_key_nas, equity_pcratio, fed_funds, junk_bond
                 ]
 
         # Writing everything to sink
