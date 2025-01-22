@@ -487,8 +487,10 @@ def run(argv=None, save_main_session=True):
         )
 
         final_sink_results = [
-                 vix_res, mmomentum_res, growth_vs_val_res, adv_decline_key_nys,
-                 adv_decline_key_nas, equity_pcratio, fed_funds, junk_bond
+                 vix_res, mmomentum_res, growth_vs_val_res,
+                 #adv_decline_key_nys,
+                 #adv_decline_key_nas,
+                 equity_pcratio, fed_funds, junk_bond
                 ]
 
         # Writing everything to sink
