@@ -497,7 +497,7 @@ def run(argv=None, save_main_session=True):
         destination = 'gs://mm_dataflow_bucket/outputs/marketstats_{}'.format(
             date.today().strftime('%Y-%m-%d %H:%M'))
 
-        write_all_to_sink(final_sink_results, bq_sink)
+        write_all_to_sink(final_sink_results, debugSink)
 
         logging.info('----- Attepmting some Inner Joins....')
 
