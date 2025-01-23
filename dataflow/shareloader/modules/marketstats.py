@@ -280,7 +280,7 @@ def run_advance_decline(p, exchange):
            | f'calling  ad-{exchange}' >> beam.Map(lambda exc :get_advance_decline(exc))
            | f'remap {exchange}' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
-                           'VALUE': d['VALUE']})
+                           'VALUE': str(d['VALUE'])})
            )
 
 
@@ -488,8 +488,8 @@ def run(argv=None, save_main_session=True):
 
         final_sink_results = [
                  vix_res, mmomentum_res, growth_vs_val_res,
-                 #adv_decline_key_nys,
-                 #adv_decline_key_nas,
+                 adv_decline_key_nys,
+                 adv_decline_key_nas,
                  equity_pcratio, fed_funds, junk_bond
                 ]
 
