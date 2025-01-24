@@ -533,8 +533,8 @@ def get_advance_decline(exchange):
     high_ticks = ','.join([d['Ticker'] for d in highs])
     lows = _run_screener(low_filter_dict)
     low_ticks = ','.join([d['Ticker'] for d in lows])
-    return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
-            'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
+    return [{'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
+            'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}]
 
 
 def get_buffett_six():
