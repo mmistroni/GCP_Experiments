@@ -432,11 +432,14 @@ def run(argv=None, save_main_session=True):
         pmi_key = non_manuf_pmi_res | 'Add 1' >> beam.Map(lambda d: (1, d))
         manuf_pmi_key = manuf_pmi_res | 'Add 2' >> beam.Map(lambda d: (2, d))
 
+
+
         vix_key = vix_res | 'Add 3' >> beam.Map(lambda d: (3, d))
         adv_decline_key_nys = adv_decline_nyse | 'add adv decl nyse' >> beam.Map(lambda d: (6, d))
         adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
 
+        adv_decline_nyse | 'nyse to debug' >> debugSink
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (9, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (10, d))
         qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (11, d))
@@ -487,9 +490,10 @@ def run(argv=None, save_main_session=True):
         )
 
         final_sink_results = [
-                 vix_res, mmomentum_res, growth_vs_val_res,
+                 vix_res, mmomentum_res, 
+                 growth_vs_val_res,
                  adv_decline_key_nys,
-                 adv_decline_key_nas,
+                 #adv_decline_key_nas,
                  equity_pcratio, fed_funds, junk_bond
                 ]
 
