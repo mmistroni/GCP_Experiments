@@ -477,7 +477,7 @@ def run(argv=None, save_main_session=True):
                     manuf_pmi_key,  epcratio_key, mm_key, qqq_key, rut_key,
                         nysi_key, nymo_key, junk_bond_key,
                         adv_decline_key_nas,
-                        #adv_decline_key_nys,
+                        adv_decline_key_nys,
                         shillers_key, highlow_key,
                         sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
@@ -497,8 +497,8 @@ def run(argv=None, save_main_session=True):
         final_sink_results = [
                  vix_res, mmomentum_res, 
                  growth_vs_val_res,
-                 adv_decline_key_nys,
-                 #adv_decline_key_nas,
+                 adv_decline_nyse,
+                 adv_decline_nasd,
                  equity_pcratio, fed_funds, junk_bond
                 ]
 
