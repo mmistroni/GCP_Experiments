@@ -276,7 +276,7 @@ def run_newhigh_new_low(p, fmpKey):
 
 def run_advance_decline(p, exchange):
     return  (p
-           | f'Start Advance Decline {exchange}' >> beam.Create([exchange])
+           | f'Start xAdvance Decline {exchange}' >> beam.Create([exchange])
            | f'calling  ad-{exchange}' >> beam.Map(lambda exc :get_advance_decline(exc))
            | f'remap {exchange}' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
@@ -439,7 +439,11 @@ def run(argv=None, save_main_session=True):
         adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
 
+        vix_res | 'vix tod ebug sink' >> debugSink
+
         adv_decline_nyse | 'nyse to debug' >> debugSink
+        adv_decline_nasd | 'nasd to debug ' >> debugSink
+
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (9, d))
         mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (10, d))
         qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (11, d))
@@ -471,8 +475,9 @@ def run(argv=None, save_main_session=True):
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key,  epcratio_key, mm_key, qqq_key, rut_key,
-                        nysi_key, nymo_key, junk_bond_key,adv_decline_key_nas,
-                        adv_decline_key_nys,
+                        nysi_key, nymo_key, junk_bond_key,
+                        adv_decline_key_nas,
+                        #adv_decline_key_nys,
                         shillers_key, highlow_key,
                         sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
