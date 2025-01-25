@@ -279,7 +279,7 @@ def run_advance_decline(p, exchange):
            | f'Start xAdvance Decline {exchange}' >> beam.Create([exchange])
            | f'calling  ad-{exchange}' >> beam.Map(lambda exc :get_advance_decline(exc))
            | f'remap {exchange}' >> beam.Map(
-                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE/DECLINE',
+                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange} ADVANCE_DECLINE',
                            'VALUE': f"{d['VALUE']}"})
            )
 
