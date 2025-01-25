@@ -521,21 +521,26 @@ class FinvizLoader(beam.DoFn):
 
 
 def get_advance_decline(exchange):
-    up_filter = 'Up'
-    down_filter = 'Down'
+    try:
+        up_filter = 'Up'
+        down_filter = 'Down'
 
-    high_filter_dict = {'Change' : up_filter,
-                        'Exchange' :exchange}
-    low_filter_dict = {'Change' : down_filter,
-                       'Exchange' : exchange}
+        high_filter_dict = {'Change' : up_filter,
+                            'Exchange' :exchange}
+        low_filter_dict = {'Change' : down_filter,
+                        'Exchange' : exchange}
 
-    highs = _run_screener(high_filter_dict)
-    high_ticks = ','.join([d['Ticker'] for d in highs])
-    lows = _run_screener(low_filter_dict)
-    low_ticks = ','.join([d['Ticker'] for d in lows])
-    return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
-            'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
-
+        highs = _run_screener(high_filter_dict)
+        high_ticks = ','.join([d['Ticker'] for d in highs])
+        lows = _run_screener(low_filter_dict)
+        low_ticks = ','.join([d['Ticker'] for d in lows])
+        logging.info(f' adv declie for {exchange} successfully retrieved')
+        return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
+                'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
+    except Exception as e :
+        logging.info('Exception in getting advv delcine:{str(e)}')
+        return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
+                'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
 
 def get_buffett_six():
     filter_dict = {
