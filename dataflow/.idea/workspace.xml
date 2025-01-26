@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="amending adv decline. fixing old market breadth">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixing typo">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/economics_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/economics_main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -238,38 +237,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00354" summary="fixiing buffett sx">
-      <option name="closed" value="true" />
-      <created>1734260191131</created>
-      <option name="number" value="00354" />
-      <option name="presentableId" value="LOCAL-00354" />
-      <option name="project" value="LOCAL" />
-      <updated>1734260191132</updated>
-    </task>
-    <task id="LOCAL-00355" summary="committign shareloader">
-      <option name="closed" value="true" />
-      <created>1734260406356</created>
-      <option name="number" value="00355" />
-      <option name="presentableId" value="LOCAL-00355" />
-      <option name="project" value="LOCAL" />
-      <updated>1734260406356</updated>
-    </task>
-    <task id="LOCAL-00356" summary="committign shareloader">
-      <option name="closed" value="true" />
-      <created>1734261900782</created>
-      <option name="number" value="00356" />
-      <option name="presentableId" value="LOCAL-00356" />
-      <option name="project" value="LOCAL" />
-      <updated>1734261900782</updated>
-    </task>
-    <task id="LOCAL-00357" summary="committign shareloader">
-      <option name="closed" value="true" />
-      <created>1734264363491</created>
-      <option name="number" value="00357" />
-      <option name="presentableId" value="LOCAL-00357" />
-      <option name="project" value="LOCAL" />
-      <updated>1734264363491</updated>
     </task>
     <task id="LOCAL-00358" summary="committign shareloader">
       <option name="closed" value="true" />
@@ -631,7 +598,39 @@
       <option name="project" value="LOCAL" />
       <updated>1737549192504</updated>
     </task>
-    <option name="localTasksCounter" value="403" />
+    <task id="LOCAL-00403" summary="amending adv decline. fixing old market breadth">
+      <option name="closed" value="true" />
+      <created>1737549272080</created>
+      <option name="number" value="00403" />
+      <option name="presentableId" value="LOCAL-00403" />
+      <option name="project" value="LOCAL" />
+      <updated>1737549272080</updated>
+    </task>
+    <task id="LOCAL-00404" summary="amending adv decline. fixing old market breadth">
+      <option name="closed" value="true" />
+      <created>1737563751656</created>
+      <option name="number" value="00404" />
+      <option name="presentableId" value="LOCAL-00404" />
+      <option name="project" value="LOCAL" />
+      <updated>1737563751656</updated>
+    </task>
+    <task id="LOCAL-00405" summary="upating historical data">
+      <option name="closed" value="true" />
+      <created>1737891192837</created>
+      <option name="number" value="00405" />
+      <option name="presentableId" value="LOCAL-00405" />
+      <option name="project" value="LOCAL" />
+      <updated>1737891192837</updated>
+    </task>
+    <task id="LOCAL-00406" summary="fixing typo">
+      <option name="closed" value="true" />
+      <created>1737891593036</created>
+      <option name="number" value="00406" />
+      <option name="presentableId" value="LOCAL-00406" />
+      <option name="project" value="LOCAL" />
+      <updated>1737891593037</updated>
+    </task>
+    <option name="localTasksCounter" value="407" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -646,8 +645,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="linking file to old market stats job" />
-    <MESSAGE value="storing senate discl" />
     <MESSAGE value="adding extra libs" />
     <MESSAGE value="added shillers" />
     <MESSAGE value="added advane declne" />
@@ -671,7 +668,9 @@
     <MESSAGE value="updating weekly sel" />
     <MESSAGE value="updating dftester" />
     <MESSAGE value="amending adv decline. fixing old market breadth" />
-    <option name="LAST_COMMIT_MESSAGE" value="amending adv decline. fixing old market breadth" />
+    <MESSAGE value="upating historical data" />
+    <MESSAGE value="fixing typo" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing typo" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -877,7 +876,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>535</line>
+          <line>536</line>
           <option name="timeStamp" value="207" />
         </line-breakpoint>
       </breakpoints>
