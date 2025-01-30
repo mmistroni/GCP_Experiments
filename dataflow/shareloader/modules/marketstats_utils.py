@@ -14,6 +14,7 @@ from .finviz_utils import get_high_low
 import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
+from openbb_fmp.models.index_historical import FMPIndexHistoricalFetcher
 
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
@@ -457,6 +458,27 @@ def get_vix(key):
     except Exception as e:
         logging.info(f'Exception in getting vix:{str(e)}')
         return 0.0
+
+def get_obb_vix(key):
+    try:
+        credentials = {'fmp_key' : key}
+
+        start = (date.today() - BDay(1)).date()
+        end = date.today()
+        params = {
+            "symbol": "^VIX",
+            "start_date": start,
+            "end_date": end,
+        }
+
+        data = FMPIndexHistoricalFetcher.fetch_data(params, credentials)
+        result =  [d.model_dump(exclude_none=True) for d in data]
+        # process and get latest price
+    except Exception as e:
+        logging.info(f'Exception in getting vix:{str(e)}')
+        return 0.0
+
+
 
 def get_junkbonddemand(fred_key):
     try:
