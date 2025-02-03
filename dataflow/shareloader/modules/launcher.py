@@ -10,7 +10,7 @@ from apache_beam.io.gcp.internal.clients import bigquery
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
-from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps
+from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks
 import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -136,9 +136,9 @@ def run_test_pipeline(p, fmpkey):
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.05))
              )
-def run_etoro_pipeline(p, fmpkey, tolerance=0.07):
+def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
-    test_ppln = get_leaps()
+    test_ppln = get_universe_stocks()
     return  (test_ppln
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
