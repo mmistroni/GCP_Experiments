@@ -522,8 +522,7 @@ class FinvizLoader(beam.DoFn):
                 logging.info(f'Exception in running:{str(e)}')
 
 
-def get_advance_decline(exchange):
-    return get_advance_decline2(exchange)
+def get_advance_decline2(exchange):
     try:
         up_filter = 'Up'
         down_filter = 'Down'
@@ -546,7 +545,7 @@ def get_advance_decline(exchange):
                 'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
 
 
-def get_advance_decline2(exchange):
+def get_advance_decline(exchange):
     try:
         up_filter = 'Up'
         down_filter = 'Down'
@@ -601,10 +600,11 @@ def get_swing_trader_technical():
 
 class AsyncProcessFinviz(beam.DoFn):
 
-    def __init__(self, credentials, exchange):
+    def __init__(self, credentials, exchange, params1, params2):
         self.credentials = credentials
         self.fetcher = FinvizEquityScreenerFetcher
         self.exchange = exchange
+
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element}')
@@ -623,7 +623,7 @@ class AsyncProcessFinviz(beam.DoFn):
             high_result = [d.model_dump(exclude_none=True) for d in high]
 
             low = await self.fetcher.fetch_data(low_filter_dict, {})
-            low_result = [d.model_dump(exclude_none=True) for d in high]
+            low_result = [d.model_dump(exclude_none=True) for d in low]
 
             if high_result and low_result:
                 high_ticks = ','.join([d['symbol'] for d in high_result])

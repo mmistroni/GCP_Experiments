@@ -10,7 +10,7 @@ from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
-from .finviz_utils import get_high_low
+from .finviz_utils import get_high_low, get_advance_decline2
 import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
@@ -779,3 +779,14 @@ class NewHighNewLowLoader(beam.DoFn):
 
         return [high_low_dict]
 
+class AdvanceDecline(beam.DoFn):
+    def __init__(self, exchange):
+        self.exchange = exchange
+
+    def process(self, elements):
+
+        adv_decline = high_low_dict = get_advance_decline2(self.exchange)
+
+        logging.info(f'------\n{high_low_dict}' )
+
+        return [adv_decline]
