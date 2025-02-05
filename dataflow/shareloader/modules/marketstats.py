@@ -19,8 +19,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes
-from shareloader.modules.finviz_utils import  get_advance_decline
+                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline
 from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
@@ -277,13 +276,11 @@ def run_newhigh_new_low(p, fmpKey):
 def run_advance_decline(p, exchange):
     return  (p
            | f'Start xAdvance Decline {exchange}' >> beam.Create([exchange])
-           | f'calling  ad-{exchange}' >> beam.Map(lambda exc :get_advance_decline(exc))
+           | f'calling  ad-{exchange}' >> beam.ParDo(AdvanceDecline())
            | f'remap {exchange}' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange}_ADVANCE_DECLINE',
                            'VALUE': f"{d['VALUE']}"})
            )
-
-
 
 def run_shillers(p):
     return (p | 'shiller starter' >> beam.Create(['20240101'])

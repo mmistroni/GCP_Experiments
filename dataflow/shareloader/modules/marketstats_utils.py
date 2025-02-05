@@ -780,12 +780,9 @@ class NewHighNewLowLoader(beam.DoFn):
         return [high_low_dict]
 
 class AdvanceDecline(beam.DoFn):
-    def __init__(self, exchange):
-        self.exchange = exchange
-
     def process(self, elements):
 
-        adv_decline = high_low_dict = get_advance_decline2(self.exchange)
+        adv_decline = high_low_dict = get_advance_decline2(elements[0])
 
         logging.info(f'------\n{high_low_dict}' )
 
