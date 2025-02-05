@@ -3,7 +3,7 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
                                             get_high_low, overnight_return, get_advance_decline,\
-                                            get_buffett_six
+                                            get_buffett_six, get_finviz_obb_data
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -206,6 +206,28 @@ class MyTestCase(unittest.TestCase):
                      | 'Run adLoader' >> beam.ParDo(get_buffett_six())
                      | self.debugSink
                      )
+
+    def test_obb_finviz(self):
+        up_filter = 'Up'
+        down_filter = 'Down'
+
+        high_filter_dict = {'Change': up_filter,
+                            'Exchange': 'NYSE'}
+        low_filter_dict = {'Change': down_filter,
+                           'Exchange': 'NYSE'}
+
+        res = get_finviz_obb_data({}, high_filter_dict)
+
+        self.assertTrue(len(res) > 1)
+
+        res2 = get_finviz_obb_data({}, low_filter_dict)
+
+        self.assertTrue(len(res2) > 1)
+
+    def test_get_advancedecline(self):
+        res = get_advance_decline('NYSE')
+        print(res)
+
 
 if __name__ == '__main__':
     unittest.main()

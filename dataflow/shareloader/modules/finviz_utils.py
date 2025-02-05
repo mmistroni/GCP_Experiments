@@ -9,9 +9,11 @@ import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from .superperf_metrics import  load_bennchmark_data
 import numpy as np
+from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import logging
 from datetime import date
 import requests
+import asyncio
 
 
 
@@ -530,6 +532,29 @@ def get_advance_decline(exchange):
         low_filter_dict = {'Change' : down_filter,
                         'Exchange' : exchange}
 
+        highs = get_finviz_obb_data({}, high_filter_dict)
+        high_ticks = ','.join([d['symbol'] for d in highs])
+        lows = get_finviz_obb_data({}, low_filter_dict)
+        low_ticks = ','.join([d['symbol'] for d in lows])
+        logging.info(f' adv declie for {exchange} successfully retrieved')
+        return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
+                'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
+    except Exception as e :
+        logging.info('Exception in getting advv delcine:{str(e)}')
+        return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
+                'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
+
+
+def get_advance_decline2(exchange):
+    try:
+        up_filter = 'Up'
+        down_filter = 'Down'
+
+        high_filter_dict = {'Change' : up_filter,
+                            'Exchange' :exchange}
+        low_filter_dict = {'Change' : down_filter,
+                        'Exchange' : exchange}
+
         highs = _run_screener(high_filter_dict)
         high_ticks = ','.join([d['Ticker'] for d in highs])
         lows = _run_screener(low_filter_dict)
@@ -541,6 +566,9 @@ def get_advance_decline(exchange):
         logging.info('Exception in getting advv delcine:{str(e)}')
         return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
                 'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
+
+
+
 
 def get_buffett_six():
     filter_dict = {
@@ -568,6 +596,32 @@ def get_swing_trader_value():
 
 def get_swing_trader_technical():
     pass
+
+
+def get_finviz_obb_data(creds, params):
+
+    async def fetch_data(fetcher, creds : dict, params :dict) -> list[dict]:
+        try:
+            # 1. We need to get the close price of the day by just querying for 1d interval
+            # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
+            #    today
+            # 3. we aggregate and store in bq
+            # 4 .send email for everything that increased over 10% overnight
+            # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
+
+            data = await fetcher.fetch_data(params, creds)
+            return [d.model_dump(exclude_none=True) for d in data]
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {params}:{str(e)}')
+            return []
+
+    with asyncio.Runner() as runner:
+        return runner.run(fetch_data(FinvizEquityScreenerFetcher, creds, params))
+
+
+
+
+
 
 
 

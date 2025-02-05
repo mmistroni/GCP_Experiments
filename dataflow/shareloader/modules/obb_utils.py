@@ -19,6 +19,114 @@ def create_bigquery_ppln(p):
 
             )
 
+class AsyncProcessSP500Multiples(beam.DoFn):
+
+    def __init__(self, credentials):
+        self.credentials = credentials
+        self.fetcher = MultplSP500MultiplesFetcher
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+
+        params = dict(series_name=element)
+        try:
+            # 1. We need to get the close price of the day by just querying for 1d interval
+            # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
+            #    today
+            # 3. we aggregate and store in bq
+            # 4 .send email for everything that increased over 10% overnight
+            # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
+
+            data = await self.fetcher.fetch_data(params, {})
+            result =  [d.model_dump(exclude_none=True) for d in data]
+            if result:
+
+
+
+                logging.info(f'Result is :{result}. Looking for latest close ')
+                latest = result[-1]
+                return [{'AS_OF_DATE' : latest['date'].strftime('%Y-%m-%d'),
+                        'LABEL' : element.upper(), 'VALUE': latest['value']}]
+            else:
+                return -1
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return -1
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+    #https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-streamlit-5d3a7bc42b89
+
+
+
+class AsyncProcessCorporate(beam.DoFn):
+
+    def __init__(self, credentials):
+        self.credentials = credentials
+        self.fetcher = MultplSP500MultiplesFetcher
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+
+        params = dict(series_name=element)
+        try:
+            data = await self.fetcher.fetch_data(params, {})
+            result = [d.model_dump(exclude_none=True) for d in data]
+            if result:
+                logging.info(f'Result is :{result}. Looking for latest close ')
+                latest = result[-1]
+                return [{'AS_OF_DATE': latest['date'].strftime('%Y-%m-%d'),
+                         'LABEL': element.upper(), 'VALUE': latest['value']}]
+            else:
+                return -1
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return -1
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
+
+class ProcessHistorical(beam.DoFn):
+
+    def __init__(self, fmpKey, end_date):
+        self.fmpKey = fmpKey
+        self.end_date = end_date
+        self.start_date = (end_date -BDay(30)).date()
+
+    def get_adx_and_rsi(self, ticker):
+        adx_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
+        rsi_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
+
+        try:
+            adx = requests.get(adx_url).json()
+            latest = adx[0]
+            rsi = requests.get(rsi_url).json()
+            latest_rsi= rsi[0]
+            return  (ticker , {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']})
+        except Exception as e:
+            logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
+            return (ticker , {'ADX': 0, 'RSI': 0})
+
+
+
+    def fetch_data(self, element: str):
+        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
+        ticks = element.split(',')
+        all_records = []
+        for t in ticks:
+            data = self.get_adx_and_rsi(t)
+            all_records.append(data)
+        return all_records
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        return self.fetch_data(element)
+
 class AsyncProcess(beam.DoFn):
 
     def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500'):
@@ -97,114 +205,6 @@ class AsyncProcess(beam.DoFn):
         logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
-
-
-
-class AsyncProcessSP500Multiples(beam.DoFn):
-
-    def __init__(self, credentials):
-        self.credentials = credentials
-        self.fetcher = MultplSP500MultiplesFetcher
-        
-    async def fetch_data(self, element: str):
-        logging.info(f'element is:{element}')
-
-        params = dict(series_name=element)
-        try:
-            # 1. We need to get the close price of the day by just querying for 1d interval
-            # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
-            #    today
-            # 3. we aggregate and store in bq
-            # 4 .send email for everything that increased over 10% overnight
-            # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
-
-            data = await self.fetcher.fetch_data(params, {})
-            result =  [d.model_dump(exclude_none=True) for d in data]
-            if result:
-
-
-
-                logging.info(f'Result is :{result}. Looking for latest close ')
-                latest = result[-1]
-                return [{'AS_OF_DATE' : latest['date'].strftime('%Y-%m-%d'),
-                        'LABEL' : element.upper(), 'VALUE': latest['value']}]
-            else:
-                return -1
-        except Exception as e:
-            logging.info(f'Failed to fetch data for {element}:{str(e)}')
-            return -1
-        
-    def process(self, element: str):
-        logging.info(f'Input elements:{element}')
-        with asyncio.Runner() as runner:
-            return runner.run(self.fetch_data(element))
-    #https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-streamlit-5d3a7bc42b89
-
-
-class AsyncProcessCorporate(beam.DoFn):
-
-    def __init__(self, credentials):
-        self.credentials = credentials
-        self.fetcher = MultplSP500MultiplesFetcher
-
-    async def fetch_data(self, element: str):
-        logging.info(f'element is:{element}')
-
-        params = dict(series_name=element)
-        try:
-            data = await self.fetcher.fetch_data(params, {})
-            result = [d.model_dump(exclude_none=True) for d in data]
-            if result:
-                logging.info(f'Result is :{result}. Looking for latest close ')
-                latest = result[-1]
-                return [{'AS_OF_DATE': latest['date'].strftime('%Y-%m-%d'),
-                         'LABEL': element.upper(), 'VALUE': latest['value']}]
-            else:
-                return -1
-        except Exception as e:
-            logging.info(f'Failed to fetch data for {element}:{str(e)}')
-            return -1
-
-    def process(self, element: str):
-        logging.info(f'Input elements:{element}')
-        with asyncio.Runner() as runner:
-            return runner.run(self.fetch_data(element))
-
-class ProcessHistorical(beam.DoFn):
-
-    def __init__(self, fmpKey, end_date):
-        self.fmpKey = fmpKey
-        self.end_date = end_date
-        self.start_date = (end_date -BDay(30)).date()
-
-    def get_adx_and_rsi(self, ticker):
-        adx_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=adx&period=14&apikey={self.fmpKey}'
-        rsi_url = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=rsi&period=10&apikey={self.fmpKey}'
-
-        try:
-            adx = requests.get(adx_url).json()
-            latest = adx[0]
-            rsi = requests.get(rsi_url).json()
-            latest_rsi= rsi[0]
-            return  (ticker , {'ADX' : latest['adx'],'RSI' : latest_rsi['rsi']})
-        except Exception as e:
-            logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
-            return (ticker , {'ADX': 0, 'RSI': 0})
-
-
-
-    def fetch_data(self, element: str):
-        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
-        ticks = element.split(',')
-        all_records = []
-        for t in ticks:
-            data = self.get_adx_and_rsi(t)
-            all_records.append(data)
-        return all_records
-
-    def process(self, element: str):
-        logging.info(f'Input elements:{element}')
-        return self.fetch_data(element)
 
 
 
