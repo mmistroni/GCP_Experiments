@@ -599,6 +599,46 @@ def get_swing_trader_technical():
     pass
 
 
+class AsyncProcessFinviz(beam.DoFn):
+
+    def __init__(self, credentials, exchange):
+        self.credentials = credentials
+        self.fetcher = FinvizEquityScreenerFetcher
+        self.exchange = exchange
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+
+        up_filter = 'Up'
+        down_filter = 'Down'
+
+        high_filter_dict = {'Change': up_filter,
+                            'Exchange': self.exchange}
+        low_filter_dict = {'Change': down_filter,
+                           'Exchange': self.exchange}
+
+
+        try:
+            high = await self.fetcher.fetch_data(high_filter_dict, {})
+            high_result = [d.model_dump(exclude_none=True) for d in high]
+
+            low = await self.fetcher.fetch_data(low_filter_dict, {})
+            low_result = [d.model_dump(exclude_none=True) for d in high]
+
+            if high_result and low_result:
+                high_ticks = ','.join([d['symbol'] for d in high_result])
+                low_ticks = ','.join([d['symbol'] for d in low_result])
+                logging.info(f' adv declie for {self.exchange} successfully retrieved')
+                return [{'VALUE': str(len(high_result) / len(low_result)), 'ADVANCE': len(high_result), 'DECLINE': len(low_result),
+                        'ADVANCING_TICKERS': high_ticks, 'DECLINING_TICKERS': low_ticks}]
+            else:
+                return -1
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return -1
+
+
+
 def get_finviz_obb_data(creds, params):
 
     async def fetch_data(fetcher, creds : dict, params :dict) -> list[dict]:
