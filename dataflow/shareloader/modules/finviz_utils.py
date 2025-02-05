@@ -523,6 +523,7 @@ class FinvizLoader(beam.DoFn):
 
 
 def get_advance_decline(exchange):
+    return get_advance_decline2(exchange)
     try:
         up_filter = 'Up'
         down_filter = 'Down'

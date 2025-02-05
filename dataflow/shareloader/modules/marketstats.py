@@ -319,6 +319,19 @@ def run(argv=None, save_main_session=True):
 
     debugSink =  beam.Map(logging.info)
 
+    ''' Chekc Market status daily
+    
+        dow / nadsaq /sp500 weekly   https://finviz.com/
+        - advancing/ declining
+        - new high / new log
+        - above sma50 / below sma50
+        - above sma200 / below sma200
+        
+    
+    
+    
+    
+    '''
 
     with beam.Pipeline(options=pipeline_optionss) as p:
 
