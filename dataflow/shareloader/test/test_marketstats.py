@@ -12,7 +12,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_market_momentum,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
-                        get_shiller_indexes, AdvanceDecline
+                        get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\

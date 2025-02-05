@@ -545,6 +545,33 @@ def get_advance_decline2(exchange):
                 'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
 
 
+def get_advance_decline_sma(exchange, numDays):
+    try:
+        up_filter = f'Price above SMA{numDays}'
+        down_filter = 'Price below SMA{numDays}'
+        key =  f'{numDays}-Day Simple Moving Average'
+        
+        high_filter_dict = { key : up_filter,
+                            'Exchange' :exchange}
+        low_filter_dict = {'Change' : down_filter,
+                        'Exchange' : exchange}
+
+        logging.info(f'Querying wtih {high_filter_dict}')
+
+        highs = get_finviz_obb_data({}, high_filter_dict)
+        high_ticks = ','.join([d['symbol'] for d in highs])
+        lows = get_finviz_obb_data({}, low_filter_dict)
+        low_ticks = ','.join([d['symbol'] for d in lows])
+        logging.info(f' adv declie for {exchange} successfully retrieved')
+        return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
+                'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
+    except Exception as e :
+        logging.info('Exception in getting advv delcine:{str(e)}')
+        return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
+                'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
+
+
+
 def get_advance_decline(exchange):
     try:
         up_filter = 'Up'

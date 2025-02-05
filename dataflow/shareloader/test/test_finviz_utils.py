@@ -3,7 +3,8 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
                                             get_high_low, overnight_return, get_advance_decline,\
-                                            get_buffett_six, get_finviz_obb_data
+                                            get_buffett_six, get_finviz_obb_data, get_advance_decline_sma
+
 from pprint import pprint
 import os
 from shareloader.modules.superperf_metrics import get_dividend_paid
@@ -226,6 +227,11 @@ class MyTestCase(unittest.TestCase):
 
     def test_get_advancedecline(self):
         res = get_advance_decline('NYSE')
+        print(res)
+
+
+    def test_get_advancedecline(self):
+        res = get_advance_decline_sma('NYSE', 200)
         print(res)
 
 

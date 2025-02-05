@@ -19,7 +19,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline
+                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma
 from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
@@ -158,7 +158,6 @@ def run_economic_calendar(p, key):
 
             )
 
-
 def run_vix(p, key):
     return (p | 'start run_vix' >> beam.Create(['20210101'])
                     | 'vix' >>   beam.Map(lambda d:  get_vix(key))
@@ -279,6 +278,15 @@ def run_advance_decline(p, exchange):
            | f'calling  ad-{exchange}' >> beam.ParDo(AdvanceDecline())
            | f'remap {exchange}' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange}_ADVANCE_DECLINE',
+                           'VALUE': f"{d['VALUE']}"})
+           )
+
+def run_advance_decline_sma(p, exchange, days):
+    return  (p
+           | f'Start xAdvance Decline {exchange} {days} ' >> beam.Create([exchange])
+           | f'calling  ad-{exchange} {days}' >> beam.ParDo(AdvanceDeclineSma(days))
+           | f'remap {exchange} {days}' >> beam.Map(
+                lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange}_ADVANCE_DECLINE_SMA_{days}',
                            'VALUE': f"{d['VALUE']}"})
            )
 
@@ -431,6 +439,14 @@ def run(argv=None, save_main_session=True):
         adv_decline_nyse = run_advance_decline(p , 'NYSE')
         adv_decline_nasd = run_advance_decline(p, 'NASDAQ')
 
+        adv_decline_nyse_sma50 = run_advance_decline(p , 'NYSE', 50)
+        adv_decline_nasd_sma50 = run_advance_decline(p, 'NASDAQ', 50)
+
+        adv_decline_nyse_sma200 = run_advance_decline(p , 'NYSE', 200)
+        adv_decline_nasd_sma200 = run_advance_decline(p, 'NASDAQ', 200)
+
+
+
         #non_pmi_hist = run_prev_dates_statistics_non_manuf_pmi(p)
 
 
@@ -449,30 +465,38 @@ def run(argv=None, save_main_session=True):
         adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
 
+        adv_decline_key_nys_50 = adv_decline_nyse_sma50 | 'add adv decl nyse 50' >> beam.Map(lambda d: (9 d))
+        adv_decline_key_nas_50 = adv_decline_nasd_sma50 | 'add adv decl nas 50' >> beam.Map(lambda d: (10, d))
+        
+        adv_decline_key_nys_200 = adv_decline_nyse_sma200 | 'add adv decl nyse 200' >> beam.Map(lambda d: (11, d))
+        adv_decline_key_nas_200 = adv_decline_nasd_sma200 | 'add adv decl nas 200' >> beam.Map(lambda d: (12, d))
+        
+
+
         vix_res | 'vix tod ebug sink' >> debugSink
 
         adv_decline_nyse | 'nyse to debug' >> debugSink
         adv_decline_nasd | 'nasd to debug ' >> debugSink
 
-        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (9, d))
-        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (10, d))
-        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (11, d))
-        rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (12, d))
-        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (13, d))
+        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (19, d))
+        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (20, d))
+        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (21, d))
+        rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (22, d))
+        growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (23, d))
 
-        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (15, d))
-        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (16, d))
+        nysi_key = nysi_res | 'Add nysi' >> beam.Map(lambda d: (25, d))
+        nymo_key = nymo_res | 'Add nymo' >> beam.Map(lambda d: (26, d))
 
-        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (17, d))
+        junk_bond_key = junk_bond | 'add junnkbond' >> beam.Map(lambda d: (27, d))
 
 
 
-        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (22, d))
-        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (23, d))
-        shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (24, d))
-        sp500_key = sp500_multi | 'add sp500 multi' >> beam.Map(lambda d: (26, d))
+        fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (32, d))
+        cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (33, d))
+        shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (34, d))
+        sp500_key = sp500_multi | 'add sp500 multi' >> beam.Map(lambda d: (36, d))
 
-        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (34, d))
+        sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (44, d))
 
         static_key = static | 'Add 10' >> beam.Map(lambda d: (45, d))
         stats_key = statistics | 'Add 11' >> beam.Map(lambda d: (46, d))
@@ -480,14 +504,17 @@ def run(argv=None, save_main_session=True):
         # we need a global combiner to write to sink
         pmi_hist_key = pmi_hist | 'Add 20' >> beam.Map(lambda d: (60, d))
 
-        #non_manuf_pmi_hist_key = non_pmi_hist | 'Add 40' >> beSam.Map(lambda d: (40, d))
-
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
                     manuf_pmi_key,  epcratio_key, mm_key, qqq_key, rut_key,
                         nysi_key, nymo_key, junk_bond_key,
                         adv_decline_key_nas,
                         adv_decline_key_nys,
+                        adv_decline_key_nas_50,
+                        adv_decline_key_nys_50,
+                        adv_decline_key_nas_200,
+                        adv_decline_key_nys_200,
+                        
                         shillers_key, highlow_key,
                         sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,

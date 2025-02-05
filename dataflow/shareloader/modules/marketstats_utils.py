@@ -10,7 +10,7 @@ from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
-from .finviz_utils import get_high_low, get_advance_decline2
+from .finviz_utils import get_high_low, get_advance_decline2, get_advance_decline_sma
 import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
@@ -787,3 +787,13 @@ class AdvanceDecline(beam.DoFn):
         logging.info(f'------\n{high_low_dict}' )
 
         return [adv_decline]
+
+class AdvanceDeclineSma(beam.DoFn):
+    def __init__(self, numDays):
+        self.numDays = numDays
+
+    def process(self, elements):
+        adv_decline = get_advance_decline_sma(elements[0], self.numDays)
+        return [adv_decline]
+
+
