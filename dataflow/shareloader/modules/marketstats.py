@@ -439,11 +439,11 @@ def run(argv=None, save_main_session=True):
         adv_decline_nyse = run_advance_decline(p , 'NYSE')
         adv_decline_nasd = run_advance_decline(p, 'NASDAQ')
 
-        adv_decline_nyse_sma50 = run_advance_decline(p , 'NYSE', 50)
-        adv_decline_nasd_sma50 = run_advance_decline(p, 'NASDAQ', 50)
+        adv_decline_nyse_sma50 = run_advance_decline_sma(p , 'NYSE', 50)
+        adv_decline_nasd_sma50 = run_advance_decline_sma(p, 'NASDAQ', 50)
 
-        adv_decline_nyse_sma200 = run_advance_decline(p , 'NYSE', 200)
-        adv_decline_nasd_sma200 = run_advance_decline(p, 'NASDAQ', 200)
+        adv_decline_nyse_sma200 = run_advance_decline_sma(p , 'NYSE', 200)
+        adv_decline_nasd_sma200 = run_advance_decline_sma(p, 'NASDAQ', 200)
 
 
 
