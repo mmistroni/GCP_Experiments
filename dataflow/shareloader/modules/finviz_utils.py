@@ -625,42 +625,36 @@ def get_swing_trader_technical():
 
 class AsyncProcessFinviz(beam.DoFn):
 
-    def __init__(self, credentials, exchange, params1, params2):
-        self.credentials = credentials
+    def __init__(self, high_filter, low_filter):
         self.fetcher = FinvizEquityScreenerFetcher
-        self.exchange = exchange
-
+        self.high_filter = high_filter
+        self.low_filter = low_filter
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element}')
-
-        up_filter = 'Up'
-        down_filter = 'Down'
-
-        high_filter_dict = {'Change': up_filter,
-                            'Exchange': self.exchange}
-        low_filter_dict = {'Change': down_filter,
-                           'Exchange': self.exchange}
-
-
         try:
-            high = await self.fetcher.fetch_data(high_filter_dict, {})
+            high = await self.fetcher.fetch_data(self.high_filter, {})
             high_result = [d.model_dump(exclude_none=True) for d in high]
 
-            low = await self.fetcher.fetch_data(low_filter_dict, {})
+            low = await self.fetcher.fetch_data(self.low_filter, {})
             low_result = [d.model_dump(exclude_none=True) for d in low]
 
             if high_result and low_result:
                 high_ticks = ','.join([d['symbol'] for d in high_result])
                 low_ticks = ','.join([d['symbol'] for d in low_result])
-                logging.info(f' adv declie for {self.exchange} successfully retrieved')
+                logging.info(f' adv declie for  successfully retrieved')
                 return [{'VALUE': str(len(high_result) / len(low_result)), 'ADVANCE': len(high_result), 'DECLINE': len(low_result),
                         'ADVANCING_TICKERS': high_ticks, 'DECLINING_TICKERS': low_ticks}]
             else:
-                return -1
+                return[{}]
         except Exception as e:
             logging.info(f'Failed to fetch data for {element}:{str(e)}')
-            return -1
+            return  [str(e)]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
 
 
 
@@ -674,7 +668,7 @@ def get_finviz_obb_data(creds, params):
             # 3. we aggregate and store in bq
             # 4 .send email for everything that increased over 10% overnight
             # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
-
+            logging.info('Attempting to fetch OBB FINVIZZ......')
             data = await fetcher.fetch_data(params, creds)
             return [d.model_dump(exclude_none=True) for d in data]
         except Exception as e:

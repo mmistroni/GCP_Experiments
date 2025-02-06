@@ -15,6 +15,8 @@ import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 from openbb_fmp.models.index_historical import FMPIndexHistoricalFetcher
+from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
+import asyncio
 
 def create_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(5)).date().strftime('%Y-%m-%d')
@@ -789,11 +791,46 @@ class AdvanceDecline(beam.DoFn):
         return [adv_decline]
 
 class AdvanceDeclineSma(beam.DoFn):
-    def __init__(self, numDays):
+    def __init__(self, exchange, numDays):
+        self.exchange = exchange
         self.numDays = numDays
+        self.fetcher = FinvizEquityScreenerFetcher
 
-    def process(self, elements):
-        adv_decline = get_advance_decline_sma(elements[0], self.numDays)
-        return [adv_decline]
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            up_filter = f'Price above SMA{self.numDays}'
+            down_filter = 'Price below SMA{numDays}'
+            key = f'{self.numDays}-Day Simple Moving Average'
+
+            high_filter = {key: up_filter,
+                                'Exchange': self.exchange}
+            low_filter = {'Change': down_filter,
+                               'Exchange': self.exchange}
+
+            high = await self.fetcher.fetch_data(high_filter, {})
+            high_result = [d.model_dump(exclude_none=True) for d in high]
+
+            low = await self.fetcher.fetch_data(low_filter, {})
+            low_result = [d.model_dump(exclude_none=True) for d in low]
+
+            if high_result and low_result:
+                high_ticks = ','.join([d['symbol'] for d in high_result])
+                low_ticks = ','.join([d['symbol'] for d in low_result])
+                logging.info(f' adv declie for  successfully retrieved')
+                return [{'VALUE': str(len(high_result) / len(low_result)), 'ADVANCE': len(high_result), 'DECLINE': len(low_result),
+                        'ADVANCING_TICKERS': high_ticks, 'DECLINING_TICKERS': low_ticks}]
+            else:
+                return [{'VALUE': 'NA'}]
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
 
 

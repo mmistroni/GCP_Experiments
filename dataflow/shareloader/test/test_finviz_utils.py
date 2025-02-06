@@ -3,7 +3,8 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_graham_defensive, get_graham_enterprise,\
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
                                             get_high_low, overnight_return, get_advance_decline,\
-                                            get_buffett_six, get_finviz_obb_data, get_advance_decline_sma
+                                            get_buffett_six, get_finviz_obb_data, get_advance_decline_sma, \
+                                            AsyncProcessFinviz
 
 from pprint import pprint
 import os
@@ -133,22 +134,6 @@ class MyTestCase(unittest.TestCase):
             return None
 
 
-    def extract_tables_from_pdf(self , url):
-        """Extracts tables from a PDF URL using Camelot.
-
-        Args:
-            url: The URL of the PDF file.
-
-        Returns:
-            A list of Camelot Table objects representing the extracted tables.
-        """
-
-        try:
-            tables = camelot.read_pdf(url)
-            return tables
-        except Exception as e:
-            print(f"Error extracting tables: {e}")
-            return []
 
     def test_disclosures(self):
         # Example usage
@@ -172,19 +157,6 @@ class MyTestCase(unittest.TestCase):
             df = self.extract_tables_from_pdf('c:/Users/Marco/20025679.pdf')
             print(df)
 
-    def test_pdfplumber(self):
-        import pdfplumber
-        from pprint import pprint
-        file = 'c:/Users/Marco/20025679.pdf'
-        with pdfplumber.open(file) as pdf:
-            page = pdf.pages[0]
-            tables = page.extract_tables()
-            holder_dict = []
-            for table in tables:
-                for row in table[1:]:
-                    holder_dict.append(dict(Owner=row[1], Ticker=row[2], Transaction=row[3], Date=row[4],
-                                       Amount=row[5],CapGains=row[6]))
-            pprint(holder_dict)
 
     def test_overnight_return(self):
         res = overnight_return()
@@ -207,6 +179,20 @@ class MyTestCase(unittest.TestCase):
                      | 'Run adLoader' >> beam.ParDo(get_buffett_six())
                      | self.debugSink
                      )
+
+    def test_asyncfinviz(self):
+        high_filter_dict = {'Change': 'Up',
+                            'Exchange': 'NYSE'}
+        low_filter_dict = {'Change': 'Down',
+                           'Exchange': 'NYSE'}
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(['AAPL'])
+                     | 'Run adLoader' >> beam.ParDo(AsyncProcessFinviz(high_filter_dict,
+                                                                       low_filter_dict))
+                     | self.debugSink
+                     )
+
 
     def test_obb_finviz(self):
         up_filter = 'Up'

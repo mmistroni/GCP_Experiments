@@ -20,7 +20,8 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_manufacturing_pmi, run_non_manufacturing_pmi, MarketStatsCombineFn,\
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
-                                            run_cramer_pipeline, run_advance_decline, run_sp500multiples
+                                            run_cramer_pipeline, run_advance_decline, run_sp500multiples, \
+                                            run_advance_decline_sma
 
 
 import requests
@@ -194,20 +195,6 @@ class TestMarketStats(unittest.TestCase):
 
             )
 
-    def test_another(self):
-        iexapi_key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            nyse = run_exchange_pipeline(p, iexapi_key, "New York Stock Exchange")
-            nasdaq = run_exchange_pipeline(p, iexapi_key, "Nasdaq Global Select")
-
-            final = (
-                    (nyse, nasdaq)
-                    | 'FlattenCombine all' >> beam.Flatten()
-                    | 'Mapping to String' >> beam.Map(lambda data: '{}:{}'.format(data['LABEL'], data['VALUE']))
-                    | 'Combine' >> beam.CombineGlobally(lambda x: '<br><br>'.join(x))
-                    | self.printSink
-
-            )
     def test_combineGlobally(self):
 
         class AverageFn(beam.CombineFn):
@@ -272,11 +259,6 @@ class TestMarketStats(unittest.TestCase):
             ec = run_economic_calendar(p, iexapi_key)
             ec | self.notEmptySink
 
-    def test_Nasdap(self):
-        iexapi_key = os.environ['FMPREPKEY']
-        with TestPipeline() as p:
-            res = run_exchange_pipeline(p, iexapi_key, 'NASDAQ Global Select')
-            res | self.notEmptySink
 
     def test_bqueryInnerJoinernyse_tickers(self):
         from pandas.tseries.offsets import BDay
@@ -615,6 +597,14 @@ class TestMarketStats(unittest.TestCase):
                     | 'Get all List' >> beam.ParDo(AdvanceDecline())
                     |  debugSink
             )
+
+    def test_advance_declinesma50(self):
+        debugSink = beam.Map(print)
+
+        with TestPipeline() as p:
+            res = run_advance_decline_sma(p, 'NASDAQ', 50)
+            res |  debugSink
+
 
 
 
