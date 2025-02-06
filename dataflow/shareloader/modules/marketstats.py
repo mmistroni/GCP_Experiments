@@ -465,7 +465,7 @@ def run(argv=None, save_main_session=True):
         adv_decline_key_nas = adv_decline_nasd | 'add adv decl nas' >> beam.Map(lambda d: (7, d))
         highlow_key = high_low | 'add highlow' >> beam.Map(lambda d: (8, d))
 
-        adv_decline_key_nys_50 = adv_decline_nyse_sma50 | 'add adv decl nyse 50' >> beam.Map(lambda d: (9 d))
+        adv_decline_key_nys_50 = adv_decline_nyse_sma50 | 'add adv decl nyse 50' >> beam.Map(lambda d: (9, d))
         adv_decline_key_nas_50 = adv_decline_nasd_sma50 | 'add adv decl nas 50' >> beam.Map(lambda d: (10, d))
         
         adv_decline_key_nys_200 = adv_decline_nyse_sma200 | 'add adv decl nyse 200' >> beam.Map(lambda d: (11, d))
