@@ -10,7 +10,7 @@ from pandas.tseries.offsets import BDay
 import statistics
 from .news_util import get_user_agent
 from .fred_utils import get_high_yields_spreads
-from .finviz_utils import get_high_low, get_advance_decline2, get_advance_decline_sma
+from .finviz_utils import get_high_low, get_advance_decline, get_advance_decline_sma
 import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
@@ -784,9 +784,9 @@ class NewHighNewLowLoader(beam.DoFn):
 class AdvanceDecline(beam.DoFn):
     def process(self, elements):
 
-        adv_decline = high_low_dict = get_advance_decline2(elements[0])
+        adv_decline =  get_advance_decline(elements[0])
 
-        logging.info(f'------\n{high_low_dict}' )
+        logging.info(f'------\n{adv_decline}' )
 
         return [adv_decline]
 
@@ -800,29 +800,12 @@ class AdvanceDeclineSma(beam.DoFn):
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element}')
         try:
-            up_filter = f'Price above SMA{self.numDays}'
-            down_filter = 'Price below SMA{numDays}'
-            key = f'{self.numDays}-Day Simple Moving Average'
+            adv_decline = get_advance_decline_sma(self.exchange, self.numDays)
 
-            high_filter = {key: up_filter,
-                                'Exchange': self.exchange}
-            low_filter = {'Change': down_filter,
-                               'Exchange': self.exchange}
+            logging.info(f'------\n{adv_decline}')
 
-            high = await self.fetcher.fetch_data(high_filter, {})
-            high_result = [d.model_dump(exclude_none=True) for d in high]
+            return [adv_decline]
 
-            low = await self.fetcher.fetch_data(low_filter, {})
-            low_result = [d.model_dump(exclude_none=True) for d in low]
-
-            if high_result and low_result:
-                high_ticks = ','.join([d['symbol'] for d in high_result])
-                low_ticks = ','.join([d['symbol'] for d in low_result])
-                logging.info(f' adv declie for  successfully retrieved')
-                return [{'VALUE': str(len(high_result) / len(low_result)), 'ADVANCE': len(high_result), 'DECLINE': len(low_result),
-                        'ADVANCING_TICKERS': high_ticks, 'DECLINING_TICKERS': low_ticks}]
-            else:
-                return [{'VALUE': 'NA'}]
         except Exception as e:
             logging.info(f'Failed to fetch data for {element}:{str(e)}')
             return  [{'VALUE': f'{str(e)}'}]
