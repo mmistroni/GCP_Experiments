@@ -548,12 +548,12 @@ def get_advance_decline2(exchange):
 def get_advance_decline_sma(exchange, numDays):
     try:
         up_filter = f'Price above SMA{numDays}'
-        down_filter = 'Price below SMA{numDays}'
+        down_filter = f'Price below SMA{numDays}'
         key =  f'{numDays}-Day Simple Moving Average'
         
         high_filter_dict = { key : up_filter,
                             'Exchange' :exchange}
-        low_filter_dict = {'Change' : down_filter,
+        low_filter_dict = {key : down_filter,
                         'Exchange' : exchange}
 
         logging.info(f'Querying wtih {high_filter_dict}')
@@ -566,8 +566,8 @@ def get_advance_decline_sma(exchange, numDays):
         return {'VALUE' : str(len(highs) / len(lows)), 'ADVANCE' : len(highs), 'DECLINE' : len(lows),
                 'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
     except Exception as e :
-        logging.info('Exception in getting advv delcine:{str(e)}')
-        return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
+        logging.info(f'Exception in getting advv delcine:{str(e)}')
+        return {'VALUE' : f'N/A-{str(e)} ', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
                 'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
 
 def get_advance_decline(exchange):
@@ -589,7 +589,7 @@ def get_advance_decline(exchange):
                 'ADVANCING_TICKERS' : high_ticks, 'DECLINING_TICKERS' : low_ticks}
     except Exception as e :
         logging.info('Exception in getting advv delcine:{str(e)}')
-        return {'VALUE' : 'N/A', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
+        return {'VALUE' : f'N/A {str(e)}', 'ADVANCE' : 'N/A', 'DECLINE' : 'N/A',
                 'ADVANCING_TICKERS' : 'N/A', 'DECLINING_TICKERS' : 'N/A'}
 
 

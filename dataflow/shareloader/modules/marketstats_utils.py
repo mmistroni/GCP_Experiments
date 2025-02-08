@@ -784,7 +784,7 @@ class NewHighNewLowLoader(beam.DoFn):
 class AdvanceDecline(beam.DoFn):
     def process(self, elements):
 
-        adv_decline =  get_advance_decline(elements[0])
+        adv_decline =  get_advance_decline(elements)
 
         logging.info(f'------\n{adv_decline}' )
 
