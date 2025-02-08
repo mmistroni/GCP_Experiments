@@ -283,7 +283,7 @@ def run_advance_decline(p, exchange):
 
 def run_advance_decline_sma(p, exchange, days):
     return  (p
-           | f'Start xAdvance Decline {exchange} {days} ' >> beam.Create([exchange])
+           | f'Start xxxxxAdvance Decline {exchange} {days} ' >> beam.Create([exchange])
            | f'calling  ad-{exchange} {days}' >> beam.ParDo(AdvanceDeclineSma(exchange, days))
            | f'remap {exchange} {days}' >> beam.Map(
                 lambda d: {'AS_OF_DATE': date.today().strftime('%Y-%m-%d'), 'LABEL': f'{exchange}_ADVANCE_DECLINE_SMA_{days}',
