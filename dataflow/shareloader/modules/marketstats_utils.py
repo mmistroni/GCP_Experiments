@@ -16,6 +16,9 @@ from bs4 import BeautifulSoup
 from collections import OrderedDict
 from openbb_fmp.models.index_historical import FMPIndexHistoricalFetcher
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
+from openbb_yfinance.models.index_historical import YFinanceIndexHistoricalFetcher
+from openbb_benzinga.models.world_news import BenzingaWorldNewsFetcher
+
 import asyncio
 
 def create_bigquery_ppln(p, label):
@@ -373,7 +376,7 @@ check investopedia.comm  high yield bond spread
 
 
 '''
-market_momentum_dict = {'^GSPC' : 'S&PClose', 'QQQ' : 'Nasdaq100Close',
+market_momentum_dict = {'^GSPC' : 'S&PClose', '^IXIC' : 'Nasdaq100Close',
                         'IWM': 'Russell2000Close', '^RUT' : 'Rusell2000Close'
                         }
 
@@ -805,6 +808,111 @@ class AdvanceDeclineSma(beam.DoFn):
             logging.info(f'------\n{adv_decline}')
 
             return [adv_decline]
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
+class AsyncFetcher(beam.DoFn):
+    def __init__(self, fmp_key):#
+        self.fmp_key = fmp_key
+        self.fetcher = FinvizEquityScreenerFetcher
+
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            credentials = {'fmp_api_key' : self.fmp_key}
+
+            start = (date.today() - BDay(1)).date()
+            end = date.today()
+            params = {
+                "symbol": "^IXIC",
+                "start_date": start,
+                "end_date": end,
+            }
+
+            data = await FMPIndexHistoricalFetcher.fetch_data(params, credentials)
+            result =  [d.model_dump(exclude_none=True) for d in data]
+            return result   
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+        
+
+class BenzingaNews(beam.DoFn):
+
+    def __init__(self, key):
+        self.key = key
+    
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            credentials = {'benzinga_api_key' : self.key}
+
+            start = (date.today() - BDay(1)).date()
+            end = date.today()
+            params = {
+                "start_date": start,
+                "end_date": end
+                
+            }
+
+            data = await BenzingaWorldNewsFetcher.fetch_data(params, {})
+            result =  [d.model_dump(exclude_none=True) for d in data]
+            
+            return result
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
+class OBBMarketMomemtun(beam.DoFn):
+    def __init__(self, key):
+        self.fmp_api_key = key
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            credentials = {'fmp_api_key' : self.fmp_api_key}
+
+            start = (date.today() - BDay(200)).date()
+            end = date.today()
+            params = {
+                "symbol": element,
+                "start_date": start,
+                "end_date": end,
+            }
+
+            data = await FMPIndexHistoricalFetcher.fetch_data(params, credentials)
+            result =  [d.model_dump(exclude_none=True) for d in data]
+            
+            last_days = result[-125:]
+
+            close = [d['close'] for d in last_days]
+            day125avg = statistics.mean(close)
+            latest = close[-1]
+
+            status = 'FEAR' if latest < day125avg else 'GREED'
+
+            prefix = market_momentum_dict[element]
+            return [f'{prefix}:(125MVGAVG:{day125avg})|{latest}|STATUS:{status}']
 
         except Exception as e:
             logging.info(f'Failed to fetch data for {element}:{str(e)}')

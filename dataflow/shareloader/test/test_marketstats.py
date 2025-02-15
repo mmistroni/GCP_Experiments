@@ -12,7 +12,8 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_market_momentum,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
-                        get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma
+                        get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
+                        OBBMarketMomemtun, BenzingaNews
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -513,44 +514,6 @@ class TestMarketStats(unittest.TestCase):
             res | debugSink
 
 
-    def test_scrapy(self):
-        from scrapy.http import FormRequest
-        from scrapy.crawler import CrawlerProcess
-        class MySpider(scrapy.Spider):
-            name = 'my_spider'
-            start_urls = ['https://efdsearch.senate.gov/']
-
-            def parse(self, response):
-                # Extract the hidden token
-                token = response.xpath('//input[@name="csrfmiddlewaretoken"]/@value').get()
-
-                # Construct the form data
-                formdata = {
-                    'csrfmiddlewaretoken': token,
-                    'reportTypes' : '11',
-                    'submitted_start_date' : '2024-08-15',
-                    'submitted_end_date': '2024-08-21'
-
-                    # Add other form fields here
-                }
-
-                # Submit the form
-                yield FormRequest(
-                    url=response.url,
-                    method='POST',
-                    formdata=formdata,
-                    callback=self.parse_response
-                )
-
-            def parse_response(self, response):
-                # Process the response here
-                print(f'Got:{response}')
-                pass
-
-        process = CrawlerProcess()
-        process.crawl(MySpider)
-        process.start()
-
     def test_shillers(self):
         debugSink = beam.Map(print)
 
@@ -605,7 +568,37 @@ class TestMarketStats(unittest.TestCase):
             res = run_advance_decline_sma(p, 'NASDAQ', 50)
             res |  debugSink
 
+    def test_get_obb_vix(self):
+        fmp_key = os.environ['FMPREPKEY']
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create(['NASDAQ'])
+                    | 'Get all List' >> beam.ParDo(AsyncFetcher(fmp_key))
+                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d['close'])})
+                    |  debugSink
+            )
 
+    def test_get_obb_market_momentum(self):
+        debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create(['^GSPC', '^RUT', '^IXIC'])
+                    | 'Get all List' >> beam.ParDo(OBBMarketMomemtun(fmp_key))
+                    | f'remap mm_tst' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
+                    |  debugSink
+            )
+
+    def test_benzinga_news(self):
+        debugSink = beam.Map(print)
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create(['^GSPC'])
+                    | 'Get all List' >> beam.ParDo(BenzingaNews())
+                    |  debugSink
+            )
 
 
 if __name__ == '__main__':

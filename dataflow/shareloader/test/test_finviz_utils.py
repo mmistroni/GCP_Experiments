@@ -14,6 +14,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
+from openbb_yfinance.models.equity_quote import YFinanceEquityQuoteFetcher, YFinanceIndexHistoricalQueryParams
 import requests
 import zipfile
 import xml.etree.ElementTree as ET

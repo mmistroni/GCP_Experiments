@@ -19,7 +19,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma
+                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, AsyncFetcher
 from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
@@ -160,8 +160,8 @@ def run_economic_calendar(p, key):
 
 def run_vix(p, key):
     return (p | 'start run_vix' >> beam.Create(['20210101'])
-                    | 'vix' >>   beam.Map(lambda d:  get_vix(key))
-                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d)})
+                    | 'vix' >> beam.ParDo(AsyncFetcher(key))
+                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d['close'])})
             )
 
 def run_junk_bond_demand(p, fredkey):

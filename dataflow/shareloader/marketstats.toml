@@ -37,6 +37,7 @@ dependencies = [
   "openbb-multpl",
   "openbb-fmp",
   "openbb-finviz",
+  "openbb-benzinga",
   'pandas-ta'
 
 ]
