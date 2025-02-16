@@ -150,10 +150,10 @@ def run_manufacturing_pmi(p):
 
 def run_economic_calendar(p, key):
     return (p | 'startcal' >> beam.Create(['20210101'])
-                    | 'econcalendar' >>   bbeam.ParDo(AsyncEconomicCalendar(key))
+                    | 'econcalendar' >>   beam.ParDo(AsyncEconomicCalendar(key))
                     | 'reMapping' >> beam.Map(lambda d: {'AS_OF_DATE' : d['date'],
                                                          'LABEL' : d['event'],
-                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d.get('consensus', ''},Actual:{d.get('actual') or ''}"
+                                                         'VALUE' : f"Previous:{d.get('previous', '')},Estimate:{d.get('consensus', '')},Actual:{d.get('actual','')}"
                                                          }
                                               )
 
