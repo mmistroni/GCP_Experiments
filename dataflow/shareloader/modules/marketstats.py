@@ -20,7 +20,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
                             get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, AsyncFetcher,\
-                            OBBMarketMomemtun, AsyncSectorRotation
+                            OBBMarketMomemtun, AsyncSectorRotation, AsyncEconomicCalendar
 from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
@@ -150,10 +150,10 @@ def run_manufacturing_pmi(p):
 
 def run_economic_calendar(p, key):
     return (p | 'startcal' >> beam.Create(['20210101'])
-                    | 'econcalendar' >>   beam.FlatMap(lambda d: get_economic_calendar(key))
+                    | 'econcalendar' >>   bbeam.ParDo(AsyncEconomicCalendar(key))
                     | 'reMapping' >> beam.Map(lambda d: {'AS_OF_DATE' : d['date'],
                                                          'LABEL' : d['event'],
-                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d['estimate']},Actual:{d.get('actual') or ''}"
+                                                         'VALUE' : f"Previous:{d['previous']},Estimate:{d.get('consensus', ''},Actual:{d.get('actual') or ''}"
                                                          }
                                               )
 

@@ -13,7 +13,8 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
                         get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
-                        OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator
+                        OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator, \
+                        AsyncEconomicCalendar
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -610,8 +611,27 @@ class TestMarketStats(unittest.TestCase):
                     |  debugSink
             )
 
-        print('-------------------------')
-        print((get_sector_rotation_indicator(fmp_key)))
+    def test_economic_calendar(self):
+        debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        
+        with TestPipeline() as p:
+            res = ( p
+                    | 'Start' >> beam.Create(['^GSPC'])
+                    | 'Get all List' >> beam.ParDo(AsyncEconomicCalendar(fmp_key))
+                    | 'reMapping' >> beam.Map(lambda d: {'AS_OF_DATE' : d['date'],
+                                                          'LABEL' : d['event'],
+                                                         'VALUE' : f"Previous:{d.get('previous', '')},Estimate:{d.get('consensus', '')},Actual:{d.get('actual') or ''}"
+                                                         }
+                                              )
+                    |  debugSink
+            )
+    
+        print('------------------')
+        from pprint import pprint
+        pprint(get_economic_calendar(fmp_key))
+
+
 
 if __name__ == '__main__':
     unittest.main()

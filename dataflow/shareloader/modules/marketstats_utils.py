@@ -14,6 +14,7 @@ from .finviz_utils import get_high_low, get_advance_decline, get_advance_decline
 import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
+from openbb_fmp.models.economic_calendar import FMPEconomicCalendarFetcher
 from openbb_fmp.models.index_historical import FMPIndexHistoricalFetcher
 from openbb_fmp.models.equity_historical import FMPEquityHistoricalFetcher
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
@@ -929,7 +930,6 @@ class AsyncSectorRotation(beam.DoFn):
         self.fmp_key = fmp_key
         self.fetcher = FinvizEquityScreenerFetcher
 
-
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element}')
         try:
@@ -966,6 +966,37 @@ class AsyncSectorRotation(beam.DoFn):
         logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
-        
+
+class AsyncEconomicCalendar(beam.DoFn):
+    def __init__(self, fmp_key):#
+        self.fmp_key = fmp_key
+        self.fetcher = FMPEconomicCalendarFetcher
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            credentials = {'fmp_api_key' : self.fmp_key}
+            startDate = date.today() - BDay(1)
+            toEowDays = 7 - (startDate.weekday() + 1)
+            eow = startDate + timedelta(days=toEowDays)
+            params = {
+                "start_date": startDate,
+                "end_date" : eow
+                
+            }
+            value_data = await self.fetcher.fetch_data(params, credentials)
+            value_result =  [d.model_dump(exclude_none=True) for d in value_data ]
+            relevants = [d for d in value_result if d.get('country', '') == 'US' and d.get('importance', '') in ['High', 'Medium']]
+            return relevants
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
 
 
