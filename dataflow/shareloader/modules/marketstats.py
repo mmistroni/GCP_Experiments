@@ -19,7 +19,8 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
                             get_mcclellan, get_all_us_stocks, get_junkbonddemand, \
-                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, AsyncFetcher
+                            get_cramer_picks, NewHighNewLowLoader, get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, AsyncFetcher,\
+                            OBBMarketMomemtun, AsyncSectorRotation
 from shareloader.modules.obb_utils import AsyncProcessSP500Multiples
 
 from sendgrid import SendGridAPIClient
@@ -159,7 +160,7 @@ def run_economic_calendar(p, key):
             )
 
 def run_vix(p, key):
-    return (p | 'start run_vix' >> beam.Create(['20210101'])
+    return (p | 'start run_vix' >> beam.Create(['^VIX'])
                     | 'vix' >> beam.ParDo(AsyncFetcher(key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d['close'])})
             )
@@ -183,14 +184,14 @@ def run_fed_fund_rates(p):
 
 
 def run_market_momentum(p, key, ticker='^GSPC'):
-    return (p | f'start run_mm_{ticker}' >> beam.Create(['20210101'])
-                    | f'mm_{ticker}' >>   beam.Map(lambda d:  get_market_momentum(key, ticker))
+    return (p | f'start run_mm_{ticker}' >> beam.Create([ticker])
+                    | f'mm_{ticker}' >>   beam.ParDo(OBBMarketMomemtun(key))
                     | f'remap mm_{ticker}' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
             )
 
 def run_growth_vs_value(p, key):
     return (p | 'start run_gv' >> beam.Create(['20210101'])
-                    | 'gv' >>   beam.Map(lambda d: get_sector_rotation_indicator (key))
+                    | 'gv' >>   beam.ParDo(AsyncSectorRotation(key))
                     | 'remap mmgv' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
             )
 
@@ -395,9 +396,9 @@ def run(argv=None, save_main_session=True):
 
         mmomentum_res = run_market_momentum(p, iexapi_key)
 
-        nasdaq_res = run_market_momentum(p, iexapi_key, 'QQQ')
+        nasdaq_res = run_market_momentum(p, iexapi_key, '^IXIC')
 
-        russell_res = run_market_momentum(p, iexapi_key, 'IWM')
+        russell_res = run_market_momentum(p, iexapi_key, '^RUT')
 
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
 

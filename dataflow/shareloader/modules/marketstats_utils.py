@@ -15,6 +15,7 @@ import math
 from bs4 import BeautifulSoup
 from collections import OrderedDict
 from openbb_fmp.models.index_historical import FMPIndexHistoricalFetcher
+from openbb_fmp.models.equity_historical import FMPEquityHistoricalFetcher
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 from openbb_yfinance.models.index_historical import YFinanceIndexHistoricalFetcher
 from openbb_benzinga.models.world_news import BenzingaWorldNewsFetcher
@@ -832,7 +833,7 @@ class AsyncFetcher(beam.DoFn):
             start = (date.today() - BDay(1)).date()
             end = date.today()
             params = {
-                "symbol": "^IXIC",
+                "symbol": element,
                 "start_date": start,
                 "end_date": end,
             }
@@ -923,5 +924,48 @@ class OBBMarketMomemtun(beam.DoFn):
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
 
+class AsyncSectorRotation(beam.DoFn):
+    def __init__(self, fmp_key):#
+        self.fmp_key = fmp_key
+        self.fetcher = FinvizEquityScreenerFetcher
+
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            credentials = {'fmp_api_key' : self.fmp_key}
+            growth = 'IVW'
+            value = 'IVE'
+            params = {
+                "symbol": growth,
+                
+            }
+            growth_data = await FMPEquityHistoricalFetcher.fetch_data(params, credentials)
+            growth_result =  [d.model_dump(exclude_none=True) for d in growth_data][-125:]
+            params = {
+                "symbol": value,
+                
+            }                                                          
+            value_data = await FMPEquityHistoricalFetcher.fetch_data(params, credentials)
+            value_result =  [d.model_dump(exclude_none=True) for d in value_data][-125:]
+            
+            growthClose = [d['close'] for d in growth_result]
+            valueClose = [d['close'] for d in value_result]
+            ratios = [growth / value for growth, value in zip(growthClose, valueClose)]
+
+            dayavg = statistics.mean(ratios)
+            latest = ratios[-1]
+
+            return [f'|125MVGAVG:{dayavg}|LATEST:{latest}']
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [{'VALUE': f'{str(e)}'}]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+        
 
 

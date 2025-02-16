@@ -13,7 +13,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_latest_fed_fund_rates, PMIJoinerFn, NewHighNewLowLoader, get_prices2,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
                         get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
-                        OBBMarketMomemtun, BenzingaNews
+                        OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -573,7 +573,7 @@ class TestMarketStats(unittest.TestCase):
         debugSink = beam.Map(print)
         with TestPipeline() as p:
             res = ( p
-                    | 'Start' >> beam.Create(['NASDAQ'])
+                    | 'Start' >> beam.Create(['^VIX'])
                     | 'Get all List' >> beam.ParDo(AsyncFetcher(fmp_key))
                     | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d['close'])})
                     |  debugSink
@@ -585,21 +585,33 @@ class TestMarketStats(unittest.TestCase):
         
         with TestPipeline() as p:
             res = ( p
-                    | 'Start' >> beam.Create(['^GSPC', '^RUT', '^IXIC'])
+                    | 'Start' >> beam.Create(['^GSPC'])
                     | 'Get all List' >> beam.ParDo(OBBMarketMomemtun(fmp_key))
                     | f'remap mm_tst' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'MARKET_MOMENTUM', 'VALUE' : str(d)})
                     |  debugSink
             )
 
-    def test_benzinga_news(self):
+    def test_run_market_momentum(self):
         debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            res = run_market_momentum(p, fmp_key)
+            res | debugSink
+
+    def test_new_sector_rotation(self):
+        debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        
         with TestPipeline() as p:
             res = ( p
                     | 'Start' >> beam.Create(['^GSPC'])
-                    | 'Get all List' >> beam.ParDo(BenzingaNews())
+                    | 'Get all List' >> beam.ParDo(AsyncSectorRotation(fmp_key))
+                    | f'remap mm_tst' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'SECTOR ROTATION(GROWTH/VALUE)', 'VALUE' : str(d)})
                     |  debugSink
             )
 
+        print('-------------------------')
+        print((get_sector_rotation_indicator(fmp_key)))
 
 if __name__ == '__main__':
     unittest.main()

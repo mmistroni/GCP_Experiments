@@ -7,7 +7,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from samples.email_pipeline import run
 from hamcrest.core.core.allof import all_of
 from apache_beam.transforms import util
-from shareloader.modules.news import run_my_pipeline, XyzOptions, \
+from shareloader.modules.news import run_my_pipeline, \
                                             prepare_for_big_query
 from shareloader.modules.news_util import df_to_dict, find_news_scores_for_ticker, combine_news, df_to_dict
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -86,12 +86,6 @@ class TestNewsPipeline(unittest.TestCase):
                 input = p | beam.Create([df])
                 res = self.prepare_for_big_query_tst(input)
                 res | self.notEmptySink
-
-    def test_pipeline_options(self):
-        options = XyzOptions.from_dictionary({'sector': 'Utilities', 'business_days' : 1})
-        from pprint import pprint
-        print(options.sector.get())
-        print(options.business_days.get())
 
     def test_combine_news(self):
         elements = [
