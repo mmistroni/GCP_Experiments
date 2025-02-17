@@ -154,6 +154,40 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
 
+    def calculate_smas(self, ticker):
+        # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
+        
+        try:
+           sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'    
+           r1 = requests.get(sma20).json()[0] 
+           sma50 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'     
+           r2 = requests.get(sma50).json()[0] 
+           sma200 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'     
+           r3 = requests.get(sma200).json()[0] 
+           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
+
+        except Exception as e:
+            logging.info('Failed to retreivve smas for {ticker}')
+            return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
+
+    def calculate_slope(self, ticker):
+        # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
+        
+        try:
+           sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'    
+           r1 = requests.get(sma20).json()[0] 
+           sma50 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'     
+           r2 = requests.get(sma50).json()[0] 
+           sma200 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'     
+           r3 = requests.get(sma200).json()[0] 
+           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
+
+        except Exception as e:
+            logging.info('Failed to retreivve smas for {ticker}')
+            return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
+
+
+
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
 
