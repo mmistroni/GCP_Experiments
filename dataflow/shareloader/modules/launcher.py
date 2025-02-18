@@ -86,7 +86,12 @@ def get_finviz_schema():
         "country": "STRING",
         "ticker": "STRING",
         "cob"   : "DATE",
-        "asodate" : "DATE"
+        "asodate" : "DATE",
+        "ADX" : "FLOAT",
+        "RSI": "FLOAT",
+        "SMA20": "FLOAT",
+        "SMA50": "FLOAT",
+        "SMA200": "FLOAT",
     }
 
     schemaFields = []
@@ -210,7 +215,7 @@ class EmailSender(beam.DoFn):
             '''<html>
                   <body>
                     <table>
-                       <th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>Broker</th>
+                       <th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th>
                        {}
                     </table>
                   </body>
@@ -246,6 +251,9 @@ class StockSelectionCombineFn(beam.CombineFn):
                           <td>{input['change']}</td>
                           <td>{input.get('ADX', -1)}</td>
                           <td>{input.get('RSI', -1)}</td>
+                          <td>{input.get('SMA20', -1)}</td>
+                          <td>{input.get('SMA50', -1)}</td>
+                          <td>{input.get('SMA200', -1)}</td>
                           <td>{input['selection']}</td>
                         </tr>"""
 
@@ -303,9 +311,18 @@ def run(argv = None, save_main_session=True):
 
         tester | 'tester to sink' >> sink
 
+        (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
+                | 'tster to sink' >>  finviz_sink)
+
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
         etoro | 'etoro to sink' >> sink
+
+
+        (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+               | 'etoro to sink' >> finviz_sink)
+
+
 
 
         premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()

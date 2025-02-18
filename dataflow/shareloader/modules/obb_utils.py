@@ -158,12 +158,12 @@ class AsyncProcess(beam.DoFn):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
         
         try:
-           sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'    
-           r1 = requests.get(sma20).json()[0] 
-           sma50 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'     
-           r2 = requests.get(sma50).json()[0] 
-           sma200 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'     
-           r3 = requests.get(sma200).json()[0] 
+           sma20 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'
+           r1 = requests.get(sma20).json()[0] ['sma']
+           sma50 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'
+           r2 = requests.get(sma50).json()[0]['sma']
+           sma200 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'
+           r3 = requests.get(sma200).json()[0]['sma']
            return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
 
         except Exception as e:
@@ -223,8 +223,9 @@ class AsyncProcess(beam.DoFn):
                         latest['change'] = increase
                         latest['selection'] = self.selection
                         tech_dict = self.get_adx_and_rsi(t)
+                        smas = self.calculate_smas(t)
                         latest.update(tech_dict)
-
+                        latest.update(smas)
                         all_records.append(latest)
                     else:
                         logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')

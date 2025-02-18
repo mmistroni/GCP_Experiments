@@ -27,11 +27,11 @@ class MyTestCase(unittest.TestCase):
         self.debugSink = beam.Map(print)
 
     def test_sample_pipeline(self):
-        credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
+        credentials = {'key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create(['AAPL,NVDA,AMZN,T'])
-                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.001))
+                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.00001))
                      | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
                      | self.debugSink
                      )
