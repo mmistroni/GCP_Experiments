@@ -205,6 +205,8 @@ class AsyncProcess(beam.DoFn):
         for t in ticks:
             params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
+
+            logging.info(f'Attempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
                 # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
@@ -218,7 +220,7 @@ class AsyncProcess(beam.DoFn):
 
                 # we can include adx and rsi,but we need to fetch it from a different run
                 if result:
-                    logging.info(f'Result is :{result}. Looking for latest close @{self.start_date}')
+                    logging.info(f'{t} Result is :{result}. Looking for latest close @{self.start_date}')
                     last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                             self.start_date.day,16, 0)][0]
                     latest = result[-1]
@@ -246,7 +248,7 @@ class AsyncProcess(beam.DoFn):
                 else:
                     logging.info(f'No result sfor {t}')
             except Exception as e:
-                logging.info(f'Failed to fetch data for {t}:{str(e)}')
+                logging.info(f' x Failed to fetch data for {t}:{str(e)}')
         logging.info(f'Returningn records with :{len(all_records)}')
         return all_records
 
