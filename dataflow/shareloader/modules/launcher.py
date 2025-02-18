@@ -215,7 +215,7 @@ class EmailSender(beam.DoFn):
             '''<html>
                   <body>
                     <table>
-                       <th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th><th>WATCH</th>
+                       <th>WATCH</th><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th>
                        {}
                     </table>
                   </body>
@@ -243,7 +243,9 @@ class StockSelectionCombineFn(beam.CombineFn):
     return []
 
   def add_input(self, accumulator, input):
-    ROW_TEMPLATE = f"""<tr><td>{input['ticker']}</td>
+    ROW_TEMPLATE = f"""<tr>
+                          <td><b>{input.get('highlight', '')}</b></td>
+                          <td>{input['ticker']}</td>
                           <td>{input['prev_date']}</td>
                           <td>{input['prev_close']}</td>
                           <td>{input['date']}</td>
@@ -255,7 +257,7 @@ class StockSelectionCombineFn(beam.CombineFn):
                           <td>{input.get('SMA50', -1)}</td>
                           <td>{input.get('SMA200', -1)}</td>
                           <td>{input['selection']}</td>
-                          <td>{input.get('highlight', '')}</td>
+                          
                         </tr>"""
 
     row_acc = accumulator
