@@ -409,7 +409,20 @@ def overnight_return():
     # wontwo rk., let's instead use criteria for swign trading
     # revenue growing
     # eps growing
-    # price > 5
+    # price  Over $5
+    # Return on Asset Over +15%
+    # Return On Equity Over +15%
+    # Debt/Equity Under 0.5
+    # EPS growth this year  Positive (>0%)
+    # EPS growth qtr over qtr Positive (>0%)
+    # Return on Investment Over +15%
+    # EPS growth next year Positive (>0%)
+     # Sales growth qtr over qtr Positive (>0%)
+     # Current Ratio Over 1.5
+     # Institutional Ownership  Under 60%
+     #20-Day Simple Moving Average Price above SMA20
+     #50-Day Simple Moving Average Price above SMA50
+     #200-Day Simple Moving Average Price above SMA200
     # debt to equity  < 0.5
     # peRatio < 30
     # future growth
