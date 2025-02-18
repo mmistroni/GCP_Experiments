@@ -6,8 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="moved finviz qry back">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,46 +245,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00377" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734675140799</created>
-      <option name="number" value="00377" />
-      <option name="presentableId" value="LOCAL-00377" />
-      <option name="project" value="LOCAL" />
-      <updated>1734675140799</updated>
-    </task>
-    <task id="LOCAL-00378" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734775608171</created>
-      <option name="number" value="00378" />
-      <option name="presentableId" value="LOCAL-00378" />
-      <option name="project" value="LOCAL" />
-      <updated>1734775608171</updated>
-    </task>
-    <task id="LOCAL-00379" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734777287611</created>
-      <option name="number" value="00379" />
-      <option name="presentableId" value="LOCAL-00379" />
-      <option name="project" value="LOCAL" />
-      <updated>1734777287611</updated>
-    </task>
-    <task id="LOCAL-00380" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734861678650</created>
-      <option name="number" value="00380" />
-      <option name="presentableId" value="LOCAL-00380" />
-      <option name="project" value="LOCAL" />
-      <updated>1734861678650</updated>
-    </task>
-    <task id="LOCAL-00381" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734862355246</created>
-      <option name="number" value="00381" />
-      <option name="presentableId" value="LOCAL-00381" />
-      <option name="project" value="LOCAL" />
-      <updated>1734862355246</updated>
     </task>
     <task id="LOCAL-00382" summary="committing sector">
       <option name="closed" value="true" />
@@ -638,7 +598,47 @@
       <option name="project" value="LOCAL" />
       <updated>1739898563239</updated>
     </task>
-    <option name="localTasksCounter" value="426" />
+    <task id="LOCAL-00426" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739899918131</created>
+      <option name="number" value="00426" />
+      <option name="presentableId" value="LOCAL-00426" />
+      <option name="project" value="LOCAL" />
+      <updated>1739899918131</updated>
+    </task>
+    <task id="LOCAL-00427" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739900419987</created>
+      <option name="number" value="00427" />
+      <option name="presentableId" value="LOCAL-00427" />
+      <option name="project" value="LOCAL" />
+      <updated>1739900419987</updated>
+    </task>
+    <task id="LOCAL-00428" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739901032250</created>
+      <option name="number" value="00428" />
+      <option name="presentableId" value="LOCAL-00428" />
+      <option name="project" value="LOCAL" />
+      <updated>1739901032250</updated>
+    </task>
+    <task id="LOCAL-00429" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739901114133</created>
+      <option name="number" value="00429" />
+      <option name="presentableId" value="LOCAL-00429" />
+      <option name="project" value="LOCAL" />
+      <updated>1739901114133</updated>
+    </task>
+    <task id="LOCAL-00430" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739901164481</created>
+      <option name="number" value="00430" />
+      <option name="presentableId" value="LOCAL-00430" />
+      <option name="project" value="LOCAL" />
+      <updated>1739901164481</updated>
+    </task>
+    <option name="localTasksCounter" value="431" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -904,23 +904,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>234</line>
-          <option name="timeStamp" value="234" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>236</line>
-          <option name="timeStamp" value="236" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>242</line>
+          <line>251</line>
           <option name="timeStamp" value="239" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>228</line>
-          <option name="timeStamp" value="240" />
+          <line>257</line>
+          <option name="timeStamp" value="243" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>255</line>
+          <option name="timeStamp" value="244" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>253</line>
+          <option name="timeStamp" value="245" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
