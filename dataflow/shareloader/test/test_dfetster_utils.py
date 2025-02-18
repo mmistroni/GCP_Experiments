@@ -107,9 +107,6 @@ class TestDfTesterLoader(unittest.TestCase):
 
             mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'to sink' >> self.debugSink)
-
-<<<<<<< HEAD
-=======
             historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
                                 | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x if x is not None else ''))
                                 | 'Find ADXand RSI x' >> beam.ParDo(ProcessHistorical(key, date.today()))
@@ -131,7 +128,7 @@ class TestDfTesterLoader(unittest.TestCase):
 
             res | self.debugSink
             '''
->>>>>>> 1b5ab2a (suncing)
+
             
 
             

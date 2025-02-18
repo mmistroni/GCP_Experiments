@@ -154,20 +154,29 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
 
+    def _sma(self, smaUrl):
+        try:
+            data = requests.get(smaUrl).json()
+            if len(data) > 0:
+                return data[0]['sma']
+            return 0.0
+        except Exception as e:
+            logging.info(f'Failed to fetch:{smaUrl}: {str(e)}')
+            return -1
     def calculate_smas(self, ticker):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
-        
+        sma20 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'
+        sma50 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'
+        sma200 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'
         try:
-           sma20 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'
-           r1 = requests.get(sma20).json()[0] ['sma']
-           sma50 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'
-           r2 = requests.get(sma50).json()[0]['sma']
-           sma200 = f'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'
-           r3 = requests.get(sma200).json()[0]['sma']
+
+           r1 = self._sma(sma20)
+           r2 = self._sma(sma50)
+           r3 = self._sma(sma200)
            return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
 
         except Exception as e:
-            logging.info('Failed to retreivve smas for {ticker}')
+            logging.info('CalculateSmas Failed to retreivve smas for {ticker}')
             return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
 
     def calculate_slope(self, ticker):
