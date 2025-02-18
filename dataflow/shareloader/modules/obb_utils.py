@@ -220,14 +220,9 @@ class AsyncProcess(beam.DoFn):
 
                 # we can include adx and rsi,but we need to fetch it from a different run
                 if result:
-                    logging.info(f'{t} Result is :{result}. Looking for latest close @{self.start_date}')
-                    last_close_result = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
-                                                                            self.start_date.day,18, 0)]
-                    if last_close_result:
-                        last_close = last_close_result[-1]
-                    else:
-                        logging.info(f'{t}  out of time:{result[0]}')
-                        continue
+                    logging.info(f'{t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
+                    last_close = result[-1]
+                    
                     logging.info('{t} Result has: {len(result)}')
                     latest = result[-1]
                     increase = latest['close'] / last_close['close']
