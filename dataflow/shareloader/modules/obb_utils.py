@@ -236,6 +236,7 @@ class AsyncProcess(beam.DoFn):
                         latest['selection'] = self.selection
 
                         tech_dict = self.get_adx_and_rsi(t)
+                        logging.info(f'{t} getting SMAS')
                         smas = self.calculate_smas(t)
                         latest.update(tech_dict)
                         latest.update(smas)
