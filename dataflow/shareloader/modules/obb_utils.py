@@ -223,6 +223,7 @@ class AsyncProcess(beam.DoFn):
                     logging.info(f'{t} Result is :{result}. Looking for latest close @{self.start_date}')
                     last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                             self.start_date.day,16, 0)][0]
+                    logging.info('{t} Result has: {len(result)}')
                     latest = result[-1]
                     increase = latest['close'] / last_close['close']
                     if increase > (1 + self.price_change):
