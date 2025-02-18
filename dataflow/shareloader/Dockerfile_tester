@@ -38,6 +38,9 @@ RUN ls -la  ${WORKDIR}/shareloader/modules
 
 RUN echo '----- cat ting  main--'
 RUN cat dataflow_tester.py
+RUN echo '----- cat ting  reqs--'
+RUN cat requirements.txt
+
 RUN echo '----- INSTALLING REQS ----'
 RUN pip install --no-cache-dir -r requirements.txt
 
