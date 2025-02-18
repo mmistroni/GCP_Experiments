@@ -407,6 +407,16 @@ def overnight_return():
 
     :return:
     '''
+    # wontwo rk., let's instead use criteria for swign trading
+    # revenue growing
+    # eps growing
+    # price > 5
+    # debt to equity  < 0.5
+    # peRatio < 30
+    # future growth
+
+
+
     overnight_filter_dict = {'Change': "Up 10%"}
 
     return _run_screener(overnight_filter_dict)
