@@ -231,10 +231,15 @@ class AsyncProcess(beam.DoFn):
                         latest['prev_close'] = last_close['close']
                         latest['change'] = increase
                         latest['selection'] = self.selection
+
                         tech_dict = self.get_adx_and_rsi(t)
                         smas = self.calculate_smas(t)
                         latest.update(tech_dict)
                         latest.update(smas)
+                        if latest['close'] > latest['SMA20']:
+                            latest['highlight'] = True
+
+
                         all_records.append(latest)
                     else:
                         logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
