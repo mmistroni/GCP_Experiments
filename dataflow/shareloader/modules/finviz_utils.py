@@ -9,7 +9,6 @@ import apache_beam as beam
 from finvizfinance.screener.overview import Overview
 from .superperf_metrics import  load_bennchmark_data
 import numpy as np
-from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import logging
 from datetime import date
 import requests
@@ -636,7 +635,7 @@ def get_swing_trader_technical():
 class AsyncProcessFinviz(beam.DoFn):
 
     def __init__(self, high_filter, low_filter):
-        self.fetcher = FinvizEquityScreenerFetcher
+        self.fetcher = None
         self.high_filter = high_filter
         self.low_filter = low_filter
 
@@ -686,7 +685,7 @@ def get_finviz_obb_data(creds, params):
             return []
 
     with asyncio.Runner() as runner:
-        return runner.run(fetch_data(FinvizEquityScreenerFetcher, creds, params))
+        return runner.run(fetch_data(None, creds, params))
 
 
 
