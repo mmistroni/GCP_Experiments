@@ -224,7 +224,7 @@ class AsyncProcess(beam.DoFn):
                     last_close_result = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                             self.start_date.day,18, 0)]
                     if last_close_result:
-                        last_close = last_close_result[0]
+                        last_close = last_close_result[-1]
                     else:
                         logging.info(f'{t}  out of time:{result[0]}')
                         continue
