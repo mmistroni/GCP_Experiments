@@ -3,6 +3,8 @@ avro-python3
 pyarrow
 openbb-finviz
 pandas-datareader
+yfinance
 openbb-yfinance
 finvizfinance
 openbb-multpl
+
