@@ -131,7 +131,7 @@ def map_to_bq_dict(input_dict):
     custom_dict['previousClose'] = input_dict.get('prev_close')
     custom_dict['change'] = input_dict.get('change')
     custom_dict['ticker'] = input_dict.get('ticker')
-    custom_dict['asodate'] = input_dict.get('date').date()
+    custom_dict['asodate'] = date.today()
     custom_dict['cob'] = date.today()
     custom_dict['selection'] = input_dict.get('selection')
     custom_dict["ADX"] =  input_dict.get('ADX')
