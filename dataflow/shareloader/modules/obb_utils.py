@@ -240,7 +240,7 @@ class AsyncProcess(beam.DoFn):
                         latest.update(tech_dict)
                         latest.update(smas)
                         if latest['close'] > latest['SMA20']:
-                            latest['highlight'] = True
+                            latest['highlight'] = 'True'
 
 
                         all_records.append(latest)

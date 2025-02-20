@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="moved finviz qry back">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_launcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,94 +38,96 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor": "Debug",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor": "Run",
-    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor": "Debug",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_asyncfinviz.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_obb_finviz.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor": "Debug",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_run_screener.executor": "Debug",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor": "Run",
-    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor": "Run",
-    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor": "Run",
-    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor": "Run",
-    "Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_another.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_newadvancedecline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor": "Debug",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor": "Run",
-    "Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor": "Debug",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor": "Debug",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor": "Run",
-    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor": "Debug",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor": "Run",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor": "Run",
-    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor": "Debug",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor": "Run",
-    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor": "Run",
-    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor": "Debug",
-    "Python tests.Python tests in test_obb_loader.py.executor": "Run",
-    "Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor": "Run",
-    "Python tests.pytest for test.test_marketstats.executor": "Debug",
-    "Python.economics_main.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader/test",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_asyncfinviz.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_obb_finviz.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_run_screener.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_another.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newadvancedecline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor&quot;: &quot;Debug&quot;,
+    &quot;Python tests.Python tests in test_obb_loader.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test.test_marketstats.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.economics_main.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader/test&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="dataflow" is-module-sdk="true">
@@ -144,8 +149,8 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline">
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher">
+    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_overnight_return" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -156,11 +161,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_get_advancedecline&quot;" />
+      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_overnight_return&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_run_screener" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_quotefetcher" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -171,11 +176,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_run_screener&quot;" />
+      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_quotefetcher&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_launcher.MyTestCase.test_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -186,11 +191,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_advance_declinesma50&quot;" />
+      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_etoro&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_newadvancedecline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_launcher.MyTestCase.test_swingtrader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -201,7 +206,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_newadvancedecline&quot;" />
+      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_swingtrader&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -222,11 +227,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher" />
+        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader" />
+        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_etoro" />
+        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_run_screener" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_newadvancedecline" />
       </list>
     </recent_temporary>
   </component>
@@ -245,14 +250,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00382" summary="committing sector">
-      <option name="closed" value="true" />
-      <created>1734863072089</created>
-      <option name="number" value="00382" />
-      <option name="presentableId" value="LOCAL-00382" />
-      <option name="project" value="LOCAL" />
-      <updated>1734863072089</updated>
     </task>
     <task id="LOCAL-00383" summary="updating libs">
       <option name="closed" value="true" />
@@ -638,7 +635,15 @@
       <option name="project" value="LOCAL" />
       <updated>1739901164481</updated>
     </task>
-    <option name="localTasksCounter" value="431" />
+    <task id="LOCAL-00431" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1739902638435</created>
+      <option name="number" value="00431" />
+      <option name="presentableId" value="LOCAL-00431" />
+      <option name="project" value="LOCAL" />
+      <updated>1739902638435</updated>
+    </task>
+    <option name="localTasksCounter" value="432" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -805,17 +810,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>507</line>
+          <line>539</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>502</line>
+          <line>534</line>
           <option name="timeStamp" value="107" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>500</line>
+          <line>532</line>
           <option name="timeStamp" value="109" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -844,42 +849,42 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>485</line>
+          <line>517</line>
           <option name="timeStamp" value="193" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>548</line>
+          <line>580</line>
           <option name="timeStamp" value="217" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>578</line>
+          <line>610</line>
           <option name="timeStamp" value="220" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>574</line>
+          <line>606</line>
           <option name="timeStamp" value="221" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>569</line>
+          <line>601</line>
           <option name="timeStamp" value="222" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>591</line>
+          <line>623</line>
           <option name="timeStamp" value="223" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>562</line>
+          <line>594</line>
           <option name="timeStamp" value="224" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>571</line>
+          <line>603</line>
           <option name="timeStamp" value="225" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -905,22 +910,37 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
           <line>251</line>
-          <option name="timeStamp" value="239" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>257</line>
           <option name="timeStamp" value="243" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>255</line>
+          <line>249</line>
           <option name="timeStamp" value="244" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>253</line>
+          <line>247</line>
           <option name="timeStamp" value="245" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>209</line>
+          <option name="timeStamp" value="246" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>221</line>
+          <option name="timeStamp" value="247" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>245</line>
+          <option name="timeStamp" value="249" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
+          <line>252</line>
+          <option name="timeStamp" value="251" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

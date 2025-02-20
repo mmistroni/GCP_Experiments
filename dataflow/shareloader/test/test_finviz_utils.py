@@ -14,7 +14,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
-from openbb_yfinance.models.equity_quote import YFinanceEquityQuoteFetcher, YFinanceIndexHistoricalQueryParams
+from openbb_yfinance.models.equity_quote import YFinanceEquityQuoteFetcher
 import requests
 import zipfile
 import xml.etree.ElementTree as ET
@@ -161,7 +161,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_overnight_return(self):
         res = overnight_return()
-        print(res)
+        pprint(res)
 
     def test_advancedecline(self):
 
@@ -236,6 +236,30 @@ class MyTestCase(unittest.TestCase):
         #high_ticks = ','.join([d['Ticker'] for d in highs])
         lows = _run_screener(low_filter_dict)
         low_ticks = ','.join([d['Ticker'] for d in lows])
+
+
+    def test_quotefetcher(self):
+        import asyncio
+        class AsyncQuoteProcess(beam.DoFn):
+
+            def __init__(self, credentials, fetcher):
+                self.credentials = credentials
+                self.fetcher = fetcher
+
+            async def fetch_data(self, element: str):
+                params = dict(symbol=element)
+                data = await self.fetcher.fetch_data(params, self.credentials)
+                dt =  [d.model_dump(exclude_none=True) for d in data]
+                return dt
+            def process(self, element: str):
+                return asyncio.run(self.fetch_data(element))
+
+        ticker = 'AAPL'
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            quote = (p | 'Start Quote' >> beam.Create([ticker])
+                     | 'Run Quote' >> beam.ParDo(AsyncQuoteProcess({}, YFinanceEquityQuoteFetcher))
+                     | 'Print quote' >> self.debugSink)
 
 
 if __name__ == '__main__':

@@ -425,11 +425,30 @@ def overnight_return():
      #200-Day Simple Moving Average Price above SMA200
     # debt to equity  < 0.5
     # peRatio < 30
+    # revenue growing
+    # eps growing
+    # price  Over $5
     # future growth
+    fund_filters = {
+        'EPS growththis year': 'Positive (>0%)',
+        'EPS growthnext year': 'Positive (>0%)',
+        'EPS growthqtr over qtr': 'Positive (>0%)',
+        'Sales growthqtr over qtr': 'Positive (>0%)',
+        'Return on Equity': 'Over +15%',
+        'InstitutionalOwnership': 'Under 60%',
+        #'Current Ratio' :  'Over 1.5'
+    }
 
+    price_filters = {
+        'Price': 'Over $10',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        'Change': 'Up',
 
-
-    overnight_filter_dict = {'Change': "Up 10%"}
+    }
+    overnight_filter_dict = fund_filters
+    overnight_filter_dict.update(price_filters)
 
     return _run_screener(overnight_filter_dict)
 

@@ -10,7 +10,7 @@ from apache_beam.io.gcp.internal.clients import bigquery
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
-from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks
+from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return
 import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -130,6 +130,16 @@ def map_to_bq_dict(input_dict):
     custom_dict['ticker'] = custom_dict['symbol']
     return custom_dict
 
+
+def run_swingtrader_pipeline(p, fmpkey):
+    cob = date.today()
+    test_ppln = overnight_return()
+    return  (test_ppln
+                | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.07))
+             )
 
 
 def run_test_pipeline(p, fmpkey):
@@ -308,14 +318,14 @@ def run(argv = None, save_main_session=True):
         logging.info('Running premarket loader')
         obb = run_premarket_pipeline(p, known_args.fmprepkey)
         obb | 'oBB2 TO SINK' >>sink
-        obb | ' to finvbiz' >> finviz_sink
+        #obb | ' to finvbiz' >> finviz_sink
 
         tester = run_test_pipeline(p, known_args.fmprepkey)
 
         tester | 'tester to sink' >> sink
 
         (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
-                | 'tster to sink' >>  finviz_sink)
+                | 'tster to finviz sink' >>  finviz_sink)
 
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
@@ -323,7 +333,7 @@ def run(argv = None, save_main_session=True):
 
 
         (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-               | 'etoro to sink' >> finviz_sink)
+               | 'etoro to finvizsink' >> finviz_sink)
 
 
 
