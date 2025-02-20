@@ -124,7 +124,8 @@ def run_premarket_pipeline(p, fmpkey):
 
 
 def map_to_bq_dict(input_dict):
-
+    for k, v in input_dict.keys():
+        logging.info(f'{k} = {v} = {type(v)}')
     custom_dict = input_dict.copy()
     custom_dict['cob']  = date.today()
     custom_dict['ticker'] = custom_dict['symbol']
