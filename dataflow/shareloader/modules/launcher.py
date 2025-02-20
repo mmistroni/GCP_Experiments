@@ -133,7 +133,7 @@ def map_to_bq_dict(input_dict):
     custom_dict['ticker'] = input_dict.get('ticker')
     custom_dict['asodate'] = input_dict.get('date').date()
     custom_dict['cob'] = date.today()
-    custom_dict['selection'] = input_dict.get('selection']
+    custom_dict['selection'] = input_dict.get('selection')
     custom_dict["ADX"] =  input_dict.get('ADX')
     custom_dict["RSI"] =  input_dict.get('RSI')
     custom_dict["SMA20"] =  input_dict.get('SMA20')
