@@ -86,6 +86,7 @@ def get_finviz_schema():
         "country": "STRING",
         "ticker": "STRING",
         "cob"   : "DATE",
+        "selection": "STRING",
         "asodate" : "DATE",
         "ADX" : "FLOAT",
         "RSI": "FLOAT",
@@ -124,13 +125,21 @@ def run_premarket_pipeline(p, fmpkey):
 
 
 def map_to_bq_dict(input_dict):
-    for k, v in input_dict.items():
-        logging.info(f'{k} = {v} = {type(v)}')
-    custom_dict = input_dict.copy()
-    custom_dict['cob']  = date.today()
-    custom_dict['ticker'] = custom_dict['symbol']
-    return custom_dict
-
+    custom_dict = {}
+    custom_dict['symbol'] = input_dict.get('symbol')
+    custom_dict['price'] = input_dict.get('close')
+    custom_dict['open'] = input_dict.get('open')
+    custom_dict['previousClose'] = input_dict.get('prev_close')
+    custom_dict['change'] = input_dict.get('change')
+    custom_dict['ticker'] = input_dict.get('ticker')
+    custom_dict['asodate'] = date.today()
+    custom_dict['cob'] = date.today()
+    custom_dict['selection'] = input_dict.get('selection')
+    custom_dict["ADX"] =  input_dict.get('ADX')
+    custom_dict["RSI"] =  input_dict.get('RSI')
+    custom_dict["SMA20"] =  input_dict.get('SMA20')
+    custom_dict["SMA50"] =  input_dict.get('SMA50')
+    custom_dict["SMA200"] =  input_dict.get('SMA200')
 
 def run_swingtrader_pipeline(p, fmpkey):
     cob = date.today()
