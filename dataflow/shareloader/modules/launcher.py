@@ -343,7 +343,7 @@ def run(argv = None, save_main_session=True):
         tester | 'tester to sink' >> sink
 
         (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
-                | 'tster to finviz sink' >>  finviz_sink)
+                | 'tster to finviz sink' >>  sink)
 
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
@@ -351,7 +351,7 @@ def run(argv = None, save_main_session=True):
 
 
         (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-               | 'etoro to finvizsink' >> finviz_sink)
+               | 'etoro to finvizsink' >> sink)
 
 
 
