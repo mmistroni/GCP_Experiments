@@ -311,7 +311,11 @@ def run(argv = None, save_main_session=True):
             tableId='finviz_selection'),
         schema=get_bq_schema(),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+        additional_bq_parameters={
+            'ignoreUnknownValues': True  # Ignore unknown columns
+        }
+    )
 
     finviz_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
@@ -320,7 +324,11 @@ def run(argv = None, save_main_session=True):
             tableId='finviz-premarket'),
         schema=get_finviz_schema(),
         write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
-        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+        additional_bq_parameters={
+            'ignoreUnknownValues': True  # Ignore unknown columns
+        }
+    )
 
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
