@@ -140,6 +140,8 @@ def map_to_bq_dict(input_dict):
     custom_dict["SMA20"] =  input_dict.get('SMA20')
     custom_dict["SMA50"] =  input_dict.get('SMA50')
     custom_dict["SMA200"] =  input_dict.get('SMA200')
+    return custom_dict
+
 
 def run_swingtrader_pipeline(p, fmpkey):
     cob = date.today()
@@ -343,7 +345,7 @@ def run(argv = None, save_main_session=True):
         tester | 'tester to sink' >> sink
 
         (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
-                | 'tster to finviz sink' >>  sink)
+                | 'tster to finviz sink' >>  finviz_sink)
 
         etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
@@ -351,7 +353,7 @@ def run(argv = None, save_main_session=True):
 
 
         (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-               | 'etoro to finvizsink' >> sink)
+               | 'etoro to finvizsink' >> finviz_sink)
 
 
 
