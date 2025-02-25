@@ -145,12 +145,11 @@ def map_to_bq_dict(input_dict):
 
 def run_swingtrader_pipeline(p, fmpkey):
     cob = date.today()
-    test_ppln = overnight_return()
-    return  (test_ppln
+    return  (p  | 'Starting Swingrder'  >> beam.Create(overnight_return())
                 | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.07))
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1))
              )
 
 
@@ -166,7 +165,7 @@ def run_test_pipeline(p, fmpkey):
 def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
     test_ppln = get_universe_stocks()
-    return  (test_ppln
+    return  (p  | 'Starting etoro' >> beam.Create(get_universe_stocks())
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
@@ -363,8 +362,13 @@ def run(argv = None, save_main_session=True):
 
         send_email(premarket_results, known_args.sendgridkey)
 
-
         premarket_results   | 'tester TO SINK' >> sink
+
+
+        st = run_swingtrader_pipeline(p, known_args.fmprepkey) 
+
+        st | 'SwingTRader to sink' >> sink
+
 
 
 

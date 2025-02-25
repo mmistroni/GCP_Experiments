@@ -54,7 +54,11 @@ def get_universe_filter():
 
 def get_universe_stocks():
     filter = get_universe_filter()
-    return _run_screener(filter)
+    
+    res = _run_screener(filter)
+    logging.info(f'Found  {len(res)}')
+
+    return res
 
 def  get_canslim():
     '''

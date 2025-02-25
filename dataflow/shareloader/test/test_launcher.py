@@ -31,6 +31,7 @@ class MyTestCase(unittest.TestCase):
                       | 'Output' >> self.debugSink
         )
 
+    
     def test_swingtrader(self):
         from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical
         from datetime import date
