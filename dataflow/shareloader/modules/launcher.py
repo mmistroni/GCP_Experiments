@@ -335,8 +335,8 @@ def run(argv = None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
-        obb = run_premarket_pipeline(p, known_args.fmprepkey)
-        obb | 'oBB2 TO SINK' >>sink
+        #obb = run_premarket_pipeline(p, known_args.fmprepkey)
+        #obb | 'oBB2 TO SINK' >>sink
         #obb | ' to finvbiz' >> finviz_sink
 
         tester = run_test_pipeline(p, known_args.fmprepkey)
