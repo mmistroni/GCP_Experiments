@@ -11,6 +11,15 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from .marketstats_utils import get_senate_disclosures
 from functools import reduce
 from collections import OrderedDict
+from finvizfinance.group import Performance
+
+
+def get_finviz_performance():
+
+    # Create a Performance object
+    performance = Performance()
+    # Get the performance data
+    return performance.screener_view().to_dict('records')
 
 
 def fetch_performance(sector, ticker, key, start_date):
@@ -110,13 +119,15 @@ class SectorsEmailSender(beam.DoFn):
 
   def _build_html_message(self, rows):
       html = '<table border="1">'
-      header_row = "<tr><th>Sector</th><th>1Y</th><th>6M</th><th>3M</th><th>1M</th></tr>"
+      header_row = "<tr><th>Sector</th><th>Perf Week</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th></tr>"
 
       html += header_row
-      row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
+      row_template = '<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>'
 
       for dct in rows:
-          data = [dct['index'], dct['1Y'], dct['6M'], dct['3M'], dct['1M']]
+          data = [dct.get('Name', ''), dct.get('Perf Week', ''), dct.get('Perf Month', ''), 
+                  dct.get('Perf Quart', ''), dct.get('Perf Half', ''),
+                  dct.get('Perf Year', ''), dct.get('Recom', '')         ]
           html += row_template.format(*data)
       html += '</table>'
       return html

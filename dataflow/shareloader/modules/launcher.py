@@ -7,6 +7,7 @@ from apache_beam.options.pipeline_options import SetupOptions
 from shareloader.modules.finviz_utils import FinvizLoader
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical
 from apache_beam.io.gcp.internal.clients import bigquery
+from shareloader.modules.sectors_utils import get_finviz_performance
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
@@ -123,6 +124,28 @@ def run_premarket_pipeline(p, fmpkey):
 
     )
 
+def run_sector_performance(p):
+    return (p | 'Starting' >> beam.Create(get_finviz_performance())
+     )
+
+
+def create_row(dct):
+            return f"""<tr>
+                <td>{dct.get('Name', '')}</td>
+                <td>{dct.get('Perf Month', '')}</td>
+                <td>{dct.get('Perf Quart', '')}</td>
+                <td>{dct.get('Perf Half', '')}</td>
+                <td>{dct.get('Perf Year', '')}</td>
+                <td>{dct.get('Recom', '')}</td>
+                <td>{dct.get('Avg Volume', '')}</td>
+                <td>{dct.get('Rel Volume', '')}</td>
+            </tr>"""
+
+def combine_rows(rows):
+    return ','.join(rows)
+        
+        
+
 
 def map_to_bq_dict(input_dict):
     custom_dict = {}
@@ -216,9 +239,10 @@ def parse_known_args(argv):
 
 
 class EmailSender(beam.DoFn):
-    def __init__(self, key):
+    def __init__(self, key, finviz):
         self.recipients = ['mmistroni@gmail.com']
         self.key = key
+        self.finviz = finviz
 
     def _build_personalization(self, recipients):
         personalizations = []
@@ -236,12 +260,17 @@ class EmailSender(beam.DoFn):
             '''<html>
                   <body>
                     <table>
+                        <th>Name</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
+                        {}
+                    </table>
+                    <br>
+                    <table>
                        <th>WATCH</th><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th>
                        {}
                     </table>
                   </body>
                 </html>'''
-        content = template.format(msg)
+        content = template.format(self.finviz, msg)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
@@ -292,8 +321,36 @@ class StockSelectionCombineFn(beam.CombineFn):
     return ''.join(sum_count)
 
 
-def send_email(pipeline, sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
+class FinvizCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, dct):
+    ROW_TEMPLATE = f"""<tr>
+                          <td>{dct.get('Name', '')}</td>
+                          <td>{dct.get('Perf Month', '')}</td>
+                          <td>{dct.get('Perf Quart', '')}</td>
+                          <td>{dct.get('Perf Half', '')}</td>
+                          <td>{dct.get('Perf Year', '')}</td>
+                          <td>{dct.get('Recom', '')}</td>
+                          <td>{dct.get('Avg Volume', '')}</td>
+                          <td>{dct.get('Rel Volume', '')}</td>
+                       </tr>"""
+
+    row_acc = accumulator
+    row_acc.append(ROW_TEMPLATE)
+    return row_acc
+
+  def merge_accumulators(self, accumulators):
+    return sum(accumulators, [])
+    
+  def extract_output(self, accumulator):
+    return ''.join(accumulator)
+
+
+
+def send_email(pipeline, finviz,  sendgridkey):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey, finviz))
              )
 
 
@@ -340,7 +397,6 @@ def run(argv = None, save_main_session=True):
         #obb | ' to finvbiz' >> finviz_sink
 
         tester = run_test_pipeline(p, known_args.fmprepkey)
-
         tester | 'tester to sink' >> sink
 
         (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
@@ -355,12 +411,17 @@ def run(argv = None, save_main_session=True):
                | 'etoro to finvizsink' >> finviz_sink)
 
 
+        finviz_sectors = run_sector_performance(p)
 
+
+        finviz_results =  (finviz_sectors | 'mapping ' >> beam.Map(create_row)
+                                         | beam.CombineGlobally(combine_rows)
+        )
 
         premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
-        send_email(premarket_results, known_args.sendgridkey)
+        send_email(premarket_results, finviz_results, known_args.sendgridkey)
 
         premarket_results   | 'tester TO SINK' >> sink
 

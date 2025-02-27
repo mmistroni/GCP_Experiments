@@ -1,6 +1,7 @@
 import unittest
 from shareloader.modules.launcher import run_etoro_pipeline, run_test_pipeline,\
-                                         StockSelectionCombineFn, run_swingtrader_pipeline
+                                         StockSelectionCombineFn, run_swingtrader_pipeline, \
+                                            run_sector_performance, FinvizCombineFn
 from shareloader.modules.finviz_utils import  overnight_return
 from pprint import pprint
 import os
@@ -48,6 +49,30 @@ class MyTestCase(unittest.TestCase):
                     | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': key}, date.today(), price_change=0.07))
                      |  self.debugSink
                     )
+
+    def test_finviz_with_combiner(self):
+        
+        def create_row(dct):
+            return f"""<tr>
+                <td>{dct.get('Name', '')}</td>
+                <td>{dct.get('Perf Month', '')}</td>
+                <td>{dct.get('Perf Quart', '')}</td>
+                <td>{dct.get('Perf Half', '')}</td>
+                <td>{dct.get('Perf Year', '')}</td>
+                <td>{dct.get('Recom', '')}</td>
+                <td>{dct.get('Avg Volume', '')}</td>
+                <td>{dct.get('Rel Volume', '')}</td>
+            </tr>"""
+
+        def combine_rows(rows):
+            return ','.join(rows)
+        
+        with TestPipeline(options=PipelineOptions()) as p:
+            finviz = run_sector_performance(p) 
+            premarket_results =  (finviz | 'mapping ' >> beam.Map(create_row)
+                                         | beam.CombineGlobally(combine_rows)
+                                         | 'to sink' >> self.debugSink
+                                 )
 
 
 if __name__ == '__main__':
