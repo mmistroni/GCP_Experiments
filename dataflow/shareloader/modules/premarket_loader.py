@@ -462,12 +462,13 @@ def run(argv=None, save_main_session=True):
 
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
+    timeout_secs = 18400
 
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_optionss = PipelineOptions(pipeline_args)
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+    pipeline_optionss.setMaxWorkflowRuntimeWalltimeSeconds(timeout_secs)
 
-    timeout_secs = 18400
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
     test_sink = beam.Map(logging.info)
