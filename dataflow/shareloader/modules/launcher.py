@@ -341,7 +341,7 @@ class FinvizCombineFn(beam.CombineFn):
 
     def extract_output(self, accumulator):
         # Process the accumulated rows and return the result
-        return '\n'.join(accumulator)
+        return ''.join(accumulator)
 
 def create_row(dct):
     return f"""<tr>
