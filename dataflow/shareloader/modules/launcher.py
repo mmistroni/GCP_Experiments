@@ -416,8 +416,11 @@ def run(argv = None, save_main_session=True):
 
         finviz_results =  (finviz_sectors | 'mapping ' >> beam.Map(create_row)
                                          | ' combine fingz' >>beam.CombineGlobally(combine_rows)
-                                         | 'finviz to sink' >> sink
+
         )
+
+        finviz_results | 'finviz to sink' >> sink
+
 
         premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
