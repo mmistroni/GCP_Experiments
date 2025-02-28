@@ -243,7 +243,7 @@ class EmailSender(beam.DoFn):
         self.recipients = ['mmistroni@gmail.com']
         self.key = key
         self.finviz = finviz
-
+        logging.info(f'Finviz in init is {finviz}')
     def _build_personalization(self, recipients):
         personalizations = []
         for recipient in recipients:
