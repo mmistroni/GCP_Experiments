@@ -1,7 +1,7 @@
 import unittest
 from shareloader.modules.launcher import run_etoro_pipeline, run_test_pipeline,\
                                          StockSelectionCombineFn, run_swingtrader_pipeline, \
-                                            run_sector_performance, FinvizCombineFn
+                                            run_sector_performance, FinvizCombineFn, send_email, create_row
 from shareloader.modules.finviz_utils import  overnight_return
 from pprint import pprint
 import os
@@ -51,28 +51,35 @@ class MyTestCase(unittest.TestCase):
                     )
 
     def test_finviz_with_combiner(self):
-        
-        def create_row(dct):
-            return f"""<tr>
-                <td>{dct.get('Name', '')}</td>
-                <td>{dct.get('Perf Month', '')}</td>
-                <td>{dct.get('Perf Quart', '')}</td>
-                <td>{dct.get('Perf Half', '')}</td>
-                <td>{dct.get('Perf Year', '')}</td>
-                <td>{dct.get('Recom', '')}</td>
-                <td>{dct.get('Avg Volume', '')}</td>
-                <td>{dct.get('Rel Volume', '')}</td>
-            </tr>"""
+        key = os.environ['FMPREPKEY']
+        class ProcessStringFn(beam.DoFn):
+            def process(self, element):
+                # Process the string here
+                yield element  # or yield processed_element
 
-        def combine_rows(rows):
-            return ','.join(rows)
-        
         with TestPipeline(options=PipelineOptions()) as p:
+            etoro = run_etoro_pipeline(p, key)
+
+            final = ((etoro, etoro)
+                     | 'FlattenCombine all' >> beam.Flatten()
+                     | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn())
+                     )
+
+
             finviz = run_sector_performance(p) 
             premarket_results =  (finviz | 'mapping ' >> beam.Map(create_row)
-                                         | beam.CombineGlobally(combine_rows)
-                                         | 'to sink' >> self.debugSink
-                                 )
+                                         | beam.CombineGlobally(FinvizCombineFn())
+                                         #| 'extracting' >> beam.ParDo(ProcessStringFn())
+                                         #| 'to sink' >> self.debugSink
+                                  )
+
+            keyed_pcoll = final | beam.Map(lambda element: (1, element))
+            keyed_pcoll2 = premarket_results | beam.Map(lambda element: (1, element))
+
+            combined = ({'collection1': keyed_pcoll, 'collection2': keyed_pcoll2}
+                        | beam.CoGroupByKey())
+
+            send_email(combined,  os.environ['FMPREPKEY'])
 
 
 if __name__ == '__main__':

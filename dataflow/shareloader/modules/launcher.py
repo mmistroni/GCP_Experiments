@@ -239,11 +239,11 @@ def parse_known_args(argv):
 
 
 class EmailSender(beam.DoFn):
-    def __init__(self, key, finviz):
+    def __init__(self, key):
         self.recipients = ['mmistroni@gmail.com']
         self.key = key
-        self.finviz = finviz
-        logging.info(f'Finviz in init is {finviz}')
+
+
     def _build_personalization(self, recipients):
         personalizations = []
         for recipient in recipients:
@@ -254,7 +254,11 @@ class EmailSender(beam.DoFn):
         return personalizations
 
     def process(self, element):
-        msg = element
+
+        key, value_dict = element
+        stocks = list(value_dict['collection1'])
+        sectors = list(value_dict['collection2'])
+
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
             '''<html>
@@ -270,7 +274,7 @@ class EmailSender(beam.DoFn):
                     </table>
                   </body>
                 </html>'''
-        content = template.format(self.finviz, msg)
+        content = template.format(sectors, stocks)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
@@ -322,35 +326,39 @@ class StockSelectionCombineFn(beam.CombineFn):
 
 
 class FinvizCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return []
+    def create_accumulator(self):
+        return []
 
-  def add_input(self, accumulator, dct):
-    ROW_TEMPLATE = f"""<tr>
-                          <td>{dct.get('Name', '')}</td>
-                          <td>{dct.get('Perf Month', '')}</td>
-                          <td>{dct.get('Perf Quart', '')}</td>
-                          <td>{dct.get('Perf Half', '')}</td>
-                          <td>{dct.get('Perf Year', '')}</td>
-                          <td>{dct.get('Recom', '')}</td>
-                          <td>{dct.get('Avg Volume', '')}</td>
-                          <td>{dct.get('Rel Volume', '')}</td>
-                       </tr>"""
+    def add_input(self, accumulator, input):
+        accumulator.append(input)
+        return accumulator
 
-    row_acc = accumulator
-    row_acc.append(ROW_TEMPLATE)
-    return row_acc
+    def merge_accumulators(self, accumulators):
+        merged = []
+        for acc in accumulators:
+            merged.extend(acc)
+        return merged
 
-  def merge_accumulators(self, accumulators):
-    return sum(accumulators, [])
-    
-  def extract_output(self, accumulator):
-    return ''.join(accumulator)
+    def extract_output(self, accumulator):
+        # Process the accumulated rows and return the result
+        return '\n'.join(accumulator)
+
+def create_row(dct):
+    return f"""<tr>
+        <td>{dct.get('Name', '')}</td>
+        <td>{dct.get('Perf Month', '')}</td>
+        <td>{dct.get('Perf Quart', '')}</td>
+        <td>{dct.get('Perf Half', '')}</td>
+        <td>{dct.get('Perf Year', '')}</td>
+        <td>{dct.get('Recom', '')}</td>
+        <td>{dct.get('Avg Volume', '')}</td>
+        <td>{dct.get('Rel Volume', '')}</td>
+    </tr>"""
 
 
 
-def send_email(pipeline, finviz,  sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey, finviz))
+def send_email(pipeline,  sendgridkey):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
              )
 
 
@@ -413,19 +421,27 @@ def run(argv = None, save_main_session=True):
 
         finviz_sectors = run_sector_performance(p)
 
-
-        finviz_results =  (finviz_sectors | 'mapping ' >> beam.Map(create_row)
-                                         | ' combine fingz' >>beam.CombineGlobally(combine_rows)
-
-        )
+        finviz_results = (finviz_sectors | 'mapping ' >> beam.Map(create_row)
+                             | beam.CombineGlobally(FinvizCombineFn())
+                             # | 'extracting' >> beam.ParDo(ProcessStringFn())
+                             # | 'to sink' >> self.debugSink
+                             )
 
         finviz_results | 'finviz to sink' >> sink
+        keyed_finviz= finviz_results | beam.Map(lambda element: (1, element))
+
 
 
         premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
-        send_email(premarket_results, finviz_results, known_args.sendgridkey)
+        keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
+
+        combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz}
+                    | beam.CoGroupByKey())
+
+
+        send_email(combined,  known_args.sendgridkey)
 
         premarket_results   | 'tester TO SINK' >> sink
 
