@@ -43,7 +43,7 @@ substitutions:
   _SENDGRIDKEY: ''
   _RUNTYPE: ''
   _PROJECT_ID: datascience-projects
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest10
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest11
 
 
 

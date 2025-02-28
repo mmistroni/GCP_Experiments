@@ -415,7 +415,8 @@ def run(argv = None, save_main_session=True):
 
 
         finviz_results =  (finviz_sectors | 'mapping ' >> beam.Map(create_row)
-                                         | beam.CombineGlobally(combine_rows)
+                                         | ' combine fingz' >>beam.CombineGlobally(combine_rows)
+                                         | 'finviz to sink' >> sink
         )
 
         premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()
@@ -424,12 +425,6 @@ def run(argv = None, save_main_session=True):
         send_email(premarket_results, finviz_results, known_args.sendgridkey)
 
         premarket_results   | 'tester TO SINK' >> sink
-
-
-        st = run_swingtrader_pipeline(p, known_args.fmprepkey) 
-
-        st | 'SwingTRader to sink' >> sink
-
 
 
 
