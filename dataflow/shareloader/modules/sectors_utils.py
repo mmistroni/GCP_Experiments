@@ -2,13 +2,11 @@ import apache_beam as beam
 import logging
 import requests
 from itertools import chain
-from io import StringIO
 from datetime import date, timedelta, datetime
 from pandas.tseries.offsets import BDay
 import pandas as pd
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
-from .marketstats_utils import get_senate_disclosures
 from functools import reduce
 from collections import OrderedDict
 from finvizfinance.group import Performance

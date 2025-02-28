@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="moved finviz qry back">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -248,14 +246,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00386" summary="updating email sender">
-      <option name="closed" value="true" />
-      <created>1735036472068</created>
-      <option name="number" value="00386" />
-      <option name="presentableId" value="LOCAL-00386" />
-      <option name="project" value="LOCAL" />
-      <updated>1735036472068</updated>
     </task>
     <task id="LOCAL-00387" summary="updating email sender">
       <option name="closed" value="true" />
@@ -641,7 +631,15 @@
       <option name="project" value="LOCAL" />
       <updated>1740727357706</updated>
     </task>
-    <option name="localTasksCounter" value="435" />
+    <task id="LOCAL-00435" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740733988216</created>
+      <option name="number" value="00435" />
+      <option name="presentableId" value="LOCAL-00435" />
+      <option name="project" value="LOCAL" />
+      <updated>1740733988216</updated>
+    </task>
+    <option name="localTasksCounter" value="436" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
