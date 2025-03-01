@@ -250,16 +250,6 @@ class EmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
             '''<html>
-                  <head>
-                        <style>
-                            th, td {
-                                text-align: left;
-                                vertical-align: middle;
-                                width: 25%;
-                                padding: 8px;
-                            }
-                        </style>
-                  </head>
                   <body>
                     <table>
                         <th>Name</th>th>Perf Week</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
