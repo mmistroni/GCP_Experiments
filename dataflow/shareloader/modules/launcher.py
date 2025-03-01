@@ -262,7 +262,7 @@ class EmailSender(beam.DoFn):
                   </head>
                   <body>
                     <table>
-                        <th>Name</th>th>Perf Month</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
+                        <th>Name</th>th>Perf Week</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
                         {}
                     </table>
                     <br>
