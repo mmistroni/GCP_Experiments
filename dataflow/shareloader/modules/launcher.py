@@ -129,18 +129,6 @@ def run_sector_performance(p):
      )
 
 
-def create_row(dct):
-            return f"""<tr>
-                <td>{dct.get('Name', '')}</td>
-                <td>{dct.get('Perf Month', '')}</td>
-                <td>{dct.get('Perf Quart', '')}</td>
-                <td>{dct.get('Perf Half', '')}</td>
-                <td>{dct.get('Perf Year', '')}</td>
-                <td>{dct.get('Recom', '')}</td>
-                <td>{dct.get('Avg Volume', '')}</td>
-                <td>{dct.get('Rel Volume', '')}</td>
-            </tr>"""
-
 def combine_rows(rows):
     return ','.join(rows)
         
@@ -262,9 +250,19 @@ class EmailSender(beam.DoFn):
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
             '''<html>
+                  <head>
+                        <style>
+                            th, td {
+                                text-align: left;
+                                vertical-align: middle;
+                                width: 25%;
+                                padding: 8px;
+                            }
+                        </style>
+                  </head>
                   <body>
                     <table>
-                        <th>Name</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
+                        <th>Name</th>th>Perf Month</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
                         {}
                     </table>
                     <br>
@@ -346,6 +344,7 @@ class FinvizCombineFn(beam.CombineFn):
 def create_row(dct):
     return f"""<tr>
         <td>{dct.get('Name', '')}</td>
+        <td>{dct.get('Perf Week', '')}</td>
         <td>{dct.get('Perf Month', '')}</td>
         <td>{dct.get('Perf Quart', '')}</td>
         <td>{dct.get('Perf Half', '')}</td>
