@@ -256,8 +256,8 @@ class EmailSender(beam.DoFn):
     def process(self, element):
 
         key, value_dict = element
-        stocks = list(value_dict['collection1'])
-        sectors = list(value_dict['collection2'])
+        stocks = list(value_dict['collection1'])[0].replace('\n', '')
+        sectors = list(value_dict['collection2'])[0].replace('\n', '')
 
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
         template = \
