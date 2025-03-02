@@ -373,6 +373,7 @@ def run(argv = None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
+    pipeline_options.setMaxWorkflowRuntimeWalltimeSeconds(3600)
     logging.info(f'fmp key:{known_args.fmprepkey}')
 
     bq_sink = beam.io.WriteToBigQuery(
@@ -448,8 +449,9 @@ def run(argv = None, save_main_session=True):
 
         send_email(combined,  known_args.sendgridkey)
 
-        premarket_results   | 'tester TO SINK' >> sink
 
+        stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
+        stp | 'stp to sink' >> sink
 
 
 
