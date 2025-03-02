@@ -248,8 +248,24 @@ class EmailSender(beam.DoFn):
         sectors = list(value_dict['collection2'])[0].replace('\n', '')
 
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
+
+        head_str  = '''
+                    <head>
+                        <style>
+                            th, td {
+                                text-align: left;
+                                vertical-align: middle;
+                                width: 25%;
+                                padding: 8px;
+                            }
+                        </style>
+                  </head>
+
+                    '''
+
         template = \
             '''<html>
+                  {}
                   <body>
                     <table>
                         <th>Name</th><th>Perf Week</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
@@ -262,7 +278,7 @@ class EmailSender(beam.DoFn):
                     </table>
                   </body>
                 </html>'''
-        content = template.format(sectors, stocks)
+        content = template.format(head_str, sectors, stocks)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
