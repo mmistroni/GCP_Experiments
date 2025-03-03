@@ -4,7 +4,8 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_extra_watchlist, get_new_highs, FinvizLoader, \
                                             get_high_low, overnight_return, get_advance_decline,\
                                             get_buffett_six, get_finviz_obb_data, get_advance_decline_sma, \
-                                            AsyncProcessFinviz, _run_screener, get_universe_stocks
+                                            AsyncProcessFinviz, _run_screener, get_universe_stocks, \
+                                            get_eod_screener
 
 from pprint import pprint
 import os
@@ -268,6 +269,11 @@ class MyTestCase(unittest.TestCase):
              (p | 'Start Quote' >> beam.Create(get_universe_stocks())
                      | ' universe' >> beam.Map(lambda t: t['Ticker'] )
                      | 'Print quote' >> self.debugSink)
+             
+    def test_get_eod_screener(self):
+        res = get_eod_screener()
+        from pprint import pprint
+        pprint(res)
         
 
 if __name__ == '__main__':

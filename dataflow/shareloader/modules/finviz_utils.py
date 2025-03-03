@@ -755,11 +755,11 @@ def get_eod_screener():
 
     price_filters = {
         'Performance': 'Month Up',
-        'Performance2': 'Week Up',
+        #'Performance2': 'Week Up',
         '20-Day Simple Moving Average': 'Price above SMA20',
         '50-Day Simple Moving Average': 'Price above SMA50',
         '200-Day Simple Moving Average': 'Price above SMA200',
-        'All-Time High/Low' : '5% or more below High'
+        '52-Week High/Low' : '5% or more below High'
     }
     eod_filter_dict = fund_filters
     eod_filter_dict.update(descriptive_filters)
