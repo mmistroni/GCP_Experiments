@@ -8,6 +8,7 @@ from shareloader.modules.finviz_utils import FinvizLoader
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical
 from apache_beam.io.gcp.internal.clients import bigquery
 from shareloader.modules.sectors_utils import get_finviz_performance
+from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOptions
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
@@ -373,7 +374,8 @@ def run(argv = None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    pipeline_options.view_as(PipelineOptions).job_timeout_sec = 3600
+    google_cloud_options = pipeline_options.view_as(GoogleCloudOptions)
+    google_cloud_options.max_workflow_runtime_walltime_seconds = 3600
     logging.info(f'fmp key:{known_args.fmprepkey}')
 
     bq_sink = beam.io.WriteToBigQuery(
