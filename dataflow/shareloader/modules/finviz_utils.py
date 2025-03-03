@@ -724,6 +724,48 @@ def get_finviz_obb_data(creds, params):
         return runner.run(fetch_data(None, creds, params))
 
 
+def get_eod_screener():
+    '''
+    Hello Marco,
+
+    %change - %difference between the current close vs previous session's close
+    %change_from_open - %difference between the current close vs today's open
+
+
+    :return:
+    '''
+    # wontwo rk., let's instead use criteria for swign trading
+    # tryinbg some other criterias
+    descriptive_filters = {
+        'Price' : 'Over $10',
+        'Average Volume' : 'Over 200K',
+        'Relative Volume' : 'Over 1.5'
+    }
+
+    fund_filters = {
+        'EPS growththis year': 'Positive (>0%)',
+        'EPS growthnext year': 'Positive (>0%)',
+        'EPS growthqtr over qtr': 'Positive (>0%)',
+        'Sales growthqtr over qtr': 'Positive (>0%)',
+        'Return on Equity': 'Positive (>0%)',
+        'InstitutionalOwnership': 'Under 60%',
+        'Debt/Equity' : 'Under 1',
+        'Current Ratio' :  'Over 1'
+    }
+
+    price_filters = {
+        'Performance': 'Month Up',
+        'Performance2': 'Week Up',
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        'All-Time High/Low' : '5% or more below High'
+    }
+    eod_filter_dict = fund_filters
+    eod_filter_dict.update(descriptive_filters)
+    eod_filter_dict.update(price_filters)
+
+    return _run_screener(eod_filter_dict)
 
 
 
