@@ -422,6 +422,8 @@ def run(argv = None, save_main_session=True):
 
         etoro | 'etoro to sink' >> sink
 
+        stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
+        stp | 'stp to sink' >> sink
 
         (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                | 'etoro to finvizsink' >> finviz_sink)
@@ -440,7 +442,7 @@ def run(argv = None, save_main_session=True):
 
 
 
-        premarket_results =  ( (tester, etoro) |  "fmaprun all" >> beam.Flatten()
+        premarket_results =  ( (tester, etoro, stp) |  "fmaprun all" >> beam.Flatten()
                   | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
         keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
@@ -450,11 +452,6 @@ def run(argv = None, save_main_session=True):
 
 
         send_email(combined,  known_args.sendgridkey)
-
-
-        stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
-        stp | 'stp to sink' >> sink
-
 
 
 
