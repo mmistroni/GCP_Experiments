@@ -375,7 +375,7 @@ def run(argv = None, save_main_session=True):
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
     google_cloud_options = pipeline_options.view_as(GoogleCloudOptions)
-    google_cloud_options.max_workflow_runtime_walltime_seconds = 3600
+    #google_cloud_options.max_workflow_runtime_walltime_seconds = 3600
     logging.info(f'fmp key:{known_args.fmprepkey}')
 
     bq_sink = beam.io.WriteToBigQuery(
