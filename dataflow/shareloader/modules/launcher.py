@@ -12,7 +12,8 @@ from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOpt
 
 from datetime import date
 from shareloader.modules.superperformers import combine_tickers
-from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return
+from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
+                                            get_eod_screener
 import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
@@ -116,14 +117,16 @@ def run_obb_pipeline(p, fmpkey):
 
     )
 
-def run_premarket_pipeline(p, fmpkey):
+def run_eodmarket_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
-    return ( p
-             | 'PREMARKET PMStart' >> beam.Create(['AAPL'])
-             | 'PMGet all List' >> beam.ParDo(FinvizLoader(fmpkey, runtype='premarket'))
-             | 'PMMap to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
+    cob = date.today()
+    return (p | 'Starting eod' >> beam.Create(get_eod_screener())
+            | 'EOD Market ' >> beam.Map(lambda d: d['Ticker'])
+            | 'Filtering extra eod market' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+            | 'Combine all eod extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
+            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.02, selection='EOD'))
+            )
 
-    )
 
 def run_sector_performance(p):
     return (p | 'Starting' >> beam.Create(get_finviz_performance())
@@ -222,7 +225,7 @@ def parse_known_args(argv):
   parser.add_argument('--output')
   parser.add_argument('--period')
   parser.add_argument('--limit')
-  parser.add_argument('--pat')
+  parser.add_argument('--runtype')
   parser.add_argument('--sendgridkey')
   return parser.parse_known_args(argv)
 
@@ -409,50 +412,53 @@ def run(argv = None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
-        #obb = run_premarket_pipeline(p, known_args.fmprepkey)
-        #obb | 'oBB2 TO SINK' >>sink
         #obb | ' to finvbiz' >> finviz_sink
 
-        tester = run_test_pipeline(p, known_args.fmprepkey)
-        tester | 'tester to sink' >> sink
+        if known_args.runtype == 'eod':
+            obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
+            obb | 'oBB2 TO SINK' >>sink
+        else:
 
-        (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
-                | 'tster to finviz sink' >>  finviz_sink)
+            tester = run_test_pipeline(p, known_args.fmprepkey)
+            tester | 'tester to sink' >> sink
 
-        etoro = run_etoro_pipeline(p, known_args.fmprepkey)
+            (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
+                    | 'tster to finviz sink' >>  finviz_sink)
 
-        etoro | 'etoro to sink' >> sink
+            etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
-        stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
-        stp | 'stp to sink' >> sink
+            etoro | 'etoro to sink' >> sink
 
-        (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-               | 'etoro to finvizsink' >> finviz_sink)
+            stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
+            stp | 'stp to sink' >> sink
 
-
-        finviz_sectors = run_sector_performance(p)
-
-        finviz_results = (finviz_sectors | 'mapping ' >> beam.Map(create_row)
-                             | beam.CombineGlobally(FinvizCombineFn())
-                             # | 'extracting' >> beam.ParDo(ProcessStringFn())
-                             # | 'to sink' >> self.debugSink
-                             )
-
-        finviz_results | 'finviz to sink' >> sink
-        keyed_finviz= finviz_results | beam.Map(lambda element: (1, element))
+            (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                   | 'etoro to finvizsink' >> finviz_sink)
 
 
+            finviz_sectors = run_sector_performance(p)
 
-        premarket_results =  ( (tester, etoro, stp) |  "fmaprun all" >> beam.Flatten()
-                  | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
+            finviz_results = (finviz_sectors | 'mapping ' >> beam.Map(create_row)
+                                 | beam.CombineGlobally(FinvizCombineFn())
+                                 # | 'extracting' >> beam.ParDo(ProcessStringFn())
+                                 # | 'to sink' >> self.debugSink
+                                 )
 
-        keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
-
-        combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz}
-                    | beam.CoGroupByKey())
+            finviz_results | 'finviz to sink' >> sink
+            keyed_finviz= finviz_results | beam.Map(lambda element: (1, element))
 
 
-        send_email(combined,  known_args.sendgridkey)
+
+            premarket_results =  ( (tester, etoro, stp) |  "fmaprun all" >> beam.Flatten()
+                      | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
+
+            keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
+
+            combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz}
+                        | beam.CoGroupByKey())
+
+
+            send_email(combined,  known_args.sendgridkey)
 
 
 
