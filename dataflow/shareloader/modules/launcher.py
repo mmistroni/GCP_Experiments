@@ -373,7 +373,7 @@ def run(argv = None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    pipeline_options.setMaxWorkflowRuntimeWalltimeSeconds(3600)
+    pipeline_options.view_as(PipelineOptions).job_timeout_sec = 3600
     logging.info(f'fmp key:{known_args.fmprepkey}')
 
     bq_sink = beam.io.WriteToBigQuery(
