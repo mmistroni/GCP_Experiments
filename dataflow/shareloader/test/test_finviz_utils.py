@@ -274,6 +274,14 @@ class MyTestCase(unittest.TestCase):
         res = get_eod_screener()
         from pprint import pprint
         pprint(res)
+
+    def test_sample_bean(self):
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create([{'ticker':'AAPL'}])
+                     | 'Run adLoader' >> beam.Map(lambda d: d.update({'type' : 'Finviz'}) or d)
+                     | 'another map' >> beam.Map(print)
+                     )
+
         
 
 if __name__ == '__main__':
