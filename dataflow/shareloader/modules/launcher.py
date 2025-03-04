@@ -377,7 +377,7 @@ def run(argv = None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    pipeline_options.view_as(DebugOptions).add_experiment(10800)
+    #pipeline_options.view_as(DebugOptions).add_experiment(10800)
     google_cloud_options = pipeline_options.view_as(GoogleCloudOptions)
     #google_cloud_options.max_workflow_runtime_walltime_seconds = 3600
     logging.info(f'fmp key:{known_args.fmprepkey}')
