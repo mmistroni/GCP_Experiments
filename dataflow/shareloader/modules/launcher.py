@@ -18,7 +18,7 @@ import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 import itertools
-
+from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 
 class AnotherLeftJoinerFn(beam.DoFn):
 
@@ -107,15 +107,6 @@ def get_finviz_schema():
     }
 
     return schema
-
-def run_obb_pipeline(p, fmpkey):
-    logging.info('Running OBB ppln')
-    return ( p
-             | 'OBBStart' >> beam.Create(['AAPL,AMZN'])
-             | 'OBBGet all List' >> beam.ParDo(FinvizLoader(fmpkey))
-             | 'OBBMap to BQable' >> beam.Map(lambda d: map_to_bq_dict(d))
-
-    )
 
 def run_eodmarket_pipeline(p, fmpkey):
     logging.info('Running OBB ppln')
@@ -365,6 +356,13 @@ def create_row(dct):
     </tr>"""
 
 
+def finviz_pipeline(p):
+    (p | 'Test Finviz' >> beam.Create(['AAPL'])
+                | 'OBBGet all List' >> beam.ParDo(AsyncProcessFinvizTester())
+                | 'Mapping out' >> beam.Map(logging.info)
+                )
+
+
 
 def send_email(pipeline,  sendgridkey):
     return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
@@ -462,13 +460,9 @@ def run(argv = None, save_main_session=True):
 
 
             send_email(combined,  known_args.sendgridkey)
+            fvp = finviz_pipeline(p)
 
-
-
-
-
-
-
+            
 
 
 
