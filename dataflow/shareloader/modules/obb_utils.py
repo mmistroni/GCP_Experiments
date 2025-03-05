@@ -7,7 +7,7 @@ from pandas.tseries.offsets import BDay
 from datetime import date
 from pandas.tseries.offsets import BDay
 import asyncio
-
+from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 
@@ -161,7 +161,7 @@ class AsyncProcess(beam.DoFn):
             latest = profile[0]
             return {'sector' : latest['sector'], 'industry' : latest['industry']}
         except Exception as e :
-            logging.info(f'Exceptioin  for {t}:{str(e)}')
+            logging.info(f'Exceptioin  for {ticker}:{str(e)}')
             return {'sector': 'NA', 'industry': 'NA'}
 
     def _sma(self, smaUrl):

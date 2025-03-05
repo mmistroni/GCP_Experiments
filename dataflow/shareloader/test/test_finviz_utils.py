@@ -20,6 +20,46 @@ import requests
 import zipfile
 import xml.etree.ElementTree as ET
 from io import  BytesIO
+import asyncio
+import logging
+from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
+
+
+class AsyncProcessFinvizTester(beam.DoFn):
+
+    def __init__(self):
+        self.fetcher = FinvizEquityScreenerFetcher
+        
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element}')
+        try:
+            descriptive_filters = {
+                    'Price' : 'Over $10',
+                    'Average Volume' : 'Over 200K',
+                    'Relative Volume' : 'Over 1.5'
+                }
+            high = await self.fetcher.fetch_data(descriptive_filters, {})
+            high_result = [d.model_dump(exclude_none=True) for d in high]
+
+            if high_result:
+                high_ticks = ','.join([d['symbol'] for d in high_result])
+                logging.info(f' adv declie for  successfully retrieved')
+                return [{'ADVANCE': len(high_result), 
+                        'ADVANCING_TICKERS': high_ticks}]
+            else:
+                return[{}]
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return  [str(e)]
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
+
+
+
 
 
 
@@ -278,7 +318,7 @@ class MyTestCase(unittest.TestCase):
     def test_sample_bean(self):
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create([{'ticker':'AAPL'}])
-                     | 'Run adLoader' >> beam.Map(lambda d: d.update({'type' : 'Finviz'}) or d)
+                     | 'OBBGet all List' >> beam.ParDo(AsyncProcessFinvizTester())
                      | 'another map' >> beam.Map(print)
                      )
 
