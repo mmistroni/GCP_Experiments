@@ -154,6 +154,16 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
 
+    def get_profile(self, ticker):
+        profile_url = f'https://financialmodelingprep.com/api/v3/profile/{ticker}?apikey={self.fmpKey}'
+        try:
+            profile = requests.get(profile_url).json()
+            latest = profile[0]
+            return {'sector' : latest['sector'], 'industry' : latest['industry']}
+        except Exception as e :
+            logging.info(f'Exceptioin  for {t}:{str(e)}')
+            return {'sector': 'NA', 'industry': 'NA'}
+
     def _sma(self, smaUrl):
         try:
             data = requests.get(smaUrl).json()
@@ -235,6 +245,8 @@ class AsyncProcess(beam.DoFn):
                         latest['selection'] = self.selection
 
                         tech_dict = self.get_adx_and_rsi(t)
+                        profile = self.get_profile(t)
+                        latest.update(profile)
                         logging.info(f'{t} getting SMAS')
                         smas = self.calculate_smas(t)
                         latest.update(tech_dict)

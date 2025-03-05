@@ -13,7 +13,7 @@ from apache_beam.options.pipeline_options import PipelineOptions
 from datetime import date
 from shareloader.modules.obb_utils import ProcessHistorical
 from shareloader.modules.finviz_utils import get_extra_watchlist
-from shareloader.modules.launcher import run_obb_pipeline, run_premarket_pipeline, run_etoro_pipeline,\
+from shareloader.modules.launcher import run_obb_pipeline,  run_etoro_pipeline,\
                                     AnotherLeftJoinerFn, combine_tester_and_etoro
 
 class Check(beam.PTransform):
@@ -90,9 +90,8 @@ class TestDfTesterLoader(unittest.TestCase):
     def test_premarket_pipeline(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
-            input = run_premarket_pipeline(p, key)
-            input2 = run_etoro_pipeline(p)
-            res = ( (input, input2) |  "fmaprun" >> beam.Flatten()
+            input2 = run_etoro_pipeline(p, key)
+            res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
                     | 'tosink' >> self.debugSink)
 
     def test_combine_tester_and_etoro(self):
