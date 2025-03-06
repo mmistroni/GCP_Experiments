@@ -323,6 +323,31 @@ class StockSelectionCombineFn(beam.CombineFn):
   def extract_output(self, sum_count):
     return ''.join(sum_count)
 
+class StockSelectionEodCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, input):
+    {'symbol': 'PSTV', 'name': 'Plus Therapeutics Inc', 'country': 'USA', 'sector': 'Healthcare', 'industry': 'Biotechnology', 'market_cap': 8480000.0, 'price': 1.44, 'change_percent': 3.1143, 'volume': 331918742}
+    ROW_TEMPLATE = f"""<tr>
+                          <td>{input['symbol']}</td>
+                          <td>{input.get('sector', '')}</td>
+                          <td>{input.get('industry')}</td>
+                          <td>{input['price']}</td>
+                          <td>{input['change_percent']}</td>
+                        </tr>"""
+
+    row_acc = accumulator
+    row_acc.append(ROW_TEMPLATE)
+    return row_acc
+
+  def merge_accumulators(self, accumulators):
+    return list(itertools.chain(*accumulators))
+
+  def extract_output(self, sum_count):
+    return ''.join(sum_count)
+
+
 
 class FinvizCombineFn(beam.CombineFn):
     def create_accumulator(self):
@@ -359,7 +384,7 @@ def create_row(dct):
 def finviz_pipeline(p):
     (p | 'Test Finviz' >> beam.Create(['AAPL'])
                 | 'OBBGet all List' >> beam.ParDo(AsyncProcessFinvizTester())
-                | 'Mapping out' >> beam.Map(logging.info)
+                | 'Combine Finvviz Reseults' >> beam.CombineGlobally(StockSelectionCombineFn())
                 )
 
 
@@ -413,10 +438,31 @@ def run(argv = None, save_main_session=True):
         sink = beam.Map(logging.info)
 
         logging.info('Running premarket loader')
-        #obb | ' to finvbiz' >> finviz_sink
+        
+        finviz_sectors = run_sector_performance(p)
+
+        finviz_results = (finviz_sectors | 'mapping ' >> beam.Map(create_row)
+                                | beam.CombineGlobally(FinvizCombineFn())
+                                # | 'extracting' >> beam.ParDo(ProcessStringFn())
+                                # | 'to sink' >> self.debugSink
+                                )
+
+        finviz_results | 'finviz to sink' >> sink
+        keyed_finviz= finviz_results | beam.Map(lambda element: (1, element))
+
 
         if known_args.runtype == 'eod':
             obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
+
+            keyed_obb= obb | beam.Map(lambda element: (1, element))
+
+            combined = ({'collection1': keyed_obb, 'collection2': keyed_finviz}
+                        | beam.CoGroupByKey())
+
+            send_email(combined,  known_args.sendgridkey)
+            
+
+            
             obb | 'oBB2 TO SINK' >>sink
         else:
 
@@ -437,19 +483,6 @@ def run(argv = None, save_main_session=True):
                    | 'etoro to finvizsink' >> finviz_sink)
 
 
-            finviz_sectors = run_sector_performance(p)
-
-            finviz_results = (finviz_sectors | 'mapping ' >> beam.Map(create_row)
-                                 | beam.CombineGlobally(FinvizCombineFn())
-                                 # | 'extracting' >> beam.ParDo(ProcessStringFn())
-                                 # | 'to sink' >> self.debugSink
-                                 )
-
-            finviz_results | 'finviz to sink' >> sink
-            keyed_finviz= finviz_results | beam.Map(lambda element: (1, element))
-
-
-
             premarket_results =  ( (tester, etoro, stp) |  "fmaprun all" >> beam.Flatten()
                       | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
@@ -461,6 +494,8 @@ def run(argv = None, save_main_session=True):
 
             send_email(combined,  known_args.sendgridkey)
             fvp = finviz_pipeline(p)
+            fvp | 'Mapping out fvp' >> beam.Map(logging.info)
+                
 
             
 
