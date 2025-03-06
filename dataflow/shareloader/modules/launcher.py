@@ -298,8 +298,8 @@ class StockSelectionCombineFn(beam.CombineFn):
   def add_input(self, accumulator, input):
     ROW_TEMPLATE = f"""<tr>
                           <td><b>{input.get('highlight', '')}</b></td>
-                          <td>{input['ticker']}</td>
-                          <td>{input['prev_date']}({input.get('sector', '')}</td>
+                          <td>{input['ticker']}({input.get('sector', '')}</td>
+                          <td>{input['prev_date']}</td>
                           <td>{input['prev_close']}</td>
                           <td>{input['date']}</td>
                           <td>{input['close']}</td>
