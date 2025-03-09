@@ -16,7 +16,6 @@ from shareloader.modules.finviz_utils import get_extra_watchlist
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline,\
                                     run_test_pipeline
 
-from shareloader.modules.launcher import run_obb
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -96,11 +95,9 @@ class TestDfTesterLoader(unittest.TestCase):
         from datetime import date
         cob = date.today()
         with TestPipeline(options=PipelineOptions()) as p:
-            input = run_premarket_pipeline(p, key)
-
             input2 = run_etoro_pipeline(p, key,0.001)
 
-            mapped =  ((input, input2) | "etorox combined fmaprun" >> beam.Flatten()
+            mapped =  ((input2, input2) | "etorox combined fmaprun" >> beam.Flatten()
                          | 'to sink' >> self.debugSink)
             historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
                                 | 'Combine both x' >> beam.CombineGlobally(lambda x: ''.join(x if x is not None else ''))

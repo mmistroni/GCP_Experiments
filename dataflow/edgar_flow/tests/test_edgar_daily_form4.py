@@ -3,7 +3,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to
 from apache_beam.testing.test_pipeline import TestPipeline
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 from edgar_flow.modules.edgar_utils import  cusip_to_ticker, ParseForm4, EdgarCombineFn
 from edgar_flow.modules.edgar_daily_form4 import find_current_day_url, run_my_pipeline,\
                         filter_form_4, enhance_form_4
