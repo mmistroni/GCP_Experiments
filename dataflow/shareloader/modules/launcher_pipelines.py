@@ -12,6 +12,7 @@ from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
+import requests
 
 
 
@@ -27,6 +28,7 @@ def run_eodmarket_pipeline(p, fmpkey):
             )
 
 def run_sector_performance(p):
+    # Momentum hqm https://medium.datadriveninvestor.com/quantitative-momentum-strategy-94ff09df25e5
     return (p | 'Starting' >> beam.Create(get_finviz_performance())
      )
 
@@ -97,4 +99,17 @@ class StockSelectionCombineFn(beam.CombineFn):
 
   def extract_output(self, sum_count):
     return ''.join(sum_count)
+  
+
+def calculate_hqm_score(ticker, key):
+   def get_latest_price(ticker, key):
+            stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
+                                                                                                               token=key)
+            res = requests.get(stat_url).json()[0]
+        
+
+
+
+   
+
 
