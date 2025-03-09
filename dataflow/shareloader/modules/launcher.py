@@ -18,7 +18,11 @@ import argparse
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email, Personalization
 import itertools
-from shareloader.modules.obb_processes import AsyncProcessFinvizTester
+from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmarket_pipeline, \
+                                                   run_sector_performance, run_swingtrader_pipeline, \
+                                                   run_etoro_pipeline, finviz_pipeline, \
+                                                   StockSelectionCombineFn
+from shareloader.modules.launcher_email import EmailSender, send_email
 
 class AnotherLeftJoinerFn(beam.DoFn):
 
@@ -108,27 +112,11 @@ def get_finviz_schema():
 
     return schema
 
-def run_eodmarket_pipeline(p, fmpkey):
-    logging.info('Running OBB ppln')
-    cob = date.today()
-    return (p | 'Starting eod' >> beam.Create(get_eod_screener())
-            | 'EOD Market ' >> beam.Map(lambda d: d['Ticker'])
-            | 'Filtering extra eod market' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-            | 'Combine all eod extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.02, selection='EOD'))
-            )
-
-
-def run_sector_performance(p):
-    return (p | 'Starting' >> beam.Create(get_finviz_performance())
-     )
 
 
 def combine_rows(rows):
     return ','.join(rows)
         
-        
-
 
 def map_to_bq_dict(input_dict):
     custom_dict = {}
@@ -148,37 +136,6 @@ def map_to_bq_dict(input_dict):
     custom_dict["SMA200"] =  input_dict.get('SMA200')
     return custom_dict
 
-
-def run_swingtrader_pipeline(p, fmpkey):
-    cob = date.today()
-    return  (p  | 'Starting Swingrder'  >> beam.Create(overnight_return())
-                | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
-                | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1))
-             )
-
-
-def run_test_pipeline(p, fmpkey):
-    cob = date.today()
-    test_ppln = create_bigquery_ppln(p)
-    return  (test_ppln
-                | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
-                | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.05))
-             )
-def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
-    cob = date.today()
-    test_ppln = get_universe_stocks()
-    return  (p  | 'Starting etoro' >> beam.Create(get_universe_stocks())
-                | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
-                | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
-             )
-
-
 def combine_tester_and_etoro(fmpKey, tester,etoro):
     '''
     Redo.
@@ -191,8 +148,6 @@ def combine_tester_and_etoro(fmpKey, tester,etoro):
                          | 'Remap to tuple x' >> beam.Map(lambda dct: (dct['ticker'], dct))
                          | 'filtering' >> beam.Filter(lambda tpl: tpl[0] is not None)
                          )
-
-
 
     historicals =  (mapped | 'Mapping t and e x' >> beam.Map(lambda tpl: tpl[0])
                          | 'Combine both x' >> beam.CombineGlobally(lambda x: ','.join(x))
@@ -221,107 +176,6 @@ def parse_known_args(argv):
   return parser.parse_known_args(argv)
 
 
-class EmailSender(beam.DoFn):
-    def __init__(self, key):
-        self.recipients = ['mmistroni@gmail.com']
-        self.key = key
-
-
-    def _build_personalization(self, recipients):
-        personalizations = []
-        for recipient in recipients:
-            logging.info('Adding personalization for {}'.format(recipient))
-            person1 = Personalization()
-            person1.add_to(Email(recipient))
-            personalizations.append(person1)
-        return personalizations
-
-    def process(self, element):
-
-        key, value_dict = element
-        stocks = list(value_dict['collection1'])[0].replace('\n', '')
-        sectors = list(value_dict['collection2'])[0].replace('\n', '')
-
-        logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
-
-        head_str  = '''
-                    <head>
-                        <style>
-                            th, td {
-                                text-align: left;
-                                vertical-align: middle;
-                                width: 25%;
-                                padding: 8px;
-                            }
-                        </style>
-                  </head>
-
-                    '''
-
-        template = \
-            '''<html>
-                  {}
-                  <body>
-                    <table>
-                        <th>Name</th><th>Perf Week</th><th>Perf Month</th><th>Perf Quart</th><th>Perf Half</th><th>Perf Year</th><th>Recom</th><th>Avg Volume</th><th>Rel Volume</th>
-                        {}
-                    </table>
-                    <br>
-                    <table>
-                       <th>WATCH</th><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th>
-                       {}
-                    </table>
-                  </body>
-                </html>'''
-        content = template.format(head_str, sectors, stocks)
-        logging.info('Sending \n {}'.format(content))
-        message = Mail(
-            from_email='gcp_cloud_mm@outlook.com',
-            subject='Pre-Market Movers',
-            html_content=content)
-
-        personalizations = self._build_personalization(self.recipients)
-        for pers in personalizations:
-            message.add_personalization(pers)
-
-        sg = SendGridAPIClient(self.key)
-
-        response = sg.send(message)
-        logging.info('Mail Sent:{}'.format(response.status_code))
-        logging.info('Body:{}'.format(response.body))
-
-
-class StockSelectionCombineFn(beam.CombineFn):
-  def create_accumulator(self):
-    return []
-
-  def add_input(self, accumulator, input):
-    ROW_TEMPLATE = f"""<tr>
-                          <td><b>{input.get('highlight', '')}</b></td>
-                          <td>{input['ticker']}({input.get('sector', '')}</td>
-                          <td>{input['prev_date']}</td>
-                          <td>{input['prev_close']}</td>
-                          <td>{input['date']}</td>
-                          <td>{input['close']}</td>
-                          <td>{input['change']}</td>
-                          <td>{input.get('ADX', -1)}</td>
-                          <td>{input.get('RSI', -1)}</td>
-                          <td>{input.get('SMA20', -1)}</td>
-                          <td>{input.get('SMA50', -1)}</td>
-                          <td>{input.get('SMA200', -1)}</td>
-                          <td>{input['selection']}</td>
-                          
-                        </tr>"""
-
-    row_acc = accumulator
-    row_acc.append(ROW_TEMPLATE)
-    return row_acc
-
-  def merge_accumulators(self, accumulators):
-    return list(itertools.chain(*accumulators))
-
-  def extract_output(self, sum_count):
-    return ''.join(sum_count)
 
 class StockSelectionEodCombineFn(beam.CombineFn):
   def create_accumulator(self):
@@ -379,19 +233,6 @@ def create_row(dct):
         <td>{dct.get('Avg Volume', '')}</td>
         <td>{dct.get('Rel Volume', '')}</td>
     </tr>"""
-
-
-def finviz_pipeline(p):
-    (p | 'Test Finviz' >> beam.Create(['AAPL'])
-                | 'OBBGet all List' >> beam.ParDo(AsyncProcessFinvizTester())
-                | 'Combine Finvviz Reseults' >> beam.CombineGlobally(StockSelectionCombineFn())
-                )
-
-
-
-def send_email(pipeline,  sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
-             )
 
 
 def run(argv = None, save_main_session=True):
