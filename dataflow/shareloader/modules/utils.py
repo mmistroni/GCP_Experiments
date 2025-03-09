@@ -70,7 +70,7 @@ def get_prices(symbols):
 
 def create_email_template(input_elements):
     total_ptf_value = sum(map(lambda elm_list: elm_list[6], input_elements))
-
+    one, two, three = 'one', 'two', 'three'
     base_template = '<tr><td>{ticker}</td><td>{qty}</td><td>{}</td></tr>'.format(one, two, three)
     mapped_str = map(lambda lst: base_template.format(
 
@@ -85,9 +85,10 @@ def get_isr_and_kor(token):
 def get_out_of_hour_info(token, ticker):
   logging.info('Getting out of quote info for {}'.format(ticker))
   try:
+    tpl = ('AAPL', 1, 20.0)
     ticker, qty, original_price = tpl[0] , int(tpl[1]), float(tpl[2])
     stat_url = 'https://financialmodelingprep.com/api/v3/quote/{symbol}?apikey={token}'.format(symbol=ticker,
-                                                                                                token=fmprepkey)
+                                                                                                token='')
     historical_data = requests.get(stat_url).json()[0]
     return historical_data['price'], historical_data['change'],
   except Exception as e:

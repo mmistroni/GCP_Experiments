@@ -81,6 +81,43 @@ class MyTestCase(unittest.TestCase):
 
             send_email(combined,  os.environ['FMPREPKEY'])
 
+    def test_get_historical(self):
+        import pandas as pd
+        from  scipy import stats
+        key = os.environ['FMPREPKEY']
+        ticker = 'AAPL'
+        hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
+        data = requests.get(hist_url).json().get('historical')
+        df=  pd.DataFrame(data=data)[0:300][::-1]
+        
+        df = df.set_index('date')
+
+        # Define window sizes for returns
+        one_month = 21  # Approx. 21 trading days in a month
+        three_months = 63  # Approx. 63 trading days in 3 months
+        six_months = 126  # Approx. 126 trading days in 6 months
+        one_year = 252  # Approx. 252 trading days in a year
+
+        # Calculate returns (percentage change)
+        df['1_Month_Return'] = (df['adjClose'] / df['adjClose'].shift(one_month) - 1) * 100
+        df['3_Month_Return'] = (df['adjClose'] / df['adjClose'].shift(three_months) - 1) * 100
+        df['6_Month_Return'] = (df['adjClose'] / df['adjClose'].shift(six_months) - 1) * 100
+        df['1_Year_Return'] = (df['adjClose'] / df['adjClose'].shift(one_year) - 1) * 100
+        
+        df = df[['1_Month_Return', '3_Month_Return', '6_Month_Return', '1_Year_Return' ]]
+
+        time_periods = ['1_Month_Return', '3_Month_Return', '6_Month_Return', '1_Year_Return' ]
+        for row in df.index:
+            for time_period in time_periods:
+                df.loc[row, f'{time_period} Return Percentile'] = stats.percentileofscore(df[f'{time_period}'],
+                                                                                           df.loc[row, f'{time_period}'])/100
+
+
+        print(df.tail(3).T)
+
+    
+
+
 
 if __name__ == '__main__':
     unittest.main()
