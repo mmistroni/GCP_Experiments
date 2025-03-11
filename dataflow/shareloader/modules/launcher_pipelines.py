@@ -62,7 +62,7 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
              )
 
 def finviz_pipeline(p):
-    (p | 'Test Finviz' >> beam.Create(['AAPL'])
+    return (p | 'Test Finviz' >> beam.Create(['AAPL'])
                 | 'OBBGet all List' >> beam.ParDo(AsyncProcessFinvizTester())
                 | 'Combine Finvviz Reseults' >> beam.CombineGlobally(StockSelectionCombineFn())
                 )
