@@ -334,8 +334,8 @@ def run(argv = None, save_main_session=True):
 
 
             send_email(combined,  known_args.sendgridkey)
-            fvp = finviz_pipeline(p)
-            fvp | 'Mapping out fvp' >> beam.Map(logging.info)
+            #fvp = finviz_pipeline(p)
+            #fvp | 'Mapping out fvp' >> beam.Map(logging.info)
                 
 
             
