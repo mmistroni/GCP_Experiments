@@ -169,7 +169,7 @@ def get_leaps():
 
     return _run_screener(filters_dict)
 
-def get_graham_enterprise(fmpKey):
+def get_graham_enterprise():
     '''
         Current superperf filter
         return (input_dict['currentRatio'] >= 1.5) \
@@ -202,7 +202,7 @@ def get_magic_formula(fmpKey):
     return _run_screener(universe_filter)
 
 
-def get_graham_defensive(fmpKey):
+def get_graham_defensive():
 
     # https://groww.in/blog/benjamin-grahams-7-stock-criteria
     # at least MidCap  finviz
