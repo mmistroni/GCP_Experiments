@@ -986,7 +986,7 @@ class AsyncEconomicCalendar(beam.DoFn):
             }
             value_data = await self.fetcher.fetch_data(params, credentials)
             value_result =  [d.model_dump(exclude_none=True) for d in value_data ]
-            relevants = [d for d in value_result if d.get('country', '') == 'US' and d.get('importance', '') in ['High', 'Medium']]
+            relevants = [d for d in value_result if d.get('country', '') == 'US' and d.get('importance', '') in ['High', 'Medium']][::-1]
             return relevants
 
         except Exception as e:
