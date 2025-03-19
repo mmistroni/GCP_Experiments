@@ -648,15 +648,14 @@ def get_buffett_six():
                    'Current Ratio' : 'Over 1.5',#
                    'Average Volume' : 'Over 100K',
                    'Price': 'Over $10',#
-                   'institutionalOwnershipPercentage': 'institutionalOwnershipPercentage < 0.6',#
-                   'positiveEps' : 'positiveEps > 0',#
-                   'peRatio' : 'peRatio <= 15',#
-                   'priceToBookRatio' : 'priceToBookRatio < 1.5', #
+                   'InstitutionalOwnership': 'Under 60%',#
+                   'EPS growthpast 5 years': 'Positive (>0%)',
+                   'P/E': 'Low (<15)',
+                   'P/B' : 'Under 2', #
                    }
 
-    buffetts = _run_screener(filter_dict)
-    return [d['Ticker'] for d in buffetts]
-    
+    return _run_screener(filter_dict)
+
 def get_swing_trader_growth():
     pass
 

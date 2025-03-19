@@ -54,7 +54,7 @@ def run_canslim(p):
 
 def run_newhighs(p):
     return (p | 'Starting ns' >> beam.Create(get_new_highs())
-            | 'adding cs' >> beam.Map(lambda d: update_dict_beam(d,  'NEWHIGHS'))
+            | 'adding nh' >> beam.Map(lambda d: update_dict_beam(d,  'NEWHIGHS'))
             )
 
 def run_buffetsix(p):
@@ -74,8 +74,8 @@ def combine_pipelines(p):
     canslim = run_canslim(p)
     leaps = run_leaps(p)
     ge = run_graham_enterprise(p)
-    gd = run_graham_defensive()
-    universe = run_universe()
+    gd = run_graham_defensive(p)
+    universe = run_universe(p)
 
 
 
