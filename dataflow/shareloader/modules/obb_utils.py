@@ -10,6 +10,7 @@ import asyncio
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
+from openai import OpenAI
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -269,6 +270,24 @@ class AsyncProcess(beam.DoFn):
         logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
+
+
+class LLMProcessor(beam.DoFn):
+
+    def __init__(self, key):
+        """Initiate the OAI API client."""
+        self.client = OpenAI(
+            api_key=key
+        )
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        # checkout openai api
+        # https://github.com/openai/openai-python/blob/main/examples/assistant.py
+        # leverage gemini as we running on google
+
+
+
 
 
 
