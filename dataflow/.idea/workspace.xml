@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="moved finviz qry back">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="openai start">
+      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/premarket_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/superperformers.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/superperformers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +41,7 @@
     &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor&quot;: &quot;Run&quot;,
@@ -71,6 +71,7 @@
     &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_finviz_with_combiner.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor&quot;: &quot;Run&quot;,
@@ -95,6 +96,7 @@
     &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor&quot;: &quot;Run&quot;,
@@ -107,6 +109,10 @@
     &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor&quot;: &quot;Run&quot;,
@@ -146,8 +152,8 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher">
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_overnight_return" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn">
+    <configuration name="Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -158,11 +164,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_overnight_return&quot;" />
+      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_llm_on_beamn&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_quotefetcher" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -173,11 +179,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_quotefetcher&quot;" />
+      <option name="_new_target" value="&quot;test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_launcher.MyTestCase.test_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -188,11 +194,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_etoro&quot;" />
+      <option name="_new_target" value="&quot;test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_launcher.MyTestCase.test_swingtrader" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -203,11 +209,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_swingtrader&quot;" />
+      <option name="_new_target" value="&quot;test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_obb_loader.MyTestCase.test_sample_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -218,17 +224,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_sample_pipeline&quot;" />
+      <option name="_new_target" value="&quot;test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher" />
-        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader" />
-        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_etoro" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return" />
-        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn" />
+        <item itemvalue="Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines" />
+        <item itemvalue="Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix" />
+        <item itemvalue="Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim" />
+        <item itemvalue="Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline" />
       </list>
     </recent_temporary>
   </component>
@@ -247,174 +253,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00388" summary="updating email sender">
-      <option name="closed" value="true" />
-      <created>1735046743854</created>
-      <option name="number" value="00388" />
-      <option name="presentableId" value="LOCAL-00388" />
-      <option name="project" value="LOCAL" />
-      <updated>1735046743854</updated>
-    </task>
-    <task id="LOCAL-00389" summary="updating email sender">
-      <option name="closed" value="true" />
-      <created>1735050528221</created>
-      <option name="number" value="00389" />
-      <option name="presentableId" value="LOCAL-00389" />
-      <option name="project" value="LOCAL" />
-      <updated>1735050528221</updated>
-    </task>
-    <task id="LOCAL-00390" summary="reverting">
-      <option name="closed" value="true" />
-      <created>1735056846311</created>
-      <option name="number" value="00390" />
-      <option name="presentableId" value="LOCAL-00390" />
-      <option name="project" value="LOCAL" />
-      <updated>1735056846311</updated>
-    </task>
-    <task id="LOCAL-00391" summary="updating weekly sel">
-      <option name="closed" value="true" />
-      <created>1735467975474</created>
-      <option name="number" value="00391" />
-      <option name="presentableId" value="LOCAL-00391" />
-      <option name="project" value="LOCAL" />
-      <updated>1735467975475</updated>
-    </task>
-    <task id="LOCAL-00392" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735474008721</created>
-      <option name="number" value="00392" />
-      <option name="presentableId" value="LOCAL-00392" />
-      <option name="project" value="LOCAL" />
-      <updated>1735474008721</updated>
-    </task>
-    <task id="LOCAL-00393" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735474392089</created>
-      <option name="number" value="00393" />
-      <option name="presentableId" value="LOCAL-00393" />
-      <option name="project" value="LOCAL" />
-      <updated>1735474392089</updated>
-    </task>
-    <task id="LOCAL-00394" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735628674171</created>
-      <option name="number" value="00394" />
-      <option name="presentableId" value="LOCAL-00394" />
-      <option name="project" value="LOCAL" />
-      <updated>1735628674171</updated>
-    </task>
-    <task id="LOCAL-00395" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735644361291</created>
-      <option name="number" value="00395" />
-      <option name="presentableId" value="LOCAL-00395" />
-      <option name="project" value="LOCAL" />
-      <updated>1735644361292</updated>
-    </task>
-    <task id="LOCAL-00396" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735887293509</created>
-      <option name="number" value="00396" />
-      <option name="presentableId" value="LOCAL-00396" />
-      <option name="project" value="LOCAL" />
-      <updated>1735887293509</updated>
-    </task>
-    <task id="LOCAL-00397" summary="updating dftester">
-      <option name="closed" value="true" />
-      <created>1735889463071</created>
-      <option name="number" value="00397" />
-      <option name="presentableId" value="LOCAL-00397" />
-      <option name="project" value="LOCAL" />
-      <updated>1735889463071</updated>
-    </task>
-    <task id="LOCAL-00398" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1735906347810</created>
-      <option name="number" value="00398" />
-      <option name="presentableId" value="LOCAL-00398" />
-      <option name="project" value="LOCAL" />
-      <updated>1735906347810</updated>
-    </task>
-    <task id="LOCAL-00399" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1735906360098</created>
-      <option name="number" value="00399" />
-      <option name="presentableId" value="LOCAL-00399" />
-      <option name="project" value="LOCAL" />
-      <updated>1735906360098</updated>
-    </task>
-    <task id="LOCAL-00400" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1735906381471</created>
-      <option name="number" value="00400" />
-      <option name="presentableId" value="LOCAL-00400" />
-      <option name="project" value="LOCAL" />
-      <updated>1735906381471</updated>
-    </task>
-    <task id="LOCAL-00401" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1736348352225</created>
-      <option name="number" value="00401" />
-      <option name="presentableId" value="LOCAL-00401" />
-      <option name="project" value="LOCAL" />
-      <updated>1736348352226</updated>
-    </task>
-    <task id="LOCAL-00402" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1737549192503</created>
-      <option name="number" value="00402" />
-      <option name="presentableId" value="LOCAL-00402" />
-      <option name="project" value="LOCAL" />
-      <updated>1737549192504</updated>
-    </task>
-    <task id="LOCAL-00403" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1737549272080</created>
-      <option name="number" value="00403" />
-      <option name="presentableId" value="LOCAL-00403" />
-      <option name="project" value="LOCAL" />
-      <updated>1737549272080</updated>
-    </task>
-    <task id="LOCAL-00404" summary="amending adv decline. fixing old market breadth">
-      <option name="closed" value="true" />
-      <created>1737563751656</created>
-      <option name="number" value="00404" />
-      <option name="presentableId" value="LOCAL-00404" />
-      <option name="project" value="LOCAL" />
-      <updated>1737563751656</updated>
-    </task>
-    <task id="LOCAL-00405" summary="upating historical data">
-      <option name="closed" value="true" />
-      <created>1737891192837</created>
-      <option name="number" value="00405" />
-      <option name="presentableId" value="LOCAL-00405" />
-      <option name="project" value="LOCAL" />
-      <updated>1737891192837</updated>
-    </task>
-    <task id="LOCAL-00406" summary="fixing typo">
-      <option name="closed" value="true" />
-      <created>1737891593036</created>
-      <option name="number" value="00406" />
-      <option name="presentableId" value="LOCAL-00406" />
-      <option name="project" value="LOCAL" />
-      <updated>1737891593037</updated>
-    </task>
-    <task id="LOCAL-00407" summary="fixing typo">
-      <option name="closed" value="true" />
-      <created>1737892891965</created>
-      <option name="number" value="00407" />
-      <option name="presentableId" value="LOCAL-00407" />
-      <option name="project" value="LOCAL" />
-      <updated>1737892891965</updated>
-    </task>
-    <task id="LOCAL-00408" summary="moved finviz query to obb">
-      <option name="closed" value="true" />
-      <created>1738768322605</created>
-      <option name="number" value="00408" />
-      <option name="presentableId" value="LOCAL-00408" />
-      <option name="project" value="LOCAL" />
-      <updated>1738768322605</updated>
     </task>
     <task id="LOCAL-00409" summary="moved finviz query to obb">
       <option name="closed" value="true" />
@@ -640,7 +478,175 @@
       <option name="project" value="LOCAL" />
       <updated>1740737464182</updated>
     </task>
-    <option name="localTasksCounter" value="437" />
+    <task id="LOCAL-00437" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740746559099</created>
+      <option name="number" value="00437" />
+      <option name="presentableId" value="LOCAL-00437" />
+      <option name="project" value="LOCAL" />
+      <updated>1740746559099</updated>
+    </task>
+    <task id="LOCAL-00438" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740750503497</created>
+      <option name="number" value="00438" />
+      <option name="presentableId" value="LOCAL-00438" />
+      <option name="project" value="LOCAL" />
+      <updated>1740750503497</updated>
+    </task>
+    <task id="LOCAL-00439" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740757112339</created>
+      <option name="number" value="00439" />
+      <option name="presentableId" value="LOCAL-00439" />
+      <option name="project" value="LOCAL" />
+      <updated>1740757112339</updated>
+    </task>
+    <task id="LOCAL-00440" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740764496865</created>
+      <option name="number" value="00440" />
+      <option name="presentableId" value="LOCAL-00440" />
+      <option name="project" value="LOCAL" />
+      <updated>1740764496865</updated>
+    </task>
+    <task id="LOCAL-00441" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740766724467</created>
+      <option name="number" value="00441" />
+      <option name="presentableId" value="LOCAL-00441" />
+      <option name="project" value="LOCAL" />
+      <updated>1740766724468</updated>
+    </task>
+    <task id="LOCAL-00442" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740824812239</created>
+      <option name="number" value="00442" />
+      <option name="presentableId" value="LOCAL-00442" />
+      <option name="project" value="LOCAL" />
+      <updated>1740824812240</updated>
+    </task>
+    <task id="LOCAL-00443" summary="moved finviz qry back">
+      <option name="closed" value="true" />
+      <created>1740986006127</created>
+      <option name="number" value="00443" />
+      <option name="presentableId" value="LOCAL-00443" />
+      <option name="project" value="LOCAL" />
+      <updated>1740986006128</updated>
+    </task>
+    <task id="LOCAL-00444" summary="adding google pipielineo ptions">
+      <option name="closed" value="true" />
+      <created>1740986877035</created>
+      <option name="number" value="00444" />
+      <option name="presentableId" value="LOCAL-00444" />
+      <option name="project" value="LOCAL" />
+      <updated>1740986877035</updated>
+    </task>
+    <task id="LOCAL-00445" summary="adding google pipielineo ptions">
+      <option name="closed" value="true" />
+      <created>1740992842958</created>
+      <option name="number" value="00445" />
+      <option name="presentableId" value="LOCAL-00445" />
+      <option name="project" value="LOCAL" />
+      <updated>1740992842958</updated>
+    </task>
+    <task id="LOCAL-00446" summary="adding swingtraderlist">
+      <option name="closed" value="true" />
+      <created>1741000630056</created>
+      <option name="number" value="00446" />
+      <option name="presentableId" value="LOCAL-00446" />
+      <option name="project" value="LOCAL" />
+      <updated>1741000630056</updated>
+    </task>
+    <task id="LOCAL-00447" summary="addign timeout">
+      <option name="closed" value="true" />
+      <created>1741009380923</created>
+      <option name="number" value="00447" />
+      <option name="presentableId" value="LOCAL-00447" />
+      <option name="project" value="LOCAL" />
+      <updated>1741009380923</updated>
+    </task>
+    <task id="LOCAL-00448" summary="adding new screener">
+      <option name="closed" value="true" />
+      <created>1741025313032</created>
+      <option name="number" value="00448" />
+      <option name="presentableId" value="LOCAL-00448" />
+      <option name="project" value="LOCAL" />
+      <updated>1741025313032</updated>
+    </task>
+    <task id="LOCAL-00449" summary="added eod screener">
+      <option name="closed" value="true" />
+      <created>1741026021288</created>
+      <option name="number" value="00449" />
+      <option name="presentableId" value="LOCAL-00449" />
+      <option name="project" value="LOCAL" />
+      <updated>1741026021288</updated>
+    </task>
+    <task id="LOCAL-00450" summary="added eod screener">
+      <option name="closed" value="true" />
+      <created>1741071364205</created>
+      <option name="number" value="00450" />
+      <option name="presentableId" value="LOCAL-00450" />
+      <option name="project" value="LOCAL" />
+      <updated>1741071364206</updated>
+    </task>
+    <task id="LOCAL-00451" summary="added company profile">
+      <option name="closed" value="true" />
+      <created>1741199016378</created>
+      <option name="number" value="00451" />
+      <option name="presentableId" value="LOCAL-00451" />
+      <option name="project" value="LOCAL" />
+      <updated>1741199016379</updated>
+    </task>
+    <task id="LOCAL-00452" summary="added company profile">
+      <option name="closed" value="true" />
+      <created>1741761631967</created>
+      <option name="number" value="00452" />
+      <option name="presentableId" value="LOCAL-00452" />
+      <option name="project" value="LOCAL" />
+      <updated>1741761631967</updated>
+    </task>
+    <task id="LOCAL-00453" summary="added company profile">
+      <option name="closed" value="true" />
+      <created>1741764269072</created>
+      <option name="number" value="00453" />
+      <option name="presentableId" value="LOCAL-00453" />
+      <option name="project" value="LOCAL" />
+      <updated>1741764269073</updated>
+    </task>
+    <task id="LOCAL-00454" summary="added company profile">
+      <option name="closed" value="true" />
+      <created>1742294098177</created>
+      <option name="number" value="00454" />
+      <option name="presentableId" value="LOCAL-00454" />
+      <option name="project" value="LOCAL" />
+      <updated>1742294098178</updated>
+    </task>
+    <task id="LOCAL-00455" summary="startign to build s uperperf pipeline">
+      <option name="closed" value="true" />
+      <created>1742319523673</created>
+      <option name="number" value="00455" />
+      <option name="presentableId" value="LOCAL-00455" />
+      <option name="project" value="LOCAL" />
+      <updated>1742319523673</updated>
+    </task>
+    <task id="LOCAL-00456" summary="starting to build superperf">
+      <option name="closed" value="true" />
+      <created>1742408099004</created>
+      <option name="number" value="00456" />
+      <option name="presentableId" value="LOCAL-00456" />
+      <option name="project" value="LOCAL" />
+      <updated>1742408099005</updated>
+    </task>
+    <task id="LOCAL-00457" summary="openai start">
+      <option name="closed" value="true" />
+      <created>1743483321046</created>
+      <option name="number" value="00457" />
+      <option name="presentableId" value="LOCAL-00457" />
+      <option name="project" value="LOCAL" />
+      <updated>1743483321046</updated>
+    </task>
+    <option name="localTasksCounter" value="458" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -655,15 +661,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added advane declne" />
-    <MESSAGE value="removing unused" />
-    <MESSAGE value="replacing argparse" />
-    <MESSAGE value="removing XyzOptins" />
-    <MESSAGE value="added techs" />
-    <MESSAGE value="moving shareloader to new paradigm" />
-    <MESSAGE value="added buffett six" />
-    <MESSAGE value="updating dockers and cloudbuild files for edgar" />
-    <MESSAGE value="moving edgar to standard dataflow build" />
     <MESSAGE value="moving superperf to standard build" />
     <MESSAGE value="fixiing buffett sx" />
     <MESSAGE value="committign shareloader" />
@@ -680,7 +677,16 @@
     <MESSAGE value="fixing typo" />
     <MESSAGE value="moved finviz query to obb" />
     <MESSAGE value="moved finviz qry back" />
-    <option name="LAST_COMMIT_MESSAGE" value="moved finviz qry back" />
+    <MESSAGE value="adding google pipielineo ptions" />
+    <MESSAGE value="adding swingtraderlist" />
+    <MESSAGE value="addign timeout" />
+    <MESSAGE value="adding new screener" />
+    <MESSAGE value="added eod screener" />
+    <MESSAGE value="added company profile" />
+    <MESSAGE value="startign to build s uperperf pipeline" />
+    <MESSAGE value="starting to build superperf" />
+    <MESSAGE value="openai start" />
+    <option name="LAST_COMMIT_MESSAGE" value="openai start" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -797,7 +803,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>157</line>
+          <line>161</line>
           <option name="timeStamp" value="94" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -886,17 +892,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>237</line>
+          <line>241</line>
           <option name="timeStamp" value="226" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>236</line>
+          <line>240</line>
           <option name="timeStamp" value="227" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>230</line>
+          <line>234</line>
           <option name="timeStamp" value="228" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -905,39 +911,39 @@
           <option name="timeStamp" value="229" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>251</line>
-          <option name="timeStamp" value="243" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>249</line>
-          <option name="timeStamp" value="244" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>247</line>
-          <option name="timeStamp" value="245" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>209</line>
-          <option name="timeStamp" value="246" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>221</line>
-          <option name="timeStamp" value="247" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>245</line>
-          <option name="timeStamp" value="249" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>252</line>
+          <line>256</line>
           <option name="timeStamp" value="251" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/launcher.py</url>
+          <line>176</line>
+          <option name="timeStamp" value="257" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_dfetster_utils.py</url>
+          <line>99</line>
+          <option name="timeStamp" value="263" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>162</line>
+          <option name="timeStamp" value="264" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>165</line>
+          <option name="timeStamp" value="265" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/superperf_pipelines.py</url>
+          <line>27</line>
+          <option name="timeStamp" value="267" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_obb_loader.py</url>
+          <line>67</line>
+          <option name="timeStamp" value="273" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
