@@ -642,7 +642,7 @@ def get_advance_decline(exchange):
 
 def get_buffett_six():
     filter_dict = {
-                    'Return on Assets' : 'Over +10%',#
+                   'Return on Assets' : 'Over +10%',#
                    'Return on Equity' : 'Over +10%',#
                    'Debt/Equity' : 'Under 0.5', #  debt over capital
                    'Current Ratio' : 'Over 1.5',#
