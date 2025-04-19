@@ -73,7 +73,7 @@ class MarketStatsSinkCombineFn(beam.CombineFn):
 
 class EmailSender(beam.DoFn):
     def __init__(self, recipients, key):
-        self.recipients = recipients.split(',')
+        self.recipients = recipients.split(';')
         self.key = key
 
 
