@@ -162,7 +162,7 @@ def run_economic_calendar(p, key):
 def run_vix(p, key):
     return (p | 'start run_vix' >> beam.Create(['^VIX'])
                     | 'vix' >> beam.ParDo(AsyncFetcher(key))
-                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d['close'])})
+                    | 'remap vix' >> beam.Map(lambda d: {'AS_OF_DATE' : date.today().strftime('%Y-%m-%d'), 'LABEL' : 'VIX', 'VALUE' : str(d.get('close', 0.0))})
             )
 
 def run_junk_bond_demand(p, fredkey):
