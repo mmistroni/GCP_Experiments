@@ -121,6 +121,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_anotherllm_on_bean(self):
         key = os.environ['FMPREPKEY']
+        openai_key = os.environ['OPENAI_API_KEY']
 
         def to_json_string(element):
             def datetime_converter(o):
@@ -133,10 +134,24 @@ class MyTestCase(unittest.TestCase):
         with TestPipeline(options=PipelineOptions()) as p:
             input2 = run_etoro_pipeline(p, key, 0.0001)
 
-            jsons = (input2 | "ToJson" >> beam.Map(to_json_string)
-                     | 'anotheer map' >> beam.Map(lambda item: f'Please find which stocks will rise in next days based on this data \n {item}')
-                     | 'tosink' >> self.debugSink)
+            template = '''
+                            Please find which stocks will rise in next days based on this json which contains
+                            1 - prev_close: the previous close of the stock
+                            2 - change: the change from yesterday
+                            3 - ADX: the adx
+                            4 - RSI : the RSI
+                            5 - SMA20: the 20 day simple moving average
+                            6 - SMA50: the 50 day simple moving average
+                            5 - SMA200: the 200 day simple moving average
+            '''
+            instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
+            (input2 | "ToJson" >> beam.Map(to_json_string)
+                     | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+                     | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+                                                                                     instructions))
+                     | "Print image_url and annotation" >> beam.Map(print)
+                                                   )
             # res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)
 
