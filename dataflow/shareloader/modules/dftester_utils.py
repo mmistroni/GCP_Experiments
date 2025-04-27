@@ -2,6 +2,8 @@ import requests
 import logging
 from datetime import datetime
 import apache_beam as beam
+from openai import OpenAI
+
 
 
 
