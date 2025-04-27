@@ -21,7 +21,7 @@ from apache_beam.ml.inference.base import RunInference
 
 import asyncio
 import apache_beam as beam
-from openai import OpenAI
+import openai as openai
 
 class OpenAIClient:
 
@@ -50,7 +50,7 @@ class SampleOpenAIHandler(ModelHandler):
   def load_model(self):
     """Initiate the Google Vision API client."""
     """Initiate the OAI API client."""
-    client = client = OpenAI(
+    client =  openai.OpenAI(
     # This is the default and can be omitted
         api_key=self.oai_key,
     )
