@@ -142,7 +142,10 @@ class MyTestCase(unittest.TestCase):
                             4 - RSI : the RSI
                             5 - SMA20: the 20 day simple moving average
                             6 - SMA50: the 50 day simple moving average
-                            5 - SMA200: the 200 day simple moving average
+                            7 - SMA200: the 200 day simple moving average
+                            
+                            Once you finish your analysis, please summarize your finding indicating, for each
+                            stock what is your recommendation and why. 
             '''
             instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
