@@ -18,6 +18,8 @@ COPY --from=gcr.io/dataflow-templates-base/python311-template-launcher-base:2023
 ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
+COPY requirements.txt .
+
 RUN mkdir -p ${WORKDIR}/src
 RUN mkdir -p ${WORKDIR}/src/shareloader
 RUN mkdir -p ${WORKDIR}/src/shareloader/modules
@@ -42,7 +44,7 @@ RUN cat marketstats_main2.py
 
 
 RUN echo '----- INSTALLING REQS ----'
-
+RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install -e .
 
 # Super important to add these lines.
