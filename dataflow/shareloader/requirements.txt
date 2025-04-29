@@ -7,4 +7,5 @@ yfinance
 openbb-yfinance
 finvizfinance
 openbb-multpl
+openai
 
