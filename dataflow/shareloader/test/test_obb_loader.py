@@ -120,6 +120,12 @@ class MyTestCase(unittest.TestCase):
 
 
     def test_anotherllm_on_bean(self):
+
+        def combine_to_html_rows(elements):
+            from functools import reduce
+            combined = reduce(lambda acc, current: acc + current, elements, '')
+            return combined
+
         key = os.environ['FMPREPKEY']
         openai_key = os.environ['OPENAI_API_KEY']
 
@@ -151,9 +157,12 @@ class MyTestCase(unittest.TestCase):
 
             (input2 | "ToJson" >> beam.Map(to_json_string)
                      | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
-                     | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
-                                                                                     instructions))
-                     | "Print image_url and annotation" >> beam.Map(print)
+
+                    | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+                                                                                      instructions))
+                    | 'Combine' >> beam.CombineGlobally(lambda elements: "".join(elements))
+
+                    | "Print image_url and annotation" >> beam.Map(print)
                                                    )
             # res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)

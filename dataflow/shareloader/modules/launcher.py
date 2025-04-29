@@ -252,7 +252,8 @@ def run_inference(output, openai_key, debug_sink):
      | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
      | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
                                                                      instructions))
-     | "Print image_url and annotation" >> debug_sink
+     | 'Combine' >> beam.CombineGlobally(lambda elements: "".join(elements))
+
      )
 
 
@@ -356,8 +357,9 @@ def run(argv = None, save_main_session=True):
 
             send_email(combined,  known_args.sendgridkey)
 
-            run_inference(tester, known_args.openaikey, sink)
+            llm_out = run_inference(tester, known_args.openaikey, sink)
 
+            llm_out | sink
 
             
 
