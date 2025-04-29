@@ -45,6 +45,12 @@
       "label": "sendgrid key",
       "isOptional" : false
     }
-
+    ,
+    {
+      "name": "openaikey",
+      "helpText": "OpenAI Key",
+      "label": "openai key",
+      "isOptional" : true
+    }
   ]
 }

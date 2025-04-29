@@ -11,18 +11,17 @@ from shareloader.modules.sectors_utils import get_finviz_performance
 from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOptions
 
 from datetime import date
-from shareloader.modules.superperformers import combine_tickers
-from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
-                                            get_eod_screener
 import argparse
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email, Personalization
 import itertools
 from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmarket_pipeline, \
                                                    run_sector_performance, run_swingtrader_pipeline, \
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn
 from shareloader.modules.launcher_email import EmailSender, send_email
+from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler
+from apache_beam.ml.inference.base import ModelHandler
+from apache_beam.ml.inference.base import RunInference
+
 
 class AnotherLeftJoinerFn(beam.DoFn):
 
@@ -173,6 +172,7 @@ def parse_known_args(argv):
   parser.add_argument('--limit')
   parser.add_argument('--runtype')
   parser.add_argument('--sendgridkey')
+  parser.add_argument('--openaikey')
   return parser.parse_known_args(argv)
 
 
@@ -200,8 +200,6 @@ class StockSelectionEodCombineFn(beam.CombineFn):
 
   def extract_output(self, sum_count):
     return ''.join(sum_count)
-
-
 
 class FinvizCombineFn(beam.CombineFn):
     def create_accumulator(self):
@@ -233,6 +231,29 @@ def create_row(dct):
         <td>{dct.get('Avg Volume', '')}</td>
         <td>{dct.get('Rel Volume', '')}</td>
     </tr>"""
+
+def run_inference(output, openai_key, debug_sink):
+    template = '''
+                                Please find which stocks will rise in next days based on this json which contains
+                                1 - prev_close: the previous close of the stock
+                                2 - change: the change from yesterday
+                                3 - ADX: the adx
+                                4 - RSI : the RSI
+                                5 - SMA20: the 20 day simple moving average
+                                6 - SMA50: the 50 day simple moving average
+                                7 - SMA200: the 200 day simple moving average
+
+                                Once you finish your analysis, please summarize your finding indicating, for each
+                                stock what is your recommendation and why. 
+                '''
+    instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
+
+    (output | "ToJson" >> beam.Map(to_json_string)
+     | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+     | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+                                                                     instructions))
+     | "Print image_url and annotation" >> debug_sink
+     )
 
 
 def run(argv = None, save_main_session=True):
@@ -334,9 +355,9 @@ def run(argv = None, save_main_session=True):
 
 
             send_email(combined,  known_args.sendgridkey)
-            #fvp = finviz_pipeline(p)
-            #fvp | 'Mapping out fvp' >> beam.Map(logging.info)
-                
+
+            run_inference(tester, known_args.openaikey, sink)
+
 
             
 

@@ -26,6 +26,8 @@ steps:
           , '--parameters'
           ,'sendgridkey=$_SENDGRIDKEY'
           , '--parameters'
+          ,'openaikey=$_OPENAIKEY'
+          , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
           ,'--subnetwork=regions/us-central1/subnetworks/default'
@@ -41,9 +43,10 @@ substitutions:
   _PERIOD: 'annual'
   _LIMIT: '10'
   _SENDGRIDKEY: ''
+  _OPENAIKEY: ''
   _RUNTYPE: ''
   _PROJECT_ID: datascience-projects
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest11
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest12
 
 
 

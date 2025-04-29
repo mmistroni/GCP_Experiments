@@ -2,12 +2,10 @@ import requests
 import logging
 from datetime import datetime
 import apache_beam as beam
-from openai import OpenAI
-
-
-
-
-
+import json
+import openai as openai
+from apache_beam.ml.inference.base import ModelHandler
+from apache_beam.ml.inference.base import RunInference
 
 def get_fields():
     return ["ticker", "date", "currentRatio", "quickRatio", "cashRatio", "calendarYear",
@@ -157,9 +155,6 @@ def get_tickers_for_industry(industry, key):
 
     Industry
 
-
-
-
     '''
 
     url = f'https://financialmodelingprep.com/api/v3/stock-screener?industry={industry}&apikey={key}'
@@ -181,5 +176,42 @@ def get_industries(key):
         inds += sector_inds
 
     return set(inds)
+
+
+def to_json_string(element):
+    def datetime_converter(o):
+        if isinstance(o, datetime):
+            return o.isoformat()  # Convert datetime to ISO 8601 string
+        raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
+    return json.dumps(element, default=datetime_converter)
+
+class SampleOpenAIHandler(ModelHandler):
+  """DoFn that accepts a batch of images as bytearray
+  and sends that batch to the Cloud Vision API for remote inference"""
+  def __init__(self, oai_key, llm_instructions):
+      self.oai_key = oai_key
+      self.llm_instructions = llm_instructions
+
+  def load_model(self):
+    """Initiate the Google Vision API client."""
+    """Initiate the OAI API client."""
+    client =  openai.OpenAI(
+    # This is the default and can be omitted
+        api_key=self.oai_key,
+    )
+    return client
+
+
+  def run_inference(self, batch, model, inference):
+
+
+    response = model.responses.create(
+          model="gpt-4o",
+          instructions=self.llm_instructions,
+          input=batch[0],
+      )
+    return [response.output_text]
+
 
 
