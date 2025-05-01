@@ -361,7 +361,7 @@ def run(argv = None, save_main_session=True):
 
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'colletion3' : keyed_llm}
+                         'collection3' : keyed_llm}
                         | beam.CoGroupByKey())
 
 
