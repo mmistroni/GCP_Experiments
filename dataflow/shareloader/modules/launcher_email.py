@@ -25,8 +25,10 @@ class EmailSender(beam.DoFn):
     def process(self, element):
 
         key, value_dict = element
-        stocks = list(value_dict['collection1'])[0].replace('\n', '')
-        sectors = list(value_dict['collection2'])[0].replace('\n', '')
+        s_list = list(value_dict['collection1'])
+        sec_list = list(value_dict['collection2'])
+        stocks = list(value_dict['collection1'])[0].replace('\n', '') if s_list else ''
+        sectors = list(value_dict['collection2'])[0].replace('\n', '') if sec_list else ''
         try:
             llm = list(value_dict['collection3'])[0].replace('\n', '')
         except Exception as e:

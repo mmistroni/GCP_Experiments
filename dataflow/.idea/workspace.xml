@@ -5,9 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="openai start">
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_obb_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_email.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_email.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +23,6 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 5
