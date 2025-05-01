@@ -118,9 +118,7 @@ class MyTestCase(unittest.TestCase):
 
         assert openai_key is not None
 
-
     def test_anotherllm_on_bean(self):
-
         def combine_to_html_rows(elements):
             from functools import reduce
             combined = reduce(lambda acc, current: acc + current, elements, '')
@@ -141,7 +139,8 @@ class MyTestCase(unittest.TestCase):
             input2 = run_etoro_pipeline(p, key, 0.0001)
 
             template = '''
-                            Please find which stocks will rise in next days based on this json which contains
+                            I will provide you a json string containing a list of stocks.
+                            For each stock i will provide the following information
                             1 - prev_close: the previous close of the stock
                             2 - change: the change from yesterday
                             3 - ADX: the adx
@@ -149,21 +148,22 @@ class MyTestCase(unittest.TestCase):
                             5 - SMA20: the 20 day simple moving average
                             6 - SMA50: the 50 day simple moving average
                             7 - SMA200: the 200 day simple moving average
-                            
+                            Based on that information, please find which stocks which are candidates to rise in next days.
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 
+                            Here is my json
             '''
             instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
             (input2 | "ToJson" >> beam.Map(to_json_string)
-                     | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+             | 'Combine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+             | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
 
-                    | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
-                                                                                      instructions))
-                    | 'Combine' >> beam.CombineGlobally(lambda elements: "".join(elements))
+             | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+                                                                               instructions))
 
-                    | "Print image_url and annotation" >> beam.Map(print)
-                                                   )
+             | "Print image_url and annotation" >> beam.Map(print)
+             )
             # res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)
 

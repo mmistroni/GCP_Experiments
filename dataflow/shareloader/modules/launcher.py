@@ -234,7 +234,8 @@ def create_row(dct):
 
 def run_inference(output, openai_key, debug_sink):
     template = '''
-                                Please find which stocks will rise in next days based on this json which contains
+                                I will provide you a json string containing a list of stocks.
+                                For each stock i will provide the following information
                                 1 - prev_close: the previous close of the stock
                                 2 - change: the change from yesterday
                                 3 - ADX: the adx
@@ -242,20 +243,21 @@ def run_inference(output, openai_key, debug_sink):
                                 5 - SMA20: the 20 day simple moving average
                                 6 - SMA50: the 50 day simple moving average
                                 7 - SMA200: the 200 day simple moving average
-
+                                Based on that information, please find which stocks which are candidates to rise in next days.
                                 Once you finish your analysis, please summarize your finding indicating, for each
                                 stock what is your recommendation and why. 
+                                Here is my json
                 '''
     instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
     (output | "ToJson" >> beam.Map(to_json_string)
+     | 'Combine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
      | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+
      | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
                                                                      instructions))
-     | 'Combine' >> beam.CombineGlobally(lambda elements: "".join(elements))
 
      )
-
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -351,15 +353,20 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
-            combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz}
+            llm_out = run_inference(tester, known_args.openaikey, sink)
+
+            llm_out | sink
+
+            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (2, element))
+
+
+            combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
+                         'colletion3' : keyed_llm}
                         | beam.CoGroupByKey())
 
 
             send_email(combined,  known_args.sendgridkey)
 
-            llm_out = run_inference(tester, known_args.openaikey, sink)
-
-            llm_out | sink
 
             
 

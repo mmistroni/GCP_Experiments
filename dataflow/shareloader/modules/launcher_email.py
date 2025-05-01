@@ -27,7 +27,11 @@ class EmailSender(beam.DoFn):
         key, value_dict = element
         stocks = list(value_dict['collection1'])[0].replace('\n', '')
         sectors = list(value_dict['collection2'])[0].replace('\n', '')
-
+        try:
+            llm = list(value_dict['collection3'])[0].replace('\n', '')
+        except Exception as e:
+            logging.info(f'Faile dto process llm:{str(e)}')
+            llm = str(e)
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
 
         head_str  = '''
@@ -57,9 +61,10 @@ class EmailSender(beam.DoFn):
                        <th>WATCH</th><th>Ticker</th><th>PrevDate</th><th>Prev Close</th><th>Last Date</th><th>Last Close</th><th>Change</th><th>Adx</th><th>RSI</th><th>SMA20</th><th>SMA50</th><th>SMA200</th><th>Broker</th>
                        {}
                     </table>
-                  </body>
+                    <hr/>
+                    <p>{}</p>
                 </html>'''
-        content = template.format(head_str, sectors, stocks)
+        content = template.format(head_str, sectors, stocks, llm)
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
