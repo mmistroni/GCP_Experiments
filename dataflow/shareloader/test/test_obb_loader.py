@@ -10,6 +10,7 @@ from apache_beam.ml.inference.base import RunInference
 from datetime import datetime
 import json
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
+from shareloader.modules.launcher import  run_inference
 
 
 
@@ -166,6 +167,17 @@ class MyTestCase(unittest.TestCase):
              )
             # res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)
+
+    def test_anotherllm_on_bean2(self):
+        key = os.environ['FMPREPKEY']
+        openai_key = os.environ['OPENAI_API_KEY']
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_etoro_pipeline(p, key, 0.0001)
+
+            res = run_inference(input2, openai_key, beam.Map(print))
+            res | "Print image_url and annotation" >> beam.Map(print)
+
 
 
 if __name__ == '__main__':

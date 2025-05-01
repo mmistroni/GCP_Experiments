@@ -250,7 +250,7 @@ def run_inference(output, openai_key, debug_sink):
                 '''
     instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
-    (output | "ToJson" >> beam.Map(to_json_string)
+    return (output | "ToJson" >> beam.Map(to_json_string)
      | 'Combine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
      | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
 
