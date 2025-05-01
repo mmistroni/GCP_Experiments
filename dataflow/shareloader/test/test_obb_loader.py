@@ -11,6 +11,7 @@ from datetime import datetime
 import json
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
 from shareloader.modules.launcher import  run_inference
+from shareloader.modules.launcher_email import  send_email
 
 
 
@@ -178,7 +179,12 @@ class MyTestCase(unittest.TestCase):
             res = run_inference(input2, openai_key, beam.Map(print))
             res | "Print image_url and annotation" >> beam.Map(print)
 
-
+            keyed_etoro = input2 | beam.Map(lambda element: (1, element))
+            keyed_llm = res | 'mapping llm' >> beam.Map(lambda element: (1, element))
+            combined = ({'collection1': keyed_etoro, 'collection2': [],
+                         'collection3': keyed_llm}
+                        | beam.CoGroupByKey())
+            send_email(combined, 'abc')
 
 if __name__ == '__main__':
     unittest.main()

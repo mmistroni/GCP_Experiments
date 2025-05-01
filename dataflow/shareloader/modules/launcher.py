@@ -357,8 +357,7 @@ def run(argv = None, save_main_session=True):
 
             llm_out | sink
 
-            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (2, element))
-
+            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (1, element))
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
                          'collection3' : keyed_llm}
