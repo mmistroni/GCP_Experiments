@@ -18,6 +18,7 @@ class Check(beam.PTransform):
     def expand(self ,pcoll):
       print('Invoking sink....')
       assert_that(pcoll, self._checker)
+      print('Hello World')
 
 
 class EconomicUtilsTestCase(unittest.TestCase):

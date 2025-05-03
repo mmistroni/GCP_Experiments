@@ -153,6 +153,9 @@ class MyTestCase(unittest.TestCase):
                             Based on that information, please find which stocks which are candidates to rise in next days.
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 
+                            At the end of the message, for the stocks  you recommend as buy or watch, you should generate
+                            a json message with fields ticker, action (buy or watch) and an explanation.
+                            OUtput this json String between tags <STARTJSON> and <ENDJSON>
                             Here is my json
             '''
             instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
