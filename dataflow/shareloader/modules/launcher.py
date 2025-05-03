@@ -18,7 +18,7 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn
 from shareloader.modules.launcher_email import EmailSender, send_email
-from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler
+from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 from apache_beam.ml.inference.base import ModelHandler
 from apache_beam.ml.inference.base import RunInference
 
@@ -111,6 +111,23 @@ def get_finviz_schema():
 
     return schema
 
+def get_ai_stocks_schema():
+    field_dict = {
+        "cob": "DATE",
+        "ticker": "STRING",
+        "action": "STRING",
+        "explanation": "STRING"
+    }
+
+    schemaFields = []
+    for fname, ftype in field_dict.items():
+        schemaFields.append({"name": fname, "type": ftype, "mode": "NULLABLE"})
+
+    schema = {
+        "fields": schemaFields
+    }
+
+    return schema
 
 
 def combine_rows(rows):
@@ -234,20 +251,23 @@ def create_row(dct):
 
 def run_inference(output, openai_key, debug_sink):
     template = '''
-                                I will provide you a json string containing a list of stocks.
-                                For each stock i will provide the following information
-                                1 - prev_close: the previous close of the stock
-                                2 - change: the change from yesterday
-                                3 - ADX: the adx
-                                4 - RSI : the RSI
-                                5 - SMA20: the 20 day simple moving average
-                                6 - SMA50: the 50 day simple moving average
-                                7 - SMA200: the 200 day simple moving average
-                                Based on that information, please find which stocks which are candidates to rise in next days.
-                                Once you finish your analysis, please summarize your finding indicating, for each
-                                stock what is your recommendation and why. 
-                                Here is my json
-                '''
+                            I will provide you a json string containing a list of stocks.
+                            For each stock i will provide the following information
+                            1 - prev_close: the previous close of the stock
+                            2 - change: the change from yesterday
+                            3 - ADX: the adx
+                            4 - RSI : the RSI
+                            5 - SMA20: the 20 day simple moving average
+                            6 - SMA50: the 50 day simple moving average
+                            7 - SMA200: the 200 day simple moving average
+                            Based on that information, please find which stocks which are candidates to rise in next days.
+                            Once you finish your analysis, please summarize your finding indicating, for each
+                            stock what is your recommendation and why. 
+                            At the end of the message, for the stocks  you recommend as buy or watch, you should generate
+                            a json message with fields ticker, action (buy or watch) and an explanation.
+                            The json string should be written between a <STARTJSON> and <ENDJSON> tags.
+                            Here is my json
+            '''
     instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
     return (output | "ToJson" >> beam.Map(to_json_string)
@@ -258,6 +278,12 @@ def run_inference(output, openai_key, debug_sink):
                                                                      instructions))
 
      )
+
+def write_to_ai_stocks(pipeline, ai_sink):
+    (pipeline | "ExtractJSONLists" >> beam.Map(extract_json_list)
+              | "Write to AI Sink" >> ai_sink 
+     
+    )
 
 def run(argv = None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -298,6 +324,20 @@ def run(argv = None, save_main_session=True):
             'ignoreUnknownValues': True  # Ignore unknown columns
         }
     )
+
+    ai_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='ai-stocks'),
+        schema=get_ai_stocks_schema(),
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED,
+        additional_bq_parameters={
+            'ignoreUnknownValues': True  # Ignore unknown columns
+        }
+    ) 
+
 
     with beam.Pipeline(options=pipeline_options) as p:
         sink = beam.Map(logging.info)
@@ -357,7 +397,10 @@ def run(argv = None, save_main_session=True):
 
             llm_out | sink
 
-            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (1, element))
+            write_to_ai_stocks(llm_out, ai_sink)
+
+            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (2, element))
+
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
                          'collection3' : keyed_llm}

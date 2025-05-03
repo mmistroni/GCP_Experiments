@@ -186,6 +186,46 @@ def to_json_string(element):
 
     return json.dumps(element, default=datetime_converter)
 
+def extract_json_list(element):
+    """
+    This function attempts to extract a JSON list from a string.
+
+    Args:
+        element (str): The input string, which may or may not contain a JSON list.
+
+    Returns:
+        list:  A list extracted from the string, or an empty list if no valid
+               JSON list is found.
+    """
+    try:
+        # Attempt to parse the entire element as JSON.  This is the most
+        # straightforward approach if the *entire* string is valid JSON.
+        data = json.loads(element)
+        if isinstance(data, list):
+            return data  # Return the list if the whole string is a list.
+        else:
+            return [] # if the whole string is not a list, return empty list
+
+    except json.JSONDecodeError:
+        # If the entire element is not valid JSON, try to find a JSON list *within* the string.
+        try:
+            start_index = element.find('[')
+            end_index = element.rfind(']')
+            if start_index != -1 and end_index != -1 and start_index < end_index:
+                json_string = element[start_index:end_index + 1]
+                data = json.loads(json_string)
+                if isinstance(data, list):
+                  return data
+                else:
+                   return []
+            else:
+                return []
+        except json.JSONDecodeError:
+            # If no valid JSON list is found, return an empty list.
+            return []
+    except TypeError:
+        return []
+
 class SampleOpenAIHandler(ModelHandler):
   """DoFn that accepts a batch of images as bytearray
   and sends that batch to the Cloud Vision API for remote inference"""

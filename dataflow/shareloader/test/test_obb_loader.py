@@ -10,8 +10,8 @@ from apache_beam.ml.inference.base import RunInference
 from datetime import datetime
 import json
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
-from shareloader.modules.launcher import  run_inference
-from shareloader.modules.launcher_email import  send_email
+from unittest.mock import patch
+import argparse
 
 
 
@@ -23,6 +23,8 @@ class OpenAIClient:
 
     def __init__(self, openai_key):
         self.oai_key =  openai_key
+
+
 
     def process_request(self, request):
         try:
@@ -71,6 +73,14 @@ class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.debugSink = beam.Map(print)
 
+        self.patcher = patch('dataflow.edgar_flow.modules.edgar_daily_form4.XyzOptions._add_argparse_args')
+        self.mock_foo = self.patcher.start()
+        parser = argparse.ArgumentParser(add_help=False)
+
+    def tearDown(self):
+        self.patcher.stop()
+
+
     def test_sample_pipeline(self):
         credentials = {'key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
@@ -100,7 +110,7 @@ class MyTestCase(unittest.TestCase):
     def test_combine_pipeline(self):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
-        with TestPipeline(options=PipelineOptions()) as p:
+        with TestPipeline() as p:
             input = (p | 'Start' >> beam.Create(['AAPL,NVDA,AMZN,T'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.001))
                      | 'maps' >> beam.Map(lambda d: d['ticker'])
@@ -121,6 +131,9 @@ class MyTestCase(unittest.TestCase):
         assert openai_key is not None
 
     def test_anotherllm_on_bean(self):
+        import argparse
+        parser = argparse.ArgumentParser(add_help=False)
+
         def combine_to_html_rows(elements):
             from functools import reduce
             combined = reduce(lambda acc, current: acc + current, elements, '')
@@ -155,7 +168,7 @@ class MyTestCase(unittest.TestCase):
                             stock what is your recommendation and why. 
                             At the end of the message, for the stocks  you recommend as buy or watch, you should generate
                             a json message with fields ticker, action (buy or watch) and an explanation.
-                            OUtput this json String between tags <STARTJSON> and <ENDJSON>
+                            The json string should be written between a <STARTJSON> and <ENDJSON> tags.
                             Here is my json
             '''
             instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
@@ -172,22 +185,37 @@ class MyTestCase(unittest.TestCase):
             # res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)
 
-    def test_anotherllm_on_bean2(self):
-        key = os.environ['FMPREPKEY']
-        openai_key = os.environ['OPENAI_API_KEY']
+    def test_parse_json_text(self):
+        sample = '''json
+                <STARTJSON>
+                [
+                    {"ticker": "ADMA", "action": "buy", "explanation": "Trading above moving averages; RSI is at a reasonable level."},
+                    {"ticker": "APH", "action": "watch", "explanation": "Overbought RSI; monitor for correction."},
+                    {"ticker": "AVGO", "action": "buy", "explanation": "Strong movement above 20 and near 50-day SMA; upwards momentum."},
+                    {"ticker": "CTRE", "action": "buy", "explanation": "Close to 50-day SMA with moderate RSI."},
+                    {"ticker": "CVNA", "action": "watch", "explanation": "High RSI indicating overbought conditions; trading well above averages."},
+                    {"ticker": "DRD", "action": "buy", "explanation": "Low RSI suggesting nearing oversold; short-term upward potential."},
+                    {"ticker": "SE", "action": "watch", "explanation": "Strong momentum but overbought RSI; caution required."},
+                    {"ticker": "SRPT", "action": "watch", "explanation": "High ADX indicating a strong trend; RSI neutral."}
+                ]
+                <ENDJSON>'''
+        jsonval = sample[sample.find('<STARTJSON>') + 11: sample.find('<ENDJSON')]
+        dat = json.loads(jsonval)
+
+        def update_dictionary(element):
+            element['cob'] = date.today().isoformat() 
+            return element
+        
 
         with TestPipeline(options=PipelineOptions()) as p:
-            input2 = run_etoro_pipeline(p, key, 0.0001)
+            input = (p | 'Start' >> beam.Create(dat)
+                       | 'Add cob' >> beam.Map(update_dictionary)
+                       | 'To Sink' >> beam.Map(print)
+            )
 
-            res = run_inference(input2, openai_key, beam.Map(print))
-            res | "Print image_url and annotation" >> beam.Map(print)
+        
+        print(dat)
 
-            keyed_etoro = input2 | beam.Map(lambda element: (1, element))
-            keyed_llm = res | 'mapping llm' >> beam.Map(lambda element: (1, element))
-            combined = ({'collection1': keyed_etoro, 'collection2': [],
-                         'collection3': keyed_llm}
-                        | beam.CoGroupByKey())
-            send_email(combined, 'abc')
 
 if __name__ == '__main__':
     unittest.main()
