@@ -65,7 +65,15 @@ class XyzOptions(PipelineOptions):
         parser.add_argument('--recipients', default='mmistroni@gmail.com')
         parser.add_value_provider_argument('--quarters', type=str,
                                            default='QTR1,QTR2,QTR3,QTR4')
-        parser.add_argument('--key')
+        #parser.add_argument('--key')
+
+def parse_known_args(argv):
+    """Parses args for the workflow."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--key')
+    parser.add_argument('--recipients', default='mmistroni@gmail.com')
+    parser.add_argument('--quarters', type=str, default='QTR1,QTR2,QTR3,QTR4')
+    return parser.parse_known_args(argv)
 
 def find_current_quarter(current_date):
     quarter_dictionary = {
@@ -131,11 +139,11 @@ def filter_form_4(source, qtr=''):
             | 'replacing eol on form4_{}'.format(qtr) >> beam.Map(lambda p_tpl: (p_tpl[0], p_tpl[1][0:p_tpl[1].find('\\n')]))
     )
 
-def send_email(lines, pipeline_options):
+def send_email(lines, recipients, key):
     email = (
             lines
             | 'Combining to get top 30' >> beam.CombineGlobally(EdgarCombineFnForm4())
-            | 'SendEmail' >> beam.ParDo(EmailSender(pipeline_options.recipients, pipeline_options.key))
+            | 'SendEmail' >> beam.ParDo(EmailSender(recipients, key))
     )
 
 
@@ -182,12 +190,13 @@ def run(argv=None, save_main_session=True):
     timeout_secs = 10800
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
-    pipeline_options = XyzOptions()
-    pipeline_options.view_as(SetupOptions).save_main_session = True
-    pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
+    known_args, pipeline_args = parse_known_args(argv)
+    pipeline_optionss = PipelineOptions(pipeline_args)
+    pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
+    logging.info(f'fmp key:{known_args.key}')
 
     logging.info('starting pipeline..')
-    with beam.Pipeline(options=pipeline_options) as p:
+    with beam.Pipeline(options=pipeline_optionss) as p:
         source = (p  | 'Startup' >> beam.Create(['start_token'])
                      |'Add current date' >> beam.Map(find_current_day_url)
                   )
@@ -196,7 +205,6 @@ def run(argv=None, save_main_session=True):
         form4 = filter_form_4(lines)
         enhanced_data = enhance_form_4(form4)
         logging.info('Now sendig meail....')
-        #send_email(enhanced_data, pipeline_options)
-        write_to_form4_bucket(enhanced_data, pipeline_options)
+        write_to_form4_bucket(enhanced_data)
         write_to_form4_bq(enhanced_data)
 
