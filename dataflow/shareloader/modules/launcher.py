@@ -281,6 +281,8 @@ def run_inference(output, openai_key, debug_sink):
 
 def write_to_ai_stocks(pipeline, ai_sink):
     (pipeline | "ExtractJSONLists" >> beam.Map(extract_json_list)
+              | "Map to bq dict" >> (lambda d: dict(cob=date.today(), ticker=d.get('ticker', ''),
+                                                    action=d.get('action', ''), explanation=d.get('explanation', '')))
               | "Write to AI Sink" >> ai_sink 
      
     )
@@ -399,7 +401,7 @@ def run(argv = None, save_main_session=True):
 
             write_to_ai_stocks(llm_out, ai_sink)
 
-            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (2, element))
+            keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (1, element))
 
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
