@@ -31,7 +31,7 @@ class EmailSender(beam.DoFn):
         sectors = list(value_dict['collection2'])[0].replace('\n', '') if sec_list else ''
         try:
             llm = list(value_dict['collection3'])[0].replace('\n', '<br>')
-            llm = llm[0:llm.find("<JSONSTRING>")]
+            llm = llm[0:llm.find("<STARTJSON>")]
         except Exception as e:
             logging.info(f'Faile dto process llm:{str(e)}')
             llm = str(e)

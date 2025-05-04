@@ -399,7 +399,7 @@ def run(argv = None, save_main_session=True):
 
             llm_out | sink
 
-            write_to_ai_stocks(llm_out, ai_sink)
+            write_to_ai_stocks(llm_out, sink)
 
             keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (1, element))
 
