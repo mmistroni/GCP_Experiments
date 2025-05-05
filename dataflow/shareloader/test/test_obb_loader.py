@@ -12,6 +12,7 @@ import json
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
 from unittest.mock import patch
 import argparse
+from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 
 
 
@@ -73,12 +74,6 @@ class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.debugSink = beam.Map(print)
 
-        self.patcher = patch('dataflow.edgar_flow.modules.edgar_daily_form4.XyzOptions._add_argparse_args')
-        self.mock_foo = self.patcher.start()
-        parser = argparse.ArgumentParser(add_help=False)
-
-    def tearDown(self):
-        self.patcher.stop()
 
 
     def test_sample_pipeline(self):
@@ -208,8 +203,12 @@ class MyTestCase(unittest.TestCase):
         
 
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(dat)
-                       | 'Add cob' >> beam.Map(update_dictionary)
+            input = (p | 'Start' >> beam.Create([sample])
+                       | "ExtractJSONLists" >> beam.FlatMap(extract_json_list)
+                       | "Map to bq dict" >> beam.Map(lambda d: dict(cob=date.today(), ticker=d.get('ticker', ''),
+                                                    action=d.get('action', ''), 
+                                                    explanation=d.get('explanation', '')))
+              
                        | 'To Sink' >> beam.Map(print)
             )
 

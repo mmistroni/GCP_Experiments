@@ -58,15 +58,6 @@ form_type = '4'
 
 EDGAR_URL = 'https://www.sec.gov/Archives/edgar/daily-index/{year}/{quarter}/master.{current}.idx'
 
-class XyzOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_value_provider_argument('--quarters', type=str,
-                                           default='QTR1,QTR2,QTR3,QTR4')
-        #parser.add_argument('--key')
-
 def parse_known_args(argv):
     """Parses args for the workflow."""
     parser = argparse.ArgumentParser()
