@@ -282,7 +282,8 @@ def run_inference(output, openai_key, debug_sink):
 def write_to_ai_stocks(pipeline, ai_sink):
     (pipeline | "ExtractJSONLists" >> beam.Map(extract_json_list)
               | "Map to bq dict" >> beam.Map(lambda d: dict(cob=date.today(), ticker=d.get('ticker', ''),
-                                                    action=d.get('action', ''), explanation=d.get('explanation', '')))
+                                                    action=d.get('action', ''), 
+                                                    explanation=d.get('explanation', '')))
               | "Write to AI Sink" >> ai_sink 
      
     )
