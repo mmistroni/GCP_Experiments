@@ -13,6 +13,7 @@ from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
 from unittest.mock import patch
 import argparse
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
+from shareloader.modules.launcher_pipelines import run_inference
 
 
 
@@ -214,6 +215,20 @@ class MyTestCase(unittest.TestCase):
 
         
         print(dat)
+
+    def test_run_inference_pipeline(self):
+        import argparse
+        parser = argparse.ArgumentParser(add_help=False)
+
+        key = os.environ['FMPREPKEY']
+        openai_key = os.environ['OPENAI_API_KEY']
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_etoro_pipeline(p, key, 0.0001)
+
+            res = run_inference(input2, openai_key, beam.Map(print))
+            
+            res | beam.Map(print)
 
 
 if __name__ == '__main__':
