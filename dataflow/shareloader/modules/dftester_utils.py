@@ -200,7 +200,8 @@ def extract_json_list(element):
     try:
         # Attempt to parse the entire element as JSON.  This is the most
         # straightforward approach if the *entire* string is valid JSON.
-        data = json.loads(element)
+        jsonstring = element[element.find('<JSONSTART>') + 11 : element.find('<JSONEND')]
+        data = json.loads(jsonstring)
         if isinstance(data, list):
             return data  # Return the list if the whole string is a list.
         else:
