@@ -270,11 +270,11 @@ def run_inference(output, openai_key, debug_sink):
             '''
     instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
 
-    return (output | "ToJson" >> beam.Map(to_json_string)
-     | 'Combine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
-     | 'anotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+    return (output | "xxToJson" >> beam.Map(to_json_string)
+     | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+     | 'xxanotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
 
-     | "Inference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+     | "xInference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
                                                                      instructions))
 
      )
@@ -400,13 +400,14 @@ def run(argv = None, save_main_session=True):
 
             llm_out | sink
 
-            write_to_ai_stocks(llm_out, sink)
+            #write_to_ai_stocks(llm_out, sink)
 
             keyed_llm = llm_out | 'mapping llm' >> beam.Map(lambda element: (1, element))
 
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'collection3' : keyed_llm}
+                         #'collection3' : keyed_llm
+                         }
                         | beam.CoGroupByKey())
 
 
