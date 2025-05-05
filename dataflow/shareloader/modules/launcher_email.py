@@ -36,7 +36,7 @@ class EmailSender(beam.DoFn):
             logging.info(f'Faile dto process llm:{str(e)}')
             llm = str(e)
         logging.info('Attepmting to send emamil to:{self.recipient} with diff {msg}')
-
+        logging.info(f'collection 3 is\n{llm}')
         head_str  = '''
                     <head>
                         <style>
