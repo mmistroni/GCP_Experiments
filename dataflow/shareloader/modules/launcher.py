@@ -353,8 +353,8 @@ def run(argv = None, save_main_session=True):
                    | 'etoro to finvizsink' >> finviz_sink)
 
 
-            all_pipelines =  (tester, etoro, stp) |  "fmaprun all" >> beam.Flatten()
-            premarket_results =  all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
+            all_pipelines =  ((tester, etoro, stp) |  "fmaprun all" >> beam.Flatten())
+            premarket_results =  (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
