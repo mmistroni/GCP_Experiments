@@ -296,6 +296,7 @@ def run_shillers(p):
              | 'getting shillers' >> beam.FlatMap(lambda d: get_shiller_indexes())
              )
 
+
 def run_sp500multiples(p):
     return (p | 'Start sp500' >> beam.Create(['shiller_pe_month', 'pe_month', 'earnings_growth_year'])
                      | 'Run Loader sp500' >> beam.ParDo(AsyncProcessSP500Multiples({}))
@@ -434,7 +435,7 @@ def run(argv=None, save_main_session=True):
 
         shillers = run_shillers(p)
 
-        sp500_multi = run_sp500multiples(p)
+        #sp500_multi = run_sp500multiples(p)
 
 
         adv_decline_nyse = run_advance_decline(p , 'NYSE')
@@ -495,7 +496,7 @@ def run(argv=None, save_main_session=True):
         fed_funds_key = fed_funds | 'Add ff' >> beam.Map(lambda d: (32, d))
         cons_res_key = consumer_res | 'Add cres' >> beam.Map(lambda d: (33, d))
         shillers_key = shillers | 'add shillers' >> beam.Map(lambda d: (34, d))
-        sp500_key = sp500_multi | 'add sp500 multi' >> beam.Map(lambda d: (36, d))
+        #sp500_key = sp500_multi | 'add sp500 multi' >> beam.Map(lambda d: (36, d))
 
         sd_key = senate_disc | 'Add sd' >> beam.Map(lambda d: (44, d))
 
@@ -517,7 +518,7 @@ def run(argv=None, save_main_session=True):
                         adv_decline_key_nys_200,
                         
                         shillers_key, highlow_key,
-                        sp500_key,
+                        #sp500_key,
                         cftc_key,  vix_key, sd_key, growth_vs_val_key,
                         fed_funds_key, cons_res_key,
                         static_key, stats_key,
