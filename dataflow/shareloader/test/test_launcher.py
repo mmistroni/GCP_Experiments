@@ -24,9 +24,11 @@ class MyTestCase(unittest.TestCase):
     def test_etoro(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
-            etoro = run_etoro_pipeline(p, key)
+            #etoro = run_etoro_pipeline(p, key)
 
-            final = ( (etoro, etoro)
+            tester = run_test_pipeline(p, key)
+
+            final = ( (tester, tester)
                       | 'FlattenCombine all' >> beam.Flatten()
                       | 'Combine' >> beam.CombineGlobally(StockSelectionCombineFn())
                       | 'Output' >> self.debugSink

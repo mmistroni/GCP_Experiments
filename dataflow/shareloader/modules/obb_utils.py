@@ -261,7 +261,9 @@ class AsyncProcess(beam.DoFn):
                 else:
                     logging.info(f'No result sfor {t}')
             except Exception as e:
+                import time
                 logging.info(f' x Failed to fetch data for {t}:{str(e)}')
+                time.sleep(60)
         logging.info(f'Returningn records with :{len(all_records)}')
         return all_records
 
