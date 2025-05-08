@@ -238,7 +238,6 @@ class AsyncProcess(beam.DoFn):
         '''
 
         for t in ticks:
-            time.sleep(5)
             params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
 
