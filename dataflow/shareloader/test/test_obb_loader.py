@@ -92,13 +92,13 @@ class MyTestCase(unittest.TestCase):
         import time
 
         tickers = ["AAPL"
-                   #, "GOOG", "MSFT"
+                   , "GOOG", "MSFT"
                    ]
         data = {}
 
         for ticker in tickers:
             try:
-                data[ticker] = yf.download(ticker)
+                data = yf.download(','.join(tickers))
                 time.sleep(2)  # Wait for 2 seconds after each request
             except yf.exceptions.YFRateLimitError as e:
                 print(f"Rate limit hit: {e}")

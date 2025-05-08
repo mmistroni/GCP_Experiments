@@ -213,6 +213,30 @@ class AsyncProcess(beam.DoFn):
 
         ticks = element.split(',')
         all_records = []
+
+        '''
+                    items = concatenated_string.split(delimiter)
+                    batches = []
+                    for i in range(0, len(items), batch_size):
+                        batch = items[i : i + batch_size]
+                        batches.append(batch)
+                    return batches
+
+                    #we need to query in batches and then extract series for each ticker
+                    #   
+                    # 
+                    ticker_dict = {}  
+                    for ticker in df.columns:
+                        ticker_series = df[ticker]
+                        ticker_dict[ticker] = ticker_series
+                        print(f"Series for ticker: {ticker}")
+                        print(ticker_series.head())
+                        print("\n---")
+                    # now caarry on with the loop below
+                        
+        
+        '''
+
         for t in ticks:
             time.sleep(5)
             params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
