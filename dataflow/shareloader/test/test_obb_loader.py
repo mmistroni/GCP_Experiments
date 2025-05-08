@@ -81,11 +81,40 @@ class MyTestCase(unittest.TestCase):
         credentials = {'key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(['EBAY'])
+            input = (p | 'Start' >> beam.Create(['EBAY,AAPL,MSFT,NFLX,XOM,IBM,WMT'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.00001))
                      | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
                      | self.debugSink
                      )
+
+    def test_yfinance(self):
+        import yfinance as yf
+        import time
+
+        tickers = ["AAPL"
+                   #, "GOOG", "MSFT"
+                   ]
+        data = {}
+
+        for ticker in tickers:
+            try:
+                data[ticker] = yf.download(ticker)
+                time.sleep(2)  # Wait for 2 seconds after each request
+            except yf.exceptions.YFRateLimitError as e:
+                print(f"Rate limit hit: {e}")
+                print("Waiting for a while...")
+                time.sleep(60)  # Wait for 60 seconds before retrying (or exiting)
+                try:
+                    data[ticker] = yf.download(ticker) # Attempt retry
+                except yf.exceptions.YFRateLimitError as e_retry:
+                    print(f"Rate limit still hit after waiting: {e_retry}")
+                    # Handle the persistent rate limit error (e.g., exit or wait longer)
+                    break
+            except Exception as e:
+                print(f"An error occurred for {ticker}: {e}")
+
+        print(data)
+
 
     def test_sample_pipeline2(self):
         credentials = {'fmp_api_key' : os.environ['FMPREPKEY']}
