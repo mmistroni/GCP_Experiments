@@ -230,43 +230,11 @@ def get_graham_defensive():
                     'Debt/Equity': 'Under 1',
                     'P/E': 'Low (<15)',
                     'InstitutionalOwnership': 'Under 60%',
-                    'EPS growthpast5 years' : 'Positive(>0'
+                    'EPS growthpast 5 years' : 'Positive (>0%)'
                     }
-    data =  _run_screener(filters_dict)
-
-    keys = [k for k in data[0].keys()] if data else []
-
-    extra_keys = ['debtOverCapital', 'dividendPaid', 'epsGrowth',
-                  'positiveEps' , 'priceToBookRatio']
-
-    new_keys = keys +  extra_keys
-
-    # Need to group all these params in 1-2 fmp calls
-
-    '''
-
-    new_data = []
-    for finviz_dict in data:
-        ticker = finviz_dict['Ticker']
-        bench_data = get_balancesheet_benchmark(ticker, fmpKey)
-        divi_data = get_dividend_paid(ticker, fmpKey)
-        income_data = get_income_benchmark(ticker, fmpKey)
-        financial_ratios_benchmark = get_financial_ratios_benchmark(ticker, fmpKey)
-        if bench_data:
-            finviz_dict.update(bench_data)
-        if divi_data:
-            finviz_dict.update(divi_data)
-        if income_data:
-            finviz_dict.update(income_data)
-        if financial_ratios_benchmark:
-            finviz_dict.update(financial_ratios_benchmark)
-
-        out_dict = dict((k, v) for k, v in finviz_dict.items() if k in new_keys)
-        new_data.append(out_dict)
+    return  _run_screener(filters_dict)
 
 
-    return new_data
-    '''
 def get_extra_watchlist():
     '''
     Descriptive Parameters:
