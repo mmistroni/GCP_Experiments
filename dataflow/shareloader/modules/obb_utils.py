@@ -10,6 +10,7 @@ import asyncio
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
+import time
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -213,9 +214,11 @@ class AsyncProcess(beam.DoFn):
         ticks = element.split(',')
         all_records = []
         for t in ticks:
+            time.sleep(5)
             params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
 
+            
             logging.info(f'Attempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
