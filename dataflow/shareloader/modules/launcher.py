@@ -342,18 +342,18 @@ def run(argv = None, save_main_session=True):
             (tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
                     | 'tster to finviz sink' >>  finviz_sink)
 
-            etoro = run_etoro_pipeline(p, known_args.fmprepkey)
+            #etoro = run_etoro_pipeline(p, known_args.fmprepkey)
 
-            etoro | 'etoro to sink' >> sink
+            #etoro | 'etoro to sink' >> sink
 
-            stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
-            stp | 'stp to sink' >> sink
+            #stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
+            #stp | 'stp to sink' >> sink
 
-            (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-                   | 'etoro to finvizsink' >> finviz_sink)
+            #(etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+            #       | 'etoro to finvizsink' >> finviz_sink)
 
 
-            all_pipelines =  ((tester, etoro, stp) |  "fmaprun all" >> beam.Flatten())
+            all_pipelines = tester #, etoro, stp) |  "fmaprun all" >> beam.Flatten())
             premarket_results =  (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
