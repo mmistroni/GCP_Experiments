@@ -242,7 +242,7 @@ class AsyncProcess(beam.DoFn):
                             end_date=self.end_date)
 
             
-            logging.info(f'Attempting to retrieve data for {t}')
+            logging.info(f'xxxttempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
                 # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
