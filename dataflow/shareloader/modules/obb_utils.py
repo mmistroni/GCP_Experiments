@@ -256,13 +256,13 @@ class AsyncProcess(beam.DoFn):
 
                 # we can include adx and rsi,but we need to fetch it from a different run
                 if result:
-                    logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
+                    #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
                     last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                             self.start_date.day,16, 0)][0]
                     latest = result[-1]
                     increase = latest['close'] / last_close['close']
                     if increase > (1 + self.price_change):
-                        logging.info(f'Adding ({t}):{latest}')
+                        #logging.info(f'Adding ({t}):{latest}')
                         latest['ticker'] = t
                         latest['symbol'] = t
                         latest['prev_date'] = last_close['date']
@@ -273,7 +273,7 @@ class AsyncProcess(beam.DoFn):
                         tech_dict = self.get_adx_and_rsi(t)
                         profile = self.get_profile(t)
                         latest.update(profile)
-                        logging.info(f'{t} getting SMAS')
+                        #logging.info(f'{t} getting SMAS')
                         smas = self.calculate_smas(t)
                         latest.update(tech_dict)
                         latest.update(smas)
@@ -293,7 +293,7 @@ class AsyncProcess(beam.DoFn):
         return all_records
 
     def process(self, element: str):
-        logging.info(f'Input elements:{element}')
+        #logging.info(f'Input elements:{element}')
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
 
