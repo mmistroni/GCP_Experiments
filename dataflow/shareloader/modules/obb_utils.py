@@ -130,7 +130,7 @@ class ProcessHistorical(beam.DoFn):
 
 class AsyncProcess(beam.DoFn):
 
-    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500'):
+    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500', batchsize=20):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
         self.end_date = start_date
@@ -138,6 +138,7 @@ class AsyncProcess(beam.DoFn):
         self.price_change = price_change
         self.selection = selection
         self.fmpKey = credentials['key']
+        self.batch_size = batchsize
 
 
     def get_adx_and_rsi(self, ticker):
@@ -214,6 +215,11 @@ class AsyncProcess(beam.DoFn):
         ticks = element.split(',')
         all_records = []
 
+        items = element.split(',')
+        batches = []
+        for i in range(0, len(items), self.batch_size):
+            batch = items[i : i + self.batch_size]
+            batches.append(batch)
         '''
                     items = concatenated_string.split(delimiter)
                     batches = []
@@ -236,13 +242,12 @@ class AsyncProcess(beam.DoFn):
                         
         
         '''
-
-        for t in ticks:
-            params = dict(symbol=t, interval='1h', extended_hours=True, start_date=self.start_date,
+        for b in batches:
+            params = dict(symbol=','.join(b), interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
 
             
-            logging.info(f'xxxttempting to retrieve data for {t}')
+            #logging.info(f'xxxttempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
                 # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
@@ -254,41 +259,45 @@ class AsyncProcess(beam.DoFn):
                 data = await self.fetcher.fetch_data(params, {})
                 result =  [d.model_dump(exclude_none=True) for d in data]
 
+                for ticker in b:
+                    ticker_result = [d for d in result if d['symbol'] == ticker]
                 # we can include adx and rsi,but we need to fetch it from a different run
-                if result:
-                    #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
-                    last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
-                                                                            self.start_date.day,16, 0)][0]
-                    latest = result[-1]
-                    increase = latest['close'] / last_close['close']
-                    if increase > (1 + self.price_change):
-                        #logging.info(f'Adding ({t}):{latest}')
-                        latest['ticker'] = t
-                        latest['symbol'] = t
-                        latest['prev_date'] = last_close['date']
-                        latest['prev_close'] = last_close['close']
-                        latest['change'] = increase
-                        latest['selection'] = self.selection
+                    if ticker_result:
+                        #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
+                        last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
+                                                                                self.start_date.day,16, 0)][0]
+                        latest = result[-1]
+                        increase = latest['close'] / last_close['close']
+                        if increase > (1 + self.price_change):
+                            #logging.info(f'Adding ({t}):{latest}')
+                            latest['ticker'] = ticker
+                            latest['symbol'] = ticker
+                            latest['prev_date'] = last_close['date']
+                            latest['prev_close'] = last_close['close']
+                            latest['change'] = increase
+                            latest['selection'] = self.selection
 
-                        tech_dict = self.get_adx_and_rsi(t)
-                        profile = self.get_profile(t)
-                        latest.update(profile)
-                        #logging.info(f'{t} getting SMAS')
-                        smas = self.calculate_smas(t)
-                        latest.update(tech_dict)
-                        latest.update(smas)
-                        if latest['close'] > latest['SMA20']:
-                            latest['highlight'] = 'True'
+                            tech_dict = self.get_adx_and_rsi(ticker)
+                            profile = self.get_profile(ticker)
+                            latest.update(profile)
+                            #logging.info(f'{t} getting SMAS')
+                            smas = self.calculate_smas(ticker)
+                            latest.update(tech_dict)
+                            latest.update(smas)
+                            if latest['close'] > latest['SMA20']:
+                                latest['highlight'] = 'True'
 
 
-                        all_records.append(latest)
-                    else:
-                        logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
+                            all_records.append(latest)
+                        else:
+                            continue
+                            #logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
                 else:
-                    logging.info(f'No result sfor {t}')
+                    #logging.info(f'No result sfor {t}')
+                    continue
             except Exception as e:
                 import time
-                logging.info(f' x Failed to fetch data for {t}:{str(e)}')
+                logging.info(f' x Failed to fetch data for {b}:{str(e)}')
         logging.info(f'Returningn records with :{len(all_records)}')
         return all_records
 
