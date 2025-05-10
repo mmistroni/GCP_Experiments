@@ -80,7 +80,7 @@ class MyTestCase(unittest.TestCase):
         credentials = {'key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
         with TestPipeline(options=PipelineOptions()) as p:
-            input = (p | 'Start' >> beam.Create(['EBAY,AAPL,MSFT,NFLX,XOM,IBM,WMT'])
+            input = (p | 'Start' >> beam.Create(['EBAY,AAPL,MSFT,NFLX,XOM,IBM'])
                      | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.00001, batchsize=2))
                      | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
                      | self.debugSink

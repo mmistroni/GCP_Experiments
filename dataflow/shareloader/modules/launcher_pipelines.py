@@ -42,7 +42,7 @@ def run_swingtrader_pipeline(p, fmpkey):
                 | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1))
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1, selection='SwingTrader'))
              )
 
 def run_test_pipeline(p, fmpkey):
