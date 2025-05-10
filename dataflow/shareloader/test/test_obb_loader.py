@@ -82,7 +82,7 @@ class MyTestCase(unittest.TestCase):
         cob = date(2024, 10, 4)
         with TestPipeline(options=PipelineOptions()) as p:
             input = (p | 'Start' >> beam.Create(['EBAY,AAPL,MSFT,NFLX,XOM,IBM,WMT'])
-                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.00001))
+                     | 'Run Loader' >> beam.ParDo(AsyncProcess(credentials, cob ,price_change=0.00001, batchsize=2))
                      | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
                      | self.debugSink
                      )

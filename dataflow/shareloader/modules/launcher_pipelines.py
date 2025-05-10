@@ -8,7 +8,7 @@ from shareloader.modules.superperformers import combine_tickers
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return
 from datetime import datetime
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
-                                            get_eod_screener
+                                            get_eod_screener, get_new_highs
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
@@ -45,7 +45,6 @@ def run_swingtrader_pipeline(p, fmpkey):
                | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1))
              )
 
-
 def run_test_pipeline(p, fmpkey):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)
@@ -57,7 +56,7 @@ def run_test_pipeline(p, fmpkey):
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
-    test_ppln = get_universe_stocks()
+    test_ppln = get_new_highs() #get_universe_stocks()
     return  (p  | 'Starting etoro' >> beam.Create(get_universe_stocks())
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
