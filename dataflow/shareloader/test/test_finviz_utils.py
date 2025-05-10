@@ -5,7 +5,7 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_high_low, overnight_return, get_advance_decline,\
                                             get_buffett_six, get_finviz_obb_data, get_advance_decline_sma, \
                                             AsyncProcessFinviz, _run_screener, get_universe_stocks, \
-                                            get_eod_screener
+                                            get_eod_screener, get_peter_lynch
 
 from pprint import pprint
 import os
@@ -41,6 +41,10 @@ class MyTestCase(unittest.TestCase):
 
     def test_universe(self):
         rres = get_universe_stocks()
+        print(rres)
+
+    def test_peter_lynch(self):
+        rres = get_peter_lynch()
         print(rres)
 
 
