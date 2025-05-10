@@ -76,7 +76,6 @@ class MyTestCase(unittest.TestCase):
         self.debugSink = beam.Map(print)
 
 
-
     def test_sample_pipeline(self):
         credentials = {'key' : os.environ['FMPREPKEY']}
         cob = date(2024, 10, 4)
