@@ -349,6 +349,10 @@ def run(argv = None, save_main_session=True):
             stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
             stp | 'stp to sink' >> sink
 
+            (stp | 'stp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                   | 'stp to finvizsink' >> finviz_sink)
+
+
             (etoro | 'etorotester mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'etoro to finvizsink' >> finviz_sink)
 

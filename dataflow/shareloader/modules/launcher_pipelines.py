@@ -8,7 +8,7 @@ from shareloader.modules.superperformers import combine_tickers
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return
 from datetime import datetime
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
-                                            get_eod_screener, get_new_highs
+                                            get_eod_screener, get_new_highs, get_peter_lynch
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
@@ -42,7 +42,7 @@ def run_swingtrader_pipeline(p, fmpkey):
                 | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1))
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1, selection='SwingTrader'))
              )
 
 def run_test_pipeline(p, fmpkey):
@@ -56,12 +56,20 @@ def run_test_pipeline(p, fmpkey):
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
-    test_ppln = get_new_highs() #get_universe_stocks()
-    return  (p  | 'Starting etoro' >> beam.Create(get_universe_stocks())
+    return  (p  | 'Starting etoro' >> beam.Create(get_new_highs())
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
                | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
+             )
+
+def run_peterlynch_pipeline(p, fmpkey, tolerance=0.1):
+    cob = date.today()
+    return  (p  | 'Starting plynch' >> beam.Create(get_peter_lynch())
+                | 'PeterLynch extra ticker' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering plynch' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all plyncch' >> beam.CombineGlobally(lambda x: ','.join(x))
+               | 'PLynch' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='Peter Lynch'))
              )
 
 def finviz_pipeline(p):

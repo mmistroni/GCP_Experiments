@@ -293,6 +293,31 @@ def get_extra_watchlist():
 
     return _run_screener(filters_dict)
 
+def get_peter_lynch():
+    '''
+    Market cap >Rs 500 crore 100m
+    Debt-to-equity 1 for financial prudence
+    ROE >15 per cent for capital efficiency
+    Five-year EPS growth between 15-30 per cent
+    Institutional holding 30 per cent to spot off-the-radar stocks
+    P/E 15
+    Inventory growth 1.2 times revenue growth for operational discipline
+    '''
+    filters_dict = {'Market Cap.':'+Small (over $300mln)',
+                    'Average Volume' : 'Over 200K',
+                    'Price' : 'Over $10',
+                    'Current Ratio': 'Over 1',
+                    'Debt/Equity': 'Under 1',
+                    'P/E': 'Low (<15)',
+                    'Return on Equity': 'Over +20%',
+                    'EPS growthpast 5 years' : 'Over 20%'
+
+                    }
+  
+    return _run_screener(filters_dict)
+
+
+
 def get_new_highs():
     # Categories > Money, Banking, & Finance > Interest Rates > Corporate Bonds
     # https://fred.stlouisfed.org/series/BAMLH0A0HYM2

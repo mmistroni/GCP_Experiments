@@ -219,34 +219,12 @@ class AsyncProcess(beam.DoFn):
         batches = []
         for i in range(0, len(items), self.batch_size):
             batch = items[i : i + self.batch_size]
+
             batches.append(batch)
-        '''
-                    items = concatenated_string.split(delimiter)
-                    batches = []
-                    for i in range(0, len(items), batch_size):
-                        batch = items[i : i + batch_size]
-                        batches.append(batch)
-                    return batches
-
-                    #we need to query in batches and then extract series for each ticker
-                    #   
-                    # 
-                    ticker_dict = {}  
-                    for ticker in df.columns:
-                        ticker_series = df[ticker]
-                        ticker_dict[ticker] = ticker_series
-                        print(f"Series for ticker: {ticker}")
-                        print(ticker_series.head())
-                        print("\n---")
-                    # now caarry on with the loop below
-                        
-        
-        '''
         for b in batches:
-            params = dict(symbol=','.join(b), interval='1h', extended_hours=True, start_date=self.start_date,
+            symbol = ','.join(b)
+            params = dict(symbol=symbol, interval='1h', extended_hours=True, start_date=self.start_date,
                             end_date=self.end_date)
-
-            
             #logging.info(f'xxxttempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
@@ -266,10 +244,10 @@ class AsyncProcess(beam.DoFn):
                         #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
                         last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                                 self.start_date.day,16, 0)][0]
-                        latest = result[-1]
+                        latest = ticker_result[-1]
                         increase = latest['close'] / last_close['close']
                         if increase > (1 + self.price_change):
-                            #logging.info(f'Adding ({t}):{latest}')
+                            logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
                             latest['prev_date'] = latest['date']
