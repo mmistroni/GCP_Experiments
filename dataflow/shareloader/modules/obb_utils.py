@@ -254,7 +254,6 @@ class AsyncProcess(beam.DoFn):
                             latest['prev_close'] = latest['close']
                             latest['change'] = increase
                             latest['selection'] = self.selection
-
                             tech_dict = self.get_adx_and_rsi(ticker)
                             profile = self.get_profile(ticker)
                             latest.update(profile)
