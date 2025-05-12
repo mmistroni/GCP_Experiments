@@ -272,8 +272,8 @@ class AsyncProcess(beam.DoFn):
                             #logging.info(f'Adding ({t}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
-                            latest['prev_date'] = last_close['date']
-                            latest['prev_close'] = last_close['close']
+                            latest['prev_date'] = latest['date']
+                            latest['prev_close'] = latest['close']
                             latest['change'] = increase
                             latest['selection'] = self.selection
 
