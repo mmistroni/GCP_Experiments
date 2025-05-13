@@ -242,7 +242,7 @@ class AsyncProcess(beam.DoFn):
                 # we can include adx and rsi,but we need to fetch it from a different run
                     if ticker_result:
                         #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
-                        last_close = [d for d in result if d['date'] == datetime(self.start_date.year, self.start_date.month,
+                        last_close = [d for d in ticker_result if d['date'] == datetime(self.start_date.year, self.start_date.month,
                                                                                 self.start_date.day,16, 0)][0]
                         latest = ticker_result[-1]
                         increase = latest['close'] / last_close['close']
@@ -250,8 +250,8 @@ class AsyncProcess(beam.DoFn):
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
-                            latest['prev_date'] = latest['date']
-                            latest['prev_close'] = latest['close']
+                            latest['prev_date'] = last_close['date']
+                            latest['prev_close'] = last_close['close']
                             latest['change'] = increase
                             latest['selection'] = self.selection
                             tech_dict = self.get_adx_and_rsi(ticker)
