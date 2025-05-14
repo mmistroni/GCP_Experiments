@@ -16,7 +16,9 @@ import itertools
 from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmarket_pipeline, \
                                                    run_sector_performance, run_swingtrader_pipeline, \
                                                    run_etoro_pipeline, finviz_pipeline, \
-                                                   StockSelectionCombineFn, run_inference, write_to_ai_stocks
+                                                   StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
+                                                   run_peterlynch_pipeline
+                                                   
 from shareloader.modules.launcher_email import EmailSender, send_email
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 from apache_beam.ml.inference.base import ModelHandler
@@ -336,7 +338,7 @@ def run(argv = None, save_main_session=True):
             obb | 'oBB2 TO SINK' >>sink
         else:
 
-            #tester = run_test_pipeline(p, known_args.fmprepkey)
+            tester = run_peterlynch_pipeline(p, known_args.fmprepkey)
             #tester | 'tester to sink' >> sink
 
             #(tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
@@ -357,7 +359,7 @@ def run(argv = None, save_main_session=True):
                    | 'etoro to finvizsink' >> finviz_sink)
 
 
-            all_pipelines = ((etoro, stp) |  "fmaprun all" >> beam.Flatten())
+            all_pipelines = ((tester, etoro, stp) |  "fmaprun all" >> beam.Flatten())
             premarket_results =  (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
