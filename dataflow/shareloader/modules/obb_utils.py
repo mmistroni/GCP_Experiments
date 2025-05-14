@@ -240,6 +240,7 @@ class AsyncProcess(beam.DoFn):
                 for ticker in b:
                     ticker_result = [d for d in result if d['symbol'] == ticker]
                 # we can include adx and rsi,but we need to fetch it from a different run
+                    logging.info(f'Ticker res\n{ticker_result}')
                     if ticker_result:
                         #logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
                         last_close = [d for d in ticker_result if d['date'] == datetime(self.start_date.year, self.start_date.month,
@@ -267,8 +268,9 @@ class AsyncProcess(beam.DoFn):
 
                             all_records.append(latest)
                         else:
+                            logging.info(f'{ticker} increase ({increase}) change below tolerance:{1 + self.price_change}')
                             continue
-                            #logging.info(f'{t} increase ({increase}) change below tolerance:{1 + self.price_change}')
+
                 else:
                     #logging.info(f'No result sfor {t}')
                     continue
