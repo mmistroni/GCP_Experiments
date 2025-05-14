@@ -377,8 +377,9 @@ Change from Open: Up
     filters_dict.update(desc_filters)
     filters_dict.update(fund_filters)
 
-    return _run_screener(filters_dict)
-
+    dt = _run_screener(filters_dict)
+    logging.info(f' New high: {len(dt)}')
+    return dt
 def get_high_low():
     high_filter = 'New High'
     low_filter = 'New Low'
@@ -447,8 +448,9 @@ def overnight_return():
     overnight_filter_dict = fund_filters
     overnight_filter_dict.update(price_filters)
 
-    return _run_screener(overnight_filter_dict)
-
+    res =  _run_screener(overnight_filter_dict)
+    logging.info(f'Swing Trader finviz has {len(res)}')
+    return res
 
 class FinvizLoader(beam.DoFn):
     def __init__(self, key, runtype='all'):
