@@ -17,7 +17,7 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_sector_performance, run_swingtrader_pipeline, \
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
-                                                   run_peterlynch_pipeline
+                                                   run_peterlynch_pipeline, run_extra_pipeline
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
@@ -338,8 +338,8 @@ def run(argv = None, save_main_session=True):
             obb | 'oBB2 TO SINK' >>sink
         else:
 
-            tester = run_peterlynch_pipeline(p, known_args.fmprepkey)
-            #tester | 'tester to sink' >> sink
+            tester = run_extra_pipeline(p, known_args.fmprepkey)
+            tester | 'tester to sink' >> sink
 
             #(tester  | 'tester mapped'  >> beam.Map(lambda d: map_to_bq_dict(d))
             #        | 'tster to finviz sink' >>  finviz_sink)

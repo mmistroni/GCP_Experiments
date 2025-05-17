@@ -238,7 +238,10 @@ class AsyncProcess(beam.DoFn):
                 result =  [d.model_dump(exclude_none=True) for d in data]
 
                 for ticker in b:
-                    ticker_result = [d for d in result if d['symbol'] == ticker]
+                    if len(b) > 1:
+                        ticker_result = [d for d in result if d['symbol'] == ticker]
+                    else:
+                        ticker_result = [d for d in result]
                 # we can include adx and rsi,but we need to fetch it from a different run
                     logging.info(f'Ticker res\n{ticker_result}')
                     if ticker_result:

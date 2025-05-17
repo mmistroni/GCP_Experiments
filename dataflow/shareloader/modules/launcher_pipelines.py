@@ -63,6 +63,17 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
                | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
              )
 
+def run_extra_pipeline(p, fmpkey, tolerance=0.1):
+    cob = date.today()
+    return  (p  | 'Starting extras' >> beam.Create(get_extra_watchlist())
+                | 'Extra Watchlist' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering extras ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all tickers from Extraextratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
+               | 'Extras' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='ExtraWatch'))
+             )
+
+
+
 def run_peterlynch_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
     return  (p  | 'Starting plynch' >> beam.Create(get_peter_lynch())

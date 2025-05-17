@@ -291,7 +291,9 @@ def get_extra_watchlist():
     filters_dict.update(desc_filters)
     filters_dict.update(fund_filters)
 
-    return _run_screener(filters_dict)
+    extras  =  _run_screener(filters_dict)
+    logging.info(f'Fromo extra search we found:{len(extras)}')
+    return extras
 
 def get_peter_lynch():
     '''
