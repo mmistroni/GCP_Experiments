@@ -25,7 +25,7 @@ class MyTestCase(unittest.TestCase):
     def test_etoro(self):
         key = os.environ['FMPREPKEY']
         with TestPipeline(options=PipelineOptions()) as p:
-            etoro = run_etoro_pipeline(p, key)
+            etoro = run_etoro_pipeline(p, key ,tolerance=0.001)
 
             #tester = run_test_pipeline(p, key)
 
