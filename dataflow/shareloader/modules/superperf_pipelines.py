@@ -67,12 +67,76 @@ def run_extrawl(p):
             | 'adding ewl' >> beam.Map(lambda d: update_dict_beam(d,  'WATCHLIST'))
             )
 
-def combine_pipelines(p):
+'''
+
+We  need to combine and see differences betweeen the loaders so that we all retrieve the same data
+
+- Fundamental Loader calls
+    - get_fundamental_parameters
+    - get_financial_ratios
+    - get_analyst_estimates
+    - get_descriptive_and_technical
+    - get_asset_play_parameter
+    - calculate_piotrosky_score
+    - compute_rsi
+    - get_key_metrics_benchmark
+    - get_peter_lynch_ratio
+
+- MicroCap Loader
+    - get_descriptive_and_technical
+    - get_price_change (priceChangeDict.get('52weekChange', 0)
+    - get_fundamental_parameter
+    - get_financial_ratios
+    - get_dividend_paid
+    
+
+- Benchmark Loader
+    - get_quote_benchmark (to retrieve institutional ownership. can be replaced by finviz)
+    - get_income_benchmark - should be same as get_fundamental_params
+    - get_balancesheet_benchmark
+    - get_financial_ratios_benchmark fund
+    - get_key_metrics_benchmark   fund
+    - get_asset_play_parameters  fund
+    - get_peter_lynch_ratio      fund
+        
+
+
+def load_fundamental_data(source,fmpkey, split=''):
+    # fundamental works for everything minus microcap, 
+    return (source
+            | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals' >> beam.ParDo(FundamentalLoader(fmpkey, split_flag=split))
+            | 'Filtering out none fundamentals' >> beam.Filter(lambda item: item is not None)
+            | 'filtering on descr and technical' >> beam.Filter(get_descriptive_and_techincal_filter)
+            | 'Using fundamental filters' >> beam.Filter(get_fundamental_filter)
+            )
+def load_microcap_data(source,fmpkey):
+    return (source
+            | 'Combine all at fundamentals microcap' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals microcap' >> beam.ParDo(MicrocapLoader(fmpkey, microcap_flag=True))
+            | 'Filtering out none fundamentals microcap' >> beam.Filter(lambda item: item is not None)
+            | 'MicroCap Sanity Check' >> beam.Filter(microcap_sanity_check)
+            | 'Filtering microcap' >> beam.Filter(microcap_filter)
+            )
+
+def load_benchmark_data(source,fmpkey, split=None):
+    return (source
+            | 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
+            | 'Getting fundamentals bench' >> beam.ParDo(BenchmarkLoader(fmpkey, split))
+            | 'Filtering  benchmark by price' >>  beam.Filter(lambda d: d.get('price', 0) > 10)
+            )
+'''
+
+
+def combine_bernchmarks(p):
     extrawl = run_extrawl(p)
     buffetsix = run_buffetsix(p)
     newhighs = run_newhighs(p)
     canslim = run_canslim(p)
     leaps = run_leaps(p)
+
+
+def combine_fundamental(p):
     ge = run_graham_enterprise(p)
     gd = run_graham_defensive(p)
     universe = run_universe(p)
@@ -80,9 +144,10 @@ def combine_pipelines(p):
 
 
     return (
-            (extrawl, buffetsix, newhighs, canslim,
-             leaps, ge, gd, universe)
+            (ge, gd)
             | 'FlattenCombine all' >> beam.Flatten()
+            #| 'Superperf combining tickets' >> beam.Map(lambda d: dict(ticker=d.get('Ticker'), label=d.get('label')))
+            #| 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
     )
 
 

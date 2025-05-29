@@ -162,6 +162,20 @@ def filter_basic_fields(input_dict):
       return ','.join(s)
 
 
+class InMemorySink(beam.PTransform):
+    def __init__(self):
+        self.collected_data = []
+
+    def expand(self, pcoll):
+        # Apply a Map transform to append each element to our list
+        return pcoll | 'Collect Data' >> beam.Map(self._collect_element)
+
+    def _collect_element(self, element):
+        self.collected_data.append(element)
+        return element # Pass through the element if further transforms are needed
+
+
+
 class TestSuperPerformers(unittest.TestCase):
 
     def setUp(self):
@@ -275,6 +289,39 @@ class TestSuperPerformers(unittest.TestCase):
               | printingSink
              )
 
+    def test_benchmark_and_fundamental(self):
+        key = os.environ['FMPREPKEY']
+        printingSink = beam.Map(print)
+        ticker = 'AAPL'
+        print('Key is:{}|'.format(key))
+
+        sink1 = InMemorySink()
+        sink2 = InMemorySink()
+
+
+        with TestPipeline() as p:
+             bench = (p | 'Starting' >> beam.Create([ticker])
+                         | 'Combine all at fundamentals' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader' >> beam.ParDo(BenchmarkLoader(key))
+                         | 'tosnk' >>  sink1
+                         #| 'Filtering' >> beam.Filter(benchmark_filter)
+                         #| 'Filtering for defensive' >> beam.Filter(defensive_stocks_filter)
+                        #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+             )
+
+             fund = (p | 'Starting 2' >> beam.Create([ticker])
+                         | 'Combine all at fundamentals2' >> beam.CombineGlobally(combine_tickers)
+                         | 'Running Loader2' >> beam.ParDo(FundamentalLoader(key))
+                         #| 'Mapper' >> beam.Map(lambda d: map_to_bq_dict(d, 'TESTER'))
+                         #| 'Mapping to our functin' >> beam.Map(filter_basic_fields)
+                         #| 'Filtering' >> beam.Filter(asset_play_filter)
+                         | 'tosnk2' >> sink2
+             )
+
+        print(f'-------------------- FirstColl  \n {sink1.collected_data[0]}------------')
+        print(f'\n-------------------- SecondColl  \n {sink2.collected_data[0]}------------')
+
     def test_fundamentalLoader(self):
         key = os.environ['FMPREPKEY']
         printingSink = beam.Map(print)
@@ -336,10 +383,6 @@ class TestSuperPerformers(unittest.TestCase):
                 self.assertTrue(res['priceToBookRatio'] != 0)
                 self.assertTrue(res['returnOnEquity'] != 0)
                 self.assertTrue(res['returnOnAssets'] != 0)
-                counter +=1
-
-            if counter > 50:
-                break
 
 
     def test_fundamentalLoaderForAssetPLay(self):
