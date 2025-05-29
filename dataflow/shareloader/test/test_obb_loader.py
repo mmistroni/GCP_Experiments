@@ -3,7 +3,8 @@ import os
 from apache_beam.testing.test_pipeline import TestPipeline
 from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
-from shareloader.modules.obb_utils import AsyncProcess, AsyncProcessSP500Multiples, ProcessHistorical
+from shareloader.modules.obb_utils import AsyncProcess, AsyncProcessSP500Multiples, ProcessHistorical, \
+                                            AsyncFMPProcess
 from shareloader.modules.launcher import StockSelectionCombineFn
 from apache_beam.ml.inference.base import ModelHandler
 from apache_beam.ml.inference.base import RunInference
@@ -257,6 +258,22 @@ class MyTestCase(unittest.TestCase):
             res = run_inference(input2, openai_key, beam.Map(print))
             
             res | beam.Map(print)
+
+    def test_fmp_pipeline(self):
+        from shareloader.modules.superperformers import combine_tickers
+        key = os.environ['FMPREPKEY']
+        openai_key = os.environ['OPENAI_API_KEY']
+
+        with TestPipeline(options=PipelineOptions()) as p:
+
+            (p  | 'Tester' >> beam.Create([{'ticker' : 'AAPL'}, {'ticker' : 'MSFT'}])
+                | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
+                | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
+                | 'Plus500YFRun' >> beam.ParDo(
+                    AsyncFMPProcess({'fmp_api_key': key}, date.today(), price_change=0.01, selection='Plus500'))
+                | 'Out' >> beam.Map(print)
+                )
 
 
 if __name__ == '__main__':

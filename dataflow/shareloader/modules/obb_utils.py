@@ -2,6 +2,7 @@ import requests
 import logging
 from datetime import datetime
 from openbb_yfinance.models.equity_historical import YFinanceEquityHistoricalFetcher
+from openbb_fmp.models.equity_quote import FMPEquityQuoteFetcher
 import apache_beam as beam
 from pandas.tseries.offsets import BDay
 from datetime import date
@@ -185,7 +186,7 @@ class AsyncProcess(beam.DoFn):
            r1 = self._sma(sma20)
            r2 = self._sma(sma50)
            r3 = self._sma(sma200)
-           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
+           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3}
 
         except Exception as e:
             logging.info('CalculateSmas Failed to retreivve smas for {ticker}')
@@ -193,15 +194,15 @@ class AsyncProcess(beam.DoFn):
 
     def calculate_slope(self, ticker):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
-        
+
         try:
-           sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'    
-           r1 = requests.get(sma20).json()[0] 
-           sma50 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'     
-           r2 = requests.get(sma50).json()[0] 
-           sma200 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'     
-           r3 = requests.get(sma200).json()[0] 
-           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3} 
+           sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'
+           r1 = requests.get(sma20).json()[0]
+           sma50 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=50&apikey={self.fmpKey}'
+           r2 = requests.get(sma50).json()[0]
+           sma200 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=200&apikey={self.fmpKey}'
+           r3 = requests.get(sma200).json()[0]
+           return {'SMA20': r1, 'SMA50': r2, 'SMA200' : r3}
 
         except Exception as e:
             logging.info('Failed to retreivve smas for {ticker}')
@@ -291,7 +292,75 @@ class AsyncProcess(beam.DoFn):
             return runner.run(self.fetch_data(element))
 
 
+class AsyncFMPProcess(AsyncProcess):
 
+    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500', batchsize=20):
+        self.credentials = credentials
+        self.fetcher = FMPEquityQuoteFetcher
+        self.end_date = start_date
+        self.start_date = (self.end_date - BDay(1)).date()
+        self.price_change = price_change
+        self.selection = selection
+        self.fmpKey = credentials['fmp_api_key']
+        self.batch_size = batchsize
+
+    async def fetch_data(self, element: str):
+        logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
+
+        ticks = element.split(',')
+        all_records = []
+        for tick in ticks:
+            params = dict(symbol=tick, start_date=self.start_date,
+                          end_date=self.end_date)
+            # logging.info(f'xxxttempting to retrieve data for {t}')
+            try:
+                # 1. We need to get the close price of the day by just querying for 1d interval
+                # 2. then we get the pre-post market. group by day and get latest of yesterday and latest of
+                #    today
+                # 3. we aggregate and store in bq
+                # 4 .send email for everything that increased over 10% overnight
+                # 5 . also restrict only for US. drop every ticker which has a .<Exchange>
+
+                data = await self.fetcher.fetch_data(params, self.credentials)
+                result = [d.model_dump(exclude_none=True) for d in data]
+                if result:
+                    # logging.info(f'StartDate:{self.start_date} {t} Result is :{result[-1]}. Looking for latest close @{self.start_date}')
+                    latest = result[-1]
+                    logging.info(f'Latest\n{latest}')
+                    increase = latest.get('last_price', 0) / latest.get('prev_close', 1)
+                    if increase > (1 + self.price_change):
+                        logging.info(f'Adding ({tick}):{latest}')
+                        latest['ticker'] = tick
+                        latest['symbol'] = tick
+                        latest['prev_date'] = self.start_date
+                        latest['prev_close'] = latest.get('last_timestamp', datetime.now()).date()
+                        latest['change'] = increase
+                        latest['selection'] = self.selection
+                        tech_dict = self.get_adx_and_rsi(tick)
+                        profile = self.get_profile(tick)
+                        latest.update(profile)
+                        # logging.info(f'{t} getting SMAS')
+                        smas = self.calculate_smas(tick)
+                        latest.update(tech_dict)
+                        latest.update(smas)
+                        if latest['close'] > latest['SMA20']:
+                            latest['highlight'] = 'True'
+
+                        all_records.append(latest)
+                    else:
+                        logging.info(
+                            f"{tick} increase ({increase}) change below tolerance:{1 + self.price_change}.Latest:{latest['last_price']}.Last:{latest.get('prev_close', 1)}")
+                        continue
+            except Exception as e:
+                import time
+                logging.info(f' x Failed to fetch data for {tick}:{str(e)}')
+        logging.info(f'Returningn records with :{len(all_records)}')
+        return all_records
+
+    def process(self, element: str):
+        # logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))
 
 
 
