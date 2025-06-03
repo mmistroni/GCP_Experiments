@@ -12,6 +12,8 @@ from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 import time
+import time
+
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -312,6 +314,8 @@ class AsyncFMPProcess(AsyncProcess):
         for tick in ticks:
             params = dict(symbol=tick, start_date=self.start_date,
                           end_date=self.end_date)
+            # sleeping for 10 seconds
+            time.sleep(10)
             # logging.info(f'xxxttempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
@@ -347,12 +351,12 @@ class AsyncFMPProcess(AsyncProcess):
                             latest['highlight'] = 'True'
 
                         all_records.append(latest)
+
                     else:
                         logging.info(
                             f"{tick} increase ({increase}) change below tolerance:{1 + self.price_change}.Latest:{latest['last_price']}.Last:{latest.get('prev_close', 1)}")
                         continue
             except Exception as e:
-                import time
                 logging.info(f' x Failed to fetch data for {tick}:{str(e)}')
         logging.info(f'Returningn records with :{len(all_records)}')
         return all_records
