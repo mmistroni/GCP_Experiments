@@ -52,7 +52,7 @@ def run_test_pipeline(p, fmpkey):
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': key}, cob, price_change=0.08, selection='Plus500'))
+               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=0.08, selection='Plus500'))
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
