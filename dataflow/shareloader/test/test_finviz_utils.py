@@ -5,7 +5,8 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_high_low, overnight_return, get_advance_decline,\
                                             get_buffett_six, get_finviz_obb_data, get_advance_decline_sma, \
                                             AsyncProcessFinviz, _run_screener, get_universe_stocks, \
-                                            get_eod_screener, get_peter_lynch
+                                            get_eod_screener, get_peter_lynch, get_gics_to_finviz_mappings, \
+                                            get_companies_for_industry
 
 from pprint import pprint
 import os
@@ -289,6 +290,25 @@ class MyTestCase(unittest.TestCase):
                      | 'another map' >> beam.Map(print)
                      )
 
+    def test_get_gics(self):
+        import time
+        res_dict = get_gics_to_finviz_mappings()
+
+        for k, v in res_dict.items():
+            print(f'Finding best for {k} ')
+            for ind in v:
+                time.sleep(5)
+                try:
+                    best = get_companies_for_industry(ind)
+
+                    print(f'------------------------- {ind}''')
+                    print(best)
+                except Exception as e:
+                    print(f'skipping {ind}:{str(e)}')
+
+
+
+        print(res_dict['Utilities'])
         
 
 if __name__ == '__main__':

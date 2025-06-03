@@ -763,13 +763,375 @@ def get_eod_screener():
 
     return _run_screener(eod_filter_dict)
 
+def get_companies_for_industry(industry : str) -> list:
+    descriptive_filters = {
+        'Industry': industry,
+        'Average Volume': 'Over 200K',
+        'Relative Volume': 'Over 1',
+        'Country' : 'USA'
+    }
+
+    perf_filters = {
+        'Performance': 'Quarter Up',
+        'Performance 2' : 'Month Up',
+        'Relative Volume': 'Over 1.5'
+    }
+
+    price_filters = {
+        '20-Day Simple Moving Average': 'Price above SMA20',
+        '50-Day Simple Moving Average': 'Price above SMA50',
+        '200-Day Simple Moving Average': 'Price above SMA200',
+        #'52-Week High/Low': '5% or more below High'
+    }
+
+    full_filter = descriptive_filters
+    full_filter.update(perf_filters)
+    full_filter.update(price_filters)
+
+    return _run_screener(full_filter)
 
 
 
+def get_gics_to_finviz_mappings():
+    ## extracted from llm
+    # Helper dictionary to map GICS Industry/Sub-Industry to its top-level GICS Sector
+    # This is derived from the standard GICS hierarchy and the mappings in finviz_to_gics_mapping.
+    # This dictionary is used as the source for the new mapping.
+    # Re-including the finviz_to_gics_mapping for completeness within this script,
+    # as it's the source for the Finviz industries and their GICS industry/sub-industry equivalents.
+    finviz_to_gics_mapping = {
+        # Communication Services Sector
+        'Advertising Agencies': 'Advertising',
+        'Broadcasting': 'Broadcasting',
+        'Entertainment': 'Entertainment',
+        'Internet Content & Information': 'Internet Services & Infrastructure',  # Closest GICS Sub-Industry
+        'Publishing': 'Publishing',
+        'Telecom Services': 'Integrated Telecommunication Services',  # GICS Industry Group: Telecommunication Services
 
+        # Consumer Discretionary Sector
+        'Apparel Retail': 'Apparel Retail',
+        'Auto & Truck Dealerships': 'Automotive Retail',
+        'Auto Manufacturers': 'Automobiles',
+        'Auto Parts': 'Automotive Parts & Equipment',
+        'Consumer Electronics': 'Consumer Electronics',
+        'Department Stores': 'Department Stores',
+        'Discount Stores': 'Discount Stores',
+        # GICS Sub-Industry: Discount Stores & Supercenters (often grouped with Food & Staples Retail)
+        'Electronic Gaming & Multimedia': 'Interactive Home Entertainment',  # GICS Sub-Industry
+        'Footwear & Accessories': 'Apparel, Accessories & Luxury Goods',  # GICS Industry
+        'Furnishings, Fixtures & Appliances': 'Home Furnishings',  # GICS Industry
+        'Gambling': 'Casinos & Gaming',  # GICS Sub-Industry
+        'Home Improvement Retail': 'Home Improvement Retail',
+        'Internet Retail': 'Internet & Direct Marketing Retail',
+        'Leisure': 'Leisure Facilities',  # GICS Sub-Industry
+        'Lodging': 'Hotels, Resorts & Cruise Lines',  # GICS Industry
+        'Luxury Goods': 'Apparel, Accessories & Luxury Goods',  # GICS Industry
+        'Recreational Vehicles': 'Automobiles',  # GICS Industry: Recreational Vehicles are part of Automobiles
+        'Resorts & Casinos': 'Casinos & Gaming',  # GICS Sub-Industry
+        'Restaurants': 'Restaurants',
+        'Specialty Retail': 'Specialty Retail',  # GICS Sub-Industry
 
+        # Consumer Staples Sector
+        'Beverages - Brewers': 'Brewers',
+        'Beverages - Non-Alcoholic': 'Soft Drinks',
+        'Beverages - Wineries & Distilleries': 'Distillers & Vintners',
+        'Confectioners': 'Packaged Foods & Meats',  # GICS Industry
+        'Food Distribution': 'Food Distributors',
+        'Grocery Stores': 'Hypermarkets & Super Centers',  # Closest GICS Sub-Industry
+        'Household & Personal Products': 'Household Products',  # GICS Industry Group: Household & Personal Products
+        'Packaged Foods': 'Packaged Foods & Meats',
+        'Tobacco': 'Tobacco',
 
+        # Energy Sector
+        'Oil & Gas Drilling': 'Oil & Gas Drilling',
+        'Oil & Gas E&P': 'Oil & Gas Exploration & Production',
+        'Oil & Gas Equipment & Services': 'Oil & Gas Equipment & Services',
+        'Oil & Gas Integrated': 'Integrated Oil & Gas',
+        'Oil & Gas Midstream': 'Oil & Gas Storage & Transportation',  # GICS Sub-Industry
+        'Oil & Gas Refining & Marketing': 'Oil & Gas Refining & Marketing',
+        'Thermal Coal': 'Coal & Consumable Fuels',  # GICS Industry
 
+        # Financials Sector
+        'Asset Management': 'Asset Management & Custody Banks',
+        'Banks - Diversified': 'Diversified Banks',
+        'Banks - Regional': 'Regional Banks',
+        'Capital Markets': 'Investment Banking & Brokerage',  # GICS Industry Group: Capital Markets
+        'Credit Services': 'Consumer Finance',  # GICS Sub-Industry
+        'Financial Conglomerates': 'Diversified Financial Services',  # GICS Industry
+        'Financial Data & Stock Exchanges': 'Financial Exchanges & Data',
+        'Insurance - Diversified': 'Diversified Insurance',
+        'Insurance - Life': 'Life & Health Insurance',
+        'Insurance - Property & Casualty': 'Property & Casualty Insurance',
+        'Insurance - Reinsurance': 'Reinsurance',
+        'Insurance - Specialty': 'Specialty Insurance',
+        'Insurance Brokers': 'Insurance Brokers',
+        'Mortgage Finance': 'Mortgage Finance',
 
+        # Health Care Sector
+        'Biotechnology': 'Biotechnology',
+        'Diagnostics & Research': 'Life Sciences Tools & Services',  # GICS Industry
+        'Drug Manufacturers - General': 'Pharmaceuticals',  # GICS Industry
+        'Drug Manufacturers - Specialty & Generic': 'Pharmaceuticals',  # GICS Industry
+        'Health Information Services': 'Healthcare Technology',  # GICS Sub-Industry
+        'Healthcare Plans': 'Managed Health Care',
+        'Medical Care Facilities': 'Healthcare Facilities',
+        'Medical Devices': 'Medical Devices',
+        'Medical Distribution': 'Healthcare Distributors',
+        'Medical Instruments & Supplies': 'Medical Supplies',  # GICS Sub-Industry
 
+        # Industrials Sector
+        'Aerospace & Defense': 'Aerospace & Defense',
+        'Agricultural Inputs': 'Agricultural & Farm Machinery',  # GICS Industry
+        'Airports & Air Services': 'Airport Services',  # GICS Sub-Industry
+        'Building Products & Equipment': 'Building Products',  # GICS Industry
+        'Business Equipment & Supplies': 'Office Services & Supplies',  # GICS Sub-Industry
+        'Conglomerates': 'Industrial Conglomerates',
+        'Consulting Services': 'Professional Services',  # GICS Industry
+        'Education & Training Services': 'Education Services',  # GICS Sub-Industry
+        'Electrical Equipment & Parts': 'Electrical Components & Equipment',  # GICS Industry
+        'Engineering & Construction': 'Construction & Engineering',
+        'Farm & Heavy Construction Machinery': 'Construction & Farm Machinery & Heavy Trucks',  # GICS Industry
+        'Industrial Distribution': 'Trading Companies & Distributors',  # GICS Industry
+        'Integrated Freight & Logistics': 'Air Freight & Logistics',  # GICS Industry
+        'Marine Shipping': 'Marine Transportation',  # GICS Sub-Industry
+        'Metal Fabrication': 'Industrial Machinery',  # GICS Industry (broadest fit)
+        'Pollution & Treatment Controls': 'Environmental & Facilities Services',  # GICS Industry
+        'Railroads': 'Railroads',
+        'Rental & Leasing Services': 'Trading Companies & Distributors',  # GICS Industry
+        'Security & Protection Services': 'Security & Alarm Services',  # GICS Sub-Industry
+        'Specialty Business Services': 'Diversified Support Services',  # GICS Sub-Industry
+        'Specialty Industrial Machinery': 'Industrial Machinery',
+        'Staffing & Employment Services': 'Human Resource & Employment Services',  # GICS Sub-Industry
+        'Tools & Accessories': 'Industrial Machinery',  # GICS Industry (broadest fit)
+        'Travel Services': 'Travel Services',
+        'Trucking': 'Trucking',
+        'Waste Management': 'Environmental & Facilities Services',  # GICS Industry
 
+        # Information Technology Sector
+        'Communication Equipment': 'Communications Equipment',
+        'Computer Hardware': 'Technology Hardware, Storage & Peripherals',  # GICS Industry
+        'Electronic Components': 'Electronic Components',
+        'Electronics & Computer Distribution': 'Electronic Components',  # Closest fit, often grouped here
+        'Information Technology Services': 'IT Consulting & Other Services',
+        'Semiconductor Equipment & Materials': 'Semiconductor Equipment',
+        'Semiconductors': 'Semiconductors',
+        'Software - Application': 'Application Software',
+        'Software - Infrastructure': 'Systems Software',
+
+        # Materials Sector
+        'Aluminum': 'Aluminum',
+        'Building Materials': 'Construction Materials',  # GICS Industry
+        'Chemicals': 'Specialty Chemicals',  # GICS Industry (broadest fit)
+        'Coking Coal': 'Coal & Consumable Fuels',  # GICS Industry
+        'Copper': 'Copper',
+        'Gold': 'Gold',
+        'Lumber & Wood Production': 'Paper & Forest Products',  # GICS Industry
+        'Other Industrial Metals & Mining': 'Diversified Metals & Mining',  # GICS Industry
+        'Other Precious Metals & Mining': 'Precious Metals & Minerals',  # GICS Industry
+        'Packaging & Containers': 'Paper Packaging & Forest Products',  # GICS Industry
+        'Paper & Paper Products': 'Paper & Forest Products',  # GICS Industry
+        'Silver': 'Silver',
+        'Steel': 'Steel',
+        'Textile Manufacturing': 'Textiles',  # GICS Sub-Industry
+        'Uranium': 'Diversified Metals & Mining',  # GICS Industry (often grouped here)
+
+        # Real Estate Sector
+        'Real Estate - Development': 'Real Estate Development',
+        'Real Estate - Diversified': 'Diversified Real Estate',
+        'Real Estate Services': 'Real Estate Services',
+        'Residential Construction': 'Homebuilding',  # GICS Industry
+        'REIT - Diversified': 'Diversified REITs',
+        'REIT - Healthcare Facilities': 'Healthcare REITs',
+        'REIT - Hotel & Motel': 'Hotel & Resort REITs',
+        'REIT - Industrial': 'Industrial REITs',
+        'REIT - Mortgage': 'Mortgage REITs',
+        'REIT - Office': 'Office REITs',
+        'REIT - Residential': 'Residential REITs',
+        'REIT - Retail': 'Retail REITs',
+        'REIT - Specialty': 'Specialty REITs',
+
+        # Utilities Sector
+        'Solar': 'Renewable Electricity',  # GICS Sub-Industry
+        'Utilities - Diversified': 'Multi-Utilities',
+        'Utilities - Independent Power Producers': 'Independent Power Producers & Energy Traders',
+        'Utilities - Regulated Electric': 'Electric Utilities',
+        'Utilities - Regulated Gas': 'Gas Utilities',
+        'Utilities - Regulated Water': 'Water Utilities',
+        'Utilities - Renewable': 'Renewable Electricity',  # GICS Sub-Industry
+
+        # Other/Unclassified (or specific GICS mapping)
+        'Apparel Manufacturing': 'Apparel, Accessories & Luxury Goods',  # GICS Industry
+        'Farm Products': 'Agricultural Products',  # GICS Sub-Industry
+        'Personal Services': 'Diversified Consumer Services',  # GICS Industry Group
+        'Scientific & Technical Instruments': 'Life Sciences Tools & Services',  # GICS Industry
+        'Shell Companies': 'Multi-Sector Holdings',  # GICS Industry (closest fit for general shell companies)
+    }
+
+    # Helper dictionary to map GICS Industry/Sub-Industry to its top-level GICS Sector
+    # This is derived from the standard GICS hierarchy.
+    gics_industry_to_sector_helper = {
+        'Advertising': 'Communication Services',
+        'Broadcasting': 'Communication Services',
+        'Entertainment': 'Communication Services',
+        'Internet Services & Infrastructure': 'Communication Services',
+        'Publishing': 'Communication Services',
+        'Integrated Telecommunication Services': 'Communication Services',
+
+        'Apparel Retail': 'Consumer Discretionary',
+        'Automotive Retail': 'Consumer Discretionary',
+        'Automobiles': 'Consumer Discretionary',
+        'Automotive Parts & Equipment': 'Consumer Discretionary',
+        'Consumer Electronics': 'Consumer Discretionary',
+        'Department Stores': 'Consumer Discretionary',
+        'Discount Stores': 'Consumer Discretionary',
+        'Interactive Home Entertainment': 'Consumer Discretionary',
+        'Apparel, Accessories & Luxury Goods': 'Consumer Discretionary',
+        'Home Furnishings': 'Consumer Discretionary',
+        'Casinos & Gaming': 'Consumer Discretionary',
+        'Home Improvement Retail': 'Consumer Discretionary',
+        'Internet & Direct Marketing Retail': 'Consumer Discretionary',
+        'Leisure Facilities': 'Consumer Discretionary',
+        'Hotels, Resorts & Cruise Lines': 'Consumer Discretionary',
+        'Restaurants': 'Consumer Discretionary',
+        'Specialty Retail': 'Consumer Discretionary',
+        'Travel Services': 'Consumer Discretionary',
+
+        'Brewers': 'Consumer Staples',
+        'Soft Drinks': 'Consumer Staples',
+        'Distillers & Vintners': 'Consumer Staples',
+        'Packaged Foods & Meats': 'Consumer Staples',
+        'Food Distributors': 'Consumer Staples',
+        'Hypermarkets & Super Centers': 'Consumer Staples',
+        'Household Products': 'Consumer Staples',
+        'Tobacco': 'Consumer Staples',
+        'Agricultural Products': 'Consumer Staples',
+
+        'Oil & Gas Drilling': 'Energy',
+        'Oil & Gas Exploration & Production': 'Energy',
+        'Oil & Gas Equipment & Services': 'Energy',
+        'Integrated Oil & Gas': 'Energy',
+        'Oil & Gas Storage & Transportation': 'Energy',
+        'Oil & Gas Refining & Marketing': 'Energy',
+        'Coal & Consumable Fuels': 'Energy',
+
+        'Asset Management & Custody Banks': 'Financials',
+        'Diversified Banks': 'Financials',
+        'Regional Banks': 'Financials',
+        'Investment Banking & Brokerage': 'Financials',
+        'Consumer Finance': 'Financials',
+        'Diversified Financial Services': 'Financials',
+        'Financial Exchanges & Data': 'Financials',
+        'Diversified Insurance': 'Financials',
+        'Life & Health Insurance': 'Financials',
+        'Property & Casualty Insurance': 'Financials',
+        'Reinsurance': 'Financials',
+        'Specialty Insurance': 'Financials',
+        'Insurance Brokers': 'Financials',
+        'Mortgage Finance': 'Financials',
+
+        'Biotechnology': 'Health Care',
+        'Life Sciences Tools & Services': 'Health Care',
+        'Pharmaceuticals': 'Health Care',
+        'Healthcare Technology': 'Health Care',
+        'Managed Health Care': 'Health Care',
+        'Healthcare Facilities': 'Health Care',
+        'Medical Devices': 'Health Care',
+        'Healthcare Distributors': 'Health Care',
+        'Medical Supplies': 'Health Care',
+
+        'Aerospace & Defense': 'Industrials',
+        'Agricultural & Farm Machinery': 'Industrials',
+        'Airport Services': 'Industrials',
+        'Building Products': 'Industrials',
+        'Office Services & Supplies': 'Industrials',
+        'Industrial Conglomerates': 'Industrials',
+        'Professional Services': 'Industrials',
+        'Education Services': 'Industrials',
+        'Electrical Components & Equipment': 'Industrials',
+        'Construction & Engineering': 'Industrials',
+        'Construction & Farm Machinery & Heavy Trucks': 'Industrials',
+        'Trading Companies & Distributors': 'Industrials',
+        'Air Freight & Logistics': 'Industrials',
+        'Marine Transportation': 'Industrials',
+        'Industrial Machinery': 'Industrials',
+        'Environmental & Facilities Services': 'Industrials',
+        'Railroads': 'Industrials',
+        'Security & Alarm Services': 'Industrials',
+        'Diversified Support Services': 'Industrials',
+        'Human Resource & Employment Services': 'Industrials',
+        'Trucking': 'Industrials',
+
+        'Communications Equipment': 'Information Technology',
+        'Technology Hardware, Storage & Peripherals': 'Information Technology',
+        'Electronic Components': 'Information Technology',
+        'IT Consulting & Other Services': 'Information Technology',
+        'Semiconductor Equipment': 'Information Technology',
+        'Semiconductors': 'Information Technology',
+        'Application Software': 'Information Technology',
+        'Systems Software': 'Information Technology',
+
+        'Aluminum': 'Materials',
+        'Construction Materials': 'Materials',
+        'Specialty Chemicals': 'Materials',
+        'Copper': 'Materials',
+        'Gold': 'Materials',
+        'Paper & Forest Products': 'Materials',
+        'Diversified Metals & Mining': 'Materials',
+        'Precious Metals & Minerals': 'Materials',
+        'Paper Packaging & Forest Products': 'Materials',
+        'Silver': 'Materials',
+        'Steel': 'Materials',
+        'Textiles': 'Materials',
+
+        'Real Estate Development': 'Real Estate',
+        'Diversified Real Estate': 'Real Estate',
+        'Real Estate Services': 'Real Estate',
+        'Homebuilding': 'Real Estate',
+        'Diversified REITs': 'Real Estate',
+        'Healthcare REITs': 'Real Estate',
+        'Hotel & Resort REITs': 'Real Estate',
+        'Industrial REITs': 'Real Estate',
+        'Mortgage REITs': 'Real Estate',
+        'Office REITs': 'Real Estate',
+        'Residential REITs': 'Real Estate',
+        'Retail REITs': 'Real Estate',
+        'Specialty REITs': 'Real Estate',
+
+        'Renewable Electricity': 'Utilities',
+        'Multi-Utilities': 'Utilities',
+        'Independent Power Producers & Energy Traders': 'Utilities',
+        'Electric Utilities': 'Utilities',
+        'Gas Utilities': 'Utilities',
+        'Water Utilities': 'Utilities',
+        'Environmental & Facilities Services': 'Utilities',
+    }
+
+    # Initialize the dictionary to store the mapping from GICS Sector to a list of Finviz Industries
+    gics_sector_to_finviz_industries = {
+        'Communication Services': [],
+        'Consumer Discretionary': [],
+        'Consumer Staples': [],
+        'Energy': [],
+        'Financials': [],
+        'Health Care': [],
+        'Industrials': [],
+        'Information Technology': [],
+        'Materials': [],
+        'Real Estate': [],
+        'Utilities': []
+    }
+
+    # Populate the dictionary
+    for finviz_industry, gics_mapped_industry in finviz_to_gics_mapping.items():
+        gics_sector = gics_industry_to_sector_helper.get(gics_mapped_industry)
+        if gics_sector:
+            gics_sector_to_finviz_industries[gics_sector].append(finviz_industry)
+        else:
+            print(
+                f"Warning: GICS mapped industry '{gics_mapped_industry}' for Finviz industry '{finviz_industry}' does not have a corresponding GICS Sector in the helper dictionary.")
+
+    # Sort the lists of industries within each sector for consistency
+    for sector in gics_sector_to_finviz_industries:
+        gics_sector_to_finviz_industries[sector].sort()
+
+    return gics_sector_to_finviz_industries
