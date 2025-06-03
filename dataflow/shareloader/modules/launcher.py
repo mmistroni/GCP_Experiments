@@ -258,7 +258,7 @@ def run(argv = None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_options = PipelineOptions(pipeline_args)
     pipeline_options.view_as(SetupOptions).save_main_session = save_main_session
-    timeout_secs = 7200
+    timeout_secs = 80000
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
     pipeline_options.view_as(DebugOptions).add_experiment(experiment_value)
     #pipeline_options.view_as(DebugOptions).add_experiment(10800)
