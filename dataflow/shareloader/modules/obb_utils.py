@@ -315,7 +315,7 @@ class AsyncFMPProcess(AsyncProcess):
             params = dict(symbol=tick, start_date=self.start_date,
                           end_date=self.end_date)
             # sleeping for 10 seconds
-            time.sleep(10)
+            time.sleep(3)
             # logging.info(f'xxxttempting to retrieve data for {t}')
             try:
                 # 1. We need to get the close price of the day by just querying for 1d interval
