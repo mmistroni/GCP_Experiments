@@ -352,7 +352,7 @@ def run(argv = None, save_main_session=True):
             etoro | 'etoro to sink' >> sink
 
             nhp = run_newhigh_pipeline(p, known_args.fmprepkey)
-            nhp | 'tester to sink' >> sink
+            nhp | 'newhighgs to sink' >> sink
 
             stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
             stp | 'stp to sink' >> sink
