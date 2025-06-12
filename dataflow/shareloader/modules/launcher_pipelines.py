@@ -69,7 +69,7 @@ def run_newhigh_pipeline(p, fmpkey, tolerance=0.1):
                 | 'nh Watchlist' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering nh ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers from nh' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'Extras' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='NewHigh'))
+               | 'NHighs' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='NewHigh'))
              )
 
 
