@@ -2,7 +2,7 @@ import unittest
 from shareloader.modules.launcher import run_etoro_pipeline, run_test_pipeline,\
                                          StockSelectionCombineFn, run_swingtrader_pipeline, \
                                             run_sector_performance, FinvizCombineFn, send_email, create_row
-from shareloader.modules.launcher_pipelines import run_extra_pipeline
+from shareloader.modules.launcher_pipelines import run_extra_pipeline, run_newhigh_pipeline
 from shareloader.modules.finviz_utils import  overnight_return
 from pprint import pprint
 import os
@@ -42,6 +42,14 @@ class MyTestCase(unittest.TestCase):
         with TestPipeline(options=PipelineOptions()) as p:
             result  = run_extra_pipeline(p, key, 0.0001)
             result | self.debugSink
+
+    def test_newhigh(self):
+        key = os.environ['FMPREPKEY']
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            result  = run_newhigh_pipeline(p, key, 0.0001)
+            result | self.debugSink
+
 
     def test_swingtrader(self):
         from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical

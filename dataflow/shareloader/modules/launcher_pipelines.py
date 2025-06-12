@@ -63,6 +63,16 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
                | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
              )
 
+def run_newhigh_pipeline(p, fmpkey, tolerance=0.1):
+    cob = date.today()
+    return  (p  | 'Starting nh' >> beam.Create(get_new_highs())
+                | 'nh Watchlist' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering nh ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all tickers from nh' >> beam.CombineGlobally(lambda x: ','.join(x))
+               | 'Extras' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='NewHigh'))
+             )
+
+
 def run_extra_pipeline(p, fmpkey, tolerance=0.1):
     cob = date.today()
     return  (p  | 'Starting extras' >> beam.Create(get_extra_watchlist())

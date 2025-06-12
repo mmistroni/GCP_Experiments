@@ -83,10 +83,10 @@ We  need to combine and see differences betweeen the loaders so that we all retr
     - get_peter_lynch_ratio
 
 - MicroCap Loader
-    - get_descriptive_and_technical
+    - get_descriptive_and_technical F
     - get_price_change (priceChangeDict.get('52weekChange', 0)
-    - get_fundamental_parameter
-    - get_financial_ratios
+    - get_fundamental_parameter  F
+    - get_financial_ratios       F
     - get_dividend_paid
     
 
@@ -94,10 +94,10 @@ We  need to combine and see differences betweeen the loaders so that we all retr
     - get_quote_benchmark (to retrieve institutional ownership. can be replaced by finviz)
     - get_income_benchmark - should be same as get_fundamental_params
     - get_balancesheet_benchmark
-    - get_financial_ratios_benchmark fund
-    - get_key_metrics_benchmark   fund
-    - get_asset_play_parameters  fund
-    - get_peter_lynch_ratio      fund
+    - get_financial_ratios_benchmark F
+    - get_key_metrics_benchmark   F
+    - get_asset_play_parameters  F
+    - get_peter_lynch_ratio      F
         
 
 
@@ -128,26 +128,36 @@ def load_benchmark_data(source,fmpkey, split=None):
 '''
 
 
-def combine_bernchmarks(p):
+def combine_fund1(p):
     extrawl = run_extrawl(p)
     buffetsix = run_buffetsix(p)
+    universe = run_universe(p)
+    return ((extrawl, buffetsix, universe)
+                | 'FlattenCombine all f1' >> beam.Flatten()
+            )
+
+
+def combine_fund2(p):
     newhighs = run_newhighs(p)
     canslim = run_canslim(p)
     leaps = run_leaps(p)
 
+    return ((newhighs, canslim, leaps)
+                | 'FlattenCombine all f2' >> beam.Flatten()
+            )
 
-def combine_fundamental(p):
+
+def combine_benchmarks(p):
     ge = run_graham_enterprise(p)
     gd = run_graham_defensive(p)
-    universe = run_universe(p)
+
 
 
 
     return (
-            (ge, gd)
+            (ge, gd, universe)
             | 'FlattenCombine all' >> beam.Flatten()
-            #| 'Superperf combining tickets' >> beam.Map(lambda d: dict(ticker=d.get('Ticker'), label=d.get('label')))
-            #| 'Combine all at fundamentals bench' >> beam.CombineGlobally(combine_tickers)
+
     )
 
 

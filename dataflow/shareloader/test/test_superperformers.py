@@ -319,6 +319,8 @@ class TestSuperPerformers(unittest.TestCase):
                          | 'tosnk2' >> sink2
              )
 
+        import time
+        time.sleep(10)
         print(f'-------------------- FirstColl  \n {sink1.collected_data[0]}------------')
         print(f'\n-------------------- SecondColl  \n {sink2.collected_data[0]}------------')
 
