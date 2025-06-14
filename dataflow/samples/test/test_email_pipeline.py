@@ -65,14 +65,6 @@ class Display(beam.DoFn):
         print(str(element))
         yield element
 
-class MyTestOptions(PipelineOptions):
-
-    @classmethod
-    def _add_argparse_args(cls, parser):
-        parser.add_argument('--recipients', default='mmistroni@gmail.com')
-        parser.add_argument('--key', default='mykey')
-        parser.add_argument('--iexkey', default='none')
-
 class TestBeamFunctions(unittest.TestCase):
 
     @patch('samples.email_pipeline.ReadFromText')
@@ -90,7 +82,7 @@ class TestBeamFunctions(unittest.TestCase):
     def test_create_pipeline2(self, mock_get_prices):
         get_prices_return = [{'High': 3098, 'Low': 3015.77001953125, 'Open': 3062, 'Close': 3055.2099609375, 'Volume': 4026365, 'AdjClose': 3055.2099609375, 'Ticker': 'AMZN'}]
         mock_get_prices.return_value = get_prices_return
-        options = MyTestOptions()
+        options = PipelineOptions()
         sink = Check(equal_to([get_prices_return]))
         with TestPipeline(options=options) as p:
             input = p |beam.Create(['AMZN,1,1'])
