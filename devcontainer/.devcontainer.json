@@ -34,7 +34,7 @@
     "ghcr.io/devcontainers/features/python:1": {
       "version": "3.10",
       "installPipx": false,
-      "installPoetry": false # Set to true if you decide to use Poetry
+      "installPoetry": false
     },
     "ghcr.io/devcontainers/features/common-utils:2": {
       "installZsh": true,
@@ -46,6 +46,6 @@
     }
   },
   "remoteUser": "vscode",
-  "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -r requirements.txt",
+  "postCreateCommand": "set -e && echo '--- Running postCreateCommand ---' && python3 -m venv .venv && echo 'Virtual environment created.' && ./.venv/bin/pip install --upgrade pip && echo 'Pip upgraded.' && ./.venv/bin/pip install -r requirements.txt && echo 'Dependencies installed into .venv.' && ls -la .venv && echo '--- postCreateCommand Finished ---'",
   "postAttachCommand": "source .venv/bin/activate"
 }
