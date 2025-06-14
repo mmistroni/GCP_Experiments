@@ -18,6 +18,10 @@ steps:
           , 'recipients=$_RECIPIENTS'
           , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           , '--region=$_REGION'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
+          ,'--subnetwork=regions/us-central1/subnetworks/default'
+          
           ]  
     id: 'build-flex-template-via-cloudsdk'
 
@@ -28,4 +32,6 @@ substitutions:
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
   _RECIPIENTS : 'mmistroni.gmail.com'
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest2
+
 
