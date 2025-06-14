@@ -11,7 +11,11 @@ steps:
           , '--template-file-gcs-location'
           , '$_ECONOMY_TEMPLATE_GCS_LOCATION'
           , '--region=$_REGION'
-          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
+          , '--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
+          ,'--subnetwork=regions/us-central1/subnetworks/default'
+          , '--staging-location=gs://datascience-projects_cloudbuild'
+          
           ]
     id: 'build-flex-template-via-cloudsdk'
 
@@ -19,4 +23,6 @@ substitutions:
   _JOB_NAME: 'stateofeconomycloudbuild'
   _ECONOMY_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/state_of_economy_flex_template.json
   _REGION: us-central1
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/stateofeconomy:latest2
+
   

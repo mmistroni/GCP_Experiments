@@ -34,7 +34,7 @@ images: [ 'gcr.io/$_PROJECT_ID/$_ECONOMY_IMAGE_NAME' ]
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _ECONOMY_IMAGE_NAME: stateofeconomy:latest
+  _ECONOMY_IMAGE_NAME: stateofeconomy:latest2
   _ECONOMY_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/state_of_economy_flex_template.json
   _ECONOMY_METADATA_FILE: ./dataflow/shareloader/state_of_economy_template_metadata
 
