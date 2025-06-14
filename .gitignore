@@ -4,6 +4,5 @@
 **/*pytest_cache*
 **/workspace.xml
 **/*cpython*
-**/*devcontainer*
 **/*idea*
 **/*venv

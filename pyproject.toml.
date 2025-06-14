@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "GCP Experiments with Apache Beam"
+version = "0.1.0"
+description = "An Apache Beam pipeline with various integrations."
+readme = "README.md"
+authors = [
+  { name="Your Name", email="your.email@example.com" },
+]
+license = { file="LICENSE" } # If you have a LICENSE file
+requires-python = ">=3.10,<3.13" # Based on common Beam/Python versions
+
+# Dynamically load dependencies from requirements.txt
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = {file = "requirements.txt"}
+
+[project.urls]
+Homepage = "https://github.com/your-username/my-beam-pipeline" # Update with your repo URL
+Issues = "https://github.com/your-username/my-beam-pipeline/issues" # Update with your repo URL
+
+# Optional: Add entry points if you have a main script
+# [project.scripts]
+# run_pipeline = "my_module.main:run_pipeline" # Replace with your actual script path
