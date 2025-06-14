@@ -10,8 +10,19 @@ from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get
 from datetime import datetime
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
+from .superperf_metrics import get_all_data, get_fundamental_parameters, get_descriptive_and_technical,\
+                                            get_financial_ratios, get_fundamental_parameters_qtr, get_analyst_estimates,\
+                                            get_quote_benchmark, get_financial_ratios_benchmark, get_key_metrics_benchmark, \
+                                            get_income_benchmark, get_balancesheet_benchmark, get_asset_play_parameters,\
+                                            calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
+                                            get_peter_lynch_ratio
 import itertools
 import requests
+
+
+def combine_data(input):
+    return ','.join(input)
+
 
 
 def update_dict_beam(element, label):
@@ -132,6 +143,7 @@ def combine_fund1(p):
     extrawl = run_extrawl(p)
     buffetsix = run_buffetsix(p)
     universe = run_universe(p)
+    # this will go to standard
     return ((extrawl, buffetsix, universe)
                 | 'FlattenCombine all f1' >> beam.Flatten()
             )
@@ -141,7 +153,7 @@ def combine_fund2(p):
     newhighs = run_newhighs(p)
     canslim = run_canslim(p)
     leaps = run_leaps(p)
-
+    # this will go to stndard
     return ((newhighs, canslim, leaps)
                 | 'FlattenCombine all f2' >> beam.Flatten()
             )
@@ -150,21 +162,65 @@ def combine_fund2(p):
 def combine_benchmarks(p):
     ge = run_graham_enterprise(p)
     gd = run_graham_defensive(p)
-
-
-
-
+    # this will go all to benchmark
     return (
-            (ge, gd, universe)
+            (ge, gd)
             | 'FlattenCombine all' >> beam.Flatten()
 
     )
 
+def run_standard_pipeline1(p, fmpKey):
+    combined  = combine_fund1(p)
+    return (combined
+            | 'Getting fundamentals' >> beam.ParDo(EnhancedFundamentalLoader(fmpKey))
+            )
 
 
 
 
-
+class EnhancedFundamentalLoader(beam.DoFn):
+    def __init__(self, key, microcap_flag=False):
+        self.key = key
+        self.microcap_flag = microcap_flag
+        
+    def process(self, elements):
+        all_dt = []
+        isException = False
+        excMsg = ''
+        for tickerDict in elements:
+            ticker = tickerDict['ticker']
+            company_dict = tickerDict.copy()
+            try:
+                fundamental_data = get_fundamental_parameters(ticker, self.key)
+                if fundamental_data:
+                    fundamental_data.update(company_dict)
+                    fundamental_qtr = get_fundamental_parameters_qtr(ticker, self.key)
+                    if fundamental_qtr:
+                        fundamental_data.update(fundamental_qtr)
+                        financial_ratios = get_financial_ratios(ticker, self.key)
+                        if financial_ratios:
+                            fundamental_data.update(financial_ratios)
+                    updated_dict = get_analyst_estimates(ticker, self.key, fundamental_data)
+                    descr_and_tech = get_descriptive_and_technical(ticker, self.key)
+                    updated_dict.update(descr_and_tech)
+                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                    updated_dict.update(asset_play_dict)
+                    piotrosky_score = calculate_piotrosky_score(self.key, ticker)
+                    latest_rsi = compute_rsi(ticker, self.key)
+                    updated_dict['piotroskyScore'] = piotrosky_score
+                    updated_dict['rsi'] = latest_rsi
+                    logging.info(f'Getting Key Metrics Benchmark for {ticker}')
+                    keyMetrics = get_key_metrics_benchmark(ticker, self.key)
+                    updated_dict.update(keyMetrics)
+                    logging.info(f'Getting lynchratio for {ticker}')
+                    updated_dict['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, updated_dict)
+                    all_dt.append(updated_dict)
+            except Exception as e:
+                logging.info(f"Failed to process fundamental loader for {ticker}:{str(e)}")
+                
+        if isException:
+            raise Exception(excMsg)
+        return all_dt
 
 
    

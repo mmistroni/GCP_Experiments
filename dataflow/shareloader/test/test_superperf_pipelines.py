@@ -4,8 +4,9 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from shareloader.modules.superperf_pipelines import run_leaps, run_canslim, run_buffetsix ,combine_fund1, \
-                                                combine_fund2, combine_benchmarks
+                                                combine_fund2, combine_benchmarks, EnhancedFundamentalLoader
 from collections import  OrderedDict
+from apache_beam import combiners
 
 from datetime import date
 import os
@@ -59,9 +60,13 @@ class TestSuperPerfPipelines(unittest.TestCase):
                  | 'ToSink' >> self.printSink)
 
     def test_combine_benchmarks(self):
+        key = os.environ['FMPREPKEY']
+        
         with (TestPipeline() as p):
             res = combine_benchmarks(p)
             (res | 'Superperf combining tickets' >> beam.Map(lambda d: dict(ticker=d.get('Ticker'), label=d.get('label')))
+                 | 'CombineAllIntoSingleList' >> beam.CombineGlobally(combiners.ToList())
+                 | 'Getting fundamentals' >> beam.ParDo(EnhancedFundamentalLoader(key))
                  | 'ToSink' >> self.printSink)
 
 
