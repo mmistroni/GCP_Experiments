@@ -42,7 +42,7 @@ def run_swingtrader_pipeline(p, fmpkey):
                 | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.1, selection='SwingTrader'))
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.07, selection='SwingTrader'))
              )
 
 def run_test_pipeline(p, fmpkey):
@@ -54,7 +54,7 @@ def run_test_pipeline(p, fmpkey):
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=0.08, selection='Plus500'))
              )
-def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
+def run_etoro_pipeline(p, fmpkey, tolerance=0.08):
     cob = date.today()
     return  (p  | 'Starting etoro' >> beam.Create(get_new_highs())
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
@@ -63,7 +63,7 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.1):
                | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='EToro'))
              )
 
-def run_newhigh_pipeline(p, fmpkey, tolerance=0.1):
+def run_newhigh_pipeline(p, fmpkey, tolerance=0.05):
     cob = date.today()
     return  (p  | 'Starting nh' >> beam.Create(get_new_highs())
                 | 'nh Watchlist' >> beam.Map(lambda d: d['Ticker'])
