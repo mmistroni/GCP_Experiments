@@ -1,6 +1,6 @@
-from modules.sector_loader import run
+from shareloader.modules import sector_loader
 import logging
 import sys
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run()
+  sector_loader.run()
