@@ -31,13 +31,13 @@ sectorsETF = OrderedDict ({
 #https://www.tradingview.com/chart/AAPL/pmHMR643-Investors-Holy-Grail-The-Business-Economic-Cycle/?utm_source=Weekly&utm_medium=email&utm_campaign=TradingView+Weekly+188+%28EN%29
 def run_sector_loader_pipeline(p, fmprepkey):
     return (p | 'Starting st' >> beam.Create(['Start'])
-     | 'Fetch data' >> beam.Map(lambda tpl: get_sector_rankings(fmprepkey))
+     | 'Fetch data 1' >> beam.Map(lambda tpl: get_sector_rankings(fmprepkey))
      #| 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
      )
 
 def run_sector_loader_finviz(p):
     return (p | 'Starting fvz' >> beam.Create(['Start'])
-     | 'Fetch data' >> beam.Map(lambda tpl: get_finviz_performance())
+     | 'Fetch data 2' >> beam.Map(lambda tpl: get_finviz_performance())
      )
 
 
