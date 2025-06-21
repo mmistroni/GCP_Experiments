@@ -32,5 +32,5 @@ substitutions:
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
   _RECIPIENTS : 'mmistroni.gmail.com'
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest5
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest6
 
