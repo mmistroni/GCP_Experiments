@@ -34,7 +34,7 @@ images: [ 'gcr.io/$_PROJECT_ID/$_SECTORS_IMAGE_NAME' ]
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _SECTORS_IMAGE_NAME: sectors:latest4
+  _SECTORS_IMAGE_NAME: sectors:latest5
   _SECTORS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/sectors_flex_template.json
   _SECTORS_METADATA_FILE: ./dataflow/shareloader/sectors_template_metadata
 

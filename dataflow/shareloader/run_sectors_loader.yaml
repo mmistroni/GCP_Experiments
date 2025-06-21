@@ -26,12 +26,11 @@ steps:
     id: 'build-flex-template-via-cloudsdk'
 
 substitutions:
-  _JOB_NAME: 'sectorscloudbuild'
+  _JOB_NAME: 'sectorscloudbuild2'
   _SECTORS_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/sectors_flex_template.json
   _REGION: us-central1
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
   _RECIPIENTS : 'mmistroni.gmail.com'
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest4
-
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest5
 
