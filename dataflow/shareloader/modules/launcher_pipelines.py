@@ -28,7 +28,7 @@ def run_eodmarket_pipeline(p, fmpkey):
             | 'EOD Market ' >> beam.Map(lambda d: d['Ticker'])
             | 'Filtering extra eod market' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
             | 'Combine all eod extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.02, selection='EOD'))
+            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=-0.1, selection='EOD'))
             )
 
 def run_sector_performance(p):
