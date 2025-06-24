@@ -79,7 +79,7 @@ def run_extra_pipeline(p, fmpkey, tolerance=0.1):
                 | 'Extra Watchlist' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extras ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers from Extraextratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'Extras' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='ExtraWatch'))
+               | 'Extras' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=0.04, selection='ExtraWatch'))
              )
 
 
