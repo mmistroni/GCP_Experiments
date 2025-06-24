@@ -326,12 +326,12 @@ def run(argv = None, save_main_session=True):
         if known_args.runtype == 'eod':
             obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
 
-            all_pipelines_eod = ((obb) | "fmaprun all eod" >> beam.Flatten())
-            premarket_results_eod = (all_pipelines_eod | 'Combine Premarkets Reseults EOD' >> beam.CombineGlobally(
+            #all_pipelines_eod = ((obb) | "fmaprun all eod" >> beam.Flatten())
+            premarket_results_eod = (obb | 'Combine Premarkets Reseults EOD' >> beam.CombineGlobally(
                 StockSelectionCombineFn()))
 
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
-            llm_out_eod = run_inference(all_pipelines_eod, known_args.openaikey, sink)
+            llm_out_eod = run_inference(obb, known_args.openaikey, sink)
             keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
 
             combined = ({'collection1': keyed_eod,
