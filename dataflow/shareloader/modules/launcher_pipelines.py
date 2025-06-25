@@ -52,7 +52,7 @@ def run_test_pipeline(p, fmpkey):
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=0.03, selection='Plus500'))
+               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=0.1, selection='Plus500'))
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.08):
     cob = date.today()
@@ -60,7 +60,7 @@ def run_etoro_pipeline(p, fmpkey, tolerance=0.08):
                 | 'ETORO LEAPSMaping extra ticker' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering extra' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=0.04, selection='EToro'))
+               | 'Etoro' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=0.08, selection='EToro'))
              )
 
 def run_newhigh_pipeline(p, fmpkey, tolerance=0.05):
