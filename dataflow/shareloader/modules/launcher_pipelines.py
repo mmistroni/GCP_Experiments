@@ -21,14 +21,14 @@ from apache_beam.ml.inference.base import RunInference
 
 
 
-def run_eodmarket_pipeline(p, fmpkey):
+def run_eodmarket_pipeline(p, fmpkey, tolerance=-0.1):
     logging.info('Running OBB ppln')
     cob = date.today()
     return (p | 'Starting eod' >> beam.Create(get_eod_screener())
             | 'EOD Market ' >> beam.Map(lambda d: d['Ticker'])
             | 'Filtering extra eod market' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
             | 'Combine all eod extratickers' >> beam.CombineGlobally(lambda x: ','.join(x))
-            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=-0.1, selection='EOD'))
+            | 'EOD' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=tolerance, selection='EOD'))
             )
 
 def run_sector_performance(p):
