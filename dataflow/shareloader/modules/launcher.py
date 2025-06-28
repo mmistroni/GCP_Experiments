@@ -340,10 +340,12 @@ def run(argv = None, save_main_session=True):
                         | beam.CoGroupByKey())
 
             send_email(combined,  known_args.sendgridkey)
-            
 
-            
             obb | 'oBB2 TO SINK' >>sink
+
+            write_to_ai_stocks(llm_out_eod, ai_sink)
+
+
         else:
 
             plus500 = run_test_pipeline(p, known_args.fmprepkey)
