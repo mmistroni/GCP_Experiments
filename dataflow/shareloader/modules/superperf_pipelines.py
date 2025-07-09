@@ -223,6 +223,96 @@ class EnhancedFundamentalLoader(beam.DoFn):
         return all_dt
 
 
-   
+class EnhancedBenchmarkLoader(beam.DoFn):
+    def __init__(self, key, split=None):
+        self.key = key
+        self.split = split
+
+    def process(self, elements):
+        logging.info('All data is\n{}'.format(elements))
+        all_dt = []
+        isException = False
+        excMsg = ''
+
+        idx = 0
+        for tickerDict in elements:
+            ticker = tickerDict['ticker']
+            company_dict = tickerDict.copy()
+            idx +=1
+            try:
+                quotes_data = get_quote_benchmark(ticker, self.key)
+                quotes_data.update(company_dict)
+                if quotes_data:
+                    if quotes_data['institutionalOwnershipPercentage'] > 0.6 or \
+                        quotes_data['institutionalOwnershipPercentage'] ==  0.55555:
+                        continue
+                    income_data = get_income_benchmark(ticker, self.key)
+                    if income_data:
+                        quotes_data.update(income_data)
+                        balance_sheet_data = get_balancesheet_benchmark(ticker, self.key)
+                        if balance_sheet_data:
+                            quotes_data.update(balance_sheet_data)
+                            financial_ratios_data = get_financial_ratios_benchmark(ticker, self.key)
+
+                            if financial_ratios_data:
+                                quotes_data.update(financial_ratios_data)
+                                key_metrics_dta = get_key_metrics_benchmark(ticker, self.key)
+                                if key_metrics_dta:
+                                    quotes_data.update(key_metrics_dta)
+                                    asset_play_dict = get_asset_play_parameters(ticker, self.key)
+                                    quotes_data.update(asset_play_dict)
+                                    # CHecking if assets > stocks outstanding
+                                    if quotes_data.get('sharesOutstanding',1) is not None \
+                                        and quotes_data.get('price',1) is not None:
+                                        currentCompanyValue = quotes_data['sharesOutstanding'] * quotes_data['price']
+                                    else:
+                                        currentCompanyValue = 1
+                                    # current assets
+                                    quotes_data['canBuyAllItsStock'] = quotes_data['totalAssets'] - currentCompanyValue
+
+                                    if quotes_data.get('totalCurrentAssets') is not None and \
+                                            quotes_data.get('totalCurrentLiabilities') is not None and \
+                                            quotes_data.get('inventory') is not None and \
+                                            quotes_data.get('sharesOutstanding') is not None and \
+                                            quotes_data.get('sharesOutstanding') > 0:
+                                        quotes_data['netQuickAssetPerShare'] = (quotes_data['totalCurrentAssets'] -  \
+                                                                                    quotes_data['totalCurrentLiabilities'] - \
+                                                                                     quotes_data['inventory']) / quotes_data['sharesOutstanding']
+                                    else:
+                                        quotes_data['netQuickAssetPerShare'] = -1
+
+                                    quotes_data['rsi'] = 0
+                                    quotes_data['piotroskyScore'] = 0
+                                    quotes_data['lynchRatio'] = get_peter_lynch_ratio(self.key, ticker, quotes_data)
+
+                                all_dt.append(quotes_data)
+            except Exception as e:
+                logging.info(f'Unexpected exception in fundamental data for:{ticker}:{str(e)}')
+                excMsg = f'{idx/len(tickers)}Unexpected exception in fundamental data for:{ticker}:{str(e)}'
+                isException = True
+                break
+
+        if isException:
+            raise Exception(excMsg)
+        return all_dt
+
+
+class PipelineCombinerFn(beam.CombineFn):
+    def create_accumulator(self):
+        return []
+
+    def add_input(self, accumulator, input):
+        accumulator.append(input)
+        return accumulator
+
+    def merge_accumulators(self, accumulators):
+        merged = []
+        for acc in accumulators:
+            merged.extend(acc)
+        return merged
+
+    def extract_output(self, accumulator):
+        return accumulator
+
 
 

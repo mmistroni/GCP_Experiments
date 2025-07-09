@@ -1,0 +1,16 @@
+{
+  "name": "Superperformers New Run",
+  "description": "An template for finding superperformers.",
+  "parameters": [
+    {
+      "name": "fmprepkey",
+      "helpText": "FMPREP  key",
+      "label": "fmprepkey"
+    },
+    {
+      "name": "runtype",
+      "helpText": "The Run Type",
+      "label": "runtype"
+    }
+  ]
+}

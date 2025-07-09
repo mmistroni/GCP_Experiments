@@ -1,0 +1,40 @@
+steps:
+  # Run Flex Template different way
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'gcloud'
+    args: 
+      [ 
+          'dataflow'
+          , 'flex-template'
+          , 'run'
+          , '$_JOB_NAME'
+          , '--template-file-gcs-location'
+          , '$_TEMPLATE_GCS_LOCATION'
+          , '--parameters'
+          , 'fmprepkey=$_FMPKEY'
+          , '--parameters'
+          , 'iistocks=$_IISTOCKS'
+          , '--parameters'
+          , 'microcap=$_MICROCAP'
+        , '--parameters'
+        , 'probe=$_PROBE'
+        , '--parameters'
+        , 'split=$_SPLIT'
+        , '--parameters'
+        , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
+        , '--region=$_REGION'
+        , '--staging-location=gs://datascience-projects_cloudbuild/staging'
+          ]  
+    id: 'build-flex-template-via-cloudsdk'
+
+substitutions:
+  _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/superperformersnew_flex_template.json
+  _JOB_NAME: cloudbuildsuperperf
+  _REGION : 'us-central1'
+  _FMPKEY : ''
+  _IISTOCKS : ''
+  _MICROCAP: ''
+  _PROBE: ''
+  _SPLIT: ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformersnew:latest2
+
