@@ -37,7 +37,7 @@ RUN ls -la  ${WORKDIR}/shareloader/modules
 
 
 RUN echo '----- cat ting  main--'
-RUN cat superperformers_new.py
+RUN cat superperformers_main_new.py
 RUN echo '----- cat ting  reqs--'
 RUN cat requirements.txt
 
