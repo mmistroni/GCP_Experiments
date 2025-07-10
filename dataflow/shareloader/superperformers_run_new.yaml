@@ -13,14 +13,8 @@ steps:
           , '--parameters'
           , 'fmprepkey=$_FMPKEY'
           , '--parameters'
-          , 'iistocks=$_IISTOCKS'
-          , '--parameters'
-          , 'microcap=$_MICROCAP'
-        , '--parameters'
-        , 'probe=$_PROBE'
-        , '--parameters'
-        , 'split=$_SPLIT'
-        , '--parameters'
+          , 'runtype=$_RUNTYPE'
+          '--parameters'
         , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
         , '--region=$_REGION'
         , '--staging-location=gs://datascience-projects_cloudbuild/staging'
@@ -32,9 +26,6 @@ substitutions:
   _JOB_NAME: cloudbuildsuperperf-new
   _REGION : 'us-central1'
   _FMPKEY : ''
-  _IISTOCKS : ''
-  _MICROCAP: ''
-  _PROBE: ''
-  _SPLIT: ''
+  _RUNTYPE : ''
   _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformersnew:latest2
 
