@@ -14,10 +14,10 @@ steps:
           , 'fmprepkey=$_FMPKEY'
           , '--parameters'
           , 'runtype=$_RUNTYPE'
-          '--parameters'
-        , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
-        , '--region=$_REGION'
-        , '--staging-location=gs://datascience-projects_cloudbuild/staging'
+          ,'--parameters'
+          , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
+          , '--region=$_REGION'
+          , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           ]  
     id: 'build-flex-template-via-cloudsdk'
 
