@@ -29,7 +29,7 @@ steps:
 
 substitutions:
   _TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/superperformersnew_flex_template.json
-  _JOB_NAME: cloudbuildsuperperf
+  _JOB_NAME: cloudbuildsuperperf-new
   _REGION : 'us-central1'
   _FMPKEY : ''
   _IISTOCKS : ''
