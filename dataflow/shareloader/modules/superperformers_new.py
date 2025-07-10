@@ -58,7 +58,7 @@ def run(argv=None, save_main_session=True):
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
     pipeline_optionss.view_as(DebugOptions).add_experiment(experiment_value)
 
-    debugSink = beam.Map(print)
+    debugSink = beam.Map(logging.info)
     experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
     with beam.Pipeline(options=pipeline_optionss) as p:
