@@ -152,6 +152,7 @@ def map_to_bq_dict(input_dict):
     custom_dict["SMA20"] =  input_dict.get('SMA20')
     custom_dict["SMA50"] =  input_dict.get('SMA50')
     custom_dict["SMA200"] =  input_dict.get('SMA200')
+    custom_dict['slope'] = input_dict.get('slope')
     return custom_dict
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):

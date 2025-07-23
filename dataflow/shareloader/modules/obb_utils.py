@@ -13,6 +13,7 @@ import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 import time
 import time
+from scipy.stats import linregress
 
 
 def create_bigquery_ppln(p):
@@ -133,7 +134,8 @@ class ProcessHistorical(beam.DoFn):
 
 class AsyncProcess(beam.DoFn):
 
-    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500', batchsize=20):
+    def __init__(self, credentials, start_date, price_change=0.07,
+                    selection='Plus500', batchsize=20, linregdays=30):
         self.credentials = credentials
         self.fetcher = YFinanceEquityHistoricalFetcher
         self.end_date = start_date
@@ -142,6 +144,7 @@ class AsyncProcess(beam.DoFn):
         self.selection = selection
         self.fmpKey = credentials['key']
         self.batch_size = batchsize
+        self.linregdays = linregdays
 
 
     def get_adx_and_rsi(self, ticker):
@@ -196,6 +199,27 @@ class AsyncProcess(beam.DoFn):
 
     def calculate_slope(self, ticker):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
+        logging.info('Calculating slope for {ticker}')
+        try:
+            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={self.fmpKey}'
+            data = requests.get(hist_url).json().get('historical')
+
+            if data:
+                prices =  [d['adjClose'] for d in data[:self.linregdays]]
+                slope, intercept, r_value, p_value, std_err = linregress(days, prices)
+
+                # --- 3. Interpret the Slope ---
+                logging.info(f"Calculated Slope: {slope:.4f}")
+                logging.info(f"Intercept: {intercept:.4f}")
+                logging.info(f"R-squared value: {r_value ** 2:.4f}")  # R-squared tells you how well the line fits the data
+                return slope
+            return 0
+        except Exception as e:
+            logging.info(f'Failed to retreivve  slope for {ticker}:{str(e)}')
+            return 0
+
+    def calculate_slope2(self, ticker):
+        # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
 
         try:
            sma20 = 'https://financialmodelingprep.com/api/v3/technical_indicator/1day/{ticker}?type=sma&period=20&apikey={self.fmpKey}'
@@ -209,6 +233,7 @@ class AsyncProcess(beam.DoFn):
         except Exception as e:
             logging.info('Failed to retreivve smas for {ticker}')
             return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
+
 
 
 
@@ -254,6 +279,7 @@ class AsyncProcess(beam.DoFn):
                         latest = ticker_result[-1]
                         logging.info(f'Latest\n{latest}')
                         increase = latest['close'] / last_close['close']
+                        slope = self.calculate_slope(ticker)
                         if increase > (1 + self.price_change):
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
@@ -262,6 +288,7 @@ class AsyncProcess(beam.DoFn):
                             latest['prev_close'] = last_close['close']
                             latest['change'] = increase
                             latest['selection'] = self.selection
+                            latest['slope'] = slope
                             tech_dict = self.get_adx_and_rsi(ticker)
                             profile = self.get_profile(ticker)
                             latest.update(profile)
@@ -271,8 +298,6 @@ class AsyncProcess(beam.DoFn):
                             latest.update(smas)
                             if latest['close'] > latest['SMA20']:
                                 latest['highlight'] = 'True'
-
-
 
                             all_records.append(latest)
                         else:

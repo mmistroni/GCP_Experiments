@@ -168,6 +168,8 @@ def get_sectors():
             'Industrial Goods', 'Financial', 'Services', 'Conglomerates']
 
 
+
+
 def get_industries(key):
     inds = []
     for sector in get_sectors():
