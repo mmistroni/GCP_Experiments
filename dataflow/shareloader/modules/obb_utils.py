@@ -206,7 +206,7 @@ class AsyncProcess(beam.DoFn):
 
             if data:
                 prices =  [d['adjClose'] for d in data[:self.linregdays]]
-                slope, intercept, r_value, p_value, std_err = linregress(days, prices)
+                slope, intercept, r_value, p_value, std_err = linregress(self.linregdays, prices)
 
                 # --- 3. Interpret the Slope ---
                 logging.info(f"Calculated Slope: {slope:.4f}")
