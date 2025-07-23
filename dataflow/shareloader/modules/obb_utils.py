@@ -279,8 +279,9 @@ class AsyncProcess(beam.DoFn):
                         latest = ticker_result[-1]
                         logging.info(f'Latest\n{latest}')
                         increase = latest['close'] / last_close['close']
-                        slope = self.calculate_slope(ticker)
+
                         if increase > (1 + self.price_change):
+                            slope = self.calculate_slope(ticker)
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
@@ -321,7 +322,8 @@ class AsyncProcess(beam.DoFn):
 
 class AsyncFMPProcess(AsyncProcess):
 
-    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500', batchsize=20):
+    def __init__(self, credentials, start_date, price_change=0.07, selection='Plus500', batchsize=20,
+                 linregdays=30):
         self.credentials = credentials
         self.fetcher = FMPEquityQuoteFetcher
         self.end_date = start_date
@@ -330,6 +332,7 @@ class AsyncFMPProcess(AsyncProcess):
         self.selection = selection
         self.fmpKey = credentials['fmp_api_key']
         self.batch_size = batchsize
+        self.linregdays = linregdays
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element},start_date={self.start_date}, end_date={self.end_date}')
@@ -358,6 +361,7 @@ class AsyncFMPProcess(AsyncProcess):
                     logging.info(f'Latest\n{latest}')
                     increase = latest.get('last_price', 0) / latest.get('prev_close', 1)
                     if increase > (1 + self.price_change):
+                        slope = self.calculate_slope(tick)
                         logging.info(f'Adding ({tick}):{latest}')
                         latest['ticker'] = tick
                         latest['symbol'] = tick
@@ -365,6 +369,7 @@ class AsyncFMPProcess(AsyncProcess):
                         latest['prev_close'] = latest.get('last_timestamp', datetime.now()).date()
                         latest['change'] = increase
                         latest['selection'] = self.selection
+                        latest['slope'] = slope
                         tech_dict = self.get_adx_and_rsi(tick)
                         profile = self.get_profile(tick)
                         latest.update(profile)
