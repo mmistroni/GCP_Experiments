@@ -206,7 +206,7 @@ class AsyncProcess(beam.DoFn):
 
             if data:
                 logging.info(f'retrieved:{data}')
-                prices =  [d['adjClose'] for d in data[-self.linregdays:]]
+                prices =  [d['adjClose'] for d in data[0:self.linregdays]]
                 logging.info(f'prices:{prices}')
                 
                 slope, intercept, r_value, p_value, std_err = linregress(self.linregdays, prices)
