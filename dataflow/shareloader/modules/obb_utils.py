@@ -199,13 +199,16 @@ class AsyncProcess(beam.DoFn):
 
     def calculate_slope(self, ticker):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
-        logging.info('Calculating slope for {ticker}')
+        logging.info(f'Calculating slope for {ticker}')
         try:
             hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={self.fmpKey}'
             data = requests.get(hist_url).json().get('historical')
 
             if data:
-                prices =  [d['adjClose'] for d in data[:self.linregdays]]
+                logging.info(f'retrieved:{data}')
+                prices =  [d['adjClose'] for d in data[-self.linregdays:]]
+                logging.info(f'prices:{prices}')
+                
                 slope, intercept, r_value, p_value, std_err = linregress(self.linregdays, prices)
 
                 # --- 3. Interpret the Slope ---
