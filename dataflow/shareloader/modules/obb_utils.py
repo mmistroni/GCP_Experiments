@@ -205,8 +205,11 @@ class AsyncProcess(beam.DoFn):
             data = requests.get(hist_url).json().get('historical')
 
             if data:
-                prices =  [d['adjClose'] for d in data[:self.linregdays]]
-                slope, intercept, r_value, p_value, std_err = linregress(self.linregdays, prices)
+                prices =  [d['adjClose'] for d in data[:self.linregdays]][::-1]
+
+                xs = range(1, len(prices) + 1)
+
+                slope, intercept, r_value, p_value, std_err = linregress(xs, prices)
 
                 # --- 3. Interpret the Slope ---
                 logging.info(f"Calculated Slope: {slope:.4f}")
