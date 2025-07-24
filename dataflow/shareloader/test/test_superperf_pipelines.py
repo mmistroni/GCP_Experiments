@@ -6,7 +6,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 from shareloader.modules.superperf_pipelines import run_leaps, run_canslim, run_buffetsix ,combine_fund1, \
                                                 combine_fund2, combine_benchmarks, EnhancedFundamentalLoader, \
                                                 PipelineCombinerFn, EnhancedBenchmarkLoader
-from shareloader.modules.superperformers_new import run_fund1, run_fund2, run_benchmarks
+from shareloader.modules.superperformers_new import run_fund1, run_fund2, run_benchmarks, StockSelectionCombineFn
 from collections import  OrderedDict
 from apache_beam import combiners
 
@@ -57,6 +57,7 @@ class TestSuperPerfPipelines(unittest.TestCase):
                 lambda d: dict(ticker=d.get('Ticker'), label=d.get('label')))
              | 'fCombineAllIntoSingleList' >> beam.CombineGlobally(PipelineCombinerFn())
              | 'fGetting fundamentals' >> beam.ParDo(EnhancedFundamentalLoader(key))
+             | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn())
              | 'fToSink' >> self.printSink)
 
     def test_combine_fund2(self):

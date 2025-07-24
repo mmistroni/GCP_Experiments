@@ -11,6 +11,11 @@
       "name": "runtype",
       "helpText": "The Run Type",
       "label": "runtype"
+    },
+    {
+      "name": "sendgridkey",
+      "helpText": "Send Grid Key",
+      "label": "send grid key"
     }
   ]
 }

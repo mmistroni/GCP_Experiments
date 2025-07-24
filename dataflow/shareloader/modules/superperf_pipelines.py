@@ -17,6 +17,10 @@ from .superperf_metrics import get_all_data, get_fundamental_parameters, get_des
                                             calculate_piotrosky_score, compute_rsi, get_price_change, get_dividend_paid,\
                                             get_peter_lynch_ratio
 import itertools
+from .mail_utils import NEW_STOCK_EMAIL_TEMPLATE, NEW_ROW_TEMPLATE
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email, Personalization
+
 import requests
 
 
@@ -313,6 +317,67 @@ class PipelineCombinerFn(beam.CombineFn):
 
     def extract_output(self, accumulator):
         return accumulator
+
+
+class StockSelectionCombineFn(beam.CombineFn):
+  def create_accumulator(self):
+    return []
+
+  def add_input(self, accumulator, input):
+    row_acc = accumulator
+    row_acc.append(NEW_ROW_TEMPLATE.format(*[input['ticker'], input['label'], input['price']]))
+    return row_acc
+
+  def merge_accumulators(self, accumulators):
+    return list(itertools.chain(*accumulators))
+
+  def extract_output(self, sum_count):
+    return ''.join(sum_count)
+
+class EmailSender(beam.DoFn):
+    def __init__(self, recipients, key):
+        self.recipients = recipients.split(';')
+        self.key = key
+
+
+    def _build_personalization(self, recipients):
+        personalizations = []
+        for recipient in recipients:
+            logging.info('Adding personalization for {}'.format(recipient))
+            person1 = Personalization()
+            person1.add_to(Email(recipient))
+            personalizations.append(person1)
+        return personalizations
+
+
+    def process(self, element):
+        logging.info('Attepmting to send emamil to:{}, using key:{}'.format(self.recipients, self.key))
+        template = NEW_STOCK_EMAIL_TEMPLATE
+        asOfDateStr = date.today().strftime('%d %b %Y')
+        content = template.format(asOfDate=asOfDateStr, tableOfData=element)
+        sender = 'gcp_cloud_mm@outlook.com'
+        logging.info(f'Sending mail from:{sender} ')
+        logging.info('Sending \n {}'.format(content))
+        message = Mail(
+            from_email=sender,
+            to_emails=self.recipients,
+            subject=f'New Stock selection ideas for {asOfDateStr}',
+            html_content=content)
+
+        personalizations = self._build_personalization(self.recipients)
+        for pers in personalizations:
+            message.add_personalization(pers)
+
+        sg = SendGridAPIClient(self.key)
+
+        response = sg.send(message)
+        print(response.status_code, response.body, response.headers)
+
+def send_email(pipeline, sendgridkey):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(['mmistron@gmail.com'], sendgridkey))
+             )
+
+
 
 
 

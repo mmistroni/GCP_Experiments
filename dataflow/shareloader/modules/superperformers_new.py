@@ -5,9 +5,10 @@ import logging
 import apache_beam as beam
 import argparse
 from .superperf_pipelines import combine_fund1, combine_fund2, combine_benchmarks, PipelineCombinerFn,\
-                            EnhancedFundamentalLoader, EnhancedBenchmarkLoader
+                            EnhancedFundamentalLoader, EnhancedBenchmarkLoader, StockSelectionCombineFn, send_email
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
+import itertools
 
 '''
 Further source of infos
@@ -15,11 +16,20 @@ https://medium.com/@mancuso34/building-all-in-one-stock-economic-data-repository
 https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-streamlit-5d3a7bc42b89
 '''
 
+ROW_TEMPLATE =  """<tr><td>{}</td>
+                       <td>{}</td>
+                   </tr>"""
+
+
+
+
+
 def parse_known_args(argv):
     """Parses args for the workflow."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--fmprepkey')
     parser.add_argument('--runtype')
+    parser.add_argument('--sendgridkey')
     return parser.parse_known_args(argv)
 
 def run_fund1(p, key):
@@ -59,7 +69,6 @@ def run(argv=None, save_main_session=True):
     pipeline_optionss.view_as(DebugOptions).add_experiment(experiment_value)
 
     debugSink = beam.Map(logging.info)
-    experiment_value = f"max_workflow_runtime_walltime_seconds={timeout_secs}"
 
     with beam.Pipeline(options=pipeline_optionss) as p:
         run_type = known_args.runtype
@@ -67,13 +76,21 @@ def run(argv=None, save_main_session=True):
         logging.info(f'RunType:{run_type}')
         if run_type == 'fund1':
             res = run_fund1(p, key)
-            res | 'fund1 to sink' >> debugSink
         elif run_type == 'fund2':
             res = run_fund2(p, key)
-            res | 'fund2 to sink' >> debugSink
+
         elif run_type == 'benchmark':
             res = run_benchmarks(p, key)
-            res | 'bench to sink' >> debugSink
+
+
+        # sending to sink
+        res | 'bench to sink' >> debugSink
+
+        combined = (res | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn()))
+
+        combined | 'combined to sink' | debugSink
+
+        send_email(combined, known_args.sendgridkey)
 
 
 

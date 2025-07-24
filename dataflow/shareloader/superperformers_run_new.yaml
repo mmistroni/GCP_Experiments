@@ -14,6 +14,8 @@ steps:
           , 'fmprepkey=$_FMPKEY'
           , '--parameters'
           , 'runtype=$_RUNTYPE'
+          , '--parameters'
+          , 'sendgridkey=$_SENDGRIDKEY'
           ,'--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           , '--region=$_REGION'
@@ -27,5 +29,6 @@ substitutions:
   _REGION : 'us-central1'
   _FMPKEY : ''
   _RUNTYPE : ''
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformersnew:latest2
+  _SENDGRIDKEY : ''
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/superperformersnew:latest3
 

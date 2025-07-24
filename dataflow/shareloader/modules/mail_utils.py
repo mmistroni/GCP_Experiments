@@ -6,6 +6,9 @@ from functools import reduce
 
 TEMPLATE = "<tr><td>{TICKER}</td><td>{START_PRICE}</td><td>{END_PRICE}</td><td>{PERFORMANCE}</td><td>{RATINGS}</td><td>{TOTAL_FILLS}</td></tr>"
 
+NEW_ROW_TEMPLATE = "<tr><td>{}</td><td>{}</td></tr>"
+
+
 class MonthlyEmailSender(beam.DoFn):
     def __init__(self, recipients, key):
         self.recipients = recipients.split(',')
@@ -194,3 +197,47 @@ STOCK_EMAIL_TEMPLATE = """<html>
                 </html>
 
 """
+NEW_STOCK_EMAIL_TEMPLATE = """<html>
+                      <body>
+                        <p> Stock Selection for {asOfDate} </p>
+                        <br>
+                        <ul>
+                            <li>Defensive Stock: Criteria
+                            </li>
+                            <li>Enteprise Stocks: Criteria
+                            </li>
+                            <li>CANSLIM: Criteria
+                            </li>
+                            <li>Below 10M stocks: Criteria
+                            </li>
+                            <li>New Highs: Criteria
+                            </li>
+                            <li>Asset Play: Criteria
+                            </li>
+                            <li>Out of Favour*: Criteria
+                            </li>
+                            <li>MICROCAP: Criteria
+                            </li>
+                            <li>BUFFETT SIX: Criteria
+                            </li>
+                        </uls>
+                        <br>
+                        <br>
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th>TICKER</th>
+                                    <th>LABEL</th>
+                                    <th>PRICE</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {tableOfData}
+                            </tbody>
+                        </table>
+                    </body>
+                </html>
+
+"""
+
+
