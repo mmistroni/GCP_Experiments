@@ -64,7 +64,7 @@ class MyTestCase(unittest.TestCase):
                     #| 'Overnight returs' >> beam.Map(lambda d: d['Ticker'])
                     | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                     | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-                    | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': key}, date.today(), price_change=0.07))
+                    | 'Plus500YFRun' >> beam.ParDo(AsyncProcess({'key': key}, date.today(), price_change=0.0001))
                      |  self.debugSink
                     )
 
@@ -106,7 +106,7 @@ class MyTestCase(unittest.TestCase):
         ticker = 'AAPL'
         hist_url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{}?apikey={}'.format(ticker, key)
         data = requests.get(hist_url).json().get('historical')
-        df=  pd.DataFrame(data=data)[0:300][::-1]
+        df=  pd.DataFrame(data=data)[0:30][::-1]
         
         df = df.set_index('date')
 
