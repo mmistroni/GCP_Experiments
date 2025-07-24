@@ -374,7 +374,7 @@ class EmailSender(beam.DoFn):
         print(response.status_code, response.body, response.headers)
 
 def send_email(pipeline, sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(['mmistron@gmail.com'], sendgridkey))
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey))
              )
 
 
