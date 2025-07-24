@@ -88,7 +88,7 @@ def run(argv=None, save_main_session=True):
 
         combined = (res | 'combining' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
-        combined | 'combined to sink' | debugSink
+        combined | 'combined to sink'  >> debugSink
 
         send_email(combined, known_args.sendgridkey)
 
