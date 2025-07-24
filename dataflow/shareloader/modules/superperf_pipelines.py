@@ -369,9 +369,9 @@ class EmailSender(beam.DoFn):
             message.add_personalization(pers)
 
         sg = SendGridAPIClient(self.key)
-
+        logging.info('--Sending.,,,')
         response = sg.send(message)
-        print(response.status_code, response.body, response.headers)
+        logging.info(response.status_code, response.body, response.headers)
 
 def send_email(pipeline, sendgridkey):
     return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey))
