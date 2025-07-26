@@ -378,7 +378,7 @@ class EmailSender(beam.DoFn):
             logging.info(f'Failed to send email:{str(e)}')
 
 def send_email(pipeline, sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey))
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', sendgridkey))
              )
 
 
