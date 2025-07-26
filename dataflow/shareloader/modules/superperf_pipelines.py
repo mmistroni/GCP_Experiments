@@ -372,6 +372,7 @@ class EmailSender(beam.DoFn):
         logging.info('--Sending.,,,')
         try:
             response = sg.send(message)
+            logging.info('Message sent....')
             logging.info(f'Status:{response.status_code}, Body:{response.body}, Headers@{response.headers}')
         except Exception as e:
             logging.info(f'Failed to send email:{str(e)}')
