@@ -370,8 +370,11 @@ class EmailSender(beam.DoFn):
 
         sg = SendGridAPIClient(self.key)
         logging.info('--Sending.,,,')
-        response = sg.send(message)
-        logging.info(response.status_code, response.body, response.headers)
+        try:
+            response = sg.send(message)
+            logging.info(f'Status:{response.status_code}, Body:{response.body}, Headers@{response.headers}')
+        except Exception as e:
+            logging.info(f'Failed to send email:{str(e)}')
 
 def send_email(pipeline, sendgridkey):
     return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey))
