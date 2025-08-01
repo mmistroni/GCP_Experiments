@@ -335,10 +335,10 @@ class StockSelectionCombineFn(beam.CombineFn):
     return ''.join(sum_count)
 
 class EmailSender(beam.DoFn):
-    def __init__(self, recipients, key, runtype=None):
+    def __init__(self, recipients, key, runType=None):
         self.recipients = recipients.split(';')
         self.key = key
-        self.runtype = runtype or ''
+        self.runtype = runType or ''
 
 
     def _build_personalization(self, recipients):
@@ -378,8 +378,8 @@ class EmailSender(beam.DoFn):
         except Exception as e:
             logging.info(f'Failed to send email:{str(e)}')
 
-def send_email(pipeline, sendgridkey, runtype=Non):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey, runtype=None))
+def send_email(pipeline, sendgridkey, runType=None):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey, runType=runType))
              )
 
 
