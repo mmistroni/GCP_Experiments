@@ -1,5 +1,5 @@
-from modules.share_datset_loader import run
+from shareloader.modules import share_datset_loader
 import logging
 if __name__ == '__main__':
   logging.getLogger().setLevel(logging.INFO)
-  run()
+  share_datset_loader.run()
