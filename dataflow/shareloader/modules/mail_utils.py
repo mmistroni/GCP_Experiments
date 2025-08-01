@@ -6,7 +6,7 @@ from functools import reduce
 
 TEMPLATE = "<tr><td>{TICKER}</td><td>{START_PRICE}</td><td>{END_PRICE}</td><td>{PERFORMANCE}</td><td>{RATINGS}</td><td>{TOTAL_FILLS}</td></tr>"
 
-NEW_ROW_TEMPLATE = "<tr><td>{}</td><td>{}</td></tr>"
+NEW_ROW_TEMPLATE = "<tr><td>{}</td><td>{}</td><td>{}</td></tr>"
 
 
 class MonthlyEmailSender(beam.DoFn):

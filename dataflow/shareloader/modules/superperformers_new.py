@@ -90,7 +90,7 @@ def run(argv=None, save_main_session=True):
 
         combined | 'combined to sink'  >> debugSink
 
-        send_email(combined, known_args.sendgridkey)
+        send_email(combined, known_args.sendgridkey, runType=run_type)
 
 
 
