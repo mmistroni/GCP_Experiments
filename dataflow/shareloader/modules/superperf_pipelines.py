@@ -338,7 +338,7 @@ class EmailSender(beam.DoFn):
     def __init__(self, recipients, key, runType=None):
         self.recipients = recipients.split(';')
         self.key = key
-        self.runtype = runType or ''
+        self.runType = runType or ''
 
 
     def _build_personalization(self, recipients):
@@ -362,7 +362,7 @@ class EmailSender(beam.DoFn):
         message = Mail(
             from_email=sender,
             to_emails=self.recipients,
-            subject=f'New Stock selection ideas for {asOfDateStr} - run {self.runtype}',
+            subject=f'New Stock selection ideas for {asOfDateStr} - run {self.runType}',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -379,7 +379,7 @@ class EmailSender(beam.DoFn):
             logging.info(f'Failed to send email:{str(e)}')
 
 def send_email(pipeline, sendgridkey, runType=None):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistron@gmail.com', sendgridkey, runType=runType))
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', sendgridkey, runType=runType))
              )
 
 
