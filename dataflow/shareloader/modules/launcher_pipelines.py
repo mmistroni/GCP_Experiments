@@ -36,23 +36,23 @@ def run_sector_performance(p):
     return (p | 'Starting' >> beam.Create(get_finviz_performance())
      )
 
-def run_swingtrader_pipeline(p, fmpkey):
+def run_swingtrader_pipeline(p, fmpkey, price_change=0.07):
     cob = date.today()
     return  (p  | 'Starting Swingrder'  >> beam.Create(overnight_return())
                 | 'SwingTraderList' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering Blanks swt' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers swt' >> beam.CombineGlobally(combine_tickers)
-               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=0.07, selection='SwingTrader'))
+               | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=price_change, selection='SwingTrader'))
              )
 
-def run_test_pipeline(p, fmpkey):
+def run_test_pipeline(p, fmpkey, price_change=0.1):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=0.1, selection='Plus500'))
+               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.08):
     cob = date.today()

@@ -347,6 +347,30 @@ def run(argv = None, save_main_session=True):
             write_to_ai_stocks(llm_out_eod, ai_sink)
 
 
+        elif known_args.runtype == 'marketdown':
+            plus500 = run_test_pipeline(p, known_args.fmprepkey, price_change=-0.1)
+
+            stp = run_swingtrader_pipeline(p, known_args.fmprepkey, price_change=-0.1)
+
+            all_pipelines = ((plus500, stp, ) | "fmaprun all" >> beam.Flatten())
+            premarket_results = (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(
+                StockSelectionCombineFn()))
+
+            keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
+
+            llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
+
+            llm_out | sink
+
+            keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
+
+            combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
+                         'collection3': keyed_llm
+                         }
+                        | beam.CoGroupByKey())
+
+            send_email(combined, known_args.sendgridkey)
+
         else:
 
             plus500 = run_test_pipeline(p, known_args.fmprepkey)
