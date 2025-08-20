@@ -599,6 +599,14 @@ class TestMarketStats(unittest.TestCase):
             res = run_market_momentum(p, fmp_key)
             res | debugSink
 
+    def test_run_market_momentum_composite(self):
+        debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            res = run_market_momentum(p, fmp_key, ticker='^NYA')
+            res | debugSink
+
+
     def test_new_sector_rotation(self):
         debugSink = beam.Map(print)
         fmp_key = os.environ['FMPREPKEY']
