@@ -42,7 +42,7 @@ RUN echo '----- cat ting  reqs--'
 RUN cat requirements.txt
 
 RUN echo '----- INSTALLING REQS ----'
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements_dftester.txt
 
 
 RUN pip install -e .
