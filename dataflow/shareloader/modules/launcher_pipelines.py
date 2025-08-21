@@ -158,6 +158,8 @@ def run_inference(output, openai_key, debug_sink):
                             At the end of the message, for the stocks  you recommend as buy or watch, you should generate
                             a json message with fields ticker, action (buy or watch) and an explanation.
                             The json string should be written between a <STARTJSON> and <ENDJSON> tags.
+                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is wowrth th short sell them based on the
+                            same criterias
                             Here is my json
             '''
     instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
