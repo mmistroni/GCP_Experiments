@@ -283,7 +283,13 @@ class AsyncProcess(beam.DoFn):
                         logging.info(f'Latest\n{latest}')
                         increase = latest['close'] / last_close['close']
 
-                        if increase > (1 + self.price_change):
+                        checker_negative = lambda x: x < (1 - self.price_change)
+                        checker_positive = lambda x: x > (1 + self.price_change)
+
+                        func_checker = checker_negative if self.price_change < 0 else checker_positive
+
+
+                        if func_checker(increase) :
                             slope = self.calculate_slope(ticker)
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
@@ -363,7 +369,13 @@ class AsyncFMPProcess(AsyncProcess):
                     latest = result[-1]
                     logging.info(f'Latest\n{latest}')
                     increase = latest.get('last_price', 0) / latest.get('prev_close', 1)
-                    if increase > (1 + self.price_change):
+
+                    checker_negative = lambda x: x < (1 + self.price_change)
+                    checker_positive = lambda x: x > (1 + self.price_change)
+
+                    func_checker = checker_negative if self.price_change < 0 else checker_positive
+
+                    if func_checker(increase):
                         slope = self.calculate_slope(tick)
                         logging.info(f'Adding ({tick}):{latest}')
                         latest['ticker'] = tick

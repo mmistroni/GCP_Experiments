@@ -401,6 +401,8 @@ def run(argv=None, save_main_session=True):
 
         russell_res = run_market_momentum(p, iexapi_key, '^RUT')
 
+        nyc_res = run_market_momentum(p, iexapi_key, '^NYA')
+
         growth_vs_val_res = run_growth_vs_value(p, iexapi_key)
 
         senate_disc = run_senate_disclosures(p, iexapi_key)
@@ -480,9 +482,10 @@ def run(argv=None, save_main_session=True):
         adv_decline_nyse | 'nyse to debug' >> debugSink
         adv_decline_nasd | 'nasd to debug ' >> debugSink
 
-        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (19, d))
-        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (20, d))
-        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (21, d))
+        epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (18, d))
+        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (29, d))
+        qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (20, d))
+        nyc_key = nyc_res | 'Add QQQ' >> beam.Map(lambda d: (20, d))
         rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (22, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (23, d))
 
@@ -508,7 +511,7 @@ def run(argv=None, save_main_session=True):
 
         final = (
                 (staticStart_key, econCalendarKey, static1_key, pmi_key,
-                    manuf_pmi_key,  epcratio_key, mm_key, qqq_key, rut_key,
+                    manuf_pmi_key,  epcratio_key, mm_key, qqq_key, nyc_key, rut_key,
                         nysi_key, nymo_key, junk_bond_key,
                         adv_decline_key_nas,
                         adv_decline_key_nys,
