@@ -483,9 +483,9 @@ def run(argv=None, save_main_session=True):
         adv_decline_nasd | 'nasd to debug ' >> debugSink
 
         epcratio_key = equity_pcratio | 'Add 6' >> beam.Map(lambda d: (18, d))
-        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (29, d))
+        mm_key = mmomentum_res | 'Add mm' >> beam.Map(lambda d: (19, d))
         qqq_key = nasdaq_res | 'Add QQQ' >> beam.Map(lambda d: (20, d))
-        nyc_key = nyc_res | 'Add NYC' >> beam.Map(lambda d: (20, d))
+        nyc_key = nyc_res | 'Add NYC' >> beam.Map(lambda d: (21, d))
         rut_key = russell_res | 'Add rut' >> beam.Map(lambda d: (22, d))
         growth_vs_val_key = growth_vs_val_res | 'Add 14' >> beam.Map(lambda d: (23, d))
 
