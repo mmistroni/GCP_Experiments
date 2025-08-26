@@ -370,7 +370,7 @@ def run(argv = None, save_main_session=True):
                          }
                         | beam.CoGroupByKey())
 
-            send_email(combined, known_args.sendgridkey)
+            send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         else:
 

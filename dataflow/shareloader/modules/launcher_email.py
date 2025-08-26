@@ -8,9 +8,10 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 import logging
 
 class EmailSender(beam.DoFn):
-    def __init__(self, key):
+    def __init__(self, key, subject=None):
         self.recipients = ['mmistroni@gmail.com']
         self.key = key
+        self.subject = subject
 
 
     def _build_personalization(self, recipients):
@@ -71,7 +72,7 @@ class EmailSender(beam.DoFn):
         logging.info('Sending \n {}'.format(content))
         message = Mail(
             from_email='gcp_cloud_mm@outlook.com',
-            subject='Pre-Market Movers',
+            subject=self.subject or 'Pre-Market Movers',
             html_content=content)
 
         personalizations = self._build_personalization(self.recipients)
@@ -85,8 +86,8 @@ class EmailSender(beam.DoFn):
         logging.info('Body:{}'.format(response.body))
 
 
-def send_email(pipeline,  sendgridkey):
-    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey))
+def send_email(pipeline,  sendgridkey,  subject=None):
+    return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender(sendgridkey, subject=subject))
              )
 
 
