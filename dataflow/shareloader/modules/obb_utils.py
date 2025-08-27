@@ -311,7 +311,7 @@ class AsyncProcess(beam.DoFn):
 
                             all_records.append(latest)
                         else:
-                            logging.info(f"{ticker} increase ({increase}) change below tolerance:{1 + self.price_change}.Latest:{latest['close']}.Last:{last_close['close']}")
+                            logging.info(f"{ticker} change ({increase}) missed tolerance:{1 + self.price_change}.Latest:{latest['close']}.Last:{last_close['close']}")
                             continue
 
                 else:

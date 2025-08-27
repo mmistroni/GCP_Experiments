@@ -351,7 +351,7 @@ def run(argv = None, save_main_session=True):
         elif known_args.runtype == 'marketdown':
             plus500 = run_test_pipeline(p, known_args.fmprepkey, price_change=-0.15)
 
-            stp = run_swingtrader_pipeline(p, known_args.fmprepkey, price_change=-0.15)
+            stp = run_swingtrader_pipeline(p, known_args.fmprepkey, price_change=-0.10)
 
             all_pipelines = ((plus500, stp, ) | "fmaprun all" >> beam.Flatten())
             premarket_results = (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(
