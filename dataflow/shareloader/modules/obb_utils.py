@@ -288,7 +288,7 @@ class AsyncProcess(beam.DoFn):
 
                         func_checker = checker_negative if self.price_change < 0 else checker_positive
 
-
+                        logging.info(f'Increase for {tick}={increase} vs {1 + self.price_change}')
                         if func_checker(increase) :
                             slope = self.calculate_slope(ticker)
                             logging.info(f'Adding ({ticker}):{latest}')
@@ -374,7 +374,7 @@ class AsyncFMPProcess(AsyncProcess):
                     checker_positive = lambda x: x > (1 + self.price_change)
 
                     func_checker = checker_negative if self.price_change < 0 else checker_positive
-
+                    logging.info(f'Increase for {tick}={increase} vs {1+self.price_change}')
                     if func_checker(increase):
                         slope = self.calculate_slope(tick)
                         logging.info(f'Adding ({tick}):{latest}')
