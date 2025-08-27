@@ -399,7 +399,7 @@ class AsyncFMPProcess(AsyncProcess):
 
                     else:
                         logging.info(
-                            f"{tick} increase ({increase}) change below tolerance:{1 + self.price_change}.Latest:{latest['last_price']}.Last:{latest.get('prev_close', 1)}")
+                            f"{tick} change ({increase}) missed tolerance:{1 + self.price_change}.Latest:{latest['last_price']}.Last:{latest.get('prev_close', 1)}")
                         continue
             except Exception as e:
                 logging.info(f' x Failed to fetch data for {tick}:{str(e)}')
