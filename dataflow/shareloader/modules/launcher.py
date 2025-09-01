@@ -25,6 +25,8 @@ from apache_beam.ml.inference.base import ModelHandler
 from apache_beam.ml.inference.base import RunInference
 
 
+# TaLib article:https://medium.com/@wl8380/meet-ta-lib-your-new-best-friend-in-technical-analysis-60e3e7c62274
+
 class AnotherLeftJoinerFn(beam.DoFn):
 
     def __init__(self):
