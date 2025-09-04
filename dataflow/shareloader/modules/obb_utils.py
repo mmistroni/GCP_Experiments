@@ -5,15 +5,12 @@ from openbb_yfinance.models.equity_historical import YFinanceEquityHistoricalFet
 from openbb_fmp.models.equity_quote import FMPEquityQuoteFetcher
 import apache_beam as beam
 from pandas.tseries.offsets import BDay
-from datetime import date
-from pandas.tseries.offsets import BDay
 import asyncio
-from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
-import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 import time
-import time
+import pandas_ta
 from scipy.stats import linregress
+import pandas as pd
 
 
 def create_bigquery_ppln(p):
@@ -161,6 +158,43 @@ class AsyncProcess(beam.DoFn):
             logging.info(f'Failed tor etrieve data for {ticker}:{str(e)}')
             return {'ADX': 0, 'RSI': 0}
 
+    def get_pandas_ta_indicators(self, ticker):
+        try:
+            data = self._fetch_historical_data(ticker)[::-1]
+            df = pd.DataFrame(data)
+            logging.info("Calculating On-Balance Volume (OBV)...")
+            df.ta.obv(append=True)
+            # 3. Calculate Chaikin Money Flow (CMF)
+            # The ta.cmf() function requires 'high', 'low', 'close', and 'volume' data.
+            # We can specify the period (default is 20).
+            logging.info("Calculating Chaikin Money Flow (CMF)...")
+            df.ta.cmf(length=20, append=True)
+
+            # Get column names
+            cmf_column = [col for col in df.columns if 'CMF_' in col][0]
+            obv_column = 'OBV'  # pandas_ta default name for OBV
+
+            # Extract the last two rows and convert to a dictionary for clear output
+            last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')
+
+            # 4. Display the results
+            # We'll print the last 5 rows to show the newly added columns.
+            logging.info("\nDataFrame with OBV and CMF indicators:")
+            logging.info(df.tail())
+            last_record_dict = df.iloc[-1].to_dict()
+            logging.info(f'returning :{last_record_dict}')
+
+            volume_dict = {'previous_obv' : last_two_values[0][obv_column],
+                           'current_obv' : last_two_values[1][obv_column],
+                           'previous_cmf' : last_two_values[0][cmf_column],
+                           'last_cmf'     : last_two_values[1][cmf_column]
+                           }
+
+            return volume_dict
+        except Exception as e:
+            logging.info(f'Faile dto fetch obv for {str(e)}')
+            return {}
+
 
     def get_profile(self, ticker):
         profile_url = f'https://financialmodelingprep.com/api/v3/profile/{ticker}?apikey={self.fmpKey}'
@@ -197,13 +231,22 @@ class AsyncProcess(beam.DoFn):
             logging.info('CalculateSmas Failed to retreivve smas for {ticker}')
             return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
 
+    def _fetch_historical_data(self, ticker):
+        logging.info(f'Fetching historical for {ticker}')
+        try:
+            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={self.fmpKey}'
+            data = requests.get(hist_url).json().get('historical')
+            return data
+        except Exception as e:
+            logging.info(f'Could not find historical for {ticker}:@{str(e)}')
+            return []
+
+
     def calculate_slope(self, ticker):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
         logging.info('Calculating slope for {ticker}')
         try:
-            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={self.fmpKey}'
-            data = requests.get(hist_url).json().get('historical')
-
+            data = self.fetch_data(ticker)
             if data:
                 prices =  [d['adjClose'] for d in data[:self.linregdays]][::-1]
 
@@ -288,7 +331,7 @@ class AsyncProcess(beam.DoFn):
 
                         func_checker = checker_negative if self.price_change < 0 else checker_positive
 
-                        logging.info(f'Increase for {tick}={increase} vs {1 + self.price_change}')
+                        logging.info(f'Increase for {ticker}={increase} vs {1 + self.price_change}')
                         if func_checker(increase) :
                             slope = self.calculate_slope(ticker)
                             logging.info(f'Adding ({ticker}):{latest}')
@@ -388,6 +431,8 @@ class AsyncFMPProcess(AsyncProcess):
                         tech_dict = self.get_adx_and_rsi(tick)
                         profile = self.get_profile(tick)
                         latest.update(profile)
+                        pandas_indic_dict = self.get_pandas_ta_indicators(tick)
+                        latest.update(pandas_indic_dict)
                         # logging.info(f'{t} getting SMAS')
                         smas = self.calculate_smas(tick)
                         latest.update(tech_dict)

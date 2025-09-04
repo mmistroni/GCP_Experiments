@@ -266,12 +266,12 @@ class MyTestCase(unittest.TestCase):
 
         with TestPipeline(options=PipelineOptions()) as p:
 
-            (p  | 'Tester' >> beam.Create([{'ticker' : 'RBLX'}])
+            (p  | 'Tester' >> beam.Create([{'ticker' : 'CUK'}])
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
                 | 'Plus500YFRun' >> beam.ParDo(
-                    AsyncFMPProcess({'fmp_api_key': key}, date(2025,2,18), price_change=-0.01, selection='Plus500'))
+                    AsyncFMPProcess({'fmp_api_key': key}, date(2025,2,18), price_change=0.0001, selection='Plus500'))
                 | 'Out' >> beam.Map(print)
                 )
 

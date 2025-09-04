@@ -152,6 +152,11 @@ def run_inference(output, openai_key, debug_sink):
                             6 - SMA50: the 50 day simple moving average
                             7 - SMA200: the 200 day simple moving average
                             8 - slope, this will be slope of linear regression for past 30 days.
+                            9 - prev_obv: this is on balance volume from previous day
+                            10 - current_obv: this is the on balance volume for the current day
+                            11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                            12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                            
                             As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 
