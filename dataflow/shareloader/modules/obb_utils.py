@@ -352,11 +352,12 @@ class AsyncProcess(beam.DoFn):
                             tech_dict = self.get_adx_and_rsi(ticker)
                             profile = self.get_profile(ticker)
                             latest.update(profile)
-                            #logging.info(f'{t} getting SMAS')
+                            pandas_indic_dict = self.get_pandas_ta_indicators(tick)
+                            latest.update(pandas_indic_dict)
                             smas = self.calculate_smas(ticker)
                             latest.update(tech_dict)
                             latest.update(smas)
-                            if latest['close'] > latest['SMA20']:
+                            if latest.get('close') > latest.get('SMA20'):
                                 latest['highlight'] = 'True'
 
                             all_records.append(latest)
