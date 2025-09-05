@@ -352,7 +352,7 @@ class AsyncProcess(beam.DoFn):
                             tech_dict = self.get_adx_and_rsi(ticker)
                             profile = self.get_profile(ticker)
                             latest.update(profile)
-                            pandas_indic_dict = self.get_pandas_ta_indicators(tick)
+                            pandas_indic_dict = self.get_pandas_ta_indicators(ticker)
                             latest.update(pandas_indic_dict)
                             smas = self.calculate_smas(ticker)
                             latest.update(tech_dict)

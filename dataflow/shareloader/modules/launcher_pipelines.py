@@ -107,18 +107,18 @@ class StockSelectionCombineFn(beam.CombineFn):
   def add_input(self, accumulator, input):
     ROW_TEMPLATE = f"""<tr>
                           <td><b>{input.get('highlight', '')}</b></td>
-                          <td>{input['ticker']}({input.get('sector', '')})</td>
-                          <td>{input['prev_date']}</td>
-                          <td>{input['prev_close']}</td>
-                          <td>{input['date']}</td>
-                          <td>{input['close']}</td>
-                          <td>{input['change']}</td>
+                          <td>{input.get('ticker', 'noticker')}({input.get('sector', '')})</td>
+                          <td>{input.get('prev_date', 'noprev')}</td>
+                          <td>{input.get('prev_close', 'nopc')}</td>
+                          <td>{input.get('date', 'nodate')}</td>
+                          <td>{input.get('close', 'noclose')}</td>
+                          <td>{input.get('change', 'nochg')}</td>
                           <td>{input.get('ADX', -1)}</td>
                           <td>{input.get('RSI', -1)}</td>
                           <td>{input.get('SMA20', -1)}</td>
                           <td>{input.get('SMA50', -1)}</td>
                           <td>{input.get('SMA200', -1)}</td>
-                          <td>{input['selection']}</td>
+                          <td>{input.get('selection', 'nosel')}</td>
                           
                         </tr>"""
 
