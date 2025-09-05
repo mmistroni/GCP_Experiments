@@ -266,7 +266,7 @@ class MyTestCase(unittest.TestCase):
 
         with TestPipeline(options=PipelineOptions()) as p:
 
-            (p  | 'Tester' >> beam.Create([{'ticker' : 'CUK'}])
+            (p  | 'Tester' >> beam.Create([{'ticker' : 'GOOG'}])
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
