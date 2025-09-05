@@ -34,7 +34,6 @@ steps:
           , '--staging-location=gs://datascience-projects_cloudbuild'
           ]  
 substitutions:
-  _JOB_NAME: 'dftester'
   _DFTESTER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/dftester_flex_template.json
   _REGION: us-central1
   _FMPREP_KEY: ''
@@ -45,6 +44,7 @@ substitutions:
   _SENDGRIDKEY: ''
   _OPENAIKEY: ''
   _RUNTYPE: ''
+  _JOB_NAME: 'dftester-$_RUNTYPE'
   _PROJECT_ID: datascience-projects
   _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest25
 
