@@ -8,10 +8,10 @@ from pandas.tseries.offsets import BDay
 import asyncio
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 import time
-import pandas_ta
 from scipy.stats import linregress
 import pandas as pd
-
+import pandas as pd
+from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -162,17 +162,24 @@ class AsyncProcess(beam.DoFn):
         try:
             data = self._fetch_historical_data(ticker)[::-1]
             df = pd.DataFrame(data)
-            logging.info("Calculating On-Balance Volume (OBV)...")
-            df.ta.obv(append=True)
-            # 3. Calculate Chaikin Money Flow (CMF)
-            # The ta.cmf() function requires 'high', 'low', 'close', and 'volume' data.
-            # We can specify the period (default is 20).
-            logging.info("Calculating Chaikin Money Flow (CMF)...")
-            df.ta.cmf(length=20, append=True)
+            # Calculate On-Balance Volume (OBV)
+            # The OBV indicator uses 'close' and 'volume' columns.
+            obv_indicator = OnBalanceVolumeIndicator(close=df['close'], volume=df['volume'])
+            df['obv'] = obv_indicator.on_balance_volume()
+
+            # Calculate Chaikin Money Flow (CMF)
+            # The CMF indicator requires 'high', 'low', 'close', and 'volume' columns.
+            cmf_indicator = ChaikinMoneyFlowIndicator(
+                high=df['high'],
+                low=df['low'],
+                close=df['close'],
+                volume=df['volume']
+            )
+            df['cmf'] = cmf_indicator.chaikin_money_flow()
 
             # Get column names
-            cmf_column = [col for col in df.columns if 'CMF_' in col][0]
-            obv_column = 'OBV'  # pandas_ta default name for OBV
+            cmf_column = [col for col in df.columns if 'cmf' in col][0]
+            obv_column = 'obv'  # pandas_ta default name for OBV
 
             # Extract the last two rows and convert to a dictionary for clear output
             last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')

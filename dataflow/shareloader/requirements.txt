@@ -144,6 +144,7 @@ soupsieve==2.7
 sqlparse==0.5.3
 starkbank-ecdsa==2.2.0
 starlette==0.46.2
+ta
 tqdm==4.67.1
 typing-inspection==0.4.0
 typing_extensions==4.13.2
