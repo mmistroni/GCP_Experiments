@@ -179,6 +179,47 @@ def get_industries(key):
 
     return set(inds)
 
+def replace_dates_in_json(data, replacement_string="[REPLACED_DATE]"):
+    """
+    Recursively replaces all date-like strings in a JSON object with a specified string.
+
+    This function attempts to parse each string value in the JSON object using common date formats.
+    If a string matches a date format, it is replaced. This handles nested dictionaries
+    and lists.
+
+    Args:
+        data (dict | list): The JSON object (dictionary or list) to process.
+        replacement_string (str): The string to replace dates with.
+
+    Returns:
+        dict | list: The modified JSON object.
+    """
+    date_formats = [
+        '%Y-%m-%dT%H:%M:%S.%fZ',  # ISO 8601 with milliseconds
+        '%Y-%m-%dT%H:%M:%S',     # ISO 8601 without milliseconds
+        '%Y-%m-%d %H:%M:%S',     # Common database format
+        '%Y-%m-%d',              # YYYY-MM-DD
+        '%m/%d/%Y',              # MM/DD/YYYY
+    ]
+
+    if isinstance(data, dict):
+        return {k: replace_dates_in_json(v, replacement_string) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [replace_dates_in_json(item, replacement_string) for item in data]
+    elif isinstance(data, str):
+        for fmt in date_formats:
+            try:
+                datetime.strptime(data, fmt)
+                return replacement_string
+            except ValueError:
+                continue
+        # If no format matched, return the original string
+        return data
+    else:
+        # Return non-string, non-dict, non-list values as-is
+        return data
+
+
 
 def to_json_string(element):
     def datetime_converter(o):
@@ -186,7 +227,12 @@ def to_json_string(element):
             return o.isoformat()  # Convert datetime to ISO 8601 string
         raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
 
-    return json.dumps(element, default=datetime_converter)
+    jsonres =  json.dumps(element, default=datetime_converter)
+    return replace_dates_in_json(jsonres)
+
+
+
+
 
 def extract_json_list(element):
     """
