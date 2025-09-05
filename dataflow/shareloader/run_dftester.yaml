@@ -44,9 +44,9 @@ substitutions:
   _SENDGRIDKEY: ''
   _OPENAIKEY: ''
   _RUNTYPE: ''
-  _JOB_NAME: 'dftester$_RUNTYPE'
+  _JOB_NAME: 'dftester'
   _PROJECT_ID: datascience-projects
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest25
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest26
 
 
 
