@@ -33,7 +33,7 @@ images: [ 'gcr.io/$_PROJECT_ID/$_DFTESTER_IMAGE_NAME' ]
 
 substitutions:
   _PROJECT_ID: datascience-projects
-  _DFTESTER_IMAGE_NAME: dftester:latest23
+  _DFTESTER_IMAGE_NAME: dftester:latest24
   _DFTESTER_TEMPLATE_GCS_LOCATION: gs://mm_dataflow_bucket/templates/dftester_flex_template.json
   _DFTESTER_METADATA_FILE: ./dataflow/shareloader/dftester_template_metadata
 

@@ -159,6 +159,8 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
     def get_pandas_ta_indicators(self, ticker):
+        return {}
+        '''
         try:
             data = self._fetch_historical_data(ticker)[::-1]
             df = pd.DataFrame(data)
@@ -201,7 +203,7 @@ class AsyncProcess(beam.DoFn):
         except Exception as e:
             logging.info(f'Faile dto fetch obv for {str(e)}')
             return {}
-
+        '''
 
     def get_profile(self, ticker):
         profile_url = f'https://financialmodelingprep.com/api/v3/profile/{ticker}?apikey={self.fmpKey}'
