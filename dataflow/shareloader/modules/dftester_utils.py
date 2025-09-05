@@ -220,19 +220,52 @@ def replace_dates_in_json(data, replacement_string="[REPLACED_DATE]"):
         return data
 
 
+import json
+
+def json_serializable_filter(obj):
+    """
+    Recursively filters a dictionary, list, or other object to remove
+    any values that are not JSON-serializable.
+
+    Args:
+        obj: The object to filter.
+
+    Returns:
+        A new object with only JSON-serializable values.
+    """
+    if isinstance(obj, dict):
+        return {k: json_serializable_filter(v) for k, v in obj.items() if is_json_serializable(v)}
+    elif isinstance(obj, list):
+        return [json_serializable_filter(item) for item in obj if is_json_serializable(item)]
+    else:
+        # If the object is not a dict or list, return it if it's serializable.
+        return obj if is_json_serializable(obj) else None
+
+def is_json_serializable(value):
+    """
+    Checks if a given value is JSON-serializable.
+
+    Args:
+        value: The value to check.
+
+    Returns:
+        True if the value can be serialized, False otherwise.
+    """
+    try:
+        json.dumps(value)
+        return True
+    except (TypeError, OverflowError):
+        return False
+
 
 def to_json_string(element):
     def datetime_converter(o):
-        if isinstance(o, datetime):
-            return o.isoformat()  # Convert datetime to ISO 8601 string
-        raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
-
+        if is_json_serializable(element):
+            return element
+        return str(element)
     jsonres =  json.dumps(element, default=datetime_converter)
-    return replace_dates_in_json(jsonres)
-
-
-
-
+    
+    return jsonres
 
 def extract_json_list(element):
     """
