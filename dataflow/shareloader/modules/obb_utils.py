@@ -444,7 +444,7 @@ class AsyncFMPProcess(AsyncProcess):
                         smas = self.calculate_smas(tick)
                         latest.update(tech_dict)
                         latest.update(smas)
-                        if latest['last_price'] > latest['SMA20']:
+                        if latest.get('last_price', 0) > latest.get('SMA20', 0):
                             latest['highlight'] = 'True'
 
                         all_records.append(latest)
