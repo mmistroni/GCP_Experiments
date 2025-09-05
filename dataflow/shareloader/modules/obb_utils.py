@@ -344,7 +344,8 @@ class AsyncProcess(beam.DoFn):
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
-                            latest['prev_date'] = last_close['date']
+                            latest['date'] = 'today'
+                            latest['prev_date'] = 'prevdate'
                             latest['prev_close'] = last_close['close']
                             latest['change'] = increase
                             latest['selection'] = self.selection
@@ -431,8 +432,8 @@ class AsyncFMPProcess(AsyncProcess):
                         logging.info(f'Adding ({tick}):{latest}')
                         latest['ticker'] = tick
                         latest['symbol'] = tick
-                        latest['prev_date'] = self.start_date
-                        latest['prev_close'] = latest.get('last_timestamp', datetime.now()).date()
+                        latest['prev_date'] = 'prevdate'
+                        latest['prev_close'] =  latest.get('prev_close', 1)
                         latest['change'] = increase
                         latest['selection'] = self.selection
                         latest['slope'] = slope
