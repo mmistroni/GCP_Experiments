@@ -333,7 +333,7 @@ class AsyncProcess(beam.DoFn):
                         logging.info(f'Latest\n{latest}')
                         increase = latest['close'] / last_close['close']
 
-                        checker_negative = lambda x: x < (1 - self.price_change)
+                        checker_negative = lambda x: x < (1 + self.price_change)
                         checker_positive = lambda x: x > (1 + self.price_change)
 
                         func_checker = checker_negative if self.price_change < 0 else checker_positive
@@ -432,7 +432,7 @@ class AsyncFMPProcess(AsyncProcess):
                         logging.info(f'Adding ({tick}):{latest}')
                         latest['ticker'] = tick
                         latest['symbol'] = tick
-                        latest['prev_date'] = 'prevdate'
+                        latest['prev_date'] = ''
                         latest['prev_close'] =  latest.get('prev_close', 1)
                         latest['change'] = increase
                         latest['selection'] = self.selection
