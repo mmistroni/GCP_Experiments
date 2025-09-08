@@ -382,6 +382,35 @@ def send_email(pipeline, sendgridkey, runType=None):
     return (pipeline | 'SendEmail' >> beam.ParDo(EmailSender('mmistroni@gmail.com', sendgridkey, runType=runType))
              )
 
+def store_superperformers(data, bq_sink):
+    (data | 'Mapping only Relevant fields' >> beam.Map(lambda d: map_to_bq_dict(d))
+     | 'Writing to stock selection' >> bq_sink)
+
+
+def map_to_bq_dict(input_dict):
+    return dict(AS_OF_DATE=date.today(), TICKER=input_dict['symbol'], LABEL=input_dict.get('label'),
+                PRICE=input_dict['price'],
+                YEARHIGH=input_dict.get('yearHigh', 0.0), YEARLOW=input_dict.get('yearLow', 0.0),
+                PRICEAVG50=input_dict.get('priceAvg50', 0.0), PRICEAVG200=input_dict.get('priceAvg200', 0.0),
+                BOOKVALUEPERSHARE=input_dict.get('bookValuePerShare', 0.0),
+                TANGIBLEBOOKVALUEPERSHARE=input_dict.get('tangibleBookValuePerShare', 0.0),
+                CASHFLOWPERSHARE=input_dict.get('freeCashFlowPerShare',0.0), MARKETCAP=input_dict.get('marketCap', 0.0),
+                ASSET_VALUE=input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0),
+                EXCESS_MARKETCAP=( input_dict.get('bookValuePerShare', 0.0) * input_dict.get('sharesOutstanding', 0.0)  ) - input_dict.get('marketCap', 0.0),
+                DIVIDENDRATIO=input_dict.get('dividendPayoutRatio', 0.0),
+                NUM_OF_DIVIDENDS=input_dict.get('numOfDividendsPaid', 0.0),
+                PERATIO=input_dict.get('pe', 0.0),
+                INCOME_STMNT_DATE=input_dict['income_statement_date'],
+                INCOME_STMNT_DATE_QTR=input_dict.get('income_statement_qtr_date'),
+                RSI=input_dict.get('rsi',-1),
+                PIOTROSKY_SCORE=input_dict.get('piotroskyScore', -1),
+                RETURN_ON_CAPITAL=input_dict.get('returnOnCapital', -1),
+                NET_INCOME=input_dict.get('netIncome', -1),
+                LYNCH_RATIO=input_dict.get('lynchRatio', -1)
+
+                )
+
+
 
 
 

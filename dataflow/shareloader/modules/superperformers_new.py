@@ -1,11 +1,12 @@
 from __future__ import absolute_import
-
+from apache_beam.io.gcp.internal.clients import bigquery
 from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
 import logging
 import apache_beam as beam
 import argparse
 from .superperf_pipelines import combine_fund1, combine_fund2, combine_benchmarks, PipelineCombinerFn,\
-                            EnhancedFundamentalLoader, EnhancedBenchmarkLoader, StockSelectionCombineFn, send_email
+                            EnhancedFundamentalLoader, EnhancedBenchmarkLoader, StockSelectionCombineFn, send_email,\
+                            store_superperformers
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
 import itertools
@@ -19,10 +20,6 @@ https://wire.insiderfinance.io/implement-buffets-approach-with-python-and-stream
 ROW_TEMPLATE =  """<tr><td>{}</td>
                        <td>{}</td>
                    </tr>"""
-
-
-
-
 
 def parse_known_args(argv):
     """Parses args for the workflow."""
@@ -70,6 +67,15 @@ def run(argv=None, save_main_session=True):
 
     debugSink = beam.Map(logging.info)
 
+    bq_sink = beam.io.WriteToBigQuery(
+        bigquery.TableReference(
+            projectId="datascience-projects",
+            datasetId='gcp_shareloader',
+            tableId='stock_selection'),
+        schema='AS_OF_DATE:DATE,TICKER:STRING,LABEL:STRING,PRICE:FLOAT,YEARHIGH:FLOAT,YEARLOW:FLOAT,PRICEAVG50:FLOAT,PRICEAVG200:FLOAT,BOOKVALUEPERSHARE:FLOAT,TANGIBLEBOOKVALUEPERSHARE:FLOAT,CASHFLOWPERSHARE:FLOAT,MARKETCAP:FLOAT,ASSET_VALUE:FLOAT,EXCESS_MARKETCAP:FLOAT,DIVIDENDRATIO:FLOAT,PERATIO:FLOAT,INCOME_STMNT_DATE:STRING,INCOME_STMNT_DATE_QTR:STRING,RSI:FLOAT,PIOTROSKY_SCORE:FLOAT,NET_INCOME:FLOAT,RETURN_ON_CAPITAL:FLOAT,NUM_OF_DIVIDENDS:FLOAT,LYNCH_RATIO:FLOAT',
+        write_disposition=beam.io.BigQueryDisposition.WRITE_APPEND,
+        create_disposition=beam.io.BigQueryDisposition.CREATE_IF_NEEDED)
+
     with beam.Pipeline(options=pipeline_optionss) as p:
         run_type = known_args.runtype
         key = known_args.fmprepkey
@@ -92,7 +98,7 @@ def run(argv=None, save_main_session=True):
 
         send_email(combined, known_args.sendgridkey, runType=run_type)
 
-
+        store_superperformers(combined, bq_sink)
 
 
 
