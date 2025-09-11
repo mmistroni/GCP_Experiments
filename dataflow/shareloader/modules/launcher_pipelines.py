@@ -156,7 +156,8 @@ def run_inference(output, openai_key, debug_sink):
                             10 - current_obv: this is the on balance volume for the current day
                             11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
                             12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                            
+                            13 - obv_last_50_days: these are the on balance volumes for the last 50 days
+                            14 - cmf_last_50_days: these are the cmf values for past 50 days
                             As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 

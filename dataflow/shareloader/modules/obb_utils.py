@@ -184,6 +184,9 @@ class AsyncProcess(beam.DoFn):
             # Extract the last two rows and convert to a dictionary for clear output
             last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')
 
+            obvlist = df['obv'].tolist()[-50:]
+            cmflist = df['cmf'].tolist()[-50:]
+
             # 4. Display the results
             # We'll print the last 5 rows to show the newly added columns.
             logging.info("\nDataFrame with OBV and CMF indicators:")
@@ -194,7 +197,9 @@ class AsyncProcess(beam.DoFn):
             volume_dict = {'previous_obv' : last_two_values[0][obv_column],
                            'current_obv' : last_two_values[1][obv_column],
                            'previous_cmf' : last_two_values[0][cmf_column],
-                           'last_cmf'     : last_two_values[1][cmf_column]
+                           'last_cmf'     : last_two_values[1][cmf_column],
+                           'obv_last_50_days' : obvlist,
+                           'cmf_last_50_days' : cmflist
                            }
 
             return volume_dict
