@@ -98,7 +98,7 @@ def run(argv=None, save_main_session=True):
 
         send_email(combined, known_args.sendgridkey, runType=run_type)
 
-        store_superperformers(combined, bq_sink)
+        store_superperformers(res, bq_sink)
 
 
 
