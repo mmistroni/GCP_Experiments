@@ -159,16 +159,16 @@ def run_inference(output, openai_key, debug_sink):
                             13 - obv_last_50_days: these are the on balance volumes for the last 50 days
                             14 - cmf_last_50_days: these are the cmf values for past 50 days
                             As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
+                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is wotth to short sell them based on the
+                            same criterias
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 
-                            At the end of the message, for the stocks  you recommend as buy or watch, you should generate
-                            a json message with fields ticker, action (buy or watch) and an explanation.
+                            At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
+                            a json message with fields ticker, action (buy or watch or sell) and an explanation.
                             The json string should be written between a <STARTJSON> and <ENDJSON> tags.
-                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is wowth to short sell them based on the
-                            same criterias
                             Here is my json
             '''
-    instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy.'''
+    instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy or to sell.'''
 
     return (output | "xxToJson" >> beam.Map(to_json_string)
      | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
