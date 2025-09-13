@@ -159,7 +159,7 @@ def run_inference(output, openai_key, debug_sink):
                             13 - obv_last_50_days: these are the on balance volumes for the last 50 days
                             14 - cmf_last_50_days: these are the cmf values for past 50 days
                             As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
-                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is wotth to short sell them based on the
+                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
                             same criterias
                             Once you finish your analysis, please summarize your finding indicating, for each
                             stock what is your recommendation and why. 
