@@ -59,12 +59,8 @@ def parse_known_args(argv):
 
 
 def run_pipelines(p, fmpkey, recipients):
-    debugSink = beam.Map(logging.info)
-    result = run_sector_loader_pipeline(p, fmpkey)
-    finviz_result = run_sector_loader_finviz(p)
-    finviz_result | 'debug sink' >> debugSink
-    result | 'Mapping to String' >> beam.Map(logging.info)
-    return finviz_result
+    #result = run_sector_loader_pipeline(p, fmpkey)
+    return  run_sector_loader_finviz(p)
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -74,8 +70,13 @@ def run(argv=None, save_main_session=True):
     known_args, pipeline_args = parse_known_args(argv)
     pipeline_optionss = PipelineOptions(pipeline_args)
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
-    
+
+    debugSink = beam.Map(logging.info)
+
+
+
     with beam.Pipeline(options=pipeline_optionss) as p:
         finviz_result  = run_pipelines(p, known_args.key)
-        finviz_result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
-                                                                    known_args.sendgridkey))
+        finviz_result |'tosink' >> debugSink
+        #finviz_result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
+                                                                    #known_args.sendgridkey))
