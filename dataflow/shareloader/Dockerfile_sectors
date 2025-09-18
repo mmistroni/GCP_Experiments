@@ -19,7 +19,7 @@ ARG WORKDIR=/template
 WORKDIR ${WORKDIR}
 
 RUN mkdir -p ${WORKDIR}/shareloader
-COPY requirements.txt .
+COPY requirements_dftester.txt ./requirements.txt
 COPY setup_dftester.py setup.py
 COPY sectors_main.py ${WORKDIR}/sectors_main.py
 COPY modules ${WORKDIR}/shareloader/modules

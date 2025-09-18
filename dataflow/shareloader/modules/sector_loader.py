@@ -58,7 +58,7 @@ def parse_known_args(argv):
     return parser.parse_known_args(argv)
 
 
-def run_pipelines(p, fmpkey, recipients):
+def run_pipelines(p, fmpkey, recipients=''):
     #result = run_sector_loader_pipeline(p, fmpkey)
     return  run_sector_loader_finviz(p)
 

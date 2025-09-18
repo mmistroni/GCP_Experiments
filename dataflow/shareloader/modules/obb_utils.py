@@ -12,6 +12,7 @@ from scipy.stats import linregress
 import pandas as pd
 import pandas as pd
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
+from typing import List
 
 def create_bigquery_ppln(p):
     plus500_sql = """SELECT *  FROM `datascience-projects.gcp_shareloader.plus500`"""
@@ -20,6 +21,59 @@ def create_bigquery_ppln(p):
         beam.io.BigQuerySource(query=plus500_sql, use_standard_sql=True))
 
             )
+
+def get_ta_indicators(data:List[dict]) -> dict:
+    try:
+        df = pd.DataFrame(data)
+        # Calculate On-Balance Volume (OBV)
+        # The OBV indicator uses 'close' and 'volume' columns.
+        obv_indicator = OnBalanceVolumeIndicator(close=df['close'], volume=df['volume'])
+        df['obv'] = obv_indicator.on_balance_volume()
+
+        # Calculate Chaikin Money Flow (CMF)
+        # The CMF indicator requires 'high', 'low', 'close', and 'volume' columns.
+        cmf_indicator = ChaikinMoneyFlowIndicator(
+            high=df['high'],
+            low=df['low'],
+            close=df['close'],
+            volume=df['volume']
+        )
+        df['cmf'] = cmf_indicator.chaikin_money_flow()
+
+        # Get column names
+        cmf_column = [col for col in df.columns if 'cmf' in col][0]
+        obv_column = 'obv'  # pandas_ta default name for OBV
+
+        # Extract the last two rows and convert to a dictionary for clear output
+        last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')
+
+        obvlist = df['obv'].tolist()[-50:]
+        cmflist = df['cmf'].tolist()[-50:]
+
+        # 4. Display the results
+        # We'll print the last 5 rows to show the newly added columns.
+        logging.info("\nDataFrame with OBV and CMF indicators:")
+        logging.info(df.tail())
+        last_record_dict = df.iloc[-1].to_dict()
+        logging.info(f'returning :{last_record_dict}')
+
+        volume_dict = {'previous_obv' : last_two_values[0][obv_column],
+                       'current_obv' : last_two_values[1][obv_column],
+                       'previous_cmf' : last_two_values[0][cmf_column],
+                       'last_cmf'     : last_two_values[1][cmf_column],
+                       'obv_last_50_days' : obvlist,
+                       'cmf_last_50_days' : cmflist
+                       }
+
+        return volume_dict
+    except Exception as e:
+        logging.info(f'Faile dto fetch obv for {str(e)}')
+        return {}
+
+
+
+
+
 
 class AsyncProcessSP500Multiples(beam.DoFn):
 
@@ -159,54 +213,8 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
     def get_pandas_ta_indicators(self, ticker):
-        try:
-            data = self._fetch_historical_data(ticker)[::-1]
-            df = pd.DataFrame(data)
-            # Calculate On-Balance Volume (OBV)
-            # The OBV indicator uses 'close' and 'volume' columns.
-            obv_indicator = OnBalanceVolumeIndicator(close=df['close'], volume=df['volume'])
-            df['obv'] = obv_indicator.on_balance_volume()
-
-            # Calculate Chaikin Money Flow (CMF)
-            # The CMF indicator requires 'high', 'low', 'close', and 'volume' columns.
-            cmf_indicator = ChaikinMoneyFlowIndicator(
-                high=df['high'],
-                low=df['low'],
-                close=df['close'],
-                volume=df['volume']
-            )
-            df['cmf'] = cmf_indicator.chaikin_money_flow()
-
-            # Get column names
-            cmf_column = [col for col in df.columns if 'cmf' in col][0]
-            obv_column = 'obv'  # pandas_ta default name for OBV
-
-            # Extract the last two rows and convert to a dictionary for clear output
-            last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')
-
-            obvlist = df['obv'].tolist()[-50:]
-            cmflist = df['cmf'].tolist()[-50:]
-
-            # 4. Display the results
-            # We'll print the last 5 rows to show the newly added columns.
-            logging.info("\nDataFrame with OBV and CMF indicators:")
-            logging.info(df.tail())
-            last_record_dict = df.iloc[-1].to_dict()
-            logging.info(f'returning :{last_record_dict}')
-
-            volume_dict = {'previous_obv' : last_two_values[0][obv_column],
-                           'current_obv' : last_two_values[1][obv_column],
-                           'previous_cmf' : last_two_values[0][cmf_column],
-                           'last_cmf'     : last_two_values[1][cmf_column],
-                           'obv_last_50_days' : obvlist,
-                           'cmf_last_50_days' : cmflist
-                           }
-
-            return volume_dict
-        except Exception as e:
-            logging.info(f'Faile dto fetch obv for {str(e)}')
-            return {}
-
+        data = self._fetch_historical_data(ticker)[::-1]
+        return get_ta_indicators(data)
 
     def get_profile(self, ticker):
         profile_url = f'https://financialmodelingprep.com/api/v3/profile/{ticker}?apikey={self.fmpKey}'
