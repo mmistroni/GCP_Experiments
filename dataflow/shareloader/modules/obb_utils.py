@@ -22,6 +22,17 @@ def create_bigquery_ppln(p):
 
             )
 
+def fetch_historical_data(ticker, fmpKey):
+    logging.info(f'Fetching historical for {ticker}')
+    try:
+        hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={fmpKey}'
+        data = requests.get(hist_url).json().get('historical')
+        return data
+    except Exception as e:
+        logging.info(f'Could not find historical for {ticker}:@{str(e)}')
+        return []
+
+
 def get_ta_indicators(data:List[dict]) -> dict:
     try:
         df = pd.DataFrame(data)
@@ -69,11 +80,6 @@ def get_ta_indicators(data:List[dict]) -> dict:
     except Exception as e:
         logging.info(f'Faile dto fetch obv for {str(e)}')
         return {}
-
-
-
-
-
 
 class AsyncProcessSP500Multiples(beam.DoFn):
 
@@ -213,7 +219,7 @@ class AsyncProcess(beam.DoFn):
             return {'ADX': 0, 'RSI': 0}
 
     def get_pandas_ta_indicators(self, ticker):
-        data = self._fetch_historical_data(ticker)[::-1]
+        data = fetch_historical_data(ticker, self.fmpKey)[::-1]
         return get_ta_indicators(data)
 
     def get_profile(self, ticker):
@@ -251,15 +257,6 @@ class AsyncProcess(beam.DoFn):
             logging.info('CalculateSmas Failed to retreivve smas for {ticker}')
             return {'SMA20': 0, 'SMA50': 0, 'SMA200' : 0}
 
-    def _fetch_historical_data(self, ticker):
-        logging.info(f'Fetching historical for {ticker}')
-        try:
-            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={self.fmpKey}'
-            data = requests.get(hist_url).json().get('historical')
-            return data
-        except Exception as e:
-            logging.info(f'Could not find historical for {ticker}:@{str(e)}')
-            return []
 
 
     def calculate_slope(self, ticker):

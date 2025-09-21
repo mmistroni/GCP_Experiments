@@ -3,7 +3,7 @@ import unittest
 import requests
 from lxml import etree
 from io import StringIO, BytesIO
-from shareloader.modules.sector_loader import run_sector_loader_pipeline, run_sector_loader_finviz, run_pipelines
+from shareloader.modules.sectors_pipelines import run_sector_loader_pipeline, run_sector_loader_finviz, run_pipelines
 import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline

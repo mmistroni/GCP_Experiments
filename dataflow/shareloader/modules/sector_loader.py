@@ -1,6 +1,3 @@
-from __future__ import absolute_import
-
-import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions
@@ -10,6 +7,8 @@ from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_r
         get_finviz_performance
 from .marketstats_utils import get_senate_disclosures
 import argparse
+from .sectors_pipelines import run_sector_pipelines
+
 
 sectorsETF = OrderedDict ({
             'Technology' : 'XLK',
@@ -26,29 +25,6 @@ sectorsETF = OrderedDict ({
             'S&P 500' : '^GSPC'
         })
 
-
-
-#https://www.tradingview.com/chart/AAPL/pmHMR643-Investors-Holy-Grail-The-Business-Economic-Cycle/?utm_source=Weekly&utm_medium=email&utm_campaign=TradingView+Weekly+188+%28EN%29
-def run_sector_loader_pipeline(p, fmprepkey):
-    return (p | 'Starting st' >> beam.Create(['Start'])
-     | 'Fetch data 1' >> beam.Map(lambda tpl: get_sector_rankings(fmprepkey))
-     #| 'Combine' >> beam.CombineGlobally(ETFHistoryCombineFn())
-     )
-
-def run_sector_loader_finviz(p):
-    return (p | 'Starting fvz' >> beam.Create(['Start'])
-     | 'Fetch data 2' >> beam.Map(lambda tpl: get_finviz_performance())
-     )
-
-
-
-
-def run_senate_disclosures(p, key):
-    return (p | 'start run_sd' >> beam.Create(['20210101'])
-              | 'run sendisclos' >> beam.Map(lambda d : get_senate_disclosures(key))
-              | ' log out' >> beam.Map(logging.info)
-            )
-
 def parse_known_args(argv):
     """Parses args for the workflow."""
     parser = argparse.ArgumentParser()
@@ -57,10 +33,6 @@ def parse_known_args(argv):
     parser.add_argument('--sendgridkey')
     return parser.parse_known_args(argv)
 
-
-def run_pipelines(p, fmpkey, recipients=''):
-    #result = run_sector_loader_pipeline(p, fmpkey)
-    return  run_sector_loader_finviz(p)
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
@@ -71,12 +43,5 @@ def run(argv=None, save_main_session=True):
     pipeline_optionss = PipelineOptions(pipeline_args)
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
 
-    debugSink = beam.Map(logging.info)
-
-
-
     with beam.Pipeline(options=pipeline_optionss) as p:
-        finviz_result  = run_pipelines(p, known_args.key)
-        finviz_result |'tosink' >> debugSink
-        #finviz_result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
-                                                                    #known_args.sendgridkey))
+        run_sector_pipelines(p, known_args)
