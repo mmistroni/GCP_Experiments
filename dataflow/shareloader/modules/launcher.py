@@ -17,7 +17,8 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_sector_performance, run_swingtrader_pipeline, \
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
-                                                   run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline
+                                                   run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
+                                                   run_test_pipeline2
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
@@ -373,6 +374,9 @@ def run(argv = None, save_main_session=True):
                         | beam.CoGroupByKey())
 
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
+
+        elif known_args.runtype == 'tester':
+            run_test_pipeline2(p, known_args.fmprepkey)
 
         else:
 
