@@ -170,8 +170,8 @@ def run_inference(output, openai_key, debug_sink):
                             10 - current_obv: this is the on balance volume for the current day
                             11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
                             12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                            13 - obv_last_50_days: these are the on balance volumes for the last 50 days
-                            14 - cmf_last_50_days: these are the cmf values for past 50 days
+                            13 - obv_historical: these are the on balance volumes for the last 20 days
+                            14 - cmf_historical: these are the cmf values for past 20 days
                             As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
                             If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
                             same criterias
