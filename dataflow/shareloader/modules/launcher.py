@@ -376,7 +376,7 @@ def run(argv = None, save_main_session=True):
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         elif known_args.runtype == 'tester':
-            run_test_pipeline2(p, known_args.fmprepkey)
+            run_test_pipeline2(p, known_args.fmprepkey, price_change=-0.10)
 
         else:
 
