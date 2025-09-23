@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="adding plus500 read from csv">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -270,14 +269,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00486" summary="fixing slope">
-      <option name="closed" value="true" />
-      <created>1753368212566</created>
-      <option name="number" value="00486" />
-      <option name="presentableId" value="LOCAL-00486" />
-      <option name="project" value="LOCAL" />
-      <updated>1753368212566</updated>
     </task>
     <task id="LOCAL-00487" summary="fixing slope">
       <option name="closed" value="true" />
@@ -663,7 +654,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758554251015</updated>
     </task>
-    <option name="localTasksCounter" value="535" />
+    <task id="LOCAL-00535" summary="adding plus500 read from csv">
+      <option name="closed" value="true" />
+      <created>1758562806651</created>
+      <option name="number" value="00535" />
+      <option name="presentableId" value="LOCAL-00535" />
+      <option name="project" value="LOCAL" />
+      <updated>1758562806651</updated>
+    </task>
+    <option name="localTasksCounter" value="536" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
