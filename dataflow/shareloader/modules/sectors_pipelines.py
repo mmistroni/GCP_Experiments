@@ -4,7 +4,7 @@ import logging
 import apache_beam as beam
 from collections import OrderedDict
 from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_rankings, \
-        get_finviz_performance
+        get_finviz_performance, fetch_index_data
 from .marketstats_utils import get_senate_disclosures
 
 sectorsETF = OrderedDict ({
@@ -44,6 +44,11 @@ def run_senate_disclosures(p, key):
 def run_pipelines(p, fmpkey, recipients=''):
     #result = run_sector_loader_pipeline(p, fmpkey)
     return  run_sector_loader_finviz(p)
+
+def run_index_pipeline(p, ticker, fmpKey):
+    return (p | f'Starting {ticker}' >> beam.Create([ticker])
+                    | 'Fetch data {index}' >> beam.Map(lambda ticker: fetch_index_data(ticker, fmpKey))
+                    )
 
 def run_sector_pipelines(p, known_args):
     """Main entry point; defines and runs the wordcount pipeline."""

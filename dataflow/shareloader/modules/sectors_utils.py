@@ -10,6 +10,10 @@ from sendgrid.helpers.mail import Mail, Email, Personalization
 from functools import reduce
 from collections import OrderedDict
 from finvizfinance.group import Performance
+from .obb_utils import fetch_historical_data
+from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
+from typing import List
+
 
 
 def get_finviz_performance():
@@ -29,6 +33,46 @@ def fetch_performance(sector, ticker, key, start_date):
     df = df.rename(columns={'adjClose': sector})
     df = df.set_index('date')
     return df
+
+
+def get_indicators(data:List[dict]) -> dict:
+    try:
+        df = pd.DataFrame(data)
+        # Calculate On-Balance Volume (OBV)
+        # The OBV indicator uses 'close' and 'volume' columns.
+        obv_indicator = OnBalanceVolumeIndicator(close=df['close'], volume=df['volume'])
+        df['obv'] = obv_indicator.on_balance_volume()
+
+        # Calculate Chaikin Money Flow (CMF)
+        # The CMF indicator requires 'high', 'low', 'close', and 'volume' columns.
+        cmf_indicator = ChaikinMoneyFlowIndicator(
+            high=df['high'],
+            low=df['low'],
+            close=df['close'],
+            volume=df['volume']
+        )
+        df['cmf'] = cmf_indicator.chaikin_money_flow()
+
+        reduced = df[['date' ,'open', 'high', 'low', 'close',
+                        'adjClose', 'volume', 'unadjustedVolume','change', 'vwap', 'obv', 'cmf']]
+
+
+        result = reduced.to_dict('records')[-50:]
+        return result
+    except Exception as e:
+        logging.info(f'Faile dto fetch obv for {str(e)}')
+        return {}
+
+
+
+def fetch_index_data(ticker, key):
+    data = fetch_historical_data(ticker, key)[::-1]
+
+    indicators = get_indicators(data)
+
+    return indicators
+
+
 def get_sector_rankings(key):
     # sample from https://wire.insiderfinance.io/unlocking-sector-based-momentum-strategies-in-asset-allocation-8560187f3ae3
     sector_tickers = OrderedDict([('XLK', 'Technology'), ('XLF', 'Financials'), ('XLE', 'Energy'),

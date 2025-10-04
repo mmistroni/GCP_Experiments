@@ -7,7 +7,8 @@ from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_r
         get_finviz_performance
 from .marketstats_utils import get_senate_disclosures
 import argparse
-from .sectors_pipelines import run_sector_pipelines
+from .sectors_pipelines import run_sector_pipelines, run_index_pipeline
+import logging
 
 
 sectorsETF = OrderedDict ({
@@ -34,6 +35,8 @@ def parse_known_args(argv):
     return parser.parse_known_args(argv)
 
 
+
+
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
 
@@ -43,5 +46,14 @@ def run(argv=None, save_main_session=True):
     pipeline_optionss = PipelineOptions(pipeline_args)
     pipeline_optionss.view_as(SetupOptions).save_main_session = save_main_session
 
+    sink = beam.Map(logging.info)
+
+
     with beam.Pipeline(options=pipeline_optionss) as p:
         run_sector_pipelines(p, known_args)
+
+        for ticker in ['^GSPC', '^NDX', '^DJI','^RUT',
+                        '^NYA']:
+            res = run_index_pipeline(p, ticker, known_args.key)
+            res | '{ticker} to sinmk' >> sink
+

@@ -2,12 +2,9 @@ from __future__ import absolute_import
 
 import logging
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 from apache_beam.options.pipeline_options import SetupOptions, DebugOptions
-from shareloader.modules.finviz_utils import FinvizLoader
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, ProcessHistorical
 from apache_beam.io.gcp.internal.clients import bigquery
-from shareloader.modules.sectors_utils import get_finviz_performance
 from apache_beam.options.pipeline_options import PipelineOptions, GoogleCloudOptions
 
 from datetime import date
@@ -21,10 +18,6 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_test_pipeline2
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
-from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
-from apache_beam.ml.inference.base import ModelHandler
-from apache_beam.ml.inference.base import RunInference
-
 
 # TaLib article:https://medium.com/@wl8380/meet-ta-lib-your-new-best-friend-in-technical-analysis-60e3e7c62274
 

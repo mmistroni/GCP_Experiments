@@ -2,11 +2,8 @@
 import logging
 import apache_beam as beam
 from datetime import date
-from shareloader.modules.finviz_utils import FinvizLoader
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, AsyncFMPProcess
 from shareloader.modules.superperformers import combine_tickers
-from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return
-from datetime import datetime
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
                                             get_eod_screener, get_new_highs, get_peter_lynch
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
@@ -14,7 +11,6 @@ from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
 import requests
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
-from apache_beam.ml.inference.base import ModelHandler
 from apache_beam.ml.inference.base import RunInference
 
 
@@ -120,6 +116,7 @@ class StockSelectionCombineFn(beam.CombineFn):
 
   def add_input(self, accumulator, input):
     ROW_TEMPLATE = f"""<tr>
+                          <td>{input.get('selection', 'noselection')}</td>
                           <td><b>{input.get('highlight', '')}</b></td>
                           <td>{input.get('ticker', '')}({input.get('sector', '')})</td>
                           <td>{input.get('prev_date', '')}</td>
@@ -132,7 +129,6 @@ class StockSelectionCombineFn(beam.CombineFn):
                           <td>{input.get('SMA20', -1)}</td>
                           <td>{input.get('SMA50', -1)}</td>
                           <td>{input.get('SMA200', -1)}</td>
-                          <td>{input.get('selection', 'nosel')}</td>
                           
                         </tr>"""
 
