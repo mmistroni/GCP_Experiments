@@ -4,6 +4,7 @@
         "dockerfile": "../Dockerfile"
     },
     
+    
     "forwardPorts": [], // List any ports your application needs to expose (e.g., 8000)
 
     "customizations": {
