@@ -1,6 +1,6 @@
 # Use an official Python runtime as a parent image
 # Choose a Python version that matches your project's needs (e.g., 3.9, 3.10, 3.11, 3.12)
-FROM python:3.10-slim-buster
+FROM python:3.10-slim-bullseye
 
 # Set the working directory in the container
 WORKDIR /app
