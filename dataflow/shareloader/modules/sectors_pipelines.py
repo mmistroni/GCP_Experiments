@@ -47,7 +47,7 @@ def run_pipelines(p, fmpkey, recipients=''):
 
 def run_index_pipeline(p, ticker, fmpKey):
     return (p | f'Starting {ticker}' >> beam.Create([ticker])
-                    | f'Fetch data {index}' >> beam.Map(lambda ticker: fetch_index_data(ticker, fmpKey))
+                    | f'Fetch data {ticker}' >> beam.Map(lambda ticker: fetch_index_data(ticker, fmpKey))
                     )
 
 def run_sector_pipelines(p, known_args):
