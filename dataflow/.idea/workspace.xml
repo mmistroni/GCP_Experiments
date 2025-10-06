@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="adding plus500 read from csv">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixed task name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -113,6 +112,7 @@
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor&quot;: &quot;Debug&quot;,
     &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_yahoo_pipeline.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor&quot;: &quot;Run&quot;,
@@ -168,22 +168,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline">
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_run_market_momentum_composite" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_run_market_momentum_composite&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals">
     <configuration name="Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -229,6 +214,21 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_historicals" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_historicals&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -246,11 +246,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_yahoo_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_run_market_momentum_composite" />
       </list>
     </recent_temporary>
   </component>
@@ -269,38 +269,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00487" summary="fixing slope">
-      <option name="closed" value="true" />
-      <created>1753374430568</created>
-      <option name="number" value="00487" />
-      <option name="presentableId" value="LOCAL-00487" />
-      <option name="project" value="LOCAL" />
-      <updated>1753374430568</updated>
-    </task>
-    <task id="LOCAL-00488" summary="fixing slope">
-      <option name="closed" value="true" />
-      <created>1753382289022</created>
-      <option name="number" value="00488" />
-      <option name="presentableId" value="LOCAL-00488" />
-      <option name="project" value="LOCAL" />
-      <updated>1753382289022</updated>
-    </task>
-    <task id="LOCAL-00489" summary="fixing slope">
-      <option name="closed" value="true" />
-      <created>1753520654703</created>
-      <option name="number" value="00489" />
-      <option name="presentableId" value="LOCAL-00489" />
-      <option name="project" value="LOCAL" />
-      <updated>1753520654703</updated>
-    </task>
-    <task id="LOCAL-00490" summary="fixing slope">
-      <option name="closed" value="true" />
-      <created>1753520805600</created>
-      <option name="number" value="00490" />
-      <option name="presentableId" value="LOCAL-00490" />
-      <option name="project" value="LOCAL" />
-      <updated>1753520805600</updated>
     </task>
     <task id="LOCAL-00491" summary="adding price and updating subjecct">
       <option name="closed" value="true" />
@@ -662,7 +630,39 @@
       <option name="project" value="LOCAL" />
       <updated>1758562806651</updated>
     </task>
-    <option name="localTasksCounter" value="536" />
+    <task id="LOCAL-00536" summary="adding plus500 read from csv">
+      <option name="closed" value="true" />
+      <created>1758607980658</created>
+      <option name="number" value="00536" />
+      <option name="presentableId" value="LOCAL-00536" />
+      <option name="project" value="LOCAL" />
+      <updated>1758607980659</updated>
+    </task>
+    <task id="LOCAL-00537" summary="adding plus500 read from csv">
+      <option name="closed" value="true" />
+      <created>1759211841343</created>
+      <option name="number" value="00537" />
+      <option name="presentableId" value="LOCAL-00537" />
+      <option name="project" value="LOCAL" />
+      <updated>1759211841343</updated>
+    </task>
+    <task id="LOCAL-00538" summary="adding plus500 read from csv">
+      <option name="closed" value="true" />
+      <created>1759574983953</created>
+      <option name="number" value="00538" />
+      <option name="presentableId" value="LOCAL-00538" />
+      <option name="project" value="LOCAL" />
+      <updated>1759574983953</updated>
+    </task>
+    <task id="LOCAL-00539" summary="fixed task name">
+      <option name="closed" value="true" />
+      <created>1759731446880</created>
+      <option name="number" value="00539" />
+      <option name="presentableId" value="LOCAL-00539" />
+      <option name="project" value="LOCAL" />
+      <updated>1759731446881</updated>
+    </task>
+    <option name="localTasksCounter" value="540" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -677,7 +677,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added company profile" />
     <MESSAGE value="startign to build s uperperf pipeline" />
     <MESSAGE value="starting to build superperf" />
     <MESSAGE value="openai start" />
@@ -702,7 +701,8 @@
     <MESSAGE value="adding last 50 days and fixing super perf write to bq" />
     <MESSAGE value="moved pipelines out of secto rjob" />
     <MESSAGE value="adding plus500 read from csv" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding plus500 read from csv" />
+    <MESSAGE value="fixed task name" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed task name" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -933,7 +933,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/launcher.py</url>
-          <line>180</line>
+          <line>173</line>
           <option name="timeStamp" value="257" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1010,6 +1010,26 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
           <line>279</line>
           <option name="timeStamp" value="301" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>72</line>
+          <option name="timeStamp" value="304" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>60</line>
+          <option name="timeStamp" value="307" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>63</line>
+          <option name="timeStamp" value="309" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>55</line>
+          <option name="timeStamp" value="312" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
