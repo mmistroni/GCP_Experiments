@@ -6,7 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixed task name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_pipelines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_sectors_tracker.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_sectors_loader.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_sectors_loader.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -270,14 +271,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00493" summary="fixing datsetloader">
-      <option name="closed" value="true" />
-      <created>1754039452065</created>
-      <option name="number" value="00493" />
-      <option name="presentableId" value="LOCAL-00493" />
-      <option name="project" value="LOCAL" />
-      <updated>1754039452066</updated>
     </task>
     <task id="LOCAL-00494" summary="fixig wrong var name">
       <option name="closed" value="true" />
@@ -663,7 +656,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759731517293</updated>
     </task>
-    <option name="localTasksCounter" value="542" />
+    <task id="LOCAL-00542" summary="fixed task name">
+      <option name="closed" value="true" />
+      <created>1759737965370</created>
+      <option name="number" value="00542" />
+      <option name="presentableId" value="LOCAL-00542" />
+      <option name="project" value="LOCAL" />
+      <updated>1759737965370</updated>
+    </task>
+    <option name="localTasksCounter" value="543" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
