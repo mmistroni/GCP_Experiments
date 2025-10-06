@@ -39,7 +39,6 @@ def parse_known_args(argv):
 
 def run(argv=None, save_main_session=True):
     """Main entry point; defines and runs the wordcount pipeline."""
-
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
     known_args, pipeline_args = parse_known_args(argv)

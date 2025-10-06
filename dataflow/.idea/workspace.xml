@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixed task name">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_pipelines.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -269,14 +270,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00491" summary="adding price and updating subjecct">
-      <option name="closed" value="true" />
-      <created>1754028070331</created>
-      <option name="number" value="00491" />
-      <option name="presentableId" value="LOCAL-00491" />
-      <option name="project" value="LOCAL" />
-      <updated>1754028070331</updated>
     </task>
     <task id="LOCAL-00492" summary="adding price and updating subjecct">
       <option name="closed" value="true" />
@@ -662,7 +655,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759731446881</updated>
     </task>
-    <option name="localTasksCounter" value="540" />
+    <task id="LOCAL-00540" summary="fixed task name">
+      <option name="closed" value="true" />
+      <created>1759731497990</created>
+      <option name="number" value="00540" />
+      <option name="presentableId" value="LOCAL-00540" />
+      <option name="project" value="LOCAL" />
+      <updated>1759731497990</updated>
+    </task>
+    <option name="localTasksCounter" value="541" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

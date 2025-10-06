@@ -53,6 +53,7 @@ def run_index_pipeline(p, ticker, fmpKey):
 def run_sector_pipelines(p, known_args):
     """Main entry point; defines and runs the wordcount pipeline."""
 
+
     # We use the save_main_session option because one or more DoFn's in this
     # workflow rely on global context (e.g., a module imported at module level).
     debugSink = beam.Map(logging.info)
