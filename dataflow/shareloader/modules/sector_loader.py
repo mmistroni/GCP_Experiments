@@ -55,5 +55,5 @@ def run(argv=None, save_main_session=True):
         for ticker in ['^GSPC', '^NDX', '^DJI','^RUT',
                         '^NYA']:
             res = run_index_pipeline(p, ticker, known_args.key)
-            res | '{ticker} to sinmk' >> sink
+            res | f'{ticker} to sinmk' >> sink
 
