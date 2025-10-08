@@ -47,6 +47,7 @@ def run_test_pipeline2(p, fmpkey, price_change=0.1):
         | 'Reading Tickers2' >> beam.io.textio.ReadFromText('gs://mm_dataflow_bucket/inputs/Plus500.csv')
         | 'Converting to Tuple2' >> beam.Map(lambda row: row.split(','))
         | 'Filtering2' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick and '*' not in tick)
+        | 'Combine all tickers plus500' >> beam.CombineGlobally(combine_tickers)
         | 'Plus500YFRun2' >> beam.ParDo(
             AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
         | 'Logging out' >> beam.Map(logging.info)
