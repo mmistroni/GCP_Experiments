@@ -345,7 +345,7 @@ def run(argv = None, save_main_session=True):
 
 
         elif known_args.runtype == 'marketdown':
-            plus500 = run_test_pipeline2(p, known_args.fmprepkey, price_change=-0.10)
+            plus500 = run_test_pipeline(p, known_args.fmprepkey, price_change=-0.10)
 
             stp = run_swingtrader_pipeline(p, known_args.fmprepkey, price_change=-0.10)
 
