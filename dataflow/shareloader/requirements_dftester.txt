@@ -53,6 +53,7 @@ google-cloud-storage==2.19.0
 google-cloud-videointelligence==2.16.1
 google-cloud-vision==3.10.1
 google-crc32c==1.7.1
+google-genai
 google-resumable-media==2.7.2
 googleapis-common-protos==1.70.0
 grpc-google-iam-v1==0.14.2

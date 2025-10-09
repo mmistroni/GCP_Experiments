@@ -8,7 +8,7 @@ import apache_beam as beam
 from apache_beam.testing.util import assert_that, equal_to, is_not_empty
 from apache_beam.testing.test_pipeline import TestPipeline
 from shareloader.modules.sectors_utils import SectorRankGenerator, get_sector_rankings ,SectorsEmailSender, \
-                                            get_finviz_performance, fetch_index_data
+                                            get_finviz_performance, fetch_index_data, run_inference, to_json_string
 from unittest.mock import patch
 from pandas.tseries.offsets import BDay
 import yfinance as yf
@@ -158,6 +158,8 @@ class TestSectorLoader(unittest.TestCase):
     def test_historicals(self):
         key = os.environ['FMPREPKEY']
         sink = beam.Map(print)
+        openai_key = os.environ['OPENAI_API_KEY']
+
         with TestPipeline() as p:
             res =  (p | 'Starting fvz' >> beam.Create([
                                                             #'^GSPC', '^NDX', '^DJI','^RUT',
@@ -166,8 +168,25 @@ class TestSectorLoader(unittest.TestCase):
                         | 'Fetch data 2' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
                         | 'To Sink' >> sink
                         )
-    def test_fetchistring(self):
-        pass
+
+    def test_anotherllm_on_bean(self):
+        key = os.environ['FMPREPKEY']
+        openai_key = os.environ['OPENAI_API_KEY']
+
+        sink = beam.Map(print)
+
+        with TestPipeline() as p:
+            res = (p | 'Starting fvz' >> beam.Create([
+                # '^GSPC', '^NDX', '^DJI','^RUT',
+                '^NYA'
+                            ])
+                   | 'Fetch data 2' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
+                   )
+
+            llm = run_inference(res, openai_key )
+
+            llm | 'to sink' >> sink
+
 
 
         

@@ -13,8 +13,39 @@ from finvizfinance.group import Performance
 from .obb_utils import fetch_historical_data
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 from typing import List
+from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
+from apache_beam.ml.inference.base import RunInference
+import json
+
+JSON_SCHEMA =''' {
+  "analysis_report": [
+    {
+      "pattern_type": "string",  # Must be one of: "Accumulation", "Distribution", "Anomaly", "No Significant Pattern"
+      "start_date": "string",    // YYYY-MM-DD format
+      "end_date": "string",      // YYYY-MM-DD format
+      "confidence_score": "number", // Value between 0.0 and 1.0
+      "justification": "string", // Brief explanation of the detected signs (e.g., "Price consolidating in a tight range while OBV is trending up, indicating smart money buying.")
+      "key_indicators_used": "array" // e.g., ["OBV", "CDF", "Price Range"]
+    }
+  ]
+}
+'''
+TEMPLATE = f'''
+                    1.  **Analyze the Data:** Carefully review the provided JSON data.
+                    2.  **Detect Patterns:** Identify distinct patterns of **Accumulation**, **Distribution**, or significant **Anomalies** (sudden, inexplicable shifts in price, volume, or delta).
+                    3.  **Determine Significance:** Assign a **Confidence Score** from 0.0 to 1.0 for each detected pattern.
+                    4.  **Pinpoint Location:** Identify the approximate **Start Date** and **End Date** of the detected pattern.
+                    5.  **Strict JSON Output:** Generate your final analysis **ONLY** as a single JSON object that strictly adheres to the provided `{JSON_SCHEMA}`. **DO NOT** include any conversational text, explanations, or markdown outside of the final JSON block.
+            '''
 
 
+def to_json_string(element):
+    def datetime_converter(o):
+        if isinstance(o, datetime):
+            return o.isoformat()  # Convert datetime to ISO 8601 string
+        raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
+    return json.dumps(element, default=datetime_converter)
 
 def get_finviz_performance():
 
@@ -58,7 +89,7 @@ def get_indicators(data:List[dict]) -> dict:
 
 
         result = reduced.to_dict('records')[-50:]
-        return result
+        return result[0:3]
     except Exception as e:
         logging.info(f'Faile dto fetch obv for {str(e)}')
         return {}
@@ -71,6 +102,10 @@ def fetch_index_data(ticker, key):
     indicators = get_indicators(data)
 
     return indicators
+
+
+
+
 
 
 def get_sector_rankings(key):
@@ -292,6 +327,20 @@ class SectorRankGenerator:
 
         return mgd
 
+
+def run_inference(output, openai_key):
+    instructions = '''You are an expert financial market analyst specializing in Wyckoff methodology and technical pattern detection. 
+                       Your task is to analyze 50 days of stock data, which includes standard OHLC (Open, High, Low, Close) values, On-Balance Volume (OBV), 
+                       and Cumulative Delta Force (CDF)..'''
+
+    return (output | "xxToJson" >> beam.Map(to_json_string)
+     | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+     | 'xxanotheer map' >> beam.Map(lambda item: f'{TEMPLATE} \n {item}')
+
+     | "xInference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
+                                                                     instructions))
+
+     )
 
 
 

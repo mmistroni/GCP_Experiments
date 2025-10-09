@@ -10,4 +10,5 @@ finvizfinance
 numpy
 xlrd
 openpyxl
+google-genai
 
