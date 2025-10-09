@@ -40,7 +40,7 @@ class PostProcessor(beam.DoFn):
         yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
 
 
-def run_gemini_pipeline(p, google_key, prompts):
+def run_gemini_pipeline(p, google_key):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
         request_fn=generate_from_string,
@@ -48,6 +48,12 @@ def run_gemini_pipeline(p, google_key, prompts):
         # location=LOCATION
         api_key=google_key
     )
+
+    prompts = [
+        "What is 1+2?",
+        "How is the weather in NYC in July?",
+        "Write a short, 3-line poem about a robot learning to paint."
+    ]
 
     read_prompts = p | "GetPrompts" >> beam.Create(prompts)
 
