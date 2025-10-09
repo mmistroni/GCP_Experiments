@@ -15,9 +15,10 @@ from unittest.mock import patch
 import argparse
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 from shareloader.modules.launcher_pipelines import run_inference
-
-
-
+from google import genai
+import apache_beam as beam
+from apache_beam.ml.inference.gemini_inference import GeminiModelHandler # New for Beam 2.66
+from apache_beam.ml.inference.gemini_inference import generate_from_string
 import asyncio
 import apache_beam as beam
 import openai as openai
@@ -40,6 +41,56 @@ class OpenAIClient:
             return response.choices[0].text.strip()
         except Exception as e:
             return f"Error: {e}"
+
+
+import apache_beam as beam
+from apache_beam.ml.inference.gemini_inference import GeminiModelHandler # New for Beam 2.66
+from apache_beam.ml.inference.gemini_inference import generate_from_string # New for Beam 2.66
+from apache_beam.options.pipeline_options import PipelineOptions
+
+
+
+
+def run_gemini_inference(output, openai_key, debug_sink):
+    template = '''
+                            I will provide you a json string containing a list of stocks.
+                            For each stock i will provide the following information
+                            1 - prev_close: the previous close of the stock
+                            2 - change: the change from yesterday
+                            3 - ADX: the adx
+                            4 - RSI : the RSI
+                            5 - SMA20: the 20 day simple moving average
+                            6 - SMA50: the 50 day simple moving average
+                            7 - SMA200: the 200 day simple moving average
+                            8 - slope, this will be slope of linear regression for past 30 days.
+                            9 - prev_obv: this is on balance volume from previous day
+                            10 - current_obv: this is the on balance volume for the current day
+                            11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                            12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                            13 - obv_historical: these are the on balance volumes for the last 20 days
+                            14 - cmf_historical: these are the cmf values for past 20 days
+                            As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
+                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
+                            same criterias
+                            Once you finish your analysis, please summarize your finding indicating, for each
+                            stock what is your recommendation and why. 
+                            At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
+                            a json message with fields ticker, action (buy or watch or sell) and an explanation.
+                            The json string should be written between a <STARTJSON> and <ENDJSON> tags.
+                            Here is my json
+            '''
+    instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy or to sell.'''
+
+    return (output | "xxToJson" >> beam.Map(to_json_string)
+     | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+     | 'xxanotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
+
+     | "xInference" >> RunInference(model_handler=GeminiAIHandler(openai_key,
+                                                                     instructions))
+
+     )
+
+
 
 
 class SampleOpenAIHandler(ModelHandler):
@@ -68,6 +119,10 @@ class SampleOpenAIHandler(ModelHandler):
           input=batch[0],
       )
     return [response.output_text]
+
+
+
+
 
 
 
@@ -245,6 +300,10 @@ class MyTestCase(unittest.TestCase):
         
         print(dat)
 
+
+
+
+
     def test_run_inference_pipeline(self):
         import argparse
         parser = argparse.ArgumentParser(add_help=False)
@@ -257,6 +316,20 @@ class MyTestCase(unittest.TestCase):
 
             res = run_inference(input2, openai_key, beam.Map(print))
             
+            res | beam.Map(print)
+
+    def test_run_inference_pipeline2(self):
+        import argparse
+        parser = argparse.ArgumentParser(add_help=False)
+
+        key = os.environ['FMPREPKEY']
+        openai_key = os.environ['GOOGLE_API_KEUY']
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_etoro_pipeline(p, key, 0.0001)
+
+            res = run_gemini_inference(input2, openai_key, beam.Map(print))
+
             res | beam.Map(print)
 
     def test_fmp_pipeline(self):
@@ -289,6 +362,24 @@ class MyTestCase(unittest.TestCase):
                     AsyncProcess({'key': key}, date(2025,2,18), price_change=-0.0001, selection='Plus500'))
                 | 'Out' >> beam.Map(print)
                 )
+
+    def test_gemini_pipeline(self):
+
+        model_handler = GeminiModelHandler(
+            model_name='gemini-2.5-flash',
+            request_fn=generate_from_string,
+            #project='datascience-project', location='us-central1',
+            api_key=os.environ['GOOGLE_API_KEUY']
+        )
+        prompts = ['What is one plus one']
+        with beam.Pipeline(options=PipelineOptions()) as pipeline:
+            _ = (
+                    pipeline
+                    | "Create data" >> beam.Create(prompts)
+                    | "RunInference" >> RunInference(model_handler)
+                    | "Print results" >> beam.Map(lambda response: print(response.text))
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

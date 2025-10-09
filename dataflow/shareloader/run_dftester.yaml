@@ -28,6 +28,8 @@ steps:
           , '--parameters'
           ,'openaikey=$_OPENAIKEY'
           , '--parameters'
+          ,'googleapikey=$_GOOGLEAPIKEY'
+          , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
           ,'--subnetwork=regions/us-central1/subnetworks/default'
@@ -43,10 +45,11 @@ substitutions:
   _LIMIT: '10'
   _SENDGRIDKEY: ''
   _OPENAIKEY: ''
+  _GOOGLEAPIKEY: ''
   _RUNTYPE: ''
   _JOB_NAME: 'dftester'
   _PROJECT_ID: datascience-projects
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest28
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest29
 
 
 

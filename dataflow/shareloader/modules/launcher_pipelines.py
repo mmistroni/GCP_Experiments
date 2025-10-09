@@ -12,7 +12,7 @@ import itertools
 import requests
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 from apache_beam.ml.inference.base import RunInference
-
+from shareloader.modules.beam_inferences import run_gemini_pipeline
 
 
 
@@ -41,11 +41,17 @@ def run_swingtrader_pipeline(p, fmpkey, price_change=0.07):
                | 'SwingTraderRun' >> beam.ParDo(AsyncProcess({'key': fmpkey}, cob, price_change=price_change, selection='SwingTrader'))
              )
 
-def run_test_pipeline2(p, fmpkey, price_change=0.1):
+
+
+def run_test_pipeline2(p, google_key, fmp_key):
+
+    return run_gemini_pipeline(p, google_key)
+
+
     cob = date.today()
     return (p
         | 'Reading Tickers2' >> beam.io.textio.ReadFromText('gs://mm_dataflow_bucket/inputs/Plus500.csv')
-        | 'Converting to Tuple2' >> beam.Map(lambda row: row.split(','))
+        | 'Converting to Tuple2' >> beam.FlatMap(lambda row: row.split(','))
         | 'Filtering2' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick and '*' not in tick)
         | 'Combine all tickers plus500' >> beam.CombineGlobally(combine_tickers)
         | 'Plus500YFRun2' >> beam.ParDo(

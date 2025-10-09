@@ -52,5 +52,11 @@
       "label": "openai key",
       "isOptional" : true
     }
+    {
+      "name": "googleapikey",
+      "helpText": "Google Key",
+      "label": "google key",
+      "isOptional" : true
+    }
   ]
 }

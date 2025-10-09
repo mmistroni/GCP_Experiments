@@ -2,10 +2,9 @@ import requests
 import logging
 from datetime import datetime
 import apache_beam as beam
-import json
 import openai as openai
 from apache_beam.ml.inference.base import ModelHandler
-from apache_beam.ml.inference.base import RunInference
+
 
 def get_fields():
     return ["ticker", "date", "currentRatio", "quickRatio", "cashRatio", "calendarYear",
@@ -335,36 +334,4 @@ class SampleOpenAIHandler(ModelHandler):
           input=batch[0],
       )
     return [response.output_text]
-
-
-class GeminiAIHandler(ModelHandler):
-  """DoFn that accepts a batch of images as bytearray
-  and sends that batch to the Cloud Vision API for remote inference"""
-  def __init__(self, gemini_key, llm_instructions):
-      self.gemini_key = oai_key
-      self.llm_instructions = llm_instructions
-
-  def load_model(self):
-    """Initiate the Google Vision API client."""
-    """Initiate the OAI API client."""
-    client =  openai.OpenAI(
-    # This is the default and can be omitted
-        api_key=self.oai_key,
-    )
-    return client
-
-
-  def run_inference(self, batch, model, inference):
-
-
-    response = model.responses.create(
-          model="gpt-4o",
-          instructions=self.llm_instructions,
-          input=batch[0],
-      )
-    return [response.output_text]
-
-
-
-
 

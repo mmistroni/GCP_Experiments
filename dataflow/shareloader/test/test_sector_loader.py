@@ -20,6 +20,21 @@ from collections import  OrderedDict
 from datetime import date
 import os
 import pandas as pd
+import apache_beam as beam
+from apache_beam.options.pipeline_options import PipelineOptions
+
+# Import the core components for ML inference in Beam.
+from apache_beam.ml.inference.base import RunInference, PredictionResult
+
+# Import the specific model handler for Gemini on Vertex AI.
+from apache_beam.ml.inference.gemini_inference import GeminiModelHandler, generate_from_string
+
+# Helper for iterating over collections.
+from collections.abc import Iterable
+
+# Python Package Version
+from packaging.version import Version
+
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -173,6 +188,32 @@ class TestSectorLoader(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         openai_key = os.environ['OPENAI_API_KEY']
 
+        class PostProcessor(beam.DoFn):
+            """Parses the PredictionResult to extract a human-readable string."""
+
+            def process(self, element: PredictionResult) -> Iterable[str]:
+                """
+                Extracts the generated text from the Gemini API response.
+
+                The inference result from GeminiModelHandler is a tuple containing:
+                ('sdk_http_response', [<google.cloud.aiplatform_v1.types.GenerateContentResponse>])
+
+                We navigate this structure to get the final text.
+                """
+                # The original input prompt is stored in `element.example`
+                input_prompt = element.example
+
+                # The API response is in `element.inference`
+                # Path to text: response -> candidates -> content -> parts -> text
+                gemini_response = element.inference[1][0]
+
+                # Only supported for genai package 1.21.1 or earlier
+                output_text = gemini_response.content.parts[0].text
+
+                # Yield a formatted string for printing
+                yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
+
+
         sink = beam.Map(print)
 
         with TestPipeline() as p:
@@ -185,7 +226,7 @@ class TestSectorLoader(unittest.TestCase):
 
             llm = run_inference(res, openai_key )
 
-            llm | 'to sink' >> sink
+            llm | 'to sink'
 
 
 

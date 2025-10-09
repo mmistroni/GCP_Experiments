@@ -189,6 +189,7 @@ def parse_known_args(argv):
   parser.add_argument('--runtype')
   parser.add_argument('--sendgridkey')
   parser.add_argument('--openaikey')
+  parser.add_argument('--googleapikey')
   return parser.parse_known_args(argv)
 
 
@@ -369,7 +370,7 @@ def run(argv = None, save_main_session=True):
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         elif known_args.runtype == 'tester':
-            run_test_pipeline2(p, known_args.fmprepkey, price_change=-0.10)
+            run_test_pipeline2(p, known_args.googleapikey, known_args.fmprepkey)
 
         else:
 
@@ -405,17 +406,19 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
-            llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
+            ''' Skipping for now
+            #llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
 
             llm_out | sink
 
             write_to_ai_stocks(llm_out, ai_sink)
-
+            
+            
             keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
-
+            '''
 
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'collection3' : keyed_llm
+                         'collection3' : ['TBD']
                          }
                         | beam.CoGroupByKey())
 
