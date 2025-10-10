@@ -264,6 +264,7 @@ def run(argv = None, save_main_session=True):
     #google_cloud_options.max_workflow_runtime_walltime_seconds = 3600
     logging.info(f'fmp key:{known_args.fmprepkey}')
     logging.info(f'RUNTYPEy:{known_args.runtype}')
+    logging.info(f'GKEY:{known_args.googleapikey}')
 
     bq_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
