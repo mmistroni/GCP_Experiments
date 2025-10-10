@@ -33,23 +33,29 @@ class PostProcessor(beam.DoFn):
 
         # The API response is in `element.inference`
         # Path to text: response -> candidates -> content -> parts -> text
-        gemini_inference = element.inference
-        logging.info(f'element.inference is {gemini_inference}')
-    
-        logging.info(gemini_inference[1])
         
-        gemini_response = gemini_inference[1][0]
-        logging.info(f'Gemini Response:{gemini_response}')
-        logging.info(f'Gemini Resjponse Content:{gemini_response.content}')
-        logging.info(f'Gemini REsjponse Content Part:{gemini_response.content.parts}')
-        logging.info(f'Gemini REsjponse Content Part.0:{gemini_response.content.parts[0]}')
-        logging.info(f'Text:{gemini_response.content.parts[0].text}')
-        # Only supported for genai package 1.21.1 or earlier
-        # Only supported for genai package 1.21.1 or earlier
-        output_text = gemini_response.content.parts[0].text
+        try:
+            gemini_inference = element.inference
+            logging.info(f'element.inference is {gemini_inference}')
+        
+            logging.info(gemini_inference[1])
+            
+            gemini_response = gemini_inference[1][0]
+            logging.info(f'Gemini Response:{gemini_response}')
+            logging.info(f'Gemini Resjponse Content:{gemini_response.content}')
+            logging.info(f'Gemini REsjponse Content Part:{gemini_response.content.parts}')
+            logging.info(f'Gemini REsjponse Content Part.0:{gemini_response.content.parts[0]}')
+            logging.info(f'Text:{gemini_response.content.parts[0].text}')
+            # Only supported for genai package 1.21.1 or earlier
+            # Only supported for genai package 1.21.1 or earlier
+            output_text = gemini_response.content.parts[0].text
 
-        # Yield a formatted string for printing
-        yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
+            # Yield a formatted string for printing
+            yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n
+            
+        except Exception as e:
+            logging.error(f"Error processing element: {e}")
+            yield f"Input:\n{input_prompt}\n\nOutput:\nError processing response.\n"
 
 
 def run_gemini_pipeline(p, google_key):
@@ -63,8 +69,7 @@ def run_gemini_pipeline(p, google_key):
 
     prompts = [
         "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
-        #"How is the weather in NYC in July?",
-        #"Write a short, 3-line poem about a robot learning to paint."
+        
     ]
 
     read_prompts = p | "GetPrompts" >> beam.Create(prompts)
@@ -74,9 +79,11 @@ def run_gemini_pipeline(p, google_key):
     predictions = read_prompts | "RunInference" >> RunInference(model_handler) 
     
     # Parse the results to get clean text.
-    processed = predictions | "LogPredictions" >> beam.Map(logging.info)
+    processed = predictions | "PostProcess" >> beam.ParDo(PostProcessor())
 
-    
+    # Parse the results to get clean text.
+    processed | "PrintOutput" >> beam.Map(logging.info)
+
 
 
     # Parse the results to get clean text.
