@@ -13,6 +13,7 @@ import requests
 from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
 from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.beam_inferences import run_gemini_pipeline
+from shareloader.modules.beam_inferences import GeminiModelHandler
 
 
 
@@ -191,8 +192,7 @@ def run_inference(output, openai_key, debug_sink):
      | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
      | 'xxanotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
 
-     | "xInference" >> RunInference(model_handler=SampleOpenAIHandler(openai_key,
-                                                                     instructions))
+     | "xInference" >> RunInference(model_handler=GeminiModelHandler(openai_key))
 
      )
 

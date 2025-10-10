@@ -331,7 +331,7 @@ def run(argv = None, save_main_session=True):
                 StockSelectionCombineFn()))
 
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
-            llm_out_eod = run_inference(obb, known_args.openaikey, sink)
+            llm_out_eod = run_inference(obb, known_args.googleapikey, sink)
             keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
 
             combined = ({'collection1': keyed_eod,
