@@ -51,7 +51,7 @@ class PostProcessor(beam.DoFn):
             output_text = gemini_response.content.parts[0].text
 
             # Yield a formatted string for printing
-            yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n
+            yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
             
         except Exception as e:
             logging.error(f"Error processing element: {e}")
