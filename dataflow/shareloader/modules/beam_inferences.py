@@ -33,7 +33,8 @@ class PostProcessor(beam.DoFn):
         # The API response is in `element.inference`
         # Path to text: response -> candidates -> content -> parts -> text
         gemini_inference = element.inference
-        logging.info(gemini_inference)
+        logging.info(f'element.inference is {gemini_inference}')
+    
         logging.info(gemini_inference[1])
         
         gemini_response = gemini_inference[1][0]
