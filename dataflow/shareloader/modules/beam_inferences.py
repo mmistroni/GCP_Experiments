@@ -6,6 +6,7 @@ from apache_beam.ml.inference.base import RunInference, PredictionResult
 from apache_beam.ml.inference.gemini_inference import GeminiModelHandler, generate_from_string
 # Helper for iterating over collections.
 from collections.abc import Iterable
+from apache_beam.ml.inference.base import RunInference
 import logging
 # Python Package Version
 MODEL_NAME = "gemini-2.5-flash"
@@ -61,7 +62,7 @@ def run_gemini_pipeline(p, google_key):
     )
 
     prompts = [
-        "What is 1+2?",
+        "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
         #"How is the weather in NYC in July?",
         #"Write a short, 3-line poem about a robot learning to paint."
     ]
@@ -70,13 +71,13 @@ def run_gemini_pipeline(p, google_key):
 
     # The core of our pipeline: apply the RunInference transform.
     # Beam will handle batching and parallel API calls.
-    predictions = read_prompts | "RunInference" >> RunInference(model_handler)
+    predictions = read_prompts | "RunInference" >> RunInference(model_handler) | "LogPredictions" >> beam.Map(logging.info)
 
     # Parse the results to get clean text.
-    processed = predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+    #processed = predictions | "PostProcess" >> beam.ParDo(PostProcessor())
 
     # Print the final, formatted output to the console.
     # This is a simple "sink" for demonstration purposes.
-    _ = processed | "PrintOutput" >> beam.Map(logging.info)
+    #_ = predictions | "PrintOutput" >> beam.Map(logging.info)
 
 
