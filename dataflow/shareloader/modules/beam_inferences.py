@@ -32,8 +32,17 @@ class PostProcessor(beam.DoFn):
 
         # The API response is in `element.inference`
         # Path to text: response -> candidates -> content -> parts -> text
-        gemini_response = element.inference[1][0]
-
+        gemini_inference = element.inference
+        logging.info(gemini_inference)
+        logging.info(gemini_inference[1])
+        
+        gemini_response = gemini_inference[1][0]
+        logging.info(f'Gemini Response:{gemini_response}')
+        logging.info(f'Gemini Resjponse Content:{gemini_response.content}')
+        logging.info(f'Gemini REsjponse Content Part:{gemini_response.content.parts}')
+        logging.info(f'Gemini REsjponse Content Part.0:{gemini_response.content.parts[0]}')
+        logging.info(f'Text:{gemini_response.content.parts[0].text}')
+        # Only supported for genai package 1.21.1 or earlier
         # Only supported for genai package 1.21.1 or earlier
         output_text = gemini_response.content.parts[0].text
 
@@ -52,8 +61,8 @@ def run_gemini_pipeline(p, google_key):
 
     prompts = [
         "What is 1+2?",
-        "How is the weather in NYC in July?",
-        "Write a short, 3-line poem about a robot learning to paint."
+        #"How is the weather in NYC in July?",
+        #"Write a short, 3-line poem about a robot learning to paint."
     ]
 
     read_prompts = p | "GetPrompts" >> beam.Create(prompts)
