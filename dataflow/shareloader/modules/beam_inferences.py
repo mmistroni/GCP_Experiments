@@ -6,6 +6,7 @@ from apache_beam.ml.inference.base import RunInference, PredictionResult
 from apache_beam.ml.inference.gemini_inference import GeminiModelHandler, generate_from_string
 # Helper for iterating over collections.
 from collections.abc import Iterable
+import logging
 # Python Package Version
 MODEL_NAME = "gemini-2.5-flash"
 
