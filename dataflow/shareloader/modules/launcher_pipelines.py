@@ -52,6 +52,7 @@ def run_test_pipeline2(p, google_key, fmp_key):
 
     res | "PrintGeminiOutput" >> beam.Map(logging.info)
 
+    '''
 
     cob = date.today()
     return (p
@@ -63,9 +64,7 @@ def run_test_pipeline2(p, google_key, fmp_key):
             AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
         | 'Logging out' >> beam.Map(logging.info)
         )
-
-
-
+    '''
 
 def run_test_pipeline(p, fmpkey, price_change=0.1):
     cob = date.today()
