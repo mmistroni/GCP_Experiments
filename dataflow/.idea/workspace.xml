@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixed task name">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="replacing genai">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_sector_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,8 +19,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Unit Test" />
         <option value="Python Script" />
+        <option value="Python Unit Test" />
       </list>
     </option>
   </component>
@@ -48,6 +46,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
@@ -112,7 +111,9 @@
     "Python tests.Python tests for test_obb_loader.MyTestCase.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor": "Debug",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor": "Run",
@@ -176,7 +177,22 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean">
+  <component name="RunManager" selected="Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean">
+    <configuration name="Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -189,6 +205,36 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_anotherllm_on_bean&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_gemini_pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_run_inference_pipeline2&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -207,58 +253,13 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_finviz_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_historicals" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_historicals&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_run_my_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean" />
+        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean" />
         <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline" />
       </list>
     </recent_temporary>
   </component>
@@ -277,94 +278,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00495" summary="added new runtuype">
-      <option name="closed" value="true" />
-      <created>1754046745825</created>
-      <option name="number" value="00495" />
-      <option name="presentableId" value="LOCAL-00495" />
-      <option name="project" value="LOCAL" />
-      <updated>1754046745825</updated>
-    </task>
-    <task id="LOCAL-00496" summary="added new runtuype">
-      <option name="closed" value="true" />
-      <created>1754053088659</created>
-      <option name="number" value="00496" />
-      <option name="presentableId" value="LOCAL-00496" />
-      <option name="project" value="LOCAL" />
-      <updated>1754053088659</updated>
-    </task>
-    <task id="LOCAL-00497" summary="added new runtuype">
-      <option name="closed" value="true" />
-      <created>1754053167408</created>
-      <option name="number" value="00497" />
-      <option name="presentableId" value="LOCAL-00497" />
-      <option name="project" value="LOCAL" />
-      <updated>1754053167408</updated>
-    </task>
-    <task id="LOCAL-00498" summary="increased tolerance">
-      <option name="closed" value="true" />
-      <created>1754054483079</created>
-      <option name="number" value="00498" />
-      <option name="presentableId" value="LOCAL-00498" />
-      <option name="project" value="LOCAL" />
-      <updated>1754054483079</updated>
-    </task>
-    <task id="LOCAL-00499" summary="ADDED NY COJMPOSITE">
-      <option name="closed" value="true" />
-      <created>1755708651273</created>
-      <option name="number" value="00499" />
-      <option name="presentableId" value="LOCAL-00499" />
-      <option name="project" value="LOCAL" />
-      <updated>1755708651273</updated>
-    </task>
-    <task id="LOCAL-00500" summary="ADDED NY COJMPOSITE">
-      <option name="closed" value="true" />
-      <created>1755802966134</created>
-      <option name="number" value="00500" />
-      <option name="presentableId" value="LOCAL-00500" />
-      <option name="project" value="LOCAL" />
-      <updated>1755802966134</updated>
-    </task>
-    <task id="LOCAL-00501" summary="ADDED NY COJMPOSITE">
-      <option name="closed" value="true" />
-      <created>1755803444169</created>
-      <option name="number" value="00501" />
-      <option name="presentableId" value="LOCAL-00501" />
-      <option name="project" value="LOCAL" />
-      <updated>1755803444170</updated>
-    </task>
-    <task id="LOCAL-00502" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1755803649918</created>
-      <option name="number" value="00502" />
-      <option name="presentableId" value="LOCAL-00502" />
-      <option name="project" value="LOCAL" />
-      <updated>1755803649918</updated>
-    </task>
-    <task id="LOCAL-00503" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1755803858881</created>
-      <option name="number" value="00503" />
-      <option name="presentableId" value="LOCAL-00503" />
-      <option name="project" value="LOCAL" />
-      <updated>1755803858881</updated>
-    </task>
-    <task id="LOCAL-00504" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1755804085568</created>
-      <option name="number" value="00504" />
-      <option name="presentableId" value="LOCAL-00504" />
-      <option name="project" value="LOCAL" />
-      <updated>1755804085569</updated>
-    </task>
-    <task id="LOCAL-00505" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1756208526243</created>
-      <option name="number" value="00505" />
-      <option name="presentableId" value="LOCAL-00505" />
-      <option name="project" value="LOCAL" />
-      <updated>1756208526243</updated>
     </task>
     <task id="LOCAL-00506" summary="added pandas ta">
       <option name="closed" value="true" />
@@ -670,7 +583,95 @@
       <option name="project" value="LOCAL" />
       <updated>1759738820581</updated>
     </task>
-    <option name="localTasksCounter" value="544" />
+    <task id="LOCAL-00544" summary="adding genai">
+      <option name="closed" value="true" />
+      <created>1760005993408</created>
+      <option name="number" value="00544" />
+      <option name="presentableId" value="LOCAL-00544" />
+      <option name="project" value="LOCAL" />
+      <updated>1760005993408</updated>
+    </task>
+    <task id="LOCAL-00545" summary="adding genai">
+      <option name="closed" value="true" />
+      <created>1760014402666</created>
+      <option name="number" value="00545" />
+      <option name="presentableId" value="LOCAL-00545" />
+      <option name="project" value="LOCAL" />
+      <updated>1760014402666</updated>
+    </task>
+    <task id="LOCAL-00546" summary="adding genai">
+      <option name="closed" value="true" />
+      <created>1760017804566</created>
+      <option name="number" value="00546" />
+      <option name="presentableId" value="LOCAL-00546" />
+      <option name="project" value="LOCAL" />
+      <updated>1760017804568</updated>
+    </task>
+    <task id="LOCAL-00547" summary="adding genai handler and updated dependencies">
+      <option name="closed" value="true" />
+      <created>1760027763244</created>
+      <option name="number" value="00547" />
+      <option name="presentableId" value="LOCAL-00547" />
+      <option name="project" value="LOCAL" />
+      <updated>1760027763244</updated>
+    </task>
+    <task id="LOCAL-00548" summary="adding genai handler and updated dependencies">
+      <option name="closed" value="true" />
+      <created>1760071068994</created>
+      <option name="number" value="00548" />
+      <option name="presentableId" value="LOCAL-00548" />
+      <option name="project" value="LOCAL" />
+      <updated>1760071068995</updated>
+    </task>
+    <task id="LOCAL-00549" summary="adding genai handler and updated dependencies">
+      <option name="closed" value="true" />
+      <created>1760071123019</created>
+      <option name="number" value="00549" />
+      <option name="presentableId" value="LOCAL-00549" />
+      <option name="project" value="LOCAL" />
+      <updated>1760071123019</updated>
+    </task>
+    <task id="LOCAL-00550" summary="adding genai handler and updated dependencies">
+      <option name="closed" value="true" />
+      <created>1760071162632</created>
+      <option name="number" value="00550" />
+      <option name="presentableId" value="LOCAL-00550" />
+      <option name="project" value="LOCAL" />
+      <updated>1760071162632</updated>
+    </task>
+    <task id="LOCAL-00551" summary="adding genai handler and updated dependencies">
+      <option name="closed" value="true" />
+      <created>1760072203742</created>
+      <option name="number" value="00551" />
+      <option name="presentableId" value="LOCAL-00551" />
+      <option name="project" value="LOCAL" />
+      <updated>1760072203742</updated>
+    </task>
+    <task id="LOCAL-00552" summary="replacing genai">
+      <option name="closed" value="true" />
+      <created>1760195731836</created>
+      <option name="number" value="00552" />
+      <option name="presentableId" value="LOCAL-00552" />
+      <option name="project" value="LOCAL" />
+      <updated>1760195731837</updated>
+    </task>
+    <task id="LOCAL-00553" summary="replacing genai">
+      <option name="closed" value="true" />
+      <created>1760195981991</created>
+      <option name="number" value="00553" />
+      <option name="presentableId" value="LOCAL-00553" />
+      <option name="project" value="LOCAL" />
+      <updated>1760195981991</updated>
+    </task>
+    <task id="LOCAL-00554" summary="replacing genai">
+      <option name="closed" value="true" />
+      <created>1760198192047</created>
+      <option name="number" value="00554" />
+      <option name="presentableId" value="LOCAL-00554" />
+      <option name="project" value="LOCAL" />
+      <updated>1760198192047</updated>
+    </task>
+    <option name="localTasksCounter" value="555" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -685,9 +686,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="startign to build s uperperf pipeline" />
-    <MESSAGE value="starting to build superperf" />
-    <MESSAGE value="openai start" />
     <MESSAGE value="add new hights" />
     <MESSAGE value="amending tolerance" />
     <MESSAGE value=" amending tolerance for eod fixing enod fday pips" />
@@ -710,7 +708,10 @@
     <MESSAGE value="moved pipelines out of secto rjob" />
     <MESSAGE value="adding plus500 read from csv" />
     <MESSAGE value="fixed task name" />
-    <option name="LAST_COMMIT_MESSAGE" value="fixed task name" />
+    <MESSAGE value="adding genai" />
+    <MESSAGE value="adding genai handler and updated dependencies" />
+    <MESSAGE value="replacing genai" />
+    <option name="LAST_COMMIT_MESSAGE" value="replacing genai" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -951,7 +952,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_obb_loader.py</url>
-          <line>67</line>
+          <line>118</line>
           <option name="timeStamp" value="273" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1021,13 +1022,28 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
-          <line>103</line>
+          <line>81</line>
           <option name="timeStamp" value="304" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_obb_loader.py</url>
-          <line>175</line>
+          <line>230</line>
           <option name="timeStamp" value="313" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../../../Marco/envs/obb-dataflow/Lib/site-packages/apache_beam/ml/inference/gemini_inference.py</url>
+          <line>176</line>
+          <option name="timeStamp" value="319" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/../../../../Marco/envs/obb-dataflow/Lib/site-packages/apache_beam/ml/inference/gemini_inference.py</url>
+          <line>201</line>
+          <option name="timeStamp" value="320" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_beam_inferences.py</url>
+          <line>128</line>
+          <option name="timeStamp" value="321" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

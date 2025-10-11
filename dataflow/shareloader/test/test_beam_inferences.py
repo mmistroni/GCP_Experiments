@@ -146,3 +146,4 @@ class TestBeamInferencesr(unittest.TestCase):
             res | "PrintOutput" >> beam.Map(print)
 
 
+
