@@ -14,6 +14,10 @@ MODEL_NAME = "gemini-2.5-flash"
 # --- Pipeline Configuration ---
 # Number of threads to use for the local DirectRunner.
 NUM_WORKERS = 1
+SYSTEM_INSTRUCTION_TEXT = (
+    "You are a helpful and concise assistant. "
+    "Your should provide response in Json Format"
+)
 
 
 class PostProcessor(beam.DoFn):
@@ -68,6 +72,8 @@ def run_gemini_pipeline(p, google_key, prompts=None):
 
     inner_prompts = [
         "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
+        "How is the weather in NYC in July?Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
+        "Write a short, 3-line poem about a robot learning to paint.Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}"
         
     ]
 
@@ -77,7 +83,10 @@ def run_gemini_pipeline(p, google_key, prompts=None):
 
     # The core of our pipeline: apply the RunInference transform.
     # Beam will handle batching and parallel API calls.
-    predictions = read_prompts | "RunInference" >> RunInference(model_handler) 
+    predictions = read_prompts | "RunInference" >> RunInference(model_handler,
+                                                                inference_args={
+                                                "system_instruction": SYSTEM_INSTRUCTION_TEXT
+                                            })
     
     # Parse the results to get clean text.
     return  predictions | "PostProcess" >> beam.ParDo(PostProcessor())
