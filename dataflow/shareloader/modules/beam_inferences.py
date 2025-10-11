@@ -38,7 +38,6 @@ class PostProcessor(beam.DoFn):
             gemini_inference = element.inference
             logging.info(f'element.inference is {gemini_inference}')
 
-            '''
             logging.info(gemini_inference[1])
             
             gemini_response = gemini_inference[1][0]
@@ -50,7 +49,6 @@ class PostProcessor(beam.DoFn):
             # Only supported for genai package 1.21.1 or earlier
             # Only supported for genai package 1.21.1 or earlier
             output_text = gemini_response.content.parts[0].text
-            '''
             # Yield a formatted string for printing
             yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
             
@@ -59,7 +57,7 @@ class PostProcessor(beam.DoFn):
             yield f"Input:\n{input_prompt}\n\nOutput:\nError processing response.\n"
 
 
-def run_gemini_pipeline(p, google_key):
+def run_gemini_pipeline(p, google_key, prompts=None):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
         request_fn=generate_from_string,
@@ -68,30 +66,20 @@ def run_gemini_pipeline(p, google_key):
         api_key=google_key
     )
 
-    prompts = [
+    inner_prompts = [
         "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
         
     ]
 
-    read_prompts = p | "GetPrompts" >> beam.Create(prompts)
+    pipeline_prompts  = prompts or inner_prompts
+
+    read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
 
     # The core of our pipeline: apply the RunInference transform.
     # Beam will handle batching and parallel API calls.
     predictions = read_prompts | "RunInference" >> RunInference(model_handler) 
     
     # Parse the results to get clean text.
-    processed = predictions | "PostProcess" >> beam.ParDo(PostProcessor())
-
-    # Parse the results to get clean text.
-    processed | "PrintOutput" >> beam.Map(logging.info)
-
-
-
-    # Parse the results to get clean text.
-    #processed = predictions | "PostProcess" >> beam.ParDo(PostProcessor())
-
-    # Print the final, formatted output to the console.
-    # This is a simple "sink" for demonstration purposes.
-    #_ = predictions | "PrintOutput" >> beam.Map(logging.info)
+    return  predictions | "PostProcess" >> beam.ParDo(PostProcessor())
 
 

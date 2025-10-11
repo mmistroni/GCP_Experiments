@@ -128,35 +128,6 @@ def run_pipeline(prompts, model_name, num_workers):
     print("\n--- Pipeline finished ---")
 
 
-class SampleGeminiAIHandler(ModelHandler):
-  """DoFn that accepts a batch of images as bytearray
-  and sends that batch to the Cloud Vision API for remote inference"""
-  def __init__(self, oai_key, llm_instructions):
-      self.oai_key = oai_key
-      self.llm_instructions = llm_instructions
-
-  def load_model(self):
-    """Initiate the Google Vision API client."""
-    """Initiate the OAI API client."""
-    client =  GeminiModelHandler(
-        model_name="gemini-2.5-flash",
-        request_fn=generate_from_string,
-        api_key=os.environ['GOOGLE_API_KEUY']
-    )
-    return client
-
-
-  def run_inference(self, batch, model, inference):
-
-
-    response = model.responses.create(
-          model="gemini-2.5-flash",
-          input=batch[0],
-      )
-    return [response.output_text]
-
-
-
 class TestBeamInferencesr(unittest.TestCase):
 
 
@@ -168,6 +139,10 @@ class TestBeamInferencesr(unittest.TestCase):
              "Write a short, 3-line poem about a robot learning to paint."
 
         ]
-        run_pipeline(prompts, MODEL_NAME, NUM_WORKERS)
+        key = os.environ['GOOGLE_API_KEUY']
+        sink = beam.Map(print)
+        with TestPipeline(options=PipelineOptions()) as p:
+            res = run_gemini_pipeline(p, key, prompts=prompts)
+            res | "PrintOutput" >> beam.Map(print)
 
 

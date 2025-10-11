@@ -46,7 +46,11 @@ def run_swingtrader_pipeline(p, fmpkey, price_change=0.07):
 
 def run_test_pipeline2(p, google_key, fmp_key):
 
-    return run_gemini_pipeline(p, google_key)
+    sink = beam.Map(logging.info)
+
+    res =  run_gemini_pipeline(p, google_key)
+
+    res | "PrintGeminiOutput" >> beam.Map(logging.info)
 
 
     cob = date.today()
