@@ -331,19 +331,22 @@ def run(argv = None, save_main_session=True):
                 StockSelectionCombineFn()))
 
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
+            '''
             llm_out_eod = run_inference(obb, known_args.openaikey, sink)
             keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
+            '''
 
             combined = ({'collection1': keyed_eod,
                          'collection2': keyed_finviz,
-                         'collection3' : keyed_llm_eod}
+                         'collection3' :[] #keyed_llm_eod
+                         }
                         | beam.CoGroupByKey())
 
             send_email(combined,  known_args.sendgridkey)
 
             obb | 'oBB2 TO SINK' >>sink
 
-            write_to_ai_stocks(llm_out_eod, ai_sink)
+            #write_to_ai_stocks(llm_out_eod, ai_sink)
 
 
         elif known_args.runtype == 'marketdown':
@@ -357,14 +360,15 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
+            '''
             llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
 
             llm_out | sink
 
             keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
-
+            '''
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'collection3': keyed_llm
+                         'collection3': []#keyed_llm
                          }
                         | beam.CoGroupByKey())
 
