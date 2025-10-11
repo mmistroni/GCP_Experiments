@@ -10,7 +10,7 @@ finvizfinance
 numpy
 xlrd
 openpyxl
-google-genai
+google-genai==1.21.1
 anio
 httpx
 

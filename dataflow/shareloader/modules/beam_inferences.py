@@ -37,7 +37,8 @@ class PostProcessor(beam.DoFn):
         try:
             gemini_inference = element.inference
             logging.info(f'element.inference is {gemini_inference}')
-        
+
+            '''
             logging.info(gemini_inference[1])
             
             gemini_response = gemini_inference[1][0]
@@ -49,7 +50,7 @@ class PostProcessor(beam.DoFn):
             # Only supported for genai package 1.21.1 or earlier
             # Only supported for genai package 1.21.1 or earlier
             output_text = gemini_response.content.parts[0].text
-
+            '''
             # Yield a formatted string for printing
             yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
             
