@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="replacing genai">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="fixing genai calls">
       <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,30 +276,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00506" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1756213324059</created>
-      <option name="number" value="00506" />
-      <option name="presentableId" value="LOCAL-00506" />
-      <option name="project" value="LOCAL" />
-      <updated>1756213324059</updated>
-    </task>
-    <task id="LOCAL-00507" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1756213558748</created>
-      <option name="number" value="00507" />
-      <option name="presentableId" value="LOCAL-00507" />
-      <option name="project" value="LOCAL" />
-      <updated>1756213558748</updated>
-    </task>
-    <task id="LOCAL-00508" summary="added pandas ta">
-      <option name="closed" value="true" />
-      <created>1756222154318</created>
-      <option name="number" value="00508" />
-      <option name="presentableId" value="LOCAL-00508" />
-      <option name="project" value="LOCAL" />
-      <updated>1756222154320</updated>
     </task>
     <task id="LOCAL-00509" summary="added pandas ta">
       <option name="closed" value="true" />
@@ -671,7 +645,31 @@
       <option name="project" value="LOCAL" />
       <updated>1760198192047</updated>
     </task>
-    <option name="localTasksCounter" value="555" />
+    <task id="LOCAL-00555" summary="fixing genai calls">
+      <option name="closed" value="true" />
+      <created>1760199269734</created>
+      <option name="number" value="00555" />
+      <option name="presentableId" value="LOCAL-00555" />
+      <option name="project" value="LOCAL" />
+      <updated>1760199269734</updated>
+    </task>
+    <task id="LOCAL-00556" summary="fixing genai calls">
+      <option name="closed" value="true" />
+      <created>1760199364883</created>
+      <option name="number" value="00556" />
+      <option name="presentableId" value="LOCAL-00556" />
+      <option name="project" value="LOCAL" />
+      <updated>1760199364883</updated>
+    </task>
+    <task id="LOCAL-00557" summary="fixing genai calls">
+      <option name="closed" value="true" />
+      <created>1760199596155</created>
+      <option name="number" value="00557" />
+      <option name="presentableId" value="LOCAL-00557" />
+      <option name="project" value="LOCAL" />
+      <updated>1760199596155</updated>
+    </task>
+    <option name="localTasksCounter" value="558" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -686,7 +684,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add new hights" />
     <MESSAGE value="amending tolerance" />
     <MESSAGE value=" amending tolerance for eod fixing enod fday pips" />
     <MESSAGE value="added new superperf runs" />
@@ -711,7 +708,8 @@
     <MESSAGE value="adding genai" />
     <MESSAGE value="adding genai handler and updated dependencies" />
     <MESSAGE value="replacing genai" />
-    <option name="LAST_COMMIT_MESSAGE" value="replacing genai" />
+    <MESSAGE value="fixing genai calls" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixing genai calls" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

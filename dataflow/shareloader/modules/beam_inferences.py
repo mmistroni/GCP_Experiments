@@ -83,10 +83,7 @@ def run_gemini_pipeline(p, google_key, prompts=None):
 
     # The core of our pipeline: apply the RunInference transform.
     # Beam will handle batching and parallel API calls.
-    predictions = read_prompts | "RunInference" >> RunInference(model_handler,
-                                                                inference_args={
-                                                "system_instruction": SYSTEM_INSTRUCTION_TEXT
-                                            })
+    predictions = read_prompts | "RunInference" >> RunInference(model_handler)
     
     # Parse the results to get clean text.
     return  predictions | "PostProcess" >> beam.ParDo(PostProcessor())
