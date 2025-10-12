@@ -7,6 +7,7 @@ from apache_beam.ml.inference.gemini_inference import GeminiModelHandler, genera
 # Helper for iterating over collections.
 from collections.abc import Iterable
 from apache_beam.ml.inference.base import RunInference
+from shareloader.modules.dftester_utils import to_json_string
 import logging
 # Python Package Version
 MODEL_NAME = "gemini-2.5-flash"
@@ -18,6 +19,36 @@ SYSTEM_INSTRUCTION_TEXT = (
     "You are a helpful and concise assistant. "
     "Your should provide response in Json Format"
 )
+
+TEMPLATE = '''  You are a powerful stock researcher that recommends stock that are candidate to buy or to sell.
+                I will provide you a json string containing a list of stocks.
+                For each stock i will provide the following information
+                1 - prev_close: the previous close of the stock
+                2 - change: the change from yesterday
+                3 - ADX: the adx
+                4 - RSI : the RSI
+                5 - SMA20: the 20 day simple moving average
+                6 - SMA50: the 50 day simple moving average
+                7 - SMA200: the 200 day simple moving average
+                8 - slope, this will be slope of linear regression for past 30 days.
+                9 - prev_obv: this is on balance volume from previous day
+                10 - current_obv: this is the on balance volume for the current day
+                11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
+                13 - obv_historical: these are the on balance volumes for the last 20 days
+                14 - cmf_historical: these are the cmf values for past 20 days
+                As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
+                If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
+                same criterias
+                Once you finish your analysis, please summarize your finding indicating, for each
+                stock what is your recommendation and why. 
+                At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
+                a json message with fields ticker, action (buy or watch or sell) and an explanation.
+                The json string should be written between a <STARTJSON> and <ENDJSON> tags.
+                Here is my json
+            '''
+
+
 
 
 class PostProcessor(beam.DoFn):
@@ -70,16 +101,24 @@ def run_gemini_pipeline(p, google_key, prompts=None):
         api_key=google_key
     )
 
-    inner_prompts = [
-        "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
-        "How is the weather in NYC in July?Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
-        "Write a short, 3-line poem about a robot learning to paint.Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}"
-        
-    ]
+    read_prompts = None
+    if not prompts:
+        logging.info('Generating pipeline prompts')
 
-    pipeline_prompts  = prompts or inner_prompts
+        read_prompts = (p | "gemini xxToJson" >> beam.Map(to_json_string)
+                     | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+                     | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{TEMPLATE} \n {item}')
+                   )
+    else:
 
-    read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
+        prompts = [
+                    "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
+                    "How is the weather in NYC in July?Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
+                    "Write a short, 3-line poem about a robot learning to paint.Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}"
+                   ]
+
+        pipeline_prompts  = prompts
+        read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
 
     # The core of our pipeline: apply the RunInference transform.
     # Beam will handle batching and parallel API calls.

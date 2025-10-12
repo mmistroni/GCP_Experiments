@@ -375,7 +375,26 @@ def run(argv = None, save_main_session=True):
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         elif known_args.runtype == 'tester':
-            run_test_pipeline2(p, known_args.googleapikey, known_args.fmprepkey)
+            #run_test_pipeline2(p, known_args.googleapikey, known_args.fmprepkey)
+            tester = run_extra_pipeline(p, known_args.fmprepkey)
+            tester | 'tester to sink' >> sink
+
+            etoro = run_etoro_pipeline(p, known_args.fmprepkey)
+            etoro | 'etoro to sink' >> sink
+
+            nhp = run_newhigh_pipeline(p, known_args.fmprepkey)
+            nhp | 'newhighgs to sink' >> sink
+
+            stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
+            stp | 'stp to sink' >> sink
+
+
+            all_pipelines = ((tester, etoro, stp, nhp) | "test fmaprun all" >> beam.Flatten())
+
+            all_pipelines | 'testjoson to sink' >>  sink
+
+            run_test_pipeline2(all_pipelines, known_args.googleapikey, known_args.fmprepkey)
+
 
         else:
 
