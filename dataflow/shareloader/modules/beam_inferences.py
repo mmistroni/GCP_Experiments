@@ -20,7 +20,7 @@ SYSTEM_INSTRUCTION_TEXT = (
     "Your should provide response in Json Format"
 )
 
-TEMPLATE = '''  You are a powerful stock researcher that recommends stock that are candidate to buy or to sell.
+TEMPLATE = '''  You are a powerful stock researcher and statistician that recommends stock that are candidate to buy or to sell.
                 I will provide you a json string containing a list of stocks.
                 For each stock i will provide the following information
                 1 - prev_close: the previous close of the stock
@@ -37,7 +37,7 @@ TEMPLATE = '''  You are a powerful stock researcher that recommends stock that a
                 12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
                 13 - obv_historical: these are the on balance volumes for the last 20 days
                 14 - cmf_historical: these are the cmf values for past 20 days
-                As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
+                Based on that information, you will need to find which stocks which are candidates to rise in next days.
                 If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
                 same criterias
                 Once you finish your analysis, please summarize your finding indicating, for each
