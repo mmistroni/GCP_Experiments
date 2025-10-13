@@ -331,14 +331,14 @@ def run(argv = None, save_main_session=True):
                 StockSelectionCombineFn()))
 
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
-            '''
-            llm_out_eod = run_inference(obb, known_args.openaikey, sink)
+            
+            llm_out_eod = run_test_pipeline2(obb, known_args.googleapikey)
             keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
-            '''
+            
 
             combined = ({'collection1': keyed_eod,
                          'collection2': keyed_finviz,
-                         'collection3' :[] #keyed_llm_eod
+                         'collection3' :keyed_llm_eod
                          }
                         | beam.CoGroupByKey())
 
@@ -360,15 +360,15 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
-            '''
-            llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
+            
+            llm_out = run_test_pipeline2(all_pipelines, known_args.googleapikey)
 
             llm_out | sink
 
             keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
-            '''
+            
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'collection3': []#keyed_llm
+                         'collection3': keyed_llm
                          }
                         | beam.CoGroupByKey())
 
@@ -393,7 +393,7 @@ def run(argv = None, save_main_session=True):
 
             all_pipelines | 'testjoson to sink' >>  sink
 
-            run_test_pipeline2(all_pipelines, known_args.googleapikey, known_args.fmprepkey)
+            run_test_pipeline2(all_pipelines, known_args.googleapikey)
 
 
         else:
@@ -430,8 +430,7 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
-            ''' Skipping for now
-            #llm_out = run_inference(all_pipelines, known_args.openaikey, sink)
+            llm_out = run_test_pipeline2(all_pipelines, known_args.googleapikey)
 
             llm_out | sink
 
@@ -439,8 +438,7 @@ def run(argv = None, save_main_session=True):
             
             
             keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
-            '''
-
+            
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
                          'collection3' : ['TBD']
                          }

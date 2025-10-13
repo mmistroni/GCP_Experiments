@@ -44,28 +44,11 @@ def run_swingtrader_pipeline(p, fmpkey, price_change=0.07):
 
 
 
-def run_test_pipeline2(p, google_key, fmp_key):
+def run_test_pipeline2(p, google_key):
 
-    sink = beam.Map(logging.info)
+    return run_gemini_pipeline(p, google_key)
 
-    res =  run_gemini_pipeline(p, google_key)
-
-    res | "PrintGeminiOutput" >> beam.Map(logging.info)
-
-    '''
-
-    cob = date.today()
-    return (p
-        | 'Reading Tickers2' >> beam.io.textio.ReadFromText('gs://mm_dataflow_bucket/inputs/Plus500.csv')
-        | 'Converting to Tuple2' >> beam.FlatMap(lambda row: row.split(','))
-        | 'Filtering2' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick and '*' not in tick)
-        | 'Combine all tickers plus500' >> beam.CombineGlobally(combine_tickers)
-        | 'Plus500YFRun2' >> beam.ParDo(
-            AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
-        | 'Logging out' >> beam.Map(logging.info)
-        )
-    '''
-
+    
 def run_test_pipeline(p, fmpkey, price_change=0.1):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)
