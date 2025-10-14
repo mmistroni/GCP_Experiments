@@ -11,7 +11,7 @@ from shareloader.modules.dftester_utils import to_json_string
 from google.genai import types
 import logging
 # Python Packag'gemini-2.0-flash-001'e Version
-MODEL_NAME = "gemini-2.0-flash-001" #"gemini-2.5-flash"
+MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
 
 # --- Pipeline Configuration ---
 # Number of threads to use for the local DirectRunner.
