@@ -97,6 +97,9 @@ def run_gemini_pipeline(p, google_key, prompts=None):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
         request_fn=generate_from_string,
+        config=types.GenerateContentConfig(
+            system_instruction=TEMPLATE,
+            ),
         # project=PROJECT_ID,
         # location=LOCATION
         api_key=google_key
@@ -108,7 +111,7 @@ def run_gemini_pipeline(p, google_key, prompts=None):
 
         read_prompts = (p | "gemini xxToJson" >> beam.Map(to_json_string)
                      | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
-                     | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{TEMPLATE} \n {item}')
+                     | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
                    )
     else:
 
