@@ -394,8 +394,8 @@ def run(argv = None, save_main_session=True):
             all_pipelines | 'testjoson to sink' >>  sink
 
             inference = run_test_pipeline2(all_pipelines, known_args.googleapikey)
-            inference | 'Map Jsonb' >> beam.Map(lambda x: x[x.find('<STARTJSON>') + 11 : ])
-                      |  'To Sink' >> sink
+            (inference | 'Map Jsonb' >> beam.Map(lambda x: x[x.find('<STARTJSON>') + 11 : ])
+                      |  'To Sink' >> sink)
 
         else:
 
