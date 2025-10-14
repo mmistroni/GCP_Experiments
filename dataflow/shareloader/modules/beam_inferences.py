@@ -49,6 +49,20 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
                 
             '''
 
+def generate_with_instructions(
+    model_name: str,
+    instructions:str
+    batch: Sequence[str],
+    model: genai.Client,
+    inference_args: dict[str, Any]):
+  return model.models.generate_content(
+      model=model_name, 
+      contents=batch,
+      config=types.GenerateContentConfig(
+        system_instruction=instructions,
+      ), 
+      **inference_args)
+
 
 
 
@@ -96,12 +110,8 @@ class PostProcessor(beam.DoFn):
 def run_gemini_pipeline(p, google_key, prompts=None):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
-        request_fn=generate_from_string,
-        config=types.GenerateContentConfig(
-            system_instruction=TEMPLATE,
-            ),
-        # project=PROJECT_ID,
-        # location=LOCATION
+        instructions=TEMPLATE
+        request_fn=generate_frogenerate_with_instructionsm_string,
         api_key=google_key
     )
 
