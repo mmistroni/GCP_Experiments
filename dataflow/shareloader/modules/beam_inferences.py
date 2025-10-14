@@ -8,6 +8,7 @@ from apache_beam.ml.inference.gemini_inference import GeminiModelHandler, genera
 from collections.abc import Iterable
 from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.dftester_utils import to_json_string
+from google.genai import types
 import logging
 # Python Package Version
 MODEL_NAME = "gemini-2.5-flash"
@@ -45,7 +46,7 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
                 At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
                 a json message with fields ticker, action (buy or watch or sell) and an explanation.
                 The json string should be written between a <STARTJSON> and <ENDJSON> tags.
-                Here is my json
+                
             '''
 
 
