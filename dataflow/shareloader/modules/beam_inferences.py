@@ -10,8 +10,8 @@ from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.dftester_utils import to_json_string
 from google.genai import types
 import logging
-# Python Package Version
-MODEL_NAME = "gemini-2.5-flash"
+# Python Packag'gemini-2.0-flash-001'e Version
+MODEL_NAME = "gemini-2.0-flash-001" #"gemini-2.5-flash"
 
 # --- Pipeline Configuration ---
 # Number of threads to use for the local DirectRunner.
@@ -110,8 +110,10 @@ class PostProcessor(beam.DoFn):
 def run_gemini_pipeline(p, google_key, prompts=None):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
-        instructions=TEMPLATE
-        request_fn=generate_frogenerate_with_instructionsm_string,
+        request_fn=generate_from_string,
+        config=types.GenerateContentConfig(
+                    system_instruction=TEMPLATE,
+                )
         api_key=google_key
     )
 
