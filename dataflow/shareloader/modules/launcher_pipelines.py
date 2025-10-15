@@ -14,7 +14,37 @@ from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandl
 from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.beam_inferences import run_gemini_pipeline
 from shareloader.modules.beam_inferences import GeminiModelHandler
+import csv
+from io import StringIO
+import re
 
+def parse_csv_line(line):
+    """
+    Parses a single CSV line and yields individual tickers.
+    
+    This function uses Python's built-in csv module for robust parsing,
+    handling potential quotes or delimiters within the data (though less
+    likely for simple tickers).
+    """
+    # Use StringIO to treat the string as a file-like object
+    reader = csv.reader(StringIO(line))
+    
+    # csv.reader returns a list of fields (a single row)
+    try:
+        # Assuming only one row in the input
+        row = next(reader)
+        # Tickers are typically alphanumeric; a simple regex filter can
+        # help ensure we only yield valid looking tickers.
+        for field in row:
+            ticker = field.strip()
+            # Simple validation: checks if the ticker is non-empty and
+            # contains only letters and numbers.
+            if ticker and re.match(r'^[A-Z0-9]+$', ticker, re.IGNORECASE):
+                yield ticker
+    except Exception as e:
+        # Log the error for debugging. In a real pipeline, you might use 
+        # a side output for error handling.
+        print(f"Error processing line: {line}. Error: {e}")
 
 
 
@@ -48,7 +78,20 @@ def run_test_pipeline2(p, google_key):
 
     return run_gemini_pipeline(p, google_key)
 
-    
+def read_plus500_tickers(bucket_path=None):
+  file_name = bucket_path or 'gs://mm_dataflow_bucket/input/plus500_tickers.csv'
+  # 1. Read the single line from the GCS file
+  lines = p | 'Read CSV from GCS' >> beam.io.ReadFromText(gcs_uri)
+
+  # 2. Parse the line to extract all tickers
+  tickers = (lines | 'Extract Tickers' >> beam.FlatMap(parse_csv_line)
+              | 'Filter Valid Tickers' >> beam.Filter(lambda tick: tick and '.' not in tick and '-' not in tick)
+              | 'Strip Whitespace' >> beam.Map(lambda tick: tick.strip())
+              | 'Combine Tickers' >> beam.CombineGlobally(combine_tickers)
+              )
+  tickers | 'Log out' >> beam.Map(logging.info)
+
+
 def run_test_pipeline(p, fmpkey, price_change=0.1):
     cob = date.today()
     test_ppln = create_bigquery_ppln(p)

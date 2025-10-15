@@ -1,11 +1,12 @@
 {
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./dataflow",
-        "-p",
-        "test*.py"
+    "python.analysis.extraPaths": [
+        "dataflow/shareloader"
     ],
-    "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    // The relative path from the workspace root where testing should start searching.
+    "python.testing.unittestArgs": [
+        "-t", "dataflow", // Sets the start directory for discovery to 'dataflow'
+        "-s", "shareloader/tests", // Sets the pattern for searching within the start directory
+        "-p", "test_*.py" // Standard file pattern for unittest
+    ]
 }

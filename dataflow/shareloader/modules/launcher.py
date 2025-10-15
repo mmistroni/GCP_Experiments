@@ -15,7 +15,7 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
                                                    run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
-                                                   run_test_pipeline2
+                                                   run_test_pipeline2, run_plus500_pipeline
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 
@@ -375,28 +375,7 @@ def run(argv = None, save_main_session=True):
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         elif known_args.runtype == 'tester':
-            #run_test_pipeline2(p, known_args.googleapikey, known_args.fmprepkey)
-            tester = run_extra_pipeline(p, known_args.fmprepkey)
-            tester | 'tester to sink' >> sink
-
-            etoro = run_etoro_pipeline(p, known_args.fmprepkey)
-            etoro | 'etoro to sink' >> sink
-
-            nhp = run_newhigh_pipeline(p, known_args.fmprepkey)
-            nhp | 'newhighgs to sink' >> sink
-
-            stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
-            stp | 'stp to sink' >> sink
-
-
-            all_pipelines = ((tester, etoro, stp, nhp) | "test fmaprun all" >> beam.Flatten())
-
-            all_pipelines | 'testjoson to sink' >>  sink
-
-            inference = run_test_pipeline2(all_pipelines, known_args.googleapikey)
-            (inference | 'Map Jsonb' >> beam.Map(lambda x: x[x.find('<STARTJSON>') + 11 : ])
-                      |  'To Sink' >> sink)
-
+            run_plus500_pipeline(p)
         else:
 
             plus500 = run_test_pipeline(p, known_args.fmprepkey)
