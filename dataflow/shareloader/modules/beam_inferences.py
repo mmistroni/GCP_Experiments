@@ -53,7 +53,6 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
 
 def generate_with_instructions(
     model_name: str,
-    custom_instructions:str,
     batch: Sequence[str],
     model: GenAIClient,
     inference_args: dict[str, Any]):
