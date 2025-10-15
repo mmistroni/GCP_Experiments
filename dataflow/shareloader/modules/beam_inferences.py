@@ -132,6 +132,8 @@ def run_gemini_pipeline(p, google_key, prompts=None):
     predictions = read_prompts | "RunInference" >> RunInference(model_handler)
     
     # Parse the results to get clean text.
-    return  predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+    return  (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+                         | "Excluding Inputs" >> beam.Map( lambda it: it[it.find('Output:') + 7:])
+             )
 
 
