@@ -144,7 +144,7 @@ def calculate_hqm_score(ticker, key):
             res = requests.get(stat_url).json()[0]
 
 
-def run_inference(output, openai_key, debug_sink):
+def run_inference(output, openai_key):
     template = '''
                             I will provide you a json string containing a list of stocks.
                             For each stock i will provide the following information

@@ -9,7 +9,9 @@ from collections.abc import Iterable
 from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.dftester_utils import to_json_string
 from google.genai import types
+from google.genai import Client as GenAIClient
 import logging
+from typing import Any, Sequence
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
 
@@ -51,8 +53,9 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
 
 def generate_with_instructions(
     model_name: str,
+    custom_instructions:str,
     batch: Sequence[str],
-    model: genai.Client,
+    model: GenAIClient,
     inference_args: dict[str, Any]):
   return model.models.generate_content(
       model=model_name, 
@@ -122,13 +125,6 @@ def run_gemini_pipeline(p, google_key, prompts=None):
                      | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
                    )
     else:
-
-        prompts = [
-                    "What is 1+2? Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
-                    "How is the weather in NYC in July?Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}",
-                    "Write a short, 3-line poem about a robot learning to paint.Provide the response in a Json format following this schema: {'question': <prompt>, 'answer': <your_answer>}"
-                   ]
-
         pipeline_prompts  = prompts
         read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
 
