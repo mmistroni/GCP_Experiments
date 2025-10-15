@@ -441,7 +441,7 @@ def run(argv = None, save_main_session=True):
             keyed_llm = llm_out | 'mapping llm2' >> beam.Map(lambda element: (1, element))
             
             combined = ({'collection1': keyed_etoro, 'collection2': keyed_finviz,
-                         'collection3' : ['TBD']
+                         'collection3' : keyed_llm
                          }
                         | beam.CoGroupByKey())
 
