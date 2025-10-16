@@ -89,17 +89,15 @@ def run_plus500_pipeline(p, bucket_path=None):
               | 'Strip Whitespace' >> beam.Map(lambda tick: tick.strip())
               | 'Combine Tickers' >> beam.CombineGlobally(combine_tickers)
               )
-  tickers | 'Log out' >> beam.Map(logging.info)
+  return tickers
 
 
 def run_test_pipeline(p, fmpkey, price_change=0.1):
+    logging.info('Delegating to plus500')
+    test_ppln = run_plus500_pipeline(p)
     cob = date.today()
-    test_ppln = create_bigquery_ppln(p)
     return  (test_ppln
-                | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
-                | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
-                | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
-               | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
+                | 'Plus500YFRun' >> beam.ParDo(AsyncFMPProcess({'fmp_api_key': fmpkey}, cob, price_change=price_change, selection='Plus500'))
              )
 def run_etoro_pipeline(p, fmpkey, tolerance=0.08):
     cob = date.today()
