@@ -78,7 +78,7 @@ def run_test_pipeline2(p, google_key):
 
     return run_gemini_pipeline(p, google_key)
 
-def read_plus500_tickers(bucket_path=None):
+def run_plus500_pipeline(bucket_path=None):
   file_name = bucket_path or 'gs://mm_dataflow_bucket/input/plus500_tickers.csv'
   # 1. Read the single line from the GCS file
   lines = p | 'Read CSV from GCS' >> beam.io.ReadFromText(gcs_uri)
