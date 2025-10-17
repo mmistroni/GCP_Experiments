@@ -3,10 +3,15 @@
         "dataflow/shareloader"
     ],
     "python.testing.unittestEnabled": true,
-    // The relative path from the workspace root where testing should start searching.
     "python.testing.unittestArgs": [
-        "-t", "dataflow", // Sets the start directory for discovery to 'dataflow'
-        "-s", "shareloader/test", // Sets the pattern for searching within the start directory
-        "-p", "test_*.py" // Standard file pattern for unittest
+        // 1. Set the top-level directory to the root of your workspace ('.'). 
+        // This is crucial for fixing the import context.
+        "-t", ".", 
+        
+        // 2. Set the start directory to the *full relative path* to your test folder.
+        "-s", "GCPExperiments/dataflow/shareloader/tests", 
+        
+        // 3. Keep the standard file pattern.
+        "-p", "test_*.py"
     ]
 }
