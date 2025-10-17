@@ -9,7 +9,7 @@
         "-t", ".", 
         
         // 2. Set the start directory to the *full relative path* to your test folder.
-        "-s", "GCPExperiments/dataflow/shareloader/tests", 
+        "-s", "GCP_Experiments/dataflow/shareloader/tests", 
         
         // 3. Keep the standard file pattern.
         "-p", "test_*.py"
