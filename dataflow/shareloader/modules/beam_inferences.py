@@ -44,7 +44,6 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
                 If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
                 same criterias
                 If the json does not contain any elements, reply with this text:Cannot complete analysis as no stocks provided.
-                
                 Once you finish your analysis, please summarize your finding indicating, for each
                 stock what is your recommendation and why. 
                 At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
@@ -134,8 +133,12 @@ def run_gemini_pipeline(p, google_key, prompts=None):
     predictions = read_prompts | "RunInference" >> RunInference(model_handler)
     
     # Parse the results to get clean text.
-    return  (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
-                         | "Excluding Inputs" >> beam.Map( lambda it: it[it.find('Output:') + 7:])
-             )
+    llm_response =   (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+                    )
+
+    debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
+
+
+    return   llm_response  | "Excluding Inputs" >> beam.Map( lambda it: it[it.find('Output:') + 7:])
 
 
