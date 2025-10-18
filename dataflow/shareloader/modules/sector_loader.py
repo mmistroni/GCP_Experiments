@@ -7,7 +7,9 @@ from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_r
         get_finviz_performance
 from .marketstats_utils import get_senate_disclosures
 import argparse
-from .sectors_pipelines import run_sector_pipelines, run_index_pipeline
+from .sectors_pipelines import run_sector_pipelines, run_index_pipeline, \
+                               run_sectors_inference 
+
 import logging
 
 
@@ -32,6 +34,7 @@ def parse_known_args(argv):
     parser.add_argument('--recipients')
     parser.add_argument('--key')
     parser.add_argument('--sendgridkey')
+    parser.add_argument('--googlekey')
     return parser.parse_known_args(argv)
 
 
@@ -55,4 +58,6 @@ def run(argv=None, save_main_session=True):
                         '^NYA']:
             res = run_index_pipeline(p, ticker, known_args.key)
             res | f'{ticker} to sinmk' >> sink
+
+        run_sectors_inference(p, known_args.googlekey)
 

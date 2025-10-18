@@ -15,6 +15,10 @@
       "name": "recipients",
       "helpText": "recipients",
       "label": "recipients"
+    },{
+      "name": "googlekey",
+      "helpText": "google key",
+      "label": "google key"
     }
   ]
 }

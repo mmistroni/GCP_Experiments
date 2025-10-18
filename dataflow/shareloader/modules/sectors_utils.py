@@ -261,6 +261,8 @@ def generate_with_sector_instructions(
         **inference_args)
 
 
+
+
 def run_inference(p, google_key, prompts=None):
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
@@ -457,6 +459,4 @@ class SectorRankGenerator:
         mgd = pd.merge(res, oldest, on='Symbol')
 
         return mgd
-
-
 

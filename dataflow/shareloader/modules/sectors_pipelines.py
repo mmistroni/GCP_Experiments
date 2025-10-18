@@ -4,7 +4,7 @@ import logging
 import apache_beam as beam
 from collections import OrderedDict
 from .sectors_utils import SectorsEmailSender, ETFHistoryCombineFn, get_sector_rankings, \
-        get_finviz_performance, fetch_index_data
+        get_finviz_performance, fetch_index_data, run_inference
 from .marketstats_utils import get_senate_disclosures
 
 sectorsETF = OrderedDict ({
@@ -61,3 +61,16 @@ def run_sector_pipelines(p, known_args):
     finviz_result |'tosink' >> debugSink
     finviz_result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
                                                                     known_args.sendgridkey))
+
+def run_sectors_inference(p, google_key):
+    res = (p | 'Starting fvz' >> beam.Create([
+            '^GSPC',
+            '^NDX',
+                    # '^DJI',
+                    # '^RUT',
+                    #'^NYA'
+                            ])
+                   | 'Fetch data 2' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
+                   )
+            #res | sink
+    llm = run_inference(res, google_key ) | 'to sink' >> sink

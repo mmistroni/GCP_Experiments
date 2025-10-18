@@ -16,6 +16,8 @@ steps:
           , 'sendgridkey=$_SENDGRID_KEY'
           , '--parameters'
           , 'recipients=$_RECIPIENTS'
+          , '--parameters'
+          , 'googlekey=$_GOOGLE_KEY'
           , '--staging-location=gs://datascience-projects_cloudbuild/staging'
           , '--region=$_REGION'
           , '--parameters'
@@ -31,6 +33,7 @@ substitutions:
   _REGION: us-central1
   _FMPREP_KEY: ''
   _SENDGRID_KEY : ''
+  _GOOGLE_KEY : ''
   _RECIPIENTS : 'mmistroni.gmail.com'
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest10
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest11
 

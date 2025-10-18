@@ -16,10 +16,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install Poetry (a Python dependency management and packaging tool)
 # We install it globally and then configure it to store virtualenvs in the project directory
 # for easier Codespaces integration.
-RUN curl -sSL https://install.python-poetry.org | python -
-ENV PATH="/root/.poetry/bin:${PATH}"
-RUN poetry config virtualenvs.in-project true
-
+# FIX: Install and Configure Poetry in a single RUN command
+RUN curl -sSL https://install.python-poetry.org | python - \
+    && export PATH="/root/.poetry/bin:$PATH" \
+    && poetry config virtualenvs.in-project true
 # Copy pyproject.toml and poetry.lock (if it exists) to leverage Poetry's caching
 # This step helps with faster rebuilds if only source code changes.
 COPY pyproject.toml poetry.lock* ./
