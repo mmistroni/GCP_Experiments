@@ -186,7 +186,7 @@ class TestSectorLoader(unittest.TestCase):
 
     def test_anotherllm_on_bean(self):
         key = os.environ['FMPREPKEY']
-        openai_key = os.environ['OPENAI_API_KEY']
+        google_key = os.environ['GOOGLE_API_KEUY']
 
         class PostProcessor(beam.DoFn):
             """Parses the PredictionResult to extract a human-readable string."""
@@ -218,15 +218,16 @@ class TestSectorLoader(unittest.TestCase):
 
         with TestPipeline() as p:
             res = (p | 'Starting fvz' >> beam.Create([
-                # '^GSPC', '^NDX', '^DJI','^RUT',
-                '^NYA'
+                 '^GSPC',
+                # '^NDX',
+                # '^DJI',
+                # '^RUT',
+                #'^NYA'
                             ])
                    | 'Fetch data 2' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
                    )
-
-            llm = run_inference(res, openai_key )
-
-            llm | 'to sink'
+            #res | sink
+            llm = run_inference(res, google_key ) | 'to sink' >> sink
 
 
 

@@ -12,10 +12,75 @@ from collections import OrderedDict
 from finvizfinance.group import Performance
 from .obb_utils import fetch_historical_data
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
+import numpy as np
+
+from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 from typing import List
-from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
+from shareloader.modules.dftester_utils import to_json_string
+from shareloader.modules.beam_inferences import PostProcessor, MODEL_NAME, GeminiModelHandler, GenAIClient
+from google.genai import types
 from apache_beam.ml.inference.base import RunInference
+from typing import List, Sequence, Any, Dict
 import json
+
+SYSTEM_INSTRUCTIONS_STRING_TRIPLE_ANOMALY_ATR = (
+    "You are an expert **Financial Market Anomaly Detection Agent**. "
+    "Your objective is to analyze the provided 50-day time-series data, passed as a **JSON list of daily objects**, "
+    "to identify all three of the following anomaly types: **Excessive Accumulation**, **Excessive Distribution**, and **Extreme Volatility Breakout**."
+    "\n\n"
+    "### DATA CONTEXT\n"
+    "The input is a JSON array where each object contains the following fields for a trading day: "
+    "`date`, `open`, `high`, `low`, `close`, `volume`, `change`, `vwap`, `obv`, and `cmf`. The data must be treated as a strict 50-day sequence. "
+    "You must utilize all available data points for robust anomaly identification."
+    "\n\n"
+    "### SUCCESS CRITERIA (THREE ANOMALY TYPES)\n"
+    "1. **Excessive Accumulation (Divergence):** A 5-day period where the **OBV increases by more than 15%** AND the **'close' price increases by less than 5%** over the same period. "
+    "2. **Excessive Distribution (Divergence):** A 5-day period where the **OBV decreases by more than 15%** AND the **'close' price decreases by less than 5%** over the same period. "
+    "3. **Extreme Volatility Breakout (Point Anomaly):** Any single day where the **True Range (High - Low)** is **3 times greater** than the **Average True Range (ATR)** of the preceding 10 days. This indicates a sudden, sharp, and unusual spike in intra-day volatility. "
+    "\n\n"
+    "### OUTPUT FORMAT\n"
+    "The final output **MUST** be a structured JSON object listing **ALL** detected anomalies. For each anomaly, the output must include: `anomaly_type` (e.g., Accumulation, Distribution, or VolatilityBreakout), the exact `start_date` and `end_date` (which is the same as start_date for VolatilityBreakout), and a key metric (e.g., `OBV_change_percent` for divergences, or `TrueRange_Ratio` for volatility breakouts). **Do not include any conversational text or explanation outside of the structured tool call.**"
+)
+
+MAX_INPUT_DAYS = 20
+
+system_instruction_string_anomaly_template = f'''
+You are an expert **Financial Market Anomaly Detection Agent**. 
+Your objective is to analyze the provided time-series data, passed as a **JSON list of daily objects**, 
+to identify all three of the following anomaly types: **Excessive Accumulation**, **Excessive Distribution**, and **Extreme Volatility Breakout**.
+
+### DATA CONTEXT
+The input is a **subset** of the full 50-day history. Each object contains the daily fields (`date`, `open`, `high`, `low`, `close`, `obv`, `cdf`). 
+CRUCIALLY, it **ALSO** includes the following pre-calculated metrics needed for anomaly checks: 
+`true_range`, `atr_10_sma`, `obv_change_5d_pct`, and `close_change_5d_pct`. **The agent must not perform any rolling window calculations.**
+The input size **will not exceed {MAX_INPUT_DAYS} objects** to prevent timeouts. All necessary lookback data must be pre-calculated.
+
+### SUCCESS CRITERIA (THREE ANOMALY TYPES - BASED ON PRE-CALCULATED METRICS)
+1. **Excessive Accumulation (Divergence):** Any day where the pre-calculated **'obv_change_5d_pct' is > 15%** AND the **'close_change_5d_pct' is < 5%**. 
+2. **Excessive Distribution (Divergence):** Any day where the pre-calculated **'obv_change_5d_pct' is < -15%** AND the **'close_change_5d_pct' is > -5%**. 
+3. **Extreme Volatility Breakout (Point Anomaly):** Any day where the **'true_range'** is **3 times greater** than the corresponding **'atr_10_sma'** value. 
+
+### OUTPUT FORMAT
+The final output **MUST** be a **single, structured JSON object** enclosed in a **Markdown code block**. This JSON object must contain a list of all detected anomalies. For each anomaly, the object must include: `anomaly_type` (e.g., Accumulation, Distribution, or VolatilityBreakout), the exact `start_date` and `end_date` (or `start_date` only for the point anomaly), and a key metric (e.g., `OBV_change_percent` or `TrueRange_Ratio`). 
+**DO NOT include any conversational text, commentary, summaries, or explanation before or after the JSON code block.**
+
+**Example Output Structure:**
+
+```json
+[
+  {{
+    "anomaly_type": "Accumulation",
+    "start_date": "2025-01-05",
+    "end_date": "2025-01-09",
+    "OBV_change_percent": 18.5
+  }},
+  {{
+    "anomaly_type": "VolatilityBreakout",
+    "start_date": "2025-01-20",
+    "TrueRange_Ratio": 3.1
+  }}
+]
+'''
 
 def to_json_string(element):
     def datetime_converter(o):
@@ -44,16 +109,27 @@ def fetch_performance(sector, ticker, key, start_date):
     return df
 
 
-def get_indicators(data:List[dict]) -> dict:
+def get_indicators(data: List[Dict]) -> List[Dict]:
+    """
+    Calculates technical indicators and lookback metrics required by the LLM agent.
+
+    Args:
+        data: List of dictionaries containing daily OHLCV and other raw data.
+        num_days: The number of recent days to return (to respect the LLM's 20-day input limit).
+
+    Returns:
+        A list of dictionaries containing the processed data and indicators.
+    """
     try:
         df = pd.DataFrame(data)
+
+        # --- 1. Calculate Core Indicators (OBV and CMF) ---
+
         # Calculate On-Balance Volume (OBV)
-        # The OBV indicator uses 'close' and 'volume' columns.
         obv_indicator = OnBalanceVolumeIndicator(close=df['close'], volume=df['volume'])
         df['obv'] = obv_indicator.on_balance_volume()
 
-        # Calculate Chaikin Money Flow (CMF)
-        # The CMF indicator requires 'high', 'low', 'close', and 'volume' columns.
+        # Calculate Chaikin Money Flow (CMF) (Kept for completeness, though CMF isn't in the LLM criteria)
         cmf_indicator = ChaikinMoneyFlowIndicator(
             high=df['high'],
             low=df['low'],
@@ -62,16 +138,52 @@ def get_indicators(data:List[dict]) -> dict:
         )
         df['cmf'] = cmf_indicator.chaikin_money_flow()
 
-        reduced = df[['date' ,'open', 'high', 'low', 'close',
-                        'adjClose', 'volume', 'unadjustedVolume','change', 'vwap', 'obv', 'cmf']]
 
 
-        result = reduced.to_dict('records')[-50:]
-        return result[0:3]
+
+        # --- 2. Calculate Volatility Metrics (True Range and ATR-SMA) ---
+
+        # Calculate True Range (TR)
+        # This is the 'true_range' field the LLM instructions refer to.
+        high_low = df['high'] - df['low']
+        high_close = np.abs(df['high'] - df['close'].shift(1))
+        low_close = np.abs(df['low'] - df['close'].shift(1))
+
+        # Use pandas' built-in max across columns
+        df['true_range'] = pd.DataFrame({'hl': high_low, 'hc': high_close, 'lc': low_close}).max(axis=1)
+
+        # The rest of your code remains the same:
+        df['atr_10_sma'] = df['true_range'].rolling(window=10).mean()
+        # --- 3. Calculate 5-Day Divergence Metrics ---
+
+        # Calculate 5-day % change for OBV
+        # This is the 'obv_change_5d_pct' field. Multiplied by 100 for percentage value.
+        df['obv_change_5d_pct'] = df['obv'].pct_change(periods=5) * 100
+
+        # Calculate 5-day % change for Close price
+        # This is the 'close_change_5d_pct' field. Multiplied by 100 for percentage value.
+        df['close_change_5d_pct'] = df['close'].pct_change(periods=5) * 100
+
+        # --- 4. Final Processing ---
+
+        # Drop rows with NaN values resulting from the rolling window (the first 9 days)
+        # Only the rows with full indicator data are kept.
+        df.dropna(subset=['atr_10_sma', 'obv_change_5d_pct', 'close_change_5d_pct'], inplace=True)
+
+        # Select ONLY the columns that the LLM agent explicitly needs for its logic and context
+        # This is critical for minimizing payload size and honoring the system instructions.
+        reduced = df[['date', 'open', 'high', 'low', 'close', 'obv',
+                      'true_range', 'atr_10_sma', 'obv_change_5d_pct', 'close_change_5d_pct']]
+
+        # Return only the last 'num_days' records to respect the LLM's input limit (e.g., 20 days)
+        result = reduced.to_dict('records')[-MAX_INPUT_DAYS:]
+
+        return result
+
     except Exception as e:
-        logging.info(f'Faile dto fetch obv for {str(e)}')
-        return {}
-
+        # Better logging for debugging what failed
+        logging.error(f'Failed to calculate indicators: {str(e)}')
+        return []  # Return an empty list on failure, not a dict
 
 
 def fetch_index_data(ticker, key):
@@ -80,10 +192,6 @@ def fetch_index_data(ticker, key):
     indicators = get_indicators(data)
 
     return indicators
-
-
-
-
 
 
 def get_sector_rankings(key):
@@ -138,6 +246,51 @@ def get_sector_rankings(key):
 
     data = transposed[cols[::-1]]
     return data.reset_index().to_dict('records')
+
+def generate_with_sector_instructions(
+    model_name: str,
+    batch: Sequence[str],
+    model: GenAIClient,
+    inference_args: dict[str, Any]):
+    return model.models.generate_content(
+        model=model_name,
+        contents=batch,
+        config=types.GenerateContentConfig(
+            system_instruction=system_instruction_string_anomaly_template
+        ),
+        **inference_args)
+
+
+def run_inference(p, google_key, prompts=None):
+    model_handler = GeminiModelHandler(
+        model_name=MODEL_NAME,
+        request_fn=generate_with_sector_instructions,
+        api_key=google_key
+    )
+
+    read_prompts = None
+    if not prompts:
+        logging.info('Generating pipeline prompts')
+
+        read_prompts = (p | "gemini xxToJson" >> beam.Map(to_json_string)
+                        | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+                        | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
+                        )
+    else:
+        pipeline_prompts = prompts
+        read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
+
+    # The core of our pipeline: apply the RunInference transform.
+    # Beam will handle batching and parallel API calls.
+    predictions = read_prompts | "RunInference" >> RunInference(model_handler)
+
+    # Parse the results to get clean text.
+    llm_response = (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+                    )
+
+    return llm_response
+    #debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
+
 
 
 class ETFHistoryCombineFn(beam.CombineFn):

@@ -66,6 +66,8 @@ def generate_with_instructions(
       **inference_args)
 
 
+def get_default_model_handler():
+    pass
 
 
 class PostProcessor(beam.DoFn):
