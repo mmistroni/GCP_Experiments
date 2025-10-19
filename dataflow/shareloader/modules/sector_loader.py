@@ -59,5 +59,5 @@ def run(argv=None, save_main_session=True):
             res = run_index_pipeline(p, ticker, known_args.key)
             res | f'{ticker} to sinmk' >> sink
 
-        run_sectors_inference(p, known_args.googlekey)
+        run_sectors_inference(p, known_args.googlekey, known_args.key)
 

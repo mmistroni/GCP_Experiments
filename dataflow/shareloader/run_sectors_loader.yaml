@@ -35,5 +35,5 @@ substitutions:
   _SENDGRID_KEY : ''
   _GOOGLE_KEY : ''
   _RECIPIENTS : 'mmistroni.gmail.com'
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest11
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/sectors:latest12
 

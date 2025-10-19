@@ -62,7 +62,7 @@ def run_sector_pipelines(p, known_args):
     finviz_result | 'Generate Msg' >> beam.ParDo(SectorsEmailSender(known_args.recipients,
                                                                     known_args.sendgridkey))
 
-def run_sectors_inference(p, google_key):
+def run_sectors_inference(p, google_key, fmp_key):
 
     sink = beam.Map(logging.info)
     res = (p | 'Starting sector inference' >> beam.Create([
@@ -72,7 +72,7 @@ def run_sectors_inference(p, google_key):
                     # '^RUT',
                     #'^NYA'
                             ])
-                   | 'Fetch index data' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
+                   | 'Fetch index data' >> beam.Map(lambda ticker: fetch_index_data(ticker, fmp_key))
                    )
             #res | sink
     llm = run_inference(res, google_key ) | 'to inferencesink' >> sink
