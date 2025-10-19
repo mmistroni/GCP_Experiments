@@ -63,14 +63,14 @@ def run_sector_pipelines(p, known_args):
                                                                     known_args.sendgridkey))
 
 def run_sectors_inference(p, google_key):
-    res = (p | 'Starting fvz' >> beam.Create([
+    res = (p | 'Starting sector inference' >> beam.Create([
             '^GSPC',
             '^NDX',
                     # '^DJI',
                     # '^RUT',
                     #'^NYA'
                             ])
-                   | 'Fetch data 2' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
+                   | 'Fetch index data' >> beam.Map(lambda ticker: fetch_index_data(ticker, key))
                    )
             #res | sink
-    llm = run_inference(res, google_key ) | 'to sink' >> sink
+    llm = run_inference(res, google_key ) | 'to inferencesink' >> sink
