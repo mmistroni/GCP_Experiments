@@ -63,6 +63,8 @@ def run_sector_pipelines(p, known_args):
                                                                     known_args.sendgridkey))
 
 def run_sectors_inference(p, google_key):
+
+    sink = beam.Map(logging.info)
     res = (p | 'Starting sector inference' >> beam.Create([
             '^GSPC',
             '^NDX',
