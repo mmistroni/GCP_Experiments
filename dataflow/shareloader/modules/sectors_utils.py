@@ -84,6 +84,13 @@ The final output **MUST** be a **single, structured JSON object** enclosed in a 
 ]
 '''
 
+COTC_MAP = { '^GSPC' : '13874A',
+             '^NDX' : '209742',
+             '^DJI': '12460+',
+             '^RUT' : '239742',
+             '^VIX': '1170E1'   }
+
+
 def to_json_string(element):
     def datetime_converter(o):
         if isinstance(o, datetime):
@@ -188,6 +195,12 @@ def get_indicators(data: List[Dict], ticker:str) -> List[Dict]:
         logging.error(f'Failed to calculate indicators: {str(e)}')
         return []  # Return an empty list on failure, not a dict
 
+def get_cotc_data(ticker:str, key:str):
+    ''' fetches cotc data'''
+    logging.info(f'Fetching data for {ticker}')
+    # Need to wrap it in an obb calls
+    mapped_ticker = COTC_MAP[ticker]
+    pass
 
 def fetch_index_data(ticker, key):
     data = fetch_historical_data(ticker, key)[::-1]
