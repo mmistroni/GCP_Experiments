@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="adding custom instructions">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="debugging inference run">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/sectors_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,118 +41,118 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_asyncfinviz.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_obb_finviz.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_run_screener.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_finviz_with_combiner.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_get_historical.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_another.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newadvancedecline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_run_market_momentum.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_run_market_momentum_composite.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_obb_loader.MyTestCase.test_yahoo_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_benchmarks.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund1.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund1_perf.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund2.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor&quot;: &quot;Debug&quot;,
-    &quot;Python tests.Python tests in test_obb_loader.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor&quot;: &quot;Run&quot;,
-    &quot;Python tests.pytest for test.test_marketstats.executor&quot;: &quot;Debug&quot;,
-    &quot;Python.economics_main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean.executor": "Run",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor": "Run",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor": "Debug",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor": "Run",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor": "Debug",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor": "Run",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_gas_prices.executor": "Run",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_redundancies_notifications.executor": "Run",
+    "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_petrol_prices.executor": "Debug",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_advancedecline.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_asyncfinviz.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_get_advancedecline.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_highlow.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_leaps.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_new_high.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_obb_finviz.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_overnight_return.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_pdfplumber.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_quotefetcher.executor": "Debug",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_run_screener.executor": "Debug",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_something.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_tabula.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor": "Run",
+    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor": "Run",
+    "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor": "Run",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor": "Run",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_finviz_with_combiner.executor": "Debug",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_get_historical.executor": "Debug",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_another.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_consumer_sentiment.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_cramer_pipeline.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_highlowpipeline.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_junkbonddemand.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_newadvancedecline.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_newhigh_newlow.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_parse_consumer_sentiment_index.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_pips.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_run_market_momentum.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_run_market_momentum_composite.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_run_pmi.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_runcftcspfutures.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_scrapy.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_shillers.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_sp500.executor": "Run",
+    "Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor": "Debug",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline.executor": "Debug",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline2.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_sample_pipeline3.executor": "Debug",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_yahoo_pipeline.executor": "Run",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean.executor": "Debug",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_finviz_pipeline.executor": "Run",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals.executor": "Debug",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_run_my_pipeline.executor": "Run",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_sector_ranking.executor": "Run",
+    "Python tests.Python tests for test_sector_loader.TestSectorLoader.test_yfinance.executor": "Run",
+    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_cramer_inverse.executor": "Debug",
+    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_pips.executor": "Run",
+    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_run_my_pipeline.executor": "Run",
+    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_sengrid.executor": "Run",
+    "Python tests.Python tests for test_stock_pick.TestEdgarUtils.test_word_count.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_buffetsix.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_benchmarks.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund1.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund1_perf.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_fund2.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_combine_pipelines.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_canslim.executor": "Run",
+    "Python tests.Python tests for test_superperf_pipelines.TestSuperPerfPipelines.test_run_my_pipeline.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_benchmarkLoader.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_canslim_filter_df.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_dividend_paid.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark.executor": "Run",
+    "Python tests.Python tests for test_superperformers.TestSuperPerformers.test_get_financial_ratios_benchmark_brokenm.executor": "Debug",
+    "Python tests.Python tests in test_obb_loader.py.executor": "Run",
+    "Python tests.Unittests for test_marketstats.TestMarketStats.test_Nasdap.executor": "Run",
+    "Python tests.pytest for test.test_marketstats.executor": "Debug",
+    "Python.economics_main.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="dataflow" is-module-sdk="true">
@@ -174,7 +174,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean">
+  <component name="RunManager" selected="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals">
     <configuration name="Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -187,21 +187,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_anotherllm_on_bean&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -250,13 +235,28 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_sector_loader.TestSectorLoader.test_historicals" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_sector_loader.TestSectorLoader.test_historicals&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_historicals" />
+        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean" />
         <item itemvalue="Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_run_inference_pipeline2" />
-        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean" />
-        <item itemvalue="Python tests.Python tests for test_sector_loader.TestSectorLoader.test_anotherllm_on_bean" />
       </list>
     </recent_temporary>
   </component>
@@ -275,38 +275,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00520" summary="replaced pandas ta">
-      <option name="closed" value="true" />
-      <created>1757093116232</created>
-      <option name="number" value="00520" />
-      <option name="presentableId" value="LOCAL-00520" />
-      <option name="project" value="LOCAL" />
-      <updated>1757093116232</updated>
-    </task>
-    <task id="LOCAL-00521" summary="replaced pandas ta">
-      <option name="closed" value="true" />
-      <created>1757093908069</created>
-      <option name="number" value="00521" />
-      <option name="presentableId" value="LOCAL-00521" />
-      <option name="project" value="LOCAL" />
-      <updated>1757093908069</updated>
-    </task>
-    <task id="LOCAL-00522" summary="fixing formula for market down">
-      <option name="closed" value="true" />
-      <created>1757157101650</created>
-      <option name="number" value="00522" />
-      <option name="presentableId" value="LOCAL-00522" />
-      <option name="project" value="LOCAL" />
-      <updated>1757157101650</updated>
-    </task>
-    <task id="LOCAL-00523" summary="storing superperf to bq sink">
-      <option name="closed" value="true" />
-      <created>1757312833373</created>
-      <option name="number" value="00523" />
-      <option name="presentableId" value="LOCAL-00523" />
-      <option name="project" value="LOCAL" />
-      <updated>1757312833373</updated>
     </task>
     <task id="LOCAL-00524" summary="fixing superperf issues">
       <option name="closed" value="true" />
@@ -668,7 +636,39 @@
       <option name="project" value="LOCAL" />
       <updated>1760609798307</updated>
     </task>
-    <option name="localTasksCounter" value="569" />
+    <task id="LOCAL-00569" summary="adding custom instructions">
+      <option name="closed" value="true" />
+      <created>1760612464575</created>
+      <option name="number" value="00569" />
+      <option name="presentableId" value="LOCAL-00569" />
+      <option name="project" value="LOCAL" />
+      <updated>1760612464576</updated>
+    </task>
+    <task id="LOCAL-00570" summary="adding custom instructions">
+      <option name="closed" value="true" />
+      <created>1760624157480</created>
+      <option name="number" value="00570" />
+      <option name="presentableId" value="LOCAL-00570" />
+      <option name="project" value="LOCAL" />
+      <updated>1760624157480</updated>
+    </task>
+    <task id="LOCAL-00571" summary="debugging inference run">
+      <option name="closed" value="true" />
+      <created>1760676796275</created>
+      <option name="number" value="00571" />
+      <option name="presentableId" value="LOCAL-00571" />
+      <option name="project" value="LOCAL" />
+      <updated>1760676796275</updated>
+    </task>
+    <task id="LOCAL-00572" summary="debugging inference run">
+      <option name="closed" value="true" />
+      <created>1760787047812</created>
+      <option name="number" value="00572" />
+      <option name="presentableId" value="LOCAL-00572" />
+      <option name="project" value="LOCAL" />
+      <updated>1760787047813</updated>
+    </task>
+    <option name="localTasksCounter" value="573" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -683,7 +683,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added new superperf runs" />
     <MESSAGE value="added scipy" />
     <MESSAGE value="fixing broken code" />
     <MESSAGE value="fixing slope" />
@@ -708,7 +707,8 @@
     <MESSAGE value="fixing genai calls" />
     <MESSAGE value="adding gemini to call" />
     <MESSAGE value="adding custom instructions" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding custom instructions" />
+    <MESSAGE value="debugging inference run" />
+    <option name="LAST_COMMIT_MESSAGE" value="debugging inference run" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -1019,7 +1019,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
-          <line>81</line>
+          <line>196</line>
           <option name="timeStamp" value="304" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1044,8 +1044,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>58</line>
+          <line>59</line>
           <option name="timeStamp" value="322" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>287</line>
+          <option name="timeStamp" value="324" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>294</line>
+          <option name="timeStamp" value="326" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>194</line>
+          <option name="timeStamp" value="328" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
+          <line>192</line>
+          <option name="timeStamp" value="329" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>29</line>
+          <option name="timeStamp" value="330" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
