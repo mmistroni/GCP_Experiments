@@ -50,7 +50,7 @@ Your objective is to analyze the provided time-series data, passed as a **JSON l
 to identify all three of the following anomaly types: **Excessive Accumulation**, **Excessive Distribution**, and **Extreme Volatility Breakout**.
 
 ### DATA CONTEXT
-The input is a **subset** of the full 50-day history. Each object contains the daily fields (`date`, `open`, `high`, `low`, `close`, `obv`, `cdf`). 
+The input is a **subset** of the full 50-day history. Each object contains the daily fields (`ticker`, `date`, `open`, `high`, `low`, `close`, `obv`, `cdf`). 
 CRUCIALLY, it **ALSO** includes the following pre-calculated metrics needed for anomaly checks: 
 `true_range`, `atr_10_sma`, `obv_change_5d_pct`, and `close_change_5d_pct`. **The agent must not perform any rolling window calculations.**
 The input size **will not exceed {MAX_INPUT_DAYS} objects** to prevent timeouts. All necessary lookback data must be pre-calculated.
@@ -69,12 +69,14 @@ The final output **MUST** be a **single, structured JSON object** enclosed in a 
 ```json
 [
   {{
+    "ticker"      : "^DJI",
     "anomaly_type": "Accumulation",
     "start_date": "2025-01-05",
     "end_date": "2025-01-09",
     "OBV_change_percent": 18.5
   }},
   {{
+    "ticker"      : "^GSPC",
     "anomaly_type": "VolatilityBreakout",
     "start_date": "2025-01-20",
     "TrueRange_Ratio": 3.1
@@ -109,7 +111,7 @@ def fetch_performance(sector, ticker, key, start_date):
     return df
 
 
-def get_indicators(data: List[Dict]) -> List[Dict]:
+def get_indicators(data: List[Dict], ticker:str) -> List[Dict]:
     """
     Calculates technical indicators and lookback metrics required by the LLM agent.
 
@@ -122,6 +124,7 @@ def get_indicators(data: List[Dict]) -> List[Dict]:
     """
     try:
         df = pd.DataFrame(data)
+        df['ticker'] = ticker
 
         # --- 1. Calculate Core Indicators (OBV and CMF) ---
 
@@ -189,7 +192,7 @@ def get_indicators(data: List[Dict]) -> List[Dict]:
 def fetch_index_data(ticker, key):
     data = fetch_historical_data(ticker, key)[::-1]
 
-    indicators = get_indicators(data)
+    indicators = get_indicators(data, ticker)
 
     return indicators
 
