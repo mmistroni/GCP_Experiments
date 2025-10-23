@@ -23,7 +23,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
                                             run_cramer_pipeline, run_advance_decline, run_sp500multiples, \
-                                            run_advance_decline_sma, run_economic_calendar
+                                            run_advance_decline_sma, run_economic_calendar, run_cftc_spfutures
 
 
 import requests
@@ -646,6 +646,12 @@ class TestMarketStats(unittest.TestCase):
             res = run_economic_calendar(p, fmp_key)
             res | debugSink
 
+    def test_run_cotc(self):
+        debugSink = beam.Map(print)
+        fmp_key = os.environ['FMPREPKEY']
+        with TestPipeline() as p:
+            res = run_cftc_spfutures(p, fmp_key)
+            res | debugSink
 
 
 
