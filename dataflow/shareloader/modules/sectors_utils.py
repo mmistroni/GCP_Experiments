@@ -42,7 +42,7 @@ SYSTEM_INSTRUCTIONS_STRING_TRIPLE_ANOMALY_ATR = (
     "The final output **MUST** be a structured JSON object listing **ALL** detected anomalies. For each anomaly, the output must include: `anomaly_type` (e.g., Accumulation, Distribution, or VolatilityBreakout), the exact `start_date` and `end_date` (which is the same as start_date for VolatilityBreakout), and a key metric (e.g., `OBV_change_percent` for divergences, or `TrueRange_Ratio` for volatility breakouts). **Do not include any conversational text or explanation outside of the structured tool call.**"
 )
 
-MAX_INPUT_DAYS = 20
+MAX_INPUT_DAYS = 30
 
 system_instruction_string_anomaly_template = f'''
 You are an expert **Financial Market Anomaly Detection Agent**. 
@@ -182,7 +182,7 @@ def get_indicators(data: List[Dict], ticker:str) -> List[Dict]:
 
         # Select ONLY the columns that the LLM agent explicitly needs for its logic and context
         # This is critical for minimizing payload size and honoring the system instructions.
-        reduced = df[['date', 'open', 'high', 'low', 'close', 'obv',
+        reduced = df[['ticker', 'date', 'open', 'high', 'low', 'close', 'obv',
                       'true_range', 'atr_10_sma', 'obv_change_5d_pct', 'close_change_5d_pct']]
 
         # Return only the last 'num_days' records to respect the LLM's input limit (e.g., 20 days)
