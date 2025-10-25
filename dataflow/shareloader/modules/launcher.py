@@ -15,7 +15,8 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    run_etoro_pipeline, finviz_pipeline, \
                                                    StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
                                                    run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
-                                                   run_test_pipeline2, run_plus500_pipeline
+                                                   run_test_pipeline2, run_plus500_pipeline, run_gemini_pipeline, \
+                                                   run_congresstrades_pipeline
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 
@@ -332,7 +333,7 @@ def run(argv = None, save_main_session=True):
 
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
             
-            llm_out_eod = run_test_pipeline2(obb, known_args.googleapikey)
+            llm_out_eod = run_gemini_pipeline(obb, known_args.googleapikey)
             keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
             
 
@@ -361,7 +362,7 @@ def run(argv = None, save_main_session=True):
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
             
-            llm_out = run_test_pipeline2(all_pipelines, known_args.googleapikey)
+            llm_out = run_gemini_pipeline(all_pipelines, known_args.googleapikey)
 
             llm_out | sink
 
@@ -410,7 +411,7 @@ def run(argv = None, save_main_session=True):
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
-            llm_out = run_test_pipeline2(all_pipelines, known_args.googleapikey)
+            llm_out = run_gemini_pipeline(all_pipelines, known_args.googleapikey)
 
             llm_out | sink
 

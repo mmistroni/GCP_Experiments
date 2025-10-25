@@ -4,7 +4,8 @@ from datetime import datetime
 import apache_beam as beam
 import openai as openai
 from apache_beam.ml.inference.base import ModelHandler
-
+from datetime import date
+from pandas.tseries.offsets import BDay
 
 def get_fields():
     return ["ticker", "date", "currentRatio", "quickRatio", "cashRatio", "calendarYear",
@@ -18,6 +19,33 @@ def get_fields():
                 "debtToAssets", "capexToRevenue", "grahamNumber",
                 "lynchRatio"
             ]
+
+
+def create_bigquery_ppln(p, label):
+    cutoff_date = (date.today() - BDay(20)).date().strftime('%Y-%m-%d')
+    logging.info('Cutoff is:{}'.format(cutoff_date))
+    edgar_sql = f"""SELECT
+              t0.AS_OF_DATE,
+              t0.DISCLOSURE,
+              SUBSTR(t0.TICKER, STRPOS(t0.TICKER, ':') + 1) AS TICKER
+            FROM
+              `datascience-projects`.`gcp_shareloader`.`senate_disclosures` AS t0
+            WHERE
+              t0.AS_OF_DATE > '{cutoff_date}' /* Replace with your specified date */
+              AND
+              TICKER IS NOT NULL
+              AND TRIM(TICKER) != ''
+              AND TRIM(TICKER) != 'Ticker:'
+              ORDER BY
+              t0.AS_OF_DATE; 
+              """.format(cutoff=cutoff_date, label=label)
+    logging.info('executing SQL :{}'.format(edgar_sql))
+    return (p | 'Reading-{}'.format(label) >> beam.io.Read(
+        beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
+
+            )
+
+
 
 
 class DfTesterLoader(beam.DoFn):

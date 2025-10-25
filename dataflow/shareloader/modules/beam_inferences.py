@@ -52,6 +52,21 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
                 
             '''
 
+CONGRESS_TRADES_TEMPLATE = '''
+ACT AS A QUANTITATIVE MARKET RISK SPECIALIST. Your task is to perform a rapid forensic analysis on a dataset of Congress trades provided in JSON format. The primary goal is to detect and quantify any abnormal concentration or market sentiment shifts based on asset class.
+DATA INPUT: You will receive the trade data as a JSON object, where the key field for analysis is the stock 'TICKER'.
+REQUIRED ANALYSIS STEPS:
+Data Enrichment: Find the GICS Sector for each unique ticker.
+Sentiment Classification: Classify all trades into two sentiment categories: 'Bullish/Cyclical' (Sectors associated with economic growth) and 'Defensive/Non-Cyclical' (Sectors that hold value during downturns).
+Concentration Detection:
+Calculate the percentage of total trades belonging to the single most active sector.
+State how many times greater this percentage is compared to a uniform distribution across all sectors.
+Sentiment Shift Quantification: Calculate the exact overall percentage split of trades between the 'Bullish' and 'Defensive' categories.
+OUTPUT: Provide only the numerical metrics for the concentration and sentiment split, followed by a succinct professional summary detailing any detected unusual concentration or a significant sentiment shift.
+'''
+
+
+
 def generate_with_instructions(
     model_name: str,
     batch: Sequence[str],
@@ -64,6 +79,21 @@ def generate_with_instructions(
         system_instruction=TEMPLATE
       ), 
       **inference_args)
+
+def generate_for_congress(
+    model_name: str,
+    batch: Sequence[str],
+    model: GenAIClient,
+    inference_args: dict[str, Any]):
+  return model.models.generate_content(
+      model=model_name,
+      contents=batch,
+      config=types.GenerateContentConfig(
+        system_instruction=CONGRESS_TRADES_TEMPLATE
+      ),
+      **inference_args)
+
+
 
 
 def get_default_model_handler():
@@ -142,5 +172,27 @@ def run_gemini_pipeline(p, google_key, prompts=None):
 
 
     return   llm_response  | "Excluding Inputs" >> beam.Map( lambda it: it[it.find('Output:') + 7:])
+
+
+def run_gemini_congress_pipeline(p, google_key):
+    model_handler = GeminiModelHandler(
+        model_name=MODEL_NAME,
+        request_fn=generate_for_congress,
+        api_key=google_key
+    )
+
+    logging.info('Generating pipeline prompts')
+
+    read_prompts = (p | "gemini xxToJson" >> beam.Map(to_json_string)
+                    | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+                    | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
+                    )
+    predictions = read_prompts | "RunInference" >> RunInference(model_handler)
+
+    # Parse the results to get clean text.
+    llm_response = (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
+                    )
+
+    debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
 
 
