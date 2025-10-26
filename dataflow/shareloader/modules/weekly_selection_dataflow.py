@@ -74,7 +74,7 @@ class StockSelectionCombineFn(beam.CombineFn):
 def create_monthly_data_ppln(p):
     cutoff_date_str = (date.today() - BDay(60)).date().strftime('%Y-%m-%d')
     bq_sql = """SELECT TICKER, LABEL, COUNT(*) as COUNTER FROM `datascience-projects.gcp_shareloader.stock_selection` 
-        WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND LABEL <> 'STOCK_UNIVERSE' GROUP BY TICKER,LABEL 
+        WHERE AS_OF_DATE > PARSE_DATE("%F", "{}") AND LABEL <> 'STOCK_UNIVERSE' AND LABEL <> 'UNIVERSE' GROUP BY TICKER,LABEL 
   """.format(cutoff_date_str)
     return (p | 'Reading-{}'.format(cutoff_date_str) >> beam.io.Read(
         beam.io.BigQuerySource(query=bq_sql, use_standard_sql=True))
@@ -88,6 +88,7 @@ def create_weekly_data_ppln(p):
         FROM `datascience-projects.gcp_shareloader.stock_selection` 
         WHERE AS_OF_DATE >= PARSE_DATE("%F", "{}") AND
         LABEL <> 'STOCK_UNIVERSE'
+        AND LABEL <> 'UNIVERSE'
     
     
     """.format(cutoff_date_str)
