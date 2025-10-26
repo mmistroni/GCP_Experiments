@@ -38,9 +38,9 @@ def create_congress_bigquery_ppln(p):
               AND TRIM(TICKER) != 'Ticker:'
               ORDER BY
               t0.AS_OF_DATE; 
-              """.format(cutoff=cutoff_date, label=label)
+              """
     logging.info('executing SQL :{}'.format(edgar_sql))
-    return (p | 'Reading-{}'.format(label) >> beam.io.Read(
+    return (p | 'Reading-congress trades' >> beam.io.Read(
         beam.io.BigQuerySource(query=edgar_sql, use_standard_sql=True))
 
             )
