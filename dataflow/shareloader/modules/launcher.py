@@ -13,7 +13,7 @@ import itertools
 from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmarket_pipeline, \
                                                    run_sector_performance, run_swingtrader_pipeline, \
                                                    run_etoro_pipeline, finviz_pipeline, \
-                                                   StockSelectionCombineFn, run_inference, write_to_ai_stocks, \
+                                                   StockSelectionCombineFn, write_to_ai_stocks, \
                                                    run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
                                                    run_test_pipeline2, run_plus500_pipeline, run_gemini_pipeline, \
                                                    run_congresstrades_pipeline
@@ -376,7 +376,7 @@ def run(argv = None, save_main_session=True):
             send_email(combined, known_args.sendgridkey, subject='MarketDown movers')
 
         elif known_args.runtype == 'tester':
-            run_plus500_pipeline(p)
+            run_congresstrades_pipeline(p, known_args.googleapikey)
         else:
 
             plus500 = run_test_pipeline(p, known_args.fmprepkey)

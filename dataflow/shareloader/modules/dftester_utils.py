@@ -21,7 +21,7 @@ def get_fields():
             ]
 
 
-def create_bigquery_ppln(p, label):
+def create_congress_bigquery_ppln(p, label):
     cutoff_date = (date.today() - BDay(20)).date().strftime('%Y-%m-%d')
     logging.info('Cutoff is:{}'.format(cutoff_date))
     edgar_sql = f"""SELECT

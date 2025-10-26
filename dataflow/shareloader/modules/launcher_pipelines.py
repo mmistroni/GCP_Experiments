@@ -10,7 +10,7 @@ from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
 import requests
-from shareloader.modules.dftester_utils import to_json_string, extract_json_list, create_bigquery_ppln
+from shareloader.modules.dftester_utils import to_json_string, extract_json_list, create_congress_bigquery_ppln
 from apache_beam.ml.inference.base import RunInference
 from shareloader.modules.beam_inferences import run_gemini_pipeline, run_gemini_congress_pipeline
 from shareloader.modules.beam_inferences import GeminiModelHandler
@@ -74,12 +74,8 @@ def run_swingtrader_pipeline(p, fmpkey, price_change=0.07):
 
 
 def run_congresstrades_pipeline(p, google_key):
-    congress_trades = create_bigquery_ppln(p)
-
+    congress_trades = create_congress_bigquery_ppln(p)
     congress_trades | 'logging results' >> beam.Map(logging.info)
-
-
-
     run_gemini_congress_pipeline(congress_trades, google_key)
 
 def run_test_pipeline2(p, google_key):
