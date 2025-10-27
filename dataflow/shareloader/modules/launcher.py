@@ -334,7 +334,7 @@ def run(argv = None, save_main_session=True):
             keyed_eod = premarket_results_eod | beam.Map(lambda element: (1, element))
             
             llm_out_eod = run_gemini_pipeline(obb, known_args.googleapikey)
-            keyed_llm_eod = llm_out_eod | 'mapping llm2 eod' >> beam.Map(lambda element: (1, element))
+            keyed_llm_eod = llm_out_eod | 'mapping llm2xx eod' >> beam.Map(lambda element: (1, element))
             
 
             combined = ({'collection1': keyed_eod,
