@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="adding congress trdes">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/dftester_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,22 +278,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00529" summary="adding last 50 days and fixing super perf write to bq">
-      <option name="closed" value="true" />
-      <created>1758090896814</created>
-      <option name="number" value="00529" />
-      <option name="presentableId" value="LOCAL-00529" />
-      <option name="project" value="LOCAL" />
-      <updated>1758090896814</updated>
-    </task>
-    <task id="LOCAL-00530" summary="adding last 50 days and fixing super perf write to bq">
-      <option name="closed" value="true" />
-      <created>1758174433794</created>
-      <option name="number" value="00530" />
-      <option name="presentableId" value="LOCAL-00530" />
-      <option name="project" value="LOCAL" />
-      <updated>1758174433794</updated>
     </task>
     <task id="LOCAL-00531" summary="adding last 50 days and fixing super perf write to bq">
       <option name="closed" value="true" />
@@ -671,7 +655,23 @@
       <option name="project" value="LOCAL" />
       <updated>1761389099124</updated>
     </task>
-    <option name="localTasksCounter" value="578" />
+    <task id="LOCAL-00578" summary="adding congress trdes">
+      <option name="closed" value="true" />
+      <created>1761474253546</created>
+      <option name="number" value="00578" />
+      <option name="presentableId" value="LOCAL-00578" />
+      <option name="project" value="LOCAL" />
+      <updated>1761474253547</updated>
+    </task>
+    <task id="LOCAL-00579" summary="adding congress trdes">
+      <option name="closed" value="true" />
+      <created>1761474345673</created>
+      <option name="number" value="00579" />
+      <option name="presentableId" value="LOCAL-00579" />
+      <option name="project" value="LOCAL" />
+      <updated>1761474345673</updated>
+    </task>
+    <option name="localTasksCounter" value="580" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

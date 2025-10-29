@@ -40,10 +40,10 @@ TEMPLATE = '''  You are a powerful stock researcher and statistician that recomm
                 12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
                 13 - obv_historical: these are the on balance volumes for the last 20 days
                 14 - cmf_historical: these are the cmf values for past 20 days
-                Based on that information, you will need to find which stocks which are candidates to rise in next days.
+                If the json does not contain any stock data reply with this text:Cannot complete analysis as no stocks provided.
+                If the json contains stock data, then based on that information, you will need to find which stocks which are candidates to rise in next days.
                 If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
                 same criterias
-                If the json does not contain any elements, reply with this text:Cannot complete analysis as no stocks provided.
                 Once you finish your analysis, please summarize your finding indicating, for each
                 stock what is your recommendation and why. 
                 At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
