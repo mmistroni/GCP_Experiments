@@ -23,34 +23,42 @@ SYSTEM_INSTRUCTION_TEXT = (
     "Your should provide response in Json Format"
 )
 
-TEMPLATE = '''  You are a powerful stock researcher and statistician that recommends stock that are candidate to buy or to sell.
-                I will provide you a json string containing a list of stocks.
-                For each stock i will provide the following information
-                1 - prev_close: the previous close of the stock
-                2 - change: the change from yesterday
-                3 - ADX: the adx
-                4 - RSI : the RSI
-                5 - SMA20: the 20 day simple moving average
-                6 - SMA50: the 50 day simple moving average
-                7 - SMA200: the 200 day simple moving average
-                8 - slope, this will be slope of linear regression for past 30 days.
-                9 - prev_obv: this is on balance volume from previous day
-                10 - current_obv: this is the on balance volume for the current day
-                11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                13 - obv_historical: these are the on balance volumes for the last 20 days
-                14 - cmf_historical: these are the cmf values for past 20 days
-                If the json does not contain any stock data reply with this text:Cannot complete analysis as no stocks provided.
-                If the json contains stock data, then based on that information, you will need to find which stocks which are candidates to rise in next days.
-                If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
-                same criterias
-                Once you finish your analysis, please summarize your finding indicating, for each
-                stock what is your recommendation and why. 
-                At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
-                a json message with fields ticker, action (buy or watch or sell) and an explanation.
-                The json string should be written between a <STARTJSON> and <ENDJSON> tags.
-                
-            '''
+TEMPLATE = '''
+**CRITICAL INSTRUCTION: READ FIRST.**
+
+You are a powerful stock researcher and statistician. You will be provided a JSON string containing a list of stock data.
+
+**IF AND ONLY IF** the provided JSON string represents an **empty list or array** (i.e., it contains zero stock entries), you **MUST IMMEDIATELY STOP** and output only the following exact, single line of text:
+**Cannot complete analysis as no stocks provided.**
+
+**OTHERWISE (If the JSON contains stock data):**
+You are to recommend stocks that are candidates to buy or to sell based on the following information provided for each stock:
+1 - prev_close: the previous close of the stock
+2 - change: the change from yesterday
+3 - ADX: the adx
+4 - RSI : the RSI
+5 - SMA20: the 20 day simple moving average
+6 - SMA50: the 50 day simple moving average
+7 - SMA200: the 200 day simple moving average
+8 - slope: the slope of linear regression for past 30 days.
+9 - prev_obv: on balance volume from previous day
+10 - current_obv: on balance volume for the current day
+11 - previous_cmf: previous day Chaikin Money Flow (CMF) (20 days)
+12 - current_cmf: current day Chaikin Money Flow (CMF) (20 days)
+13 - obv_historical: on balance volumes for the last 20 days
+14 - cmf_historical: cmf values for past 20 days
+
+**Analysis Tasks:**
+1. Based on the data, identify which stocks are candidates to **rise** (BUY/WATCH) in the next days.
+2. For any stock that has dropped more than 10%, evaluate if it is worth to **short sell** (SELL) them based on the same criteria.
+
+**Final Output:**
+Summarize your findings, indicating the recommendation (buy, watch, or sell) and the reason for each stock.
+At the end of the message, you **must** generate a JSON message for all recommended stocks.
+The JSON must have fields `ticker`, `action` (buy, watch, or sell), and `explanation`.
+The JSON string should be written between a <STARTJSON> and <ENDJSON> tags.
+'''
+
 
 CONGRESS_TRADES_TEMPLATE = '''
 ACT AS A QUANTITATIVE MARKET RISK SPECIALIST. Your task is to perform a rapid forensic analysis on a dataset of Congress trades provided in JSON format. The primary goal is to detect and quantify any abnormal concentration or market sentiment shifts based on asset class.
