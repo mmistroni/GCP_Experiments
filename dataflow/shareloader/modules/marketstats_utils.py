@@ -413,6 +413,49 @@ def get_cftc_spfutures(key):
         return "ChangeInNetPosition:N/A, Sentiment:N/A"
 
 
+def generate_cotc_data(cotc_dict):
+    fields = ['symbol', 'as_of_date_in_form_yymmdd' ,
+              'noncomm_positions_long_all', 'noncomm_positions_short_all',
+              'comm_positions_long_all', 'comm_positions_short_all']
+    updated = dict((k,v) for k,v in cotc_dict.items() if k in fields)
+
+    net_noncomm = updated['noncomm_positions_long_all'] - updated['noncomm_positions_short_all']
+    net_comm = updated['comm_positions_long_all'] - updated['comm_positions_short_all']
+    updated['net_non_commercial'] = net_noncomm
+    updated['net_commercial'] = net_comm
+    updated['date'] = datetime.strptime(updated['as_of_date_in_form_yymmdd'], '%y%m%d')
+
+    return updated
+
+def get_cot_futures(key, symbol):
+    ''' wE NEED TO ADD THE following query to the marketstats
+    SELECT *  FROM `datascience-projects.gcp_shareloader.market_stats`
+        WHERE LABEL LIKE 'CFTC%'
+        ORDER BY AS_OF_DATE DESC
+        LIMIT 5
+    '''
+    # Investigate this URL https://www.cftc.gov/files/dea/history/dea_fut_xls_2022.zip
+    base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report/?apikey={key}'
+    all_data = requests.get(base_url).json()
+    from pprint import pprint
+
+    vx = [d for d in all_data if d['symbol'] == symbol]
+
+
+
+    if len(vx) > 0:
+        try:
+            return [generate_cotc_data(d) for d in vx]
+        except Exception as e:
+            logging.info(f'Excepetion nc otc:{str(e)}')
+        data = all_data[0]
+        return f"ChangeInNetPosition:{data['changeInNetPosition']}, Sentiment:{data['marketSentiment']}"
+    else:
+        return []
+
+
+
+
 def get_sp500():
     tables = pd.read_html('https://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
     sp500_df = tables[0]
@@ -1000,4 +1043,154 @@ class AsyncEconomicCalendar(beam.DoFn):
             return runner.run(self.fetch_data(element))
 
 
+import pandas as pd
+import numpy as np  # Import numpy for NaT handling if needed
 
+import pandas as pd
+import numpy as np  # Import numpy for NaT handling if needed
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+class SentimentCalculator:
+    """
+    A class to calculate sentiment, merge VIX price data, and visualize COT analysis.
+    The plot includes markers for extreme COT Percentile Ranks (5%, 50%, 95%).
+    """
+
+    def calculate_sentiment(self, data: list[dict], vix_prices_df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Processes COT data and VIX price data, merges them, and calculates the
+        COT Percentile Rank.
+
+        Args:
+            data: A list of dictionaries (COT data).
+            vix_prices_df: A pandas DataFrame containing VIX daily price data.
+
+        Returns:
+            A merged and calculated pandas DataFrame, or None on error.
+        """
+        COT_DATE_COLUMN = 'as_of_date_in_form_yymmdd'
+        INDEX_VALUE_COLUMN = 'net_non_commercial'
+        VIX_DATE_COLUMN = 'date'
+        VIX_CLOSE_COLUMN = 'close'
+
+        # --- 1. Load and Prepare COT Data ---
+        try:
+            df = pd.DataFrame(data=data)
+            # Convert 'yymmdd' to full datetime object
+            df['Date'] = pd.to_datetime(df[COT_DATE_COLUMN], format='%y%m%d')
+            analysis_df = df.set_index('Date').sort_index()
+            analysis_df = analysis_df[[INDEX_VALUE_COLUMN]].rename(columns={INDEX_VALUE_COLUMN: 'Net_Position'})
+            print(f"COT DataFrame loaded with {len(analysis_df)} records.")
+
+            # --- 2. Preparing and Merging VIX Price Records (Weekly Resampling) ---
+            print(f"\n--- 2. Preparing and Merging VIX Price Records ---")
+
+            if VIX_CLOSE_COLUMN not in vix_prices_df.columns or VIX_DATE_COLUMN not in vix_prices_df.columns:
+                print(f"Error: VIX price DataFrame must contain '{VIX_DATE_COLUMN}' and '{VIX_CLOSE_COLUMN}' columns.")
+                return None
+
+            # Convert the VIX date column to datetime and set as index
+            vix_prices_df[VIX_DATE_COLUMN] = pd.to_datetime(vix_prices_df[VIX_DATE_COLUMN])
+            vix_prices_df = vix_prices_df.set_index(VIX_DATE_COLUMN).sort_index()
+
+            # Downsample VIX daily data to weekly, taking the *last* close for the week
+            # 'W-TUE' anchors to the typical COT report date (Tuesday data)
+            vix_weekly_close = vix_prices_df[VIX_CLOSE_COLUMN].resample('W-TUE').last()
+            vix_weekly_close.rename('VIX_Close', inplace=True)
+
+            # Merge the prepared weekly VIX data with the COT data
+            analysis_df = analysis_df.merge(vix_weekly_close, left_index=True, right_index=True, how='inner')
+
+            if len(analysis_df) == 0:
+                print("Error: No common dates found between COT and VIX data after resampling.")
+                return None
+
+            print(f"Data successfully merged. Final records for analysis: {len(analysis_df)}")
+
+            # --- 3. Calculating Key Analytical Metrics ---
+            # Percentile Rank calculation is essential for identifying extremes
+            analysis_df['Percentile_Rank'] = analysis_df['Net_Position'].rank(pct=True)
+            analysis_df['WoW_Change'] = analysis_df['Net_Position'].diff()
+            analysis_df['VIX_WoW_Change'] = analysis_df['VIX_Close'].diff()
+            analysis_df['VIX_WoW_Pct_Change'] = analysis_df['VIX_Close'].pct_change()
+
+            print("\nAnalysis DataFrame prepared successfully.")
+            return analysis_df
+
+        except Exception as e:
+            print(f"\nAn error occurred during data processing: {e}")
+            return None
+
+    @staticmethod
+    def plot_cot_vix_relationship(analysis_df: pd.DataFrame, file_name: str = 'cot_vix_plot.png'):
+        """
+        Generates a dual-axis plot showing VIX Close Price and COT Percentile Rank,
+        marking extreme Percentile Rank levels (5%, 50%, 95%) for guidance.
+        """
+        if analysis_df.empty:
+            print("Cannot plot: Input DataFrame is empty.")
+            return
+
+        fig, ax1 = plt.subplots(figsize=(14, 7))
+
+        # --- Primary Axis: VIX Closing Price (Blue Line) ---
+        color_vix = 'tab:blue'
+        ax1.set_xlabel('Date')
+        ax1.set_ylabel('VIX Close Price', color=color_vix, fontweight='bold')
+        ax1.plot(analysis_df.index, analysis_df['VIX_Close'], color=color_vix, label='VIX Close Price', linewidth=2)
+        ax1.tick_params(axis='y', labelcolor=color_vix)
+        ax1.grid(True, linestyle='--', alpha=0.6)
+
+        # --- Secondary Axis: COT Percentile Rank (Red Dashed Line) ---
+        ax2 = ax1.twinx()
+        color_cot = 'tab:red'
+        ax2.set_ylabel('COT Percentile Rank (Sentiment)', color=color_cot, fontweight='bold')
+        ax2.plot(analysis_df.index, analysis_df['Percentile_Rank'], color=color_cot, linestyle='--',
+                 label='COT Percentile Rank', linewidth=1.5, alpha=0.7)
+        ax2.tick_params(axis='y', labelcolor=color_cot)
+
+        # Set COT Percentile Rank (ax2) limits from 0 to 1 for visual clarity
+        ax2.set_ylim(0, 1)
+
+        # --- Marking Extremes on Secondary Axis (Percentile Rank) ---
+
+        # Extreme High Sentiment (95% - Historically Bearish for VIX, Bullish for S&P 500)
+        ax2.axhline(y=0.95, color='darkred', linestyle='-', linewidth=1, alpha=0.9, label='95% Extreme High Sentiment')
+        ax2.text(analysis_df.index[-1], 0.95, 'Extreme High (95%)', color='darkred', ha='right', va='bottom',
+                 fontsize=9, bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+
+        # Neutral Level
+        ax2.axhline(y=0.50, color='gray', linestyle=':', linewidth=1, alpha=0.7, label='50% Neutral')
+
+        # Extreme Low Sentiment (5% - Historically Bullish for VIX, Bearish for S&P 500)
+        ax2.axhline(y=0.05, color='darkgreen', linestyle='-', linewidth=1, alpha=0.9, label='5% Extreme Low Sentiment')
+        ax2.text(analysis_df.index[-1], 0.05, 'Extreme Low (5%)', color='darkgreen', ha='right', va='top', fontsize=9,
+                 bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
+
+        # --- Final Plot Aesthetics ---
+
+        # Title and legend
+        plt.title('VIX Price vs. COT Non-Commercial Net Position Percentile Rank', fontweight='bold', pad=15)
+
+        # Combine legends from both axes
+        lines, labels = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax2.legend(lines + lines2, labels + labels2, loc='upper left', frameon=True, fontsize='small')
+
+        # Save and show
+        plt.tight_layout()
+        plt.savefig(file_name)
+        plt.show()
+        print(f"\nPlot generated and saved to {file_name}")

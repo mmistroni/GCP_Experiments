@@ -68,9 +68,9 @@ def run_sectors_inference(p, google_key, fmp_key):
     res = (p | 'Starting sector inference' >> beam.Create([
             '^GSPC',
             '^NDX',
-                    # '^DJI',
-                    # '^RUT',
-                    #'^NYA'
+                   '^DJI',
+                   '^RUT',
+                   '^NYA'
                             ])
                    | 'Fetch index data' >> beam.Map(lambda ticker: fetch_index_data(ticker, fmp_key))
                    )

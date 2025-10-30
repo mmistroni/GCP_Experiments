@@ -13,4 +13,5 @@ openpyxl
 google-genai==1.21.1
 anio
 httpx
+matplotlib
 

@@ -14,7 +14,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
                         get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
                         OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator, \
-                        AsyncEconomicCalendar
+                        AsyncEconomicCalendar, generate_cotc_data, get_cot_futures, SentimentCalculator
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -652,6 +652,163 @@ class TestMarketStats(unittest.TestCase):
         with TestPipeline() as p:
             res = run_cftc_spfutures(p, fmp_key)
             res | debugSink
+
+    def test_commitmentoftrades(self):
+        key = os.environ['FMPREPKEY']
+        base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report/?apikey={key}'
+        all_data = requests.get(base_url).json()
+        from pprint import pprint
+
+        vx = [d for d in all_data if d['symbol'] == 'VX']
+
+        from pprint import pprint
+        pprint(vx[0:10])
+        print('----------')
+        pprint(vx[-5:])
+        print('------')
+        print(vx[0])
+
+    def test_run_cotc2(self):
+        key = os.environ['FMPREPKEY']
+        base_url = f'https://financialmodelingprep.com/api/v4/commitment_of_traders_report_analysis/VX?apikey={key}'
+        all_data = requests.get(base_url).json()
+
+        from pprint import pprint
+
+        vx = [d for d in all_data if d['symbol'] == 'VX']
+
+        from pprint import pprint
+        pprint(vx[0:10])
+        print('----------')
+        pprint(vx[-5:])
+        print('------')
+        print(vx[0])
+
+    def test_generate_cotc_data(self):
+        sample = {'symbol' : 'TST', 'as_of_date_in_form_yymmdd' : '250114',
+                'short_name' : 'tst', 'market_and_exchange_names' : 'none',
+              'cftc_contract_market_code':'x', 'noncomm_positions_long_all' : 26107,
+                  'noncomm_positions_short_all' : 29018,
+              'comm_positions_long_all' : 33114, 'comm_positions_short_all' : 28483}
+
+        print(generate_cotc_data(sample))
+
+
+
+    def calculate_sentiment(self, data):
+        DATE_COLUMN = 'as_of_date_in_form_yymmdd'
+        INDEX_VALUE_COLUMN = 'net_non_commercial'
+        import pandas as pd
+
+        #print(f"--- 1. Loading Data from Uploaded File: {FILE_NAME} ---")
+        try:
+            # Load the data from the user's uploaded JSON file
+            df = pd.DataFrame(data=data)
+
+            print(f"DataFrame loaded with {len(df)} records (100 weeks confirmed).")
+
+            # --- 2. Preparing Weekly Time Series Data ---
+
+            # Step 1: Ensure the Date column is a proper datetime object.
+            # Step 1: Ensure the Date column is a proper datetime object.
+            df['Date'] = pd.to_datetime(df[DATE_COLUMN], format='%y%m%d')
+
+            # Step 2: Set the new 'Date' column as the DataFrame's index.
+            df = df.set_index('Date')
+
+            # Step 3: Select the index value column and assign it to a new DataFrame
+            analysis_df = df[[INDEX_VALUE_COLUMN]].sort_index()
+            analysis_df.rename(columns={INDEX_VALUE_COLUMN: 'Net_Position'}, inplace=True)
+
+            print("\n--- 3. Calculating Key Analytical Metrics ---")
+
+            # Metric 1: Percentile Rank (Detects Extreme Positioning)
+            # Ranks the current position against all other positions in the dataset (100 weeks).
+            # 0.99 means the position is higher than 99% of all historical positions.
+            analysis_df['Percentile_Rank'] = analysis_df['Net_Position'].rank(pct=True)
+
+            # Metric 2: Week-over-Week Change (Detects Sentiment Switch/Momentum)
+            # Calculates the difference from the previous week's position.
+            analysis_df['WoW_Change'] = analysis_df['Net_Position'].diff()
+
+            # --- 4. Extreme Positioning Analysis (VIX Futures Non-Commercial) ---
+
+            # Define thresholds for identifying "extreme" positioning (top/bottom 5%)
+            EXTREME_THRESHOLD = 0.05
+
+            print(f"\n--- 4. Extreme Positioning Analysis (VIX Futures Non-Commercial) ---")
+            print(f"--- Extreme Threshold: Top/Bottom {EXTREME_THRESHOLD * 100:.0f}% of 100 Weeks ---")
+
+            # Find the most extremely short positions (VIX Contrarian Bullish Signal)
+            extreme_short = analysis_df[analysis_df['Percentile_Rank'] <= EXTREME_THRESHOLD]
+
+            # Find the most extremely long positions (VIX Contrarian Bearish Signal)
+            extreme_long = analysis_df[analysis_df['Percentile_Rank'] >= (1 - EXTREME_THRESHOLD)]
+
+            # Report Extreme Short Positions
+            print(f"\n--- A. Extreme SHORT Positions (Percentile Rank <= {EXTREME_THRESHOLD:.2f}) ---")
+            print(
+                "Interpretation: Extreme complacency/bearish VIX sentiment. Historically precedes VIX spikes (VIX goes up).")
+            if not extreme_short.empty:
+                print(extreme_short[['Net_Position', 'Percentile_Rank', 'WoW_Change']])
+            else:
+                print("No weeks found in the extreme short threshold.")
+
+            # Report Extreme Long Positions
+            print(f"\n--- B. Extreme LONG Positions (Percentile Rank >= {1 - EXTREME_THRESHOLD:.2f}) ---")
+            print(
+                "Interpretation: Extreme fear/bullish VIX sentiment. Historically precedes VIX drops (VIX goes down).")
+            if not extreme_long.empty:
+                print(extreme_long[['Net_Position', 'Percentile_Rank', 'WoW_Change']])
+            else:
+                print("No weeks found in the extreme long threshold.")
+
+            # --- Print Summary (Original Section 4 remnants, now consolidated) ---
+            print("\n--- Full Data Summary (Head/Tail for context) ---")
+            print(analysis_df[['Net_Position', 'Percentile_Rank', 'WoW_Change']].head(3))
+            print("...")
+            print(analysis_df[['Net_Position', 'Percentile_Rank', 'WoW_Change']].tail(3))
+
+
+        except Exception as e:
+            print(f"\nAn error occurred during data processing: {e}")
+            print("Please ensure your JSON file is correctly formatted and the columns exist.")
+
+
+    def test_get_historical_prices(self):
+        from datetime import datetime
+
+        key = os.environ['FMPREPKEY']
+
+
+
+    def test_get_cotc_futures(self):
+        from datetime import datetime
+        import pandas as pd
+        def get_historical_prices(ticker, start_date, key):
+            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={key}'
+
+            data =  requests.get(hist_url).json().get('historical')
+            return [d for d in data if datetime.strptime(d['date'], '%Y-%m-%d').date() >=start_date]
+
+
+
+        key = os.environ['FMPREPKEY']
+        from pprint import pprint
+        cot_futures = get_cot_futures(key, 'VX')
+
+        vix_prices =  get_historical_prices('^VIX', date(2023,1,1), key)
+
+        vix_prices_df = pd.DataFrame(data=vix_prices)
+
+        # Example usage (you would use your actual data here)
+        calc = SentimentCalculator()
+        analysis_df = calc.calculate_sentiment(cot_futures, vix_prices_df)
+
+        print(analysis_df)
+
+        if analysis_df is not None:
+            SentimentCalculator.plot_cot_vix_relationship(analysis_df, file_name='c:/Temp/cot_vix_plot.png')
 
 
 
