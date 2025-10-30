@@ -810,7 +810,7 @@ class TestMarketStats(unittest.TestCase):
         if analysis_df is not None:
             SentimentCalculator.plot_cot_vix_relationship(analysis_df, file_name='c:/Temp/cot_vix_plot.png')
 
-
+        # >>> obb.regulators.cftc.cot(id='1170E1', provider='cftc').columns
 
 if __name__ == '__main__':
     unittest.main()
