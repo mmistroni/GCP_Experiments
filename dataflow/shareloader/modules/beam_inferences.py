@@ -73,7 +73,12 @@ Sentiment Shift Quantification: Calculate the exact overall percentage split of 
 OUTPUT: Provide only the numerical metrics for the concentration and sentiment split, followed by a succinct professional summary detailing any detected unusual concentration or a significant sentiment shift.
 '''
 
+# --- Constants for PCollection Tags ---
+NON_EMPTY_PROMPTS_TAG = 'non_empty_prompts'
+EMPTY_PROMPT_TAG = 'empty_prompt'
+# -------------------------------------
 
+#
 
 def generate_with_instructions(
     model_name: str,
@@ -149,7 +154,29 @@ class PostProcessor(beam.DoFn):
             yield f"Input:\n{input_prompt}\n\nOutput:\nError processing response.\n"
 
 
+# 1. New DoFn to route based on prompt content
+class ContentRouter(beam.DoFn):
+    """
+    Routes the single combined prompt string based on its content:
+    If it's empty JSON (e.g., '[]'), it goes to the empty tag.
+    Otherwise, it goes to the main tag.
+    """
+
+    def process(self, element):
+        # Check if the combined string is empty or represents an empty list
+        prompt_content = element.strip()
+        if not prompt_content or prompt_content == '[]':
+            # Route to the 'empty' path
+            yield beam.pvalue.TaggedOutput(EMPTY_PROMPT_TAG, 'No data')
+        else:
+            # Route to the 'non-empty' path for inference
+            yield element
+
+
 def run_gemini_pipeline(p, google_key, prompts=None):
+    """
+    Runs the Gemini pipeline with conditional handling for empty input data.
+    """
     model_handler = GeminiModelHandler(
         model_name=MODEL_NAME,
         request_fn=generate_with_instructions,
@@ -159,28 +186,48 @@ def run_gemini_pipeline(p, google_key, prompts=None):
     read_prompts = None
     if not prompts:
         logging.info('Generating pipeline prompts')
-
+        # This creates the PCollection from the initial pipeline input
+        # Note: CombineGlobally produces 0 elements if input is empty, or 1 element (the combined string)
         read_prompts = (p | "gemini xxToJson" >> beam.Map(to_json_string)
-                     | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
-                     | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
-                   )
+                        | 'gemini xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
+                        | 'gemini xxanotheer map' >> beam.Map(lambda item: f'{item}')
+                        )
     else:
-        pipeline_prompts  = prompts
+        pipeline_prompts = prompts
+        # This creates the PCollection from the Python list
         read_prompts = p | "GetPrompts" >> beam.Create(pipeline_prompts)
 
-    # The core of our pipeline: apply the RunInference transform.
-    # Beam will handle batching and parallel API calls.
-    predictions = read_prompts | "RunInference" >> RunInference(model_handler)
-    
-    # Parse the results to get clean text.
-    llm_response =   (predictions | "PostProcess" >> beam.ParDo(PostProcessor())
-                    )
+    # --- BEAM CONTENT-BASED ROUTING ---
 
-    debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
+    # 1. Route the single combined prompt element based on its content
+    # This transform returns a dictionary of PCollections indexed by their tags
+    router_results = read_prompts | 'ContentRouter' >> beam.ParDo(ContentRouter()).with_outputs(
+        EMPTY_PROMPT_TAG, main=NON_EMPTY_PROMPTS_TAG)
 
+    # Separate the PCollections based on the routing tags
+    non_empty_prompts = router_results[NON_EMPTY_PROMPTS_TAG]
+    no_data_results = router_results[EMPTY_PROMPT_TAG]
 
-    return   llm_response  | "Excluding Inputs" >> beam.Map( lambda it: it[it.find('Output:') + 7:])
+    # 2. Path 1: The Standard Analysis Flow (only runs on non-empty content)
 
+    # Run Inference and Post-Process the results
+    post_processed_results = (non_empty_prompts
+                              | "RunInference" >> RunInference(model_handler)
+                              | "PostProcess" >> beam.ParDo(PostProcessor())
+                              )
+
+    # DEBUG STEP: Add the logging step here as requested
+    debug = post_processed_results | 'Debugging inference output' >> beam.Map(logging.info)
+
+    # Clean the output to remove the 'Output: ' prefix
+    analysis_results = post_processed_results | "CleanOutput" >> beam.Map(lambda it: it[it.find('Output:') + 7:])
+
+    # 3. Path 2: The 'No Data' Handler Flow (contains the 'No data' string)
+
+    # 4. Flatten the two PCollections together
+    # If the prompt contained data, analysis_results has the output, and no_data_results is empty.
+    # If the prompt was empty JSON ('[]'), analysis_results is empty, and no_data_results contains 'No data'.
+    return (analysis_results, no_data_results) | 'FinalFlatten' >> beam.Flatten()
 
 def run_gemini_congress_pipeline(p, google_key):
     model_handler = GeminiModelHandler(
