@@ -1042,75 +1042,26 @@ class AsyncEconomicCalendar(beam.DoFn):
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
 
+
+import pandas as pd
+import numpy as np  # Import numpy for NaT handling if needed
+
+import pandas as pd
+import numpy as np  # Import numpy for NaT handling if needed
+
+import pandas as pd
 import matplotlib.pyplot as plt
 
 import pandas as pd
-import numpy as np  # Need numpy for the helper function
+import matplotlib.pyplot as plt
 
 
-class SentimentCalculator:  # Assuming your original function is part of a class/script
+class SentimentCalculator:
+    """
+    A class to calculate sentiment, merge VIX price data, and visualize COT analysis.
+    """
 
-    def _assign_cot_signal(self, row: pd.Series) -> str:
-        """
-        Assigns a VIX COT Signal based on VIX price and Percentile Rank thresholds.
-        These thresholds are typically used for contrarian signals.
-        """
-        vix = row['VIX_Close']
-        rank = row['Percentile_Rank']
-
-        # --- Thresholds based on general market/VIX analysis ---
-        # VIX Price:
-        LOW_VIX = 15.0
-        HIGH_VIX = 25.0
-
-        # Percentile Rank (for VIX COT Net Position):
-        # A low rank means speculators are historically net-short (complacent).
-        EXTREME_COMPLACENCY_RANK_MAX = 0.15  # Top 15% historically short
-        ELEVATED_COMPLACENCY_RANK_MAX = 0.30  # Top 30% historically short
-
-        # A high rank means speculators are historically net-long (fearful).
-        EXTREME_FEAR_RANK_MIN = 0.85  # Bottom 15% historically short (i.e., long)
-        ELEVATED_FEAR_RANK_MIN = 0.70  # Bottom 30% historically short
-
-        # 1. Extreme Complacency (Strong Bearish Signal for Stocks / Buy VIX)
-        if (vix < LOW_VIX) and (rank < EXTREME_COMPLACENCY_RANK_MAX):
-            return 'Extreme Complacency (Contrarian Buy Volatility)'
-
-        # 2. Extreme Fear (Strong Bullish Signal for Stocks / Sell VIX)
-        elif (vix > HIGH_VIX) and (rank > EXTREME_FEAR_RANK_MIN):
-            return 'Extreme Fear (Contrarian Sell Volatility)'
-
-        # 3. Elevated Complacency
-        elif (vix < LOW_VIX) and (rank < ELEVATED_COMPLACENCY_RANK_MAX):
-            return 'Elevated Complacency'
-
-        # 4. Elevated Fear
-        elif (vix > 20.0) and (rank > ELEVATED_FEAR_RANK_MIN):  # Using a mid-range VIX threshold for Elevated Fear
-            return 'Elevated Fear'
-
-        # 5. Volatility Spike (High VIX but not Extreme Speculator Positioning)
-        elif vix > HIGH_VIX:
-            return 'VIX Spike (Price-Driven Fear)'
-
-        # 6. Low Volatility (Low VIX but not Extreme Speculator Positioning)
-        elif vix < LOW_VIX:
-            return 'Low Volatility (Price-Driven Complacency)'
-
-        # 7. Neutral/Mean-Reversion
-        return 'Neutral Sentiment'
-
-    def calculate_sentiment(self, data: list[dict], vix_prices_df: pd.DataFrame) -> pd.DataFrame | None:
-        """
-        Processes COT data and VIX price data, merges them, and calculates the
-        COT Percentile Rank and VIX COT Signal.
-
-        Args:
-            data: A list of dictionaries (COT data).
-            vix_prices_df: A pandas DataFrame containing VIX daily price data.
-
-        Returns:
-            A merged and calculated pandas DataFrame, or None on error.
-        """
+    def calculate_sentiment(self, data, vix_prices_df: pd.DataFrame):
         COT_DATE_COLUMN = 'as_of_date_in_form_yymmdd'
         INDEX_VALUE_COLUMN = 'net_non_commercial'
         VIX_DATE_COLUMN = 'date'
@@ -1124,19 +1075,24 @@ class SentimentCalculator:  # Assuming your original function is part of a class
             analysis_df = analysis_df[[INDEX_VALUE_COLUMN]].rename(columns={INDEX_VALUE_COLUMN: 'Net_Position'})
             print(f"COT DataFrame loaded with {len(analysis_df)} records.")
 
-            # --- 2. Preparing and Merging VIX Price Records (Weekly Resampling) ---
+            # --- 2. Preparing and Merging VIX Price Records (Weekly Resampling Fix) ---
             print(f"\n--- 2. Preparing and Merging VIX Price Records ---")
 
             if VIX_CLOSE_COLUMN not in vix_prices_df.columns or VIX_DATE_COLUMN not in vix_prices_df.columns:
                 print(f"Error: VIX price DataFrame must contain '{VIX_DATE_COLUMN}' and '{VIX_CLOSE_COLUMN}' columns.")
                 return None
 
+            # Convert the VIX date column to datetime and set as index
             vix_prices_df[VIX_DATE_COLUMN] = pd.to_datetime(vix_prices_df[VIX_DATE_COLUMN])
             vix_prices_df = vix_prices_df.set_index(VIX_DATE_COLUMN).sort_index()
 
+            # Downsample VIX daily data to weekly, taking the *last* close for the week
+            # ('W-TUE' anchors to the COT report date)
             vix_weekly_close = vix_prices_df[VIX_CLOSE_COLUMN].resample('W-TUE').last()
             vix_weekly_close.rename('VIX_Close', inplace=True)
 
+            # Merge the prepared weekly VIX data with the COT data
+            initial_count = len(analysis_df)
             analysis_df = analysis_df.merge(vix_weekly_close, left_index=True, right_index=True, how='inner')
 
             if len(analysis_df) == 0:
@@ -1151,19 +1107,12 @@ class SentimentCalculator:  # Assuming your original function is part of a class
             analysis_df['VIX_WoW_Change'] = analysis_df['VIX_Close'].diff()
             analysis_df['VIX_WoW_Pct_Change'] = analysis_df['VIX_Close'].pct_change()
 
-            # --- 4. NEW: Calculate VIX COT Signal ---
-            print(f"\n--- 4. Calculating VIX COT Signal ---")
-            analysis_df['VIX_COT_Signal'] = analysis_df.apply(self._assign_cot_signal, axis=1)
-
             print("\nAnalysis DataFrame prepared successfully.")
             return analysis_df
 
         except Exception as e:
             print(f"\nAn error occurred during data processing: {e}")
             return None
-
-
-
 
     @staticmethod
     def plot_cot_vix_relationship(analysis_df: pd.DataFrame, file_name: str = 'cot_vix_plot.png'):
