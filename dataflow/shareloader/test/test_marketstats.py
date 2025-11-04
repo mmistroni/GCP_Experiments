@@ -694,87 +694,6 @@ class TestMarketStats(unittest.TestCase):
         print(generate_cotc_data(sample))
 
 
-
-    def calculate_sentiment(self, data):
-        DATE_COLUMN = 'as_of_date_in_form_yymmdd'
-        INDEX_VALUE_COLUMN = 'net_non_commercial'
-        import pandas as pd
-
-        #print(f"--- 1. Loading Data from Uploaded File: {FILE_NAME} ---")
-        try:
-            # Load the data from the user's uploaded JSON file
-            df = pd.DataFrame(data=data)
-
-            print(f"DataFrame loaded with {len(df)} records (100 weeks confirmed).")
-
-            # --- 2. Preparing Weekly Time Series Data ---
-
-            # Step 1: Ensure the Date column is a proper datetime object.
-            # Step 1: Ensure the Date column is a proper datetime object.
-            df['Date'] = pd.to_datetime(df[DATE_COLUMN], format='%y%m%d')
-
-            # Step 2: Set the new 'Date' column as the DataFrame's index.
-            df = df.set_index('Date')
-
-            # Step 3: Select the index value column and assign it to a new DataFrame
-            analysis_df = df[[INDEX_VALUE_COLUMN]].sort_index()
-            analysis_df.rename(columns={INDEX_VALUE_COLUMN: 'Net_Position'}, inplace=True)
-
-            print("\n--- 3. Calculating Key Analytical Metrics ---")
-
-            # Metric 1: Percentile Rank (Detects Extreme Positioning)
-            # Ranks the current position against all other positions in the dataset (100 weeks).
-            # 0.99 means the position is higher than 99% of all historical positions.
-            analysis_df['Percentile_Rank'] = analysis_df['Net_Position'].rank(pct=True)
-
-            # Metric 2: Week-over-Week Change (Detects Sentiment Switch/Momentum)
-            # Calculates the difference from the previous week's position.
-            analysis_df['WoW_Change'] = analysis_df['Net_Position'].diff()
-
-            # --- 4. Extreme Positioning Analysis (VIX Futures Non-Commercial) ---
-
-            # Define thresholds for identifying "extreme" positioning (top/bottom 5%)
-            EXTREME_THRESHOLD = 0.05
-
-            print(f"\n--- 4. Extreme Positioning Analysis (VIX Futures Non-Commercial) ---")
-            print(f"--- Extreme Threshold: Top/Bottom {EXTREME_THRESHOLD * 100:.0f}% of 100 Weeks ---")
-
-            # Find the most extremely short positions (VIX Contrarian Bullish Signal)
-            extreme_short = analysis_df[analysis_df['Percentile_Rank'] <= EXTREME_THRESHOLD]
-
-            # Find the most extremely long positions (VIX Contrarian Bearish Signal)
-            extreme_long = analysis_df[analysis_df['Percentile_Rank'] >= (1 - EXTREME_THRESHOLD)]
-
-            # Report Extreme Short Positions
-            print(f"\n--- A. Extreme SHORT Positions (Percentile Rank <= {EXTREME_THRESHOLD:.2f}) ---")
-            print(
-                "Interpretation: Extreme complacency/bearish VIX sentiment. Historically precedes VIX spikes (VIX goes up).")
-            if not extreme_short.empty:
-                print(extreme_short[['Net_Position', 'Percentile_Rank', 'WoW_Change']])
-            else:
-                print("No weeks found in the extreme short threshold.")
-
-            # Report Extreme Long Positions
-            print(f"\n--- B. Extreme LONG Positions (Percentile Rank >= {1 - EXTREME_THRESHOLD:.2f}) ---")
-            print(
-                "Interpretation: Extreme fear/bullish VIX sentiment. Historically precedes VIX drops (VIX goes down).")
-            if not extreme_long.empty:
-                print(extreme_long[['Net_Position', 'Percentile_Rank', 'WoW_Change']])
-            else:
-                print("No weeks found in the extreme long threshold.")
-
-            # --- Print Summary (Original Section 4 remnants, now consolidated) ---
-            print("\n--- Full Data Summary (Head/Tail for context) ---")
-            print(analysis_df[['Net_Position', 'Percentile_Rank', 'WoW_Change']].head(3))
-            print("...")
-            print(analysis_df[['Net_Position', 'Percentile_Rank', 'WoW_Change']].tail(3))
-
-
-        except Exception as e:
-            print(f"\nAn error occurred during data processing: {e}")
-            print("Please ensure your JSON file is correctly formatted and the columns exist.")
-
-
     def test_get_historical_prices(self):
         from datetime import datetime
 
@@ -785,6 +704,7 @@ class TestMarketStats(unittest.TestCase):
     def test_get_cotc_futures(self):
         from datetime import datetime
         import pandas as pd
+        pd.set_option('display.max_columns', None)
         def get_historical_prices(ticker, start_date, key):
             hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={key}'
 
@@ -806,6 +726,9 @@ class TestMarketStats(unittest.TestCase):
         analysis_df = calc.calculate_sentiment(cot_futures, vix_prices_df)
 
         print(analysis_df)
+
+        current_dt = datetime.now().strftime('')
+
 
         if analysis_df is not None:
             SentimentCalculator.plot_cot_vix_relationship(analysis_df, file_name='c:/Temp/cot_vix_plot.png')

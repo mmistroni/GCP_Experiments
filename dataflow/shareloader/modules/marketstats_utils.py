@@ -1055,13 +1055,31 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
 
 class SentimentCalculator:
     """
     A class to calculate sentiment, merge VIX price data, and visualize COT analysis.
+    The plot includes markers for extreme COT Percentile Ranks (5%, 50%, 95%).
     """
 
-    def calculate_sentiment(self, data, vix_prices_df: pd.DataFrame):
+    def calculate_sentiment(self, data: list[dict], vix_prices_df: pd.DataFrame) -> pd.DataFrame | None:
+        """
+        Processes COT data and VIX price data, merges them, and calculates the
+        COT Percentile Rank.
+
+        Args:
+            data: A list of dictionaries (COT data).
+            vix_prices_df: A pandas DataFrame containing VIX daily price data.
+
+        Returns:
+            A merged and calculated pandas DataFrame, or None on error.
+        """
         COT_DATE_COLUMN = 'as_of_date_in_form_yymmdd'
         INDEX_VALUE_COLUMN = 'net_non_commercial'
         VIX_DATE_COLUMN = 'date'
@@ -1070,12 +1088,13 @@ class SentimentCalculator:
         # --- 1. Load and Prepare COT Data ---
         try:
             df = pd.DataFrame(data=data)
+            # Convert 'yymmdd' to full datetime object
             df['Date'] = pd.to_datetime(df[COT_DATE_COLUMN], format='%y%m%d')
             analysis_df = df.set_index('Date').sort_index()
             analysis_df = analysis_df[[INDEX_VALUE_COLUMN]].rename(columns={INDEX_VALUE_COLUMN: 'Net_Position'})
             print(f"COT DataFrame loaded with {len(analysis_df)} records.")
 
-            # --- 2. Preparing and Merging VIX Price Records (Weekly Resampling Fix) ---
+            # --- 2. Preparing and Merging VIX Price Records (Weekly Resampling) ---
             print(f"\n--- 2. Preparing and Merging VIX Price Records ---")
 
             if VIX_CLOSE_COLUMN not in vix_prices_df.columns or VIX_DATE_COLUMN not in vix_prices_df.columns:
@@ -1087,12 +1106,11 @@ class SentimentCalculator:
             vix_prices_df = vix_prices_df.set_index(VIX_DATE_COLUMN).sort_index()
 
             # Downsample VIX daily data to weekly, taking the *last* close for the week
-            # ('W-TUE' anchors to the COT report date)
+            # 'W-TUE' anchors to the typical COT report date (Tuesday data)
             vix_weekly_close = vix_prices_df[VIX_CLOSE_COLUMN].resample('W-TUE').last()
             vix_weekly_close.rename('VIX_Close', inplace=True)
 
             # Merge the prepared weekly VIX data with the COT data
-            initial_count = len(analysis_df)
             analysis_df = analysis_df.merge(vix_weekly_close, left_index=True, right_index=True, how='inner')
 
             if len(analysis_df) == 0:
@@ -1102,6 +1120,7 @@ class SentimentCalculator:
             print(f"Data successfully merged. Final records for analysis: {len(analysis_df)}")
 
             # --- 3. Calculating Key Analytical Metrics ---
+            # Percentile Rank calculation is essential for identifying extremes
             analysis_df['Percentile_Rank'] = analysis_df['Net_Position'].rank(pct=True)
             analysis_df['WoW_Change'] = analysis_df['Net_Position'].diff()
             analysis_df['VIX_WoW_Change'] = analysis_df['VIX_Close'].diff()
