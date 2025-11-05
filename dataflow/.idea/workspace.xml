@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="adding congress trdes">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="cleaning inference">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -90,7 +95,9 @@
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_generate_cotc_data.executor": "Debug",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cftc_spfutures_pipeline.executor": "Run",
-    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures.executor": "Run",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc2.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures.executor": "Debug",
+    "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_historical_prices.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_senate_disclosures.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_get_vix.executor": "Run",
@@ -112,6 +119,7 @@
     "Python tests.Python tests for test_marketstats.test_parse_consumer_sentiment_index.executor": "Debug",
     "Python tests.Python tests for test_obb_loader.MyTestCase.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_anotherllm_on_bean.executor": "Run",
+    "Python tests.Python tests for test_obb_loader.MyTestCase.test_cftc_pipeline.executor": "Debug",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_fmp_pipeline.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_gemini_pipeline.executor": "Run",
     "Python tests.Python tests for test_obb_loader.MyTestCase.test_llm_on_beamn.executor": "Run",
@@ -179,8 +187,8 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures">
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_commitmentoftrades" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb">
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_cotc2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -191,22 +199,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_commitmentoftrades&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_generate_cotc_data" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_generate_cotc_data&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_cotc2&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -225,6 +218,21 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_cotc_futures_obb&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_historical_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -240,7 +248,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_run_cotc2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_obb_loader.MyTestCase.test_cftc_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -251,17 +259,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_run_cotc2&quot;" />
+      <option name="_new_target" value="&quot;test_obb_loader.MyTestCase.test_cftc_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures" />
+        <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_cftc_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc2" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_historical_prices" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_generate_cotc_data" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_run_cotc2" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_commitmentoftrades" />
       </list>
     </recent_temporary>
   </component>
@@ -280,54 +288,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00535" summary="adding plus500 read from csv">
-      <option name="closed" value="true" />
-      <created>1758562806651</created>
-      <option name="number" value="00535" />
-      <option name="presentableId" value="LOCAL-00535" />
-      <option name="project" value="LOCAL" />
-      <updated>1758562806651</updated>
-    </task>
-    <task id="LOCAL-00536" summary="adding plus500 read from csv">
-      <option name="closed" value="true" />
-      <created>1758607980658</created>
-      <option name="number" value="00536" />
-      <option name="presentableId" value="LOCAL-00536" />
-      <option name="project" value="LOCAL" />
-      <updated>1758607980659</updated>
-    </task>
-    <task id="LOCAL-00537" summary="adding plus500 read from csv">
-      <option name="closed" value="true" />
-      <created>1759211841343</created>
-      <option name="number" value="00537" />
-      <option name="presentableId" value="LOCAL-00537" />
-      <option name="project" value="LOCAL" />
-      <updated>1759211841343</updated>
-    </task>
-    <task id="LOCAL-00538" summary="adding plus500 read from csv">
-      <option name="closed" value="true" />
-      <created>1759574983953</created>
-      <option name="number" value="00538" />
-      <option name="presentableId" value="LOCAL-00538" />
-      <option name="project" value="LOCAL" />
-      <updated>1759574983953</updated>
-    </task>
-    <task id="LOCAL-00539" summary="fixed task name">
-      <option name="closed" value="true" />
-      <created>1759731446880</created>
-      <option name="number" value="00539" />
-      <option name="presentableId" value="LOCAL-00539" />
-      <option name="project" value="LOCAL" />
-      <updated>1759731446881</updated>
-    </task>
-    <task id="LOCAL-00540" summary="fixed task name">
-      <option name="closed" value="true" />
-      <created>1759731497990</created>
-      <option name="number" value="00540" />
-      <option name="presentableId" value="LOCAL-00540" />
-      <option name="project" value="LOCAL" />
-      <updated>1759731497990</updated>
     </task>
     <task id="LOCAL-00541" summary="fixed task name">
       <option name="closed" value="true" />
@@ -673,8 +633,67 @@
       <option name="project" value="LOCAL" />
       <updated>1761847694335</updated>
     </task>
-    <option name="localTasksCounter" value="584" />
+    <task id="LOCAL-00584" summary="adding congress trdes">
+      <option name="closed" value="true" />
+      <created>1761847878447</created>
+      <option name="number" value="00584" />
+      <option name="presentableId" value="LOCAL-00584" />
+      <option name="project" value="LOCAL" />
+      <updated>1761847878447</updated>
+    </task>
+    <task id="LOCAL-00585" summary="committing sentimetn calculator">
+      <option name="closed" value="true" />
+      <created>1762241919862</created>
+      <option name="number" value="00585" />
+      <option name="presentableId" value="LOCAL-00585" />
+      <option name="project" value="LOCAL" />
+      <updated>1762241919864</updated>
+    </task>
+    <task id="LOCAL-00586" summary="committing sentimetn calculator">
+      <option name="closed" value="true" />
+      <created>1762269229184</created>
+      <option name="number" value="00586" />
+      <option name="presentableId" value="LOCAL-00586" />
+      <option name="project" value="LOCAL" />
+      <updated>1762269229185</updated>
+    </task>
+    <task id="LOCAL-00587" summary="committing sentimetn calculator">
+      <option name="closed" value="true" />
+      <created>1762272139612</created>
+      <option name="number" value="00587" />
+      <option name="presentableId" value="LOCAL-00587" />
+      <option name="project" value="LOCAL" />
+      <updated>1762272139613</updated>
+    </task>
+    <task id="LOCAL-00588" summary="cleaning inference">
+      <option name="closed" value="true" />
+      <created>1762274403267</created>
+      <option name="number" value="00588" />
+      <option name="presentableId" value="LOCAL-00588" />
+      <option name="project" value="LOCAL" />
+      <updated>1762274403267</updated>
+    </task>
+    <task id="LOCAL-00589" summary="cleaning inference">
+      <option name="closed" value="true" />
+      <created>1762356503821</created>
+      <option name="number" value="00589" />
+      <option name="presentableId" value="LOCAL-00589" />
+      <option name="project" value="LOCAL" />
+      <updated>1762356503821</updated>
+    </task>
+    <option name="localTasksCounter" value="590" />
     <servers />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+        <option value="Space.CommitStatus" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -688,8 +707,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="adding price and updating subjecct" />
-    <MESSAGE value="fixing datsetloader" />
     <MESSAGE value="fixig wrong var name" />
     <MESSAGE value="added new runtuype" />
     <MESSAGE value="increased tolerance" />
@@ -713,7 +730,9 @@
     <MESSAGE value="adding ticker to output" />
     <MESSAGE value="SORTING OUT COTCC" />
     <MESSAGE value="adding congress trdes" />
-    <option name="LAST_COMMIT_MESSAGE" value="adding congress trdes" />
+    <MESSAGE value="committing sentimetn calculator" />
+    <MESSAGE value="cleaning inference" />
+    <option name="LAST_COMMIT_MESSAGE" value="cleaning inference" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -835,7 +854,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>517</line>
+          <line>518</line>
           <option name="timeStamp" value="103" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -860,7 +879,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
-          <line>336</line>
+          <line>337</line>
           <option name="timeStamp" value="160" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -954,7 +973,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_obb_loader.py</url>
-          <line>118</line>
+          <line>79</line>
           <option name="timeStamp" value="273" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1029,7 +1048,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_obb_loader.py</url>
-          <line>230</line>
+          <line>191</line>
           <option name="timeStamp" value="313" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1049,7 +1068,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>82</line>
+          <line>87</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1076,6 +1095,56 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
           <line>29</line>
           <option name="timeStamp" value="330" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>1119</line>
+          <option name="timeStamp" value="333" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
+          <line>1129</line>
+          <option name="timeStamp" value="334" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>890</line>
+          <option name="timeStamp" value="355" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>809</line>
+          <option name="timeStamp" value="366" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>836</line>
+          <option name="timeStamp" value="367" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>858</line>
+          <option name="timeStamp" value="368" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>854</line>
+          <option name="timeStamp" value="369" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>848</line>
+          <option name="timeStamp" value="371" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>880</line>
+          <option name="timeStamp" value="372" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_marketstats.py</url>
+          <line>851</line>
+          <option name="timeStamp" value="373" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

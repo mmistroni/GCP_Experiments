@@ -15,4 +15,13 @@ anio
 httpx
 matplotlib
 openbb
+openai
+openbb-benzinga
+openbb-core
+openbb-finviz
+openbb-fmp
+openbb-multpl
+openbb-yfinance
+openbb-cftc
+
 
