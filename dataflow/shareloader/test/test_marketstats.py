@@ -24,6 +24,7 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
                                             run_cramer_pipeline, run_advance_decline, run_sp500multiples, \
                                             run_advance_decline_sma, run_economic_calendar, run_cftc_spfutures
+from shareloader.modules.obb_processes import AsyncCFTCTester
 
 
 import requests
@@ -701,25 +702,188 @@ class TestMarketStats(unittest.TestCase):
 
 
 
-    def test_get_cotc_futures(self):
+    def test_get_cotc_futures_obb(self):
         from datetime import datetime
         import pandas as pd
+        from apache_beam import pvalue
         pd.set_option('display.max_columns', None)
-        def get_historical_prices(ticker, start_date, key):
-            hist_url = f'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?apikey={key}'
 
-            data =  requests.get(hist_url).json().get('historical')
+        def get_historical_prices(ticker, start_date, key):
+            hist_url = f'https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={ticker}&apikey={key}&from=2004-01-01'
+
+            data =  requests.get(hist_url).json()
             return [d for d in data if datetime.strptime(d['date'], '%Y-%m-%d').date() >=start_date]
 
-
-
         key = os.environ['FMPREPKEY']
+
+        with TestPipeline() as p:
+            pcoll_cftc = (
+                    p
+                    | 'Tester' >> beam.Create([('^VIX', '1170E1')])
+                    | 'CFTC' >> beam.ParDo(AsyncCFTCTester(credentials={'fmp_api_key': key}))
+            )
+
+        # 1. Capture the data into the external list using a DoFn
+        vix_prices = get_historical_prices('^VIX', date(2004, 1, 1), key)
+
+
+        pcoll_yahoo = (p | beam.Create(vix_prices))
+
+        import apache_beam as beam
+        import pandas as pd
+
+        # Assuming pcoll_yahoo contains all historical daily price data
+        # We'll use a single-element trigger to materialize all price data for resampling
+
+        class ResampleToWeekly(beam.DoFn):
+            def process(self, dummy_element, all_prices_list):
+                # 1. Load all historical prices into a DataFrame (Side Input)
+                df = pd.DataFrame(all_prices_list)
+                df['date'] = pd.to_datetime(df['date'])
+                df = df.set_index('date').sort_index()
+
+                # 2. Resample to Weekly (using the last price of the week)
+                # We need a custom mapping to align exactly with the COT Tuesday date.
+                # If your COT date is the Tuesday, we must align the price to that day.
+
+                # Standard weekly resampling (e.g., using Friday close):
+                # df_weekly = df['close'].resample('W-FRI').last().dropna().reset_index()
+
+                # Better: Resample to end-of-day TUESDAY ('W-TUE') and use that closing price:
+                df_weekly = df['close'].resample('W-TUE').last().dropna().reset_index()
+
+                # 3. Yield the resampled weekly records back to Beam
+                for _, row in df_weekly.iterrows():
+                    yield {
+                        'date': row['date'].strftime('%Y-%m-%d'),  # Standardized string key
+                        'close': row['close']
+                    }
+
+        # --- Apply Resampling ---
+        # 1. Convert historical price PCollection into a single list view
+        price_list_view = beam.pvalue.AsList(pcoll_yahoo)
+        trigger = p | 'CreateTrigger' >> beam.Create([None])
+
+        pcoll_yahoo_weekly = (
+                trigger
+                | 'ResamplePrices' >> beam.ParDo(ResampleToWeekly(), all_prices_list=price_list_view)
+                | 'KeyYahooWeekly' >> beam.Map(lambda x: (x['date'], x))
+        )
+
+
+
+
+
+
+        #1 getting basics
+        LOOKBACK_WINDOW_SIZE = 156
+        # Assume pcoll_cftc and pcoll_yahoo are available
+
+        # 1. Key and Standardize CFTC Data
+        keyed_cftc = (
+                pcoll_cftc
+                | 'KeyCFTC' >> beam.Map(
+            # Convert date object to YYYY-MM-DD string for joining
+            lambda x: (x['date'].strftime('%Y-%m-%d'), x)
+        )
+        )
+
+        # 2. Key Yahoo Finance Data
+        keyed_yahoo = (
+                pcoll_yahoo_weekly
+                | 'KeyYahoo' >> beam.Map(
+            # Yahoo date is already the correct string format
+            lambda x: (x['date'], x)
+        )
+        )
+
+        #2. join and calculate net positions
+        class CalculateNetPosition(beam.DoFn):
+            def process(self, element):
+                date, joined_data = element
+
+                cftc_list = joined_data.get('COT', [])
+                yahoo_list = joined_data.get('Price', [])
+
+                if cftc_list and yahoo_list:
+                    cot = cftc_list[0]
+                    price = yahoo_list[0]
+
+                    # 🚨 Pydantic Reminder: Validation check should happen here 🚨
+
+                    # Calculate daily Net Position
+                    net_position = cot['noncomm_positions_long_all'] - cot['noncomm_positions_short_all']
+
+                    # Yield the record keyed by the market code (for the rolling GroupByKey)
+                    yield (cot['cftc_contract_market_code'], {
+                        'date': date,
+                        'net_position': net_position,
+                        'price': price['close']
+                    })
+
+        # --- Join ---
+        joined_pcoll = (
+                {'COT': keyed_cftc, 'Price': keyed_yahoo}
+                | 'JoinDataOnDate' >> beam.CoGroupByKey()
+        )
+
+        # --- Calculate Net Position ---
+        net_position_pcoll = (
+                joined_pcoll
+                | 'CalculateNetPos' >> beam.ParDo(CalculateNetPosition())
+        )
+
+
+        #3 Rolling COT index
+        class CalculateRollingIndexAndSignal(beam.DoFn):
+            def __init__(self, window_size):
+                self.window_size = window_size
+
+            def process(self, element):
+                market, historical_data = element
+
+                # 1. Create a Pandas DataFrame on the market's history
+                df = pd.DataFrame(historical_data)
+
+                # 2. Sort by date (CRITICAL for rolling calculations)
+                df['date'] = pd.to_datetime(df['date'])
+                df = df.sort_values(by='date').reset_index(drop=True)
+
+                # 3. Calculate Rolling Min/Max
+                min_pos = df['net_position'].rolling(window=self.window_size, min_periods=1).min()
+                max_pos = df['net_position'].rolling(window=self.window_size, min_periods=1).max()
+
+                # 4. Calculate COT Index (Vectorized)
+                # Use .fillna(50) to set the initial value before the window is full
+                # Use .where() to handle division by zero (min == max)
+                df['cot_index'] = (
+                        100 * (df['net_position'] - min_pos) / (max_pos - min_pos)
+                ).where(min_pos != max_pos, 50.0)  # Set to 50 if min == max
+
+                # 5. Signal Generation (Vectorized)
+                df['signal'] = 'Neutral'
+                df.loc[df['cot_index'] < 10.0, 'signal'] = 'Oversold (BUY)'
+                df.loc[df['cot_index'] > 90.0, 'signal'] = 'Overbought (SELL)'
+
+                # 6. Yield final results back to Beam
+                yield from df[['date', 'cot_index', 'signal', 'price']].to_dict('records')
+
+        # --- Calculate Rolling Index ---
+        final_cot_data = (
+                net_position_pcoll
+                | 'GroupAllHistoryByMarket' >> beam.GroupByKey()
+                | 'CalculateRollingIndex' >> beam.ParDo(CalculateRollingIndexAndSignal(LOOKBACK_WINDOW_SIZE))
+        )
+
+        final_cot_data | 'output' >> beam.Map(print)
+
+
         from pprint import pprint
-        cot_futures = get_cot_futures(key, 'VX')
+        results_list = []
+        '''
+        cot_futures = cftc_records | 'CaptureList' >> beam.ParDo(ListCapture(results_list))
 
-        vix_prices =  get_historical_prices('^VIX', date(2023,1,1), key)
 
-        vix_prices_df = pd.DataFrame(data=vix_prices)
 
         # Example usage (you would use your actual data here)
         calc = SentimentCalculator()
@@ -734,6 +898,7 @@ class TestMarketStats(unittest.TestCase):
             SentimentCalculator.plot_cot_vix_relationship(analysis_df, file_name='c:/Temp/cot_vix_plot.png')
 
         # >>> obb.regulators.cftc.cot(id='1170E1', provider='cftc').columns
+        '''
 
 if __name__ == '__main__':
     unittest.main()

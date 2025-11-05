@@ -6,6 +6,7 @@ from datetime import date
 from pandas.tseries.offsets import BDay
 import asyncio
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
+from openbb_cftc.models.cot import CftcCotFetcher
 import pandas as pd
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 
@@ -42,3 +43,33 @@ class AsyncProcessFinvizTester(beam.DoFn):
         with asyncio.Runner() as runner:
             return runner.run(self.fetch_data(element))
 
+
+class AsyncCFTCTester(beam.DoFn):
+
+    def __init__(self, credentials):
+        self.fetcher = CftcCotFetcher
+        self.credentials = credentials
+
+    async def fetch_data(self, element: tuple):
+        logging.info(f'element is:{element}')
+
+        symbol, cftc_id = element
+
+
+        try:
+            params = {
+                'symbol': symbol,
+                'id': cftc_id,
+            }
+            async_data = await self.fetcher.fetch_data(params, self.credentials)
+            data = [d.model_dump(exclude_none=True) for d in async_data]
+            return data
+
+        except Exception as e:
+            logging.info(f'Failed to fetch data for {element}:{str(e)}')
+            return []
+
+    def process(self, element: tuple):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.fetch_data(element))

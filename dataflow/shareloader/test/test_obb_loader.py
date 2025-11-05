@@ -5,6 +5,7 @@ from datetime import date
 from apache_beam.options.pipeline_options import PipelineOptions
 from shareloader.modules.obb_utils import AsyncProcess, AsyncProcessSP500Multiples, ProcessHistorical, \
                                             AsyncFMPProcess
+from shareloader.modules.obb_processes import AsyncCFTCTester
 from shareloader.modules.launcher import StockSelectionCombineFn
 from apache_beam.ml.inference.base import ModelHandler
 from apache_beam.ml.inference.base import RunInference
@@ -17,11 +18,12 @@ from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandl
 from shareloader.modules.launcher_pipelines import run_inference
 from google import genai
 import apache_beam as beam
-from apache_beam.ml.inference.gemini_inference import GeminiModelHandler # New for Beam 2.66
+from apache_beam.ml.inference.gemini_inference import GeminiModelHandler
 from apache_beam.ml.inference.gemini_inference import generate_from_string
 import asyncio
 import apache_beam as beam
 import openai as openai
+from shareloader.modules.beam_inferences import run_gemini_pipeline
 
 class OpenAIClient:
 
@@ -48,47 +50,6 @@ from apache_beam.ml.inference.gemini_inference import GeminiModelHandler # New f
 from apache_beam.ml.inference.gemini_inference import generate_from_string # New for Beam 2.66
 from apache_beam.options.pipeline_options import PipelineOptions
 
-
-
-
-def run_gemini_inference(output, openai_key, debug_sink):
-    template = '''
-                            I will provide you a json string containing a list of stocks.
-                            For each stock i will provide the following information
-                            1 - prev_close: the previous close of the stock
-                            2 - change: the change from yesterday
-                            3 - ADX: the adx
-                            4 - RSI : the RSI
-                            5 - SMA20: the 20 day simple moving average
-                            6 - SMA50: the 50 day simple moving average
-                            7 - SMA200: the 200 day simple moving average
-                            8 - slope, this will be slope of linear regression for past 30 days.
-                            9 - prev_obv: this is on balance volume from previous day
-                            10 - current_obv: this is the on balance volume for the current day
-                            11 - previous_cmf: this is the value for the previous day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                            12 - current_cmf: this is the value for the current  day of  Chaikin Money Flow (CMF), calculated over previous 20 days
-                            13 - obv_historical: these are the on balance volumes for the last 20 days
-                            14 - cmf_historical: these are the cmf values for past 20 days
-                            As a stock trader and statistician, based on that information, please find which stocks which are candidates to rise in next days.
-                            If any of the stocks on the list have dropped more than 10%, then evaluate if it is worth to short sell them based on the
-                            same criterias
-                            Once you finish your analysis, please summarize your finding indicating, for each
-                            stock what is your recommendation and why. 
-                            At the end of the message, for the stocks  you recommend as buy or watch or sell, you should generate
-                            a json message with fields ticker, action (buy or watch or sell) and an explanation.
-                            The json string should be written between a <STARTJSON> and <ENDJSON> tags.
-                            Here is my json
-            '''
-    instructions = '''You are a powerful stock researcher that recommends stock that are candidate to buy or to sell.'''
-
-    return (output | "xxToJson" >> beam.Map(to_json_string)
-     | 'xxCombine jsons' >> beam.CombineGlobally(lambda elements: "".join(elements))
-     | 'xxanotheer map' >> beam.Map(lambda item: f'{template} \n {item}')
-
-     | "xInference" >> RunInference(model_handler=GeminiAIHandler(openai_key,
-                                                                     instructions))
-
-     )
 
 
 
@@ -318,20 +279,6 @@ class MyTestCase(unittest.TestCase):
             
             res | beam.Map(print)
 
-    def test_run_inference_pipeline2(self):
-        import argparse
-        parser = argparse.ArgumentParser(add_help=False)
-
-        key = os.environ['FMPREPKEY']
-        openai_key = os.environ['GOOGLE_API_KEUY']
-
-        with TestPipeline(options=PipelineOptions()) as p:
-            input2 = run_etoro_pipeline(p, key, 0.0001)
-
-            res = run_gemini_inference(input2, openai_key, beam.Map(print))
-
-            res | beam.Map(print)
-
     def test_fmp_pipeline(self):
         from shareloader.modules.superperformers import combine_tickers
         key = os.environ['FMPREPKEY']
@@ -379,6 +326,15 @@ class MyTestCase(unittest.TestCase):
                     | "RunInference" >> RunInference(model_handler)
                     | "Print results" >> beam.Map(lambda response: print(response.text))
             )
+
+    def test_cftc_pipeline(self):
+        key = os.environ['FMPREPKEY']
+        with TestPipeline(options=PipelineOptions()) as p:
+            cftc_records = (p | 'Tester' >> beam.Create([('^VIX', '1170E1')])
+               | 'CFTC' >> beam.ParDo(
+                        AsyncCFTCTester(credentials={'fmp_api_key': key})
+                    )
+             )
 
 
 if __name__ == '__main__':
