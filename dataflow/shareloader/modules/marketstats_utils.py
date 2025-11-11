@@ -1044,21 +1044,6 @@ class AsyncEconomicCalendar(beam.DoFn):
 
 
 import pandas as pd
-import numpy as np  # Import numpy for NaT handling if needed
-
-import pandas as pd
-import numpy as np  # Import numpy for NaT handling if needed
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import pandas as pd
-import matplotlib.pyplot as plt
-
-import pandas as pd
 import matplotlib.pyplot as plt
 
 

@@ -5,12 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="cleaning inference">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/modules/vix_pipelines.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_dftester.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/requirements_marketstats.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_marketstats.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,8 +21,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="Python Unit Test" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>
@@ -48,6 +49,8 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean.executor": "Run",
+    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline.executor": "Run",
+    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
@@ -162,7 +165,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader",
+    "last_opened_file_path": "C:/Users/Marco And Sofia/GitHubProjects/GCP_Experiments/dataflow/shareloader/test",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
@@ -176,9 +179,9 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\modules" />
-      <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\test" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src" />
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\mypackage" />
     </key>
@@ -187,8 +190,8 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb">
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_cotc2" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline">
+    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -199,7 +202,22 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_cotc2&quot;" />
+      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_pipeline&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_sentimente&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -233,21 +251,6 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_historical_prices" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_historical_prices&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
     <configuration name="Python tests for test_obb_loader.MyTestCase.test_cftc_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -265,11 +268,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb" />
         <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures" />
         <item itemvalue="Python tests.Python tests for test_obb_loader.MyTestCase.test_cftc_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc2" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_historical_prices" />
       </list>
     </recent_temporary>
   </component>
@@ -288,14 +291,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00541" summary="fixed task name">
-      <option name="closed" value="true" />
-      <created>1759731517293</created>
-      <option name="number" value="00541" />
-      <option name="presentableId" value="LOCAL-00541" />
-      <option name="project" value="LOCAL" />
-      <updated>1759731517293</updated>
     </task>
     <task id="LOCAL-00542" summary="fixed task name">
       <option name="closed" value="true" />
@@ -681,7 +676,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762356503821</updated>
     </task>
-    <option name="localTasksCounter" value="590" />
+    <task id="LOCAL-00590" summary="cleaning inference">
+      <option name="closed" value="true" />
+      <created>1762376542546</created>
+      <option name="number" value="00590" />
+      <option name="presentableId" value="LOCAL-00590" />
+      <option name="project" value="LOCAL" />
+      <updated>1762376542546</updated>
+    </task>
+    <option name="localTasksCounter" value="591" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1098,12 +1101,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>1119</line>
+          <line>1104</line>
           <option name="timeStamp" value="333" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>1129</line>
+          <line>1114</line>
           <option name="timeStamp" value="334" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
