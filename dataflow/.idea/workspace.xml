@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="cleaning inference">
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/vix_pipelines.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -291,14 +285,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00542" summary="fixed task name">
-      <option name="closed" value="true" />
-      <created>1759737965370</created>
-      <option name="number" value="00542" />
-      <option name="presentableId" value="LOCAL-00542" />
-      <option name="project" value="LOCAL" />
-      <updated>1759737965370</updated>
     </task>
     <task id="LOCAL-00543" summary="fixed task name">
       <option name="closed" value="true" />
@@ -684,7 +670,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762376542546</updated>
     </task>
-    <option name="localTasksCounter" value="591" />
+    <task id="LOCAL-00591" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1762880617967</created>
+      <option name="number" value="00591" />
+      <option name="presentableId" value="LOCAL-00591" />
+      <option name="project" value="LOCAL" />
+      <updated>1762880617967</updated>
+    </task>
+    <option name="localTasksCounter" value="592" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -710,7 +704,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="fixig wrong var name" />
     <MESSAGE value="added new runtuype" />
     <MESSAGE value="increased tolerance" />
     <MESSAGE value="ADDED NY COJMPOSITE" />
@@ -735,7 +728,8 @@
     <MESSAGE value="adding congress trdes" />
     <MESSAGE value="committing sentimetn calculator" />
     <MESSAGE value="cleaning inference" />
-    <option name="LAST_COMMIT_MESSAGE" value="cleaning inference" />
+    <MESSAGE value="ading classes for cots" />
+    <option name="LAST_COMMIT_MESSAGE" value="ading classes for cots" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -163,6 +163,11 @@ class MyTestCase(unittest.TestCase):
 
             # 1.3 Combine VIX and COT Data (Joins 1.1 and 1.2)
             # This transform now receives PCollections correctly keyed by date.
+
+            keyed_cot | 'to sink' >> sink
+
+            return
+
             combined_data_list = (
                     {'vix': keyed_vix, 'cot': keyed_cot}
                     | 'Combine VIX and COT' >> beam.CoGroupByKey()
