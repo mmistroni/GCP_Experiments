@@ -183,6 +183,7 @@ class MyTestCase(unittest.TestCase):
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
         res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df)
+        res['close'] = res['vix_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
         analyzer = CorrelationAnalyzer(res)
