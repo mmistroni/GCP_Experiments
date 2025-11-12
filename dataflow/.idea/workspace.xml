@@ -290,14 +290,6 @@
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
     </task>
-    <task id="LOCAL-00548" summary="adding genai handler and updated dependencies">
-      <option name="closed" value="true" />
-      <created>1760071068994</created>
-      <option name="number" value="00548" />
-      <option name="presentableId" value="LOCAL-00548" />
-      <option name="project" value="LOCAL" />
-      <updated>1760071068995</updated>
-    </task>
     <task id="LOCAL-00549" summary="adding genai handler and updated dependencies">
       <option name="closed" value="true" />
       <created>1760071123019</created>
@@ -682,7 +674,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762969091208</updated>
     </task>
-    <option name="localTasksCounter" value="597" />
+    <task id="LOCAL-00597" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1762969742207</created>
+      <option name="number" value="00597" />
+      <option name="presentableId" value="LOCAL-00597" />
+      <option name="project" value="LOCAL" />
+      <updated>1762969742207</updated>
+    </task>
+    <option name="localTasksCounter" value="598" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1149,7 +1149,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>234</line>
+          <line>235</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1169,7 +1169,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>205</line>
+          <line>206</line>
           <option name="timeStamp" value="387" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

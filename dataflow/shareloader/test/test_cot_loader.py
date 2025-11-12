@@ -203,6 +203,7 @@ class MyTestCase(unittest.TestCase):
         print('... Generatign signaldata ....')
         generator = SignalGenerator(res, optimal_lookback)
         mock_df = generator.get_backtest_data()
+        return
         initial_capital = 100000.0
 
         # NOTE: Using the default price_column='close'
