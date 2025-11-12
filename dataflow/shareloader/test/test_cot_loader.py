@@ -64,6 +64,8 @@ class MyTestCase(unittest.TestCase):
         signal = generator.get_current_signal()
         print(signal)
 
+
+
     def test_cot_sentiment_backtest(self):
 
         def calculate_metrics(results_df: pd.DataFrame):
