@@ -290,14 +290,6 @@
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
     </task>
-    <task id="LOCAL-00547" summary="adding genai handler and updated dependencies">
-      <option name="closed" value="true" />
-      <created>1760027763244</created>
-      <option name="number" value="00547" />
-      <option name="presentableId" value="LOCAL-00547" />
-      <option name="project" value="LOCAL" />
-      <updated>1760027763244</updated>
-    </task>
     <task id="LOCAL-00548" summary="adding genai handler and updated dependencies">
       <option name="closed" value="true" />
       <created>1760071068994</created>
@@ -682,7 +674,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762965638589</updated>
     </task>
-    <option name="localTasksCounter" value="596" />
+    <task id="LOCAL-00596" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1762969091208</created>
+      <option name="number" value="00596" />
+      <option name="presentableId" value="LOCAL-00596" />
+      <option name="project" value="LOCAL" />
+      <updated>1762969091208</updated>
+    </task>
+    <option name="localTasksCounter" value="597" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1149,7 +1149,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>233</line>
+          <line>234</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1159,13 +1159,33 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>204</line>
-          <option name="timeStamp" value="381" />
+          <line>126</line>
+          <option name="timeStamp" value="382" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>126</line>
-          <option name="timeStamp" value="382" />
+          <line>203</line>
+          <option name="timeStamp" value="386" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
+          <line>205</line>
+          <option name="timeStamp" value="387" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
+          <line>79</line>
+          <option name="timeStamp" value="391" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
+          <line>23</line>
+          <option name="timeStamp" value="395" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
+          <line>83</line>
+          <option name="timeStamp" value="397" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

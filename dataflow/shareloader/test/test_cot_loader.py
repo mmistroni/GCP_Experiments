@@ -174,6 +174,7 @@ class MyTestCase(unittest.TestCase):
 
     def test_cot_simulation(self):
 
+
         # prepare data
         print('... Gettingn data ....')
         key = os.environ['FMPREPKEY']
