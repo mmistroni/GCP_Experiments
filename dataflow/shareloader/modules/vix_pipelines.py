@@ -2,7 +2,6 @@ import apache_beam as beam
 import pandas as pd
 from openbb import obb
 import requests
-from datetime import date, datetime
 from openbb_cftc.models.cot import CftcCotFetcher
 import logging
 import asyncio
@@ -12,13 +11,13 @@ from shareloader.modules.correlation_analyzer import CorrelationAnalyzer, find_s
 from shareloader.modules.signal_generator import  SignalGenerator
 
 from pydantic import BaseModel, Field
-from datetime import date, datetime
+import datetime
 from typing import List, Dict, Any
 
 
 class COTMetrics(BaseModel):
     """Defines the schema for data after sentiment calculation (res_df)."""
-    date: date
+    date: datetime.date
     VIX_Close: float
     COT_Sentiment: float
     # Add other key columns that VixSentimentCalculator adds to the DataFrame
@@ -43,7 +42,7 @@ def get_historical_prices(ticker, start_date, key):
     # This remains a utility as it runs outside the main pipeline flow
     hist_url = f'https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={ticker}&apikey={key}&from=2004-01-01'
     data = requests.get(hist_url).json()
-    prices = [d for d in data if datetime.strptime(d['date'], '%Y-%m-%d').date() >= start_date]
+    prices = [d for d in data if datetime.datetime.strptime(d['date'], '%Y-%m-%d').date() >= start_date]
     return pd.DataFrame(prices)
 
 
@@ -55,9 +54,9 @@ class AcquireVIXDataFn(beam.DoFn):
     def process(self, element):
         """Element is the dummy value (None). Returns keyed VIX DataFrame."""
         print('... Acquiring VIX Data ....')
-        vix_df = get_historical_prices('^VIX', date(2004, 7, 20), self.fmp_key)
+        vix_df = get_historical_prices('^VIX', datetime.date(2004, 7, 20), self.fmp_key)
         # Key the output with a constant 'A'
-        yield ('A', vix_df)
+        yield vix_df
 
 
 # --- NEW Stage 1.2: Acquire COT Data (Async/External) ---
@@ -75,7 +74,7 @@ class AcquireCOTDataFn(beam.DoFn):
         # This is where the external/async call should happen
         cot_df = obb.regulators.cftc.cot(id='1170E1', provider='cftc').to_dataframe()
         # Key the output with a constant 'A'
-        yield ('A', cot_df)
+        yield cot_df
 
     async def fetch_data(self, element: str):
         logging.info(f'element is:{element}')
@@ -128,6 +127,44 @@ class RunCorrelationAnalysisFn(beam.DoFn):
         # Yield the DataFrame containing all lookback/holding period correlations
         yield results_df
 
+
+import apache_beam as beam
+from datetime import timedelta
+import datetime
+
+
+class ExplodeCotToDailyFn(beam.DoFn):
+    """
+    Takes a single weekly COT report record and yields a new (Daily_Date, COT_Record)
+    keyed element for every trading day the report is valid for (forward-fill).
+    """
+
+    def process(self, record):
+        # The 'date' key is the COT Report date (typically a Tuesday)
+        report_date = record['date']
+
+        # 1. Define the start and end of the validity window
+        # The report is valid starting the day *after* the report date.
+        # We start on Wednesday.
+        start_date = report_date + timedelta(days=1)
+
+        # The report is typically superseded by the NEXT report, which is 7 days later.
+        # We stop *on* the next report date (which the next record will pick up).
+        # We run for 7 days (Wednesday to Tuesday)
+        end_date = report_date + timedelta(days=7)
+
+        current_date = start_date
+
+        # 2. Iterate and yield a new key-value pair for each day
+        while current_date < end_date:
+            # Check if it is a weekday (Mon-Fri) - assuming a 5-day trading week
+            # Monday=0, Sunday=6
+            if current_date.weekday() < 5:
+                # The key is the trading date
+                # The value is the original COT record (now correctly attributed)
+                yield (current_date, record)
+
+            current_date += timedelta(days=1)
 
 # Stage 4: Find Optimal Correlation
 class FindOptimalCorrelationFn(beam.DoFn):

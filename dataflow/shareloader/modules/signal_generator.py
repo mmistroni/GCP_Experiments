@@ -1,38 +1,41 @@
 import pandas as pd
-import numpy as np
 
-# --- Pydantic Reminder ---
-# After finding these final numerical thresholds, you should lock them into a
-# Pydantic model for your strategy configuration. This ensures that your trading
-# agent or backtest tool always uses validated, statistically optimal parameters.
-# -------------------------
 
-# --- Configuration (Based on Correlation Analysis) ---
+# Assume EXTREME_LOW_PERCENTILE, EXTREME_HIGH_PERCENTILE, and OPTIMAL_LOOKBACK_WEEKS
+# are defined globally (e.g., 0.10, 0.90, and 156)
 INPUT_FILE = 'outputs_vix_analysis_dated_with_sentiment.csv'
 OPTIMAL_LOOKBACK_WEEKS = 156 # 3 Years
 EXTREME_LOW_PERCENTILE = 0.10 # 10th percentile for Extreme Bullish (BUY VIX)
 EXTREME_HIGH_PERCENTILE = 0.90 # 90th percentile for Extreme Bearish (SELL VIX)
-# -----------------------------------------------------
-
-
+# --------
 class SignalGenerator:
     """
-    Calculates the VIX COT Index using the optimal 156-week lookback and
-    determines the dynamic Buy/Sell thresholds and the current signal.
+    Calculates the VIX COT Index and dynamic Buy/Sell thresholds across the entire
+    historical period and compiles the final Signal DataFrame for backtesting.
     """
-    def __init__(self, df: pd.DataFrame, optimal_lookback:int):
-        self.df = df
-        # Recalculate the COT index using the optimal 156-week lookback
-        self.cot_index_series = self._calculate_vix_cot_index(optimal_lookback)
 
-        # Calculate the dynamic thresholds from the newly calculated COT Index
-        self.buy_vix_threshold = self.cot_index_series.quantile(EXTREME_LOW_PERCENTILE)
-        self.sell_vix_threshold = self.cot_index_series.quantile(EXTREME_HIGH_PERCENTILE)
+    def __init__(self, df: pd.DataFrame, optimal_lookback_weeks: int):
+        self.df = df
+        self.optimal_lookback = optimal_lookback_weeks
+        self.df = self.df.sort_index()  # Ensure data is sorted by date/index
+
+        # 1. Calculate the core COT Index series
+        self.cot_index_series = self._calculate_vix_cot_index(self.optimal_lookback)
+
+        # 2. Calculate dynamic thresholds for the entire history
+        self.buy_vix_thresholds = self.cot_index_series.rolling(
+            window=self.optimal_lookback
+        ).quantile(EXTREME_LOW_PERCENTILE).shift(1)  # Shift(1) to prevent look-ahead bias
+
+        self.sell_vix_thresholds = self.cot_index_series.rolling(
+            window=self.optimal_lookback
+        ).quantile(EXTREME_HIGH_PERCENTILE).shift(1)  # Shift(1) to prevent look-ahead bias
+
+        # 3. Compile the final signal DataFrame
+        self.signal_df = self._compile_signal_dataframe()
 
     def _calculate_vix_cot_index(self, lookback_period: int) -> pd.Series:
-        """
-        Calculates the VIX COT Index using a specified lookback period.
-        """
+        """Calculates the VIX COT Index using a specified lookback period."""
         net_position = self.df['noncomm_net']
 
         # Calculate the rolling maximum and minimum of the Net Position
@@ -40,45 +43,70 @@ class SignalGenerator:
         rolling_min = net_position.rolling(window=lookback_period).min()
 
         # COT Index Formula: (Net - Min) / (Max - Min) * 100
-        # The index is only valid when the window is full (after 'lookback_period' weeks)
         cot_index = ((net_position - rolling_min) / (rolling_max - rolling_min)) * 100
 
         return cot_index
 
+    def _compile_signal_dataframe(self) -> pd.DataFrame:
+        """Creates the final, comprehensive DataFrame needed for backtesting."""
+
+        # Start with a copy of the key data
+        df_out = self.df[['noncomm_net', 'open_interest']].copy()
+
+        # Add the calculated index and dynamic thresholds
+        df_out['COT_Index'] = self.cot_index_series
+        df_out['Buy_Threshold'] = self.buy_vix_thresholds
+        df_out['Sell_Threshold'] = self.sell_vix_thresholds
+
+        # Generate the signal for every day
+        def generate_signal(row):
+            if row['COT_Index'] <= row['Buy_Threshold']:
+                return "BUY"
+            elif row['COT_Index'] >= row['Sell_Threshold']:
+                return "SELL"
+            else:
+                return "NEUTRAL"
+
+        # Apply the signal generation function
+        df_out['Trade_Signal'] = df_out.apply(generate_signal, axis=1)
+
+        # Add the look-forward period (12 weeks, which is ~60 trading days)
+        df_out['Hold_Period_Days'] = 60  # Set to 60 trading days for 12 weeks
+
+        return df_out.dropna(subset=['COT_Index'])  # Drop initial lookback nulls
+
+    def get_backtest_data(self) -> pd.DataFrame:
+        """Public method to return the full backtesting DataFrame."""
+        return self.signal_df
+
     def get_current_signal(self):
         """
-        Determines the current signal based on the latest COT Index value.
+        Keeps the original print function for displaying the latest signal,
+        but retrieves values from the compiled DataFrame.
         """
-        # Get the latest valid COT Index value
-        latest_cot_index = self.cot_index_series.dropna().iloc[-1]
-        latest_date = self.cot_index_series.dropna().index[-1].strftime('%Y-%m-%d')
+        latest_row = self.signal_df.iloc[-1]
+        latest_cot_index = latest_row['COT_Index']
+        latest_date = latest_row.name.strftime('%Y-%m-%d')  # Assuming index is DatetimeIndex
 
-        signal = "Neutral"
+        # Use the stored thresholds for the printout
+        buy_threshold = latest_row['Buy_Threshold']
+        sell_threshold = latest_row['Sell_Threshold']
 
-        if latest_cot_index <= self.buy_vix_threshold:
-            signal = "EXTREME BULLISH (BUY VIX) - Expected VIX move in 12 weeks"
-        elif latest_cot_index >= self.sell_vix_threshold:
-            signal = "EXTREME BEARISH (SELL VIX) - Expected VIX move in 12 weeks"
-        else:
-            # Check for moderate signals for more context (using 30th/70th percentiles)
-            if latest_cot_index < self.cot_index_series.quantile(0.30):
-                 signal = "Bullish/Complacent (Monitor for Extreme)"
-            elif latest_cot_index > self.cot_index_series.quantile(0.70):
-                 signal = "Bearish/Fearful (Monitor for Extreme)"
+        signal = latest_row['Trade_Signal']
 
-
+        # --- Print Logic (Optimized) ---
         print("\n--- VIX COT Strategy Signal Report ---")
-        print(f"Optimal Lookback Period Used: {OPTIMAL_LOOKBACK_WEEKS} Weeks (3 Years)")
+        print(f"Optimal Lookback Period Used: {self.optimal_lookback} Weeks")
         print(f"Latest COT Report Date: {latest_date}")
         print("-" * 40)
-        print("DYNAMIC THRESHOLDS (Calculated from 156-Week COT Index History):")
-        print(f"  1. EXTREME BULLISH (BUY VIX) Threshold (10th %-ile): {self.buy_vix_threshold:.2f}%")
-        print(f"  2. EXTREME BEARISH (SELL VIX) Threshold (90th %-ile): {self.sell_vix_threshold:.2f}%")
+        print("DYNAMIC THRESHOLDS (Calculated from Historical Index Data):")
+        print(
+            f"  1. EXTREME BULLISH (BUY VIX) Threshold ({EXTREME_LOW_PERCENTILE * 100:.0f}%-ile): {buy_threshold:.2f}%")
+        print(
+            f"  2. EXTREME BEARISH (SELL VIX) Threshold ({EXTREME_HIGH_PERCENTILE * 100:.0f}%-ile): {sell_threshold:.2f}%")
         print("-" * 40)
         print(f"LATEST VIX COT INDEX VALUE: {latest_cot_index:.2f}%")
         print(f"GENERATED SIGNAL: {signal}")
-        print("Expected Trade Duration: 12 Weeks")
+        print("Expected Trade Duration: 12 Weeks (60 Trading Days)")
 
         return latest_cot_index, signal
-
-

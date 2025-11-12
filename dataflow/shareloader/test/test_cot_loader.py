@@ -1,54 +1,27 @@
 import unittest
 import os
 from apache_beam.testing.test_pipeline import TestPipeline
-from datetime import date
-from apache_beam.options.pipeline_options import PipelineOptions
-from shareloader.modules.obb_utils import AsyncProcess, AsyncProcessSP500Multiples, ProcessHistorical, \
-                                            AsyncFMPProcess
-from shareloader.modules.obb_processes import AsyncCFTCTester
-from shareloader.modules.launcher import StockSelectionCombineFn
-from apache_beam.ml.inference.base import ModelHandler
-from apache_beam.ml.inference.base import RunInference
-from datetime import datetime
-import json
-from shareloader.modules.launcher_pipelines import   run_etoro_pipeline
-from unittest.mock import patch
-import argparse
-from shareloader.modules.dftester_utils import to_json_string, SampleOpenAIHandler, extract_json_list
-from shareloader.modules.launcher_pipelines import run_inference
-from google import genai
-import apache_beam as beam
-from apache_beam.ml.inference.gemini_inference import GeminiModelHandler
-from apache_beam.ml.inference.gemini_inference import generate_from_string
-import asyncio
-import apache_beam as beam
-import openai as openai
-from shareloader.modules.beam_inferences import run_gemini_pipeline
 
 
 import apache_beam as beam
-from apache_beam.ml.inference.gemini_inference import GeminiModelHandler # New for Beam 2.66
-from apache_beam.ml.inference.gemini_inference import generate_from_string # New for Beam 2.66
-from apache_beam.options.pipeline_options import PipelineOptions
 from openbb import obb
-from shareloader.modules.vix_sentiment_calculator import VixSentimentCalculator
 from shareloader.modules.correlation_analyzer import CorrelationAnalyzer, find_smallest_correlation
 from shareloader.modules.signal_generator import SignalGenerator
 from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSentimentCalculator, AcquireCOTDataFn, \
                                             AcquireVIXDataFn, CalculateSentimentFn, RunCorrelationAnalysisFn,\
-                                            FindOptimalCorrelationFn, GenerateSignalFn
+                                            FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
 
 import pandas as pd
-
+import numpy as np
 
 import requests
-from datetime import date
+import datetime
 def get_historical_prices(ticker, start_date, key):
 
   hist_url = f'https://financialmodelingprep.com/stable/historical-price-eod/full?symbol={ticker}&apikey={key}&from=2004-01-01'
 
   data =  requests.get(hist_url).json()
-  return [d for d in data if datetime.strptime(d['date'], '%Y-%m-%d').date() >=start_date]
+  return [d for d in data if datetime.datetime.strptime(d['date'], '%Y-%m-%d').date() >=start_date]
 
 def get_latest_cot():
     # async process
@@ -65,7 +38,7 @@ class MyTestCase(unittest.TestCase):
         # Step 1. getting cot and vix prices
         print('... Gettingn data ....')
         key = os.environ['FMPREPKEY']
-        vix_prices = get_historical_prices('^VIX', date(2004, 7, 20), key)
+        vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
         cot_df = get_latest_cot()
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
@@ -91,50 +64,139 @@ class MyTestCase(unittest.TestCase):
         signal = generator.get_current_signal()
         print(signal)
 
+    def test_cot_sentiment_backtest(self):
+
+        def calculate_metrics(results_df: pd.DataFrame):
+            # Total Return
+            total_return = (results_df['Capital'].iloc[-1] - results_df['Capital'].iloc[0]) / \
+                           results_df['Capital'].iloc[0]
+
+            # Calculate daily returns for volatility analysis
+            returns = results_df['Capital'].pct_change().dropna()
+
+            # Annualized Return (assuming 252 trading days)
+            annualized_return = returns.mean() * 252
+
+            # Annualized Volatility
+            annualized_volatility = returns.std() * np.sqrt(252)
+
+            # Sharpe Ratio (Assuming a 0% risk-free rate for simplicity)
+            sharpe_ratio = annualized_return / annualized_volatility
+
+            # Max Drawdown (Helper function needed for proper max drawdown calculation)
+            # The simple way:
+            cumulative_max = results_df['Capital'].cummax()
+            drawdown = (results_df['Capital'] - cumulative_max) / cumulative_max
+            max_drawdown = drawdown.min()
+
+            print("\n--- Backtest Results ---")
+            print(f"Start Date: {results_df.index[0].strftime('%Y-%m-%d')}")
+            print(f"End Date: {results_df.index[-1].strftime('%Y-%m-%d')}")
+            print(f"Total Return: {total_return:.2%}")
+            print(f"Annualized Return: {annualized_return:.2%}")
+            print(f"Max Drawdown: {max_drawdown:.2%}")
+            print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+
+        def run_backtest_simulation(df: pd.DataFrame, initial_capital: float = 100000.0):
+            # Ensure columns are present and dates are indices
+            if df.index.dtype != 'datetime64[ns]':
+                raise ValueError("DataFrame index must be a DatetimeIndex.")
+
+            df = df.copy()
+
+            # Initialize Tracking Columns
+            df['Position'] = np.nan  # 1 for Long, 0 for Flat
+            df['Entry_Price'] = np.nan
+            df['Exit_Price'] = np.nan
+            df['Exit_Date_Target'] = pd.NaT
+            df['P_L'] = 0.0  # Profit/Loss for the day
+            df['Capital'] = initial_capital
+
+            # Simulation State Variables
+            in_position = False
+
+            # --- The Core Simulation Loop ---
+            for i in range(len(df)):
+                current_date = df.index[i]
+
+                # Carry over capital from the previous day
+                if i > 0:
+                    df.loc[current_date, 'Capital'] = df.iloc[i - 1]['Capital']
+
+                # 1. Check for Position Exit
+                if in_position and current_date >= df.loc[df.index[i - 1], 'Exit_Date_Target']:
+                    # Execute SELL based on today's closing price
+                    exit_price = df.loc[current_date, 'VIX_Close']
+                    entry_price = df.loc[df.index[i - 1], 'Entry_Price']  # Look back one row for the entry details
+
+                    # Simple P&L calculation (assuming 1 unit/share for simplicity)
+                    p_l = (exit_price - entry_price)
+
+                    # Update Capital and Log Trade
+                    df.loc[current_date, 'Capital'] += p_l
+                    df.loc[current_date, 'P_L'] = p_l
+                    df.loc[current_date, 'Exit_Price'] = exit_price
+                    df.loc[current_date, 'Position'] = 0  # Mark position as closed
+
+                    in_position = False
+
+                # 2. Check for Position Entry (BUY)
+                elif not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
+                    # Execute BUY based on today's closing price
+                    entry_price = df.loc[current_date, 'VIX_Close']
+
+                    # Calculate the target exit date
+                    hold_days = df.loc[current_date, 'Hold_Period_Days']
+                    exit_date_target = current_date + timedelta(days=hold_days)  # Needs refinement for trading days
+
+                    # Update Position Status
+                    df.loc[current_date, 'Entry_Price'] = entry_price
+                    df.loc[current_date, 'Exit_Date_Target'] = exit_date_target
+                    df.loc[current_date, 'Position'] = 1  # Mark position as open
+
+                    in_position = True
+
+            return df.dropna(subset=['Position'])
+
+
+
+        # Step 1. getting cot and vix prices
+        print('... Gettingn data ....')
+        key = os.environ['FMPREPKEY']
+        vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
+        cot_df = get_latest_cot()
+        # Step 2. calcuclate sentiment
+        print('... Calculating Sentiment ....')
+        calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
+        res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df)
+        # Step 3. Correlation analysis
+        print('... Correlation analysis ....')
+        analyzer = CorrelationAnalyzer(res)
+        analyzer.run_analysis()
+        results_df = analyzer.get_results_table()
+        # Step 4:  Find optimal correlation
+        print('... Optimal corr ....')
+        optimal_lookback, optimal_holding_period, optimal_correlation = find_smallest_correlation(results_df)
+        print("--- Optimal Parameter Search Results ---")
+        print(f"Based on the analysis, the most predictive signal (smallest correlation) is found at:")
+        print(f"Optimal Lookback Period (Row Index): {optimal_lookback} Weeks")
+        print(f"Optimal Holding Period (Column Name): {optimal_holding_period} Weeks")
+        print(f"Optimal Correlation Value: {optimal_correlation}")
+        # Step 5.  Signal Generation
+        # 2. Run Signal Generator
+        print('... Generatign signaldata ....')
+        generator = SignalGenerator(res, optimal_lookback)
+        final_df = generator.get_backtest_data()
+
+        # Example usage (assuming 'final_df' contains all data and signal):
+        final_results_df = run_backtest_simulation(final_df)
+        calculate_metrics(final_results_df)
+
+
     def test_cot_pipeline(self):
         key = os.environ['FMPREPKEY']
         sink = beam.Map(print)
-
-        # --- FIXING THE KEYING LOGIC FOR COT/VIX ---
-        def parse_and_key_records(record_list):
-            """
-            Parses data (JSON strings or DataFrame) into a stream of (date, dict) tuples.
-            Assumes the ParDo yields a list containing the data structure (usually one element).
-            """
-            if not record_list:
-                return
-
-            first_element = record_list[0]
-            data_records = []
-
-            # CASE 1: The element is a Pandas DataFrame
-            if isinstance(first_element, pd.DataFrame):
-                print("Detected DataFrame input. Converting to list of records.")
-                # Convert DataFrame rows into a list of dictionaries
-                data_records = first_element.to_dict('records')
-
-            # CASE 2: The element is a JSON string (or list of them, the old logic)
-            elif isinstance(first_element, str):
-                print("Detected JSON string input. Parsing...")
-                for record_json in record_list:
-                    try:
-                        # Original logic for JSON parsing
-                        data_records.append(json.loads(record_json))
-                    except json.JSONDecodeError:
-                        print(f"Skipping malformed JSON record.")
-                        continue
-
-            else:
-                print(f"Skipping unknown data type received: {type(first_element)}.")
-                return
-
-            # 2. Key the processed dictionary records
-            for record_dict in data_records:
-                if 'date' in record_dict:
-                    # Yields the (key, value) pair required for CoGroupByKey
-                    yield (record_dict['date'], record_dict)
-                else:
-                    print(f"Skipping record without 'date' key: {record_dict}")
+        KEY_BY_DATE = lambda record_list: [(record['date'], record) for record in record_list]
 
         with TestPipeline() as p:
             # Note: Best practice for production is to use --environment=sdk to pass keys securely
@@ -145,37 +207,41 @@ class MyTestCase(unittest.TestCase):
 
             # --- PARALLEL ACQUISITION STAGE (Stage 1) ---
 
-            # 1.1 Acquire VIX Data
-            keyed_vix = (
+            # 1.1 Acquire VIX Data (Keyed by 'A')
+            vix_records = (
                     start_pcoll
                     | 'Acquire VIX Data' >> beam.ParDo(AcquireVIXDataFn(fmp_key=fmp_key))
-                    # FIX: Use FlatMap with the new function to PARSE and KEY in one step.
-                    | 'Parse & Key VIX' >> beam.FlatMap(parse_and_key_records)
             )
 
+            # 2. Key VIX Records
+            keyed_vix = (
+                    vix_records
+                    | 'Key VIX by Date' >> beam.Map(lambda record: (record['date'], record))
+            )
+
+
             # 1.2 Acquire COT Data
+            # FIX: Add a step to convert the list of records into (date, record) pairs.
             keyed_cot = (
                     start_pcoll
                     | 'Acquire COT Data' >> beam.ParDo(AcquireCOTDataFn(credentials={}))
-                    # FIX: Use FlatMap with the new function to PARSE and KEY in one step.
-                    | 'Parse & Key COT' >> beam.FlatMap(parse_and_key_records)
             )
 
-            # 1.3 Combine VIX and COT Data (Joins 1.1 and 1.2)
-            # This transform now receives PCollections correctly keyed by date.
-
-            keyed_cot | 'to sink' >> sink
+            # 1.2 Acquire COT Data and Explode to Daily Keys
+            keyed_cot_daily = (
+                    keyed_cot  # This is your PCollection of raw COT records
+                    | 'Explode COT to Daily Keys' >> beam.ParDo(ExplodeCotToDailyFn())
+            )
 
             return
-
+            # 1.3 Combine VIX and COT Data (CoGroupByKey on the Daily Date)
             combined_data_list = (
-                    {'vix': keyed_vix, 'cot': keyed_cot}
-                    | 'Combine VIX and COT' >> beam.CoGroupByKey()
+                    {'vix': keyed_vix, 'cot': keyed_cot_daily}  # Use the exploded COT collection
+                    | 'CoGroup VIX and COT' >> beam.CoGroupByKey()
             )
 
-            combined_data_list | 'to sink' >> sink
-
             return
+
 
             # --- SENTIMENT CALCULATION STAGE (Stage 2) ---
             # Output is a single DataFrame
