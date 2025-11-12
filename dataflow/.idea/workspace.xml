@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +46,8 @@
     "Python tests.Python tests for test_beam_inferences.TestBeamInferencesr.test_anotherllm_on_bean.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest.executor": "Debug",
-    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Run",
+    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new.executor": "Run",
+    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
@@ -185,7 +187,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest">
+  <component name="RunManager" selected="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation">
     <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -216,6 +218,21 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_sentiment_new&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -231,7 +248,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_simulation" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -242,32 +259,17 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_cotc_futures&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_marketstats.TestMarketStats.test_get_cotc_futures_obb&quot;" />
+      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_simulation&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures_obb" />
-        <item itemvalue="Python tests.Python tests for test_marketstats.TestMarketStats.test_get_cotc_futures" />
       </list>
     </recent_temporary>
   </component>
@@ -286,14 +288,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00545" summary="adding genai">
-      <option name="closed" value="true" />
-      <created>1760014402666</created>
-      <option name="number" value="00545" />
-      <option name="presentableId" value="LOCAL-00545" />
-      <option name="project" value="LOCAL" />
-      <updated>1760014402666</updated>
     </task>
     <task id="LOCAL-00546" summary="adding genai">
       <option name="closed" value="true" />
@@ -679,7 +673,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762950630255</updated>
     </task>
-    <option name="localTasksCounter" value="594" />
+    <task id="LOCAL-00594" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1762956217017</created>
+      <option name="number" value="00594" />
+      <option name="presentableId" value="LOCAL-00594" />
+      <option name="project" value="LOCAL" />
+      <updated>1762956217017</updated>
+    </task>
+    <option name="localTasksCounter" value="595" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1146,18 +1148,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>200</line>
+          <line>232</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>104</line>
-          <option name="timeStamp" value="378" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>66</line>
-          <option name="timeStamp" value="379" />
+          <line>41</line>
+          <option name="timeStamp" value="380" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

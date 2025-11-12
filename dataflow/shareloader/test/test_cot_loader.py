@@ -64,105 +64,117 @@ class MyTestCase(unittest.TestCase):
         signal = generator.get_current_signal()
         print(signal)
 
+    import pandas as pd
+    import numpy as np
+    from datetime import timedelta
 
+    # --- ASSUMED INPUT DATA (REPLACE WITH YOUR ACTUAL LOADED DATA) ---
+    # cot_df: DataFrame with Date index and columns like 'noncomm_positions_long_all', 'noncomm_positions_short_all'
+    # vix_df: DataFrame with Date index and daily 'VIX_Close' price
 
-    def test_cot_sentiment_backtest(self):
+    import pandas as pd
+    import numpy as np
+    from datetime import timedelta
 
-        def calculate_metrics(results_df: pd.DataFrame):
-            # Total Return
-            total_return = (results_df['Capital'].iloc[-1] - results_df['Capital'].iloc[0]) / \
-                           results_df['Capital'].iloc[0]
+    # --- ASSUMED INPUT DATA ---
+    # cot_df: DataFrame with Date index and columns like 'noncomm_positions_long_all',
+    #         'noncomm_positions_short_all' (used to calculate noncomm_net)
+    # vix_df: DataFrame with Date index and daily 'VIX_Close' price
 
-            # Calculate daily returns for volatility analysis
-            returns = results_df['Capital'].pct_change().dropna()
+    def prepare_daily_backtest_data(self, cot_df: pd.DataFrame, vix_df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Aligns weekly COT data (which is forward-filled) to daily VIX prices,
+        preparing the final daily-indexed DataFrame.
+        Assumes VIX price column is named 'close'.
+        """
 
-            # Annualized Return (assuming 252 trading days)
-            annualized_return = returns.mean() * 252
+        # 1. Calculate the required 'noncomm_net' in the COT data
+        cot_df = cot_df.copy()
+        if 'noncomm_net' not in cot_df.columns:
+            # Assuming the necessary underlying columns exist
+            cot_df['noncomm_net'] = (
+                    cot_df['noncomm_positions_long_all'] - cot_df['noncomm_positions_short_all']
+            )
 
-            # Annualized Volatility
-            annualized_volatility = returns.std() * np.sqrt(252)
+        cot_cols_to_keep = ['noncomm_net']
+        cot_daily = cot_df[cot_cols_to_keep]
 
-            # Sharpe Ratio (Assuming a 0% risk-free rate for simplicity)
-            sharpe_ratio = annualized_return / annualized_volatility
+        # 2. Forward-Fill COT data to every trading day
+        # Create a daily index covering the entire VIX range
+        daily_index = vix_df.index
 
-            # Max Drawdown (Helper function needed for proper max drawdown calculation)
-            # The simple way:
-            cumulative_max = results_df['Capital'].cummax()
-            drawdown = (results_df['Capital'] - cumulative_max) / cumulative_max
-            max_drawdown = drawdown.min()
+        # Reindex the COT data to the full daily index and forward-fill (ffill)
+        cot_daily = cot_daily.reindex(daily_index).ffill()
 
-            print("\n--- Backtest Results ---")
-            print(f"Start Date: {results_df.index[0].strftime('%Y-%m-%d')}")
-            print(f"End Date: {results_df.index[-1].strftime('%Y-%m-%d')}")
-            print(f"Total Return: {total_return:.2%}")
-            print(f"Annualized Return: {annualized_return:.2%}")
-            print(f"Max Drawdown: {max_drawdown:.2%}")
-            print(f"Sharpe Ratio: {sharpe_ratio:.2f}")
+        # 3. Final Merge (Align VIX and COT)
+        # The VIX price column ('close') is included here
+        final_merged_df = vix_df.merge(cot_daily, left_index=True, right_index=True, how='inner')
 
-        def run_backtest_simulation(df: pd.DataFrame, initial_capital: float = 100000.0):
-            # Ensure columns are present and dates are indices
-            if df.index.dtype != 'datetime64[ns]':
-                raise ValueError("DataFrame index must be a DatetimeIndex.")
+        if 'noncomm_net' not in final_merged_df.columns:
+            raise ValueError("Failed to merge 'noncomm_net'. Check column names in COT input.")
 
-            df = df.copy()
+        # 4. Drop leading NaNs from the start of the COT data
+        return final_merged_df.dropna(subset=cot_cols_to_keep)
+    # --- EXAMPLE USAGE ---
+    # daily_aligned_df = prepare_daily_backtest_data(weekly_cot_df, daily_vix_df)
+    # generator = SignalGenerator(df=daily_aligned_df, ...)
 
-            # Initialize Tracking Columns
-            df['Position'] = np.nan  # 1 for Long, 0 for Flat
-            df['Entry_Price'] = np.nan
-            df['Exit_Price'] = np.nan
-            df['Exit_Date_Target'] = pd.NaT
-            df['P_L'] = 0.0  # Profit/Loss for the day
-            df['Capital'] = initial_capital
+    def run_backtest_simulation(self, df: pd.DataFrame, price_column: str = 'close', initial_capital: float = 100000.0):
+        """
+        Simulates the long-only trading strategy based on BUY/SELL signals and a fixed hold period.
+        Defaults to using the 'close' price column.
+        """
+        df.index = pd.to_datetime(df.index)
+        df = df.sort_index().copy()
 
-            # Simulation State Variables
-            in_position = False
+        df['Position'] = np.nan
+        df['Entry_Price'] = np.nan
+        df['Exit_Price'] = np.nan
+        df['Exit_Date_Target'] = pd.NaT
+        df['P_L'] = 0.0
+        df['Capital'] = initial_capital
 
-            # --- The Core Simulation Loop ---
-            for i in range(len(df)):
-                current_date = df.index[i]
+        in_position = False
 
-                # Carry over capital from the previous day
-                if i > 0:
-                    df.loc[current_date, 'Capital'] = df.iloc[i - 1]['Capital']
+        for i in range(len(df)):
+            current_date = df.index[i]
 
-                # 1. Check for Position Exit
-                if in_position and current_date >= df.loc[df.index[i - 1], 'Exit_Date_Target']:
-                    # Execute SELL based on today's closing price
-                    exit_price = df.loc[current_date, 'VIX_Close']
-                    entry_price = df.loc[df.index[i - 1], 'Entry_Price']  # Look back one row for the entry details
+            if i > 0:
+                df.loc[current_date, 'Capital'] = df.iloc[i - 1]['Capital']
+                if in_position:
+                    # Carry forward position details
+                    df.loc[current_date, 'Position'] = df.iloc[i - 1]['Position']
+                    df.loc[current_date, 'Entry_Price'] = df.iloc[i - 1]['Entry_Price']
+                    df.loc[current_date, 'Exit_Date_Target'] = df.iloc[i - 1]['Exit_Date_Target']
 
-                    # Simple P&L calculation (assuming 1 unit/share for simplicity)
-                    p_l = (exit_price - entry_price)
+            # 1. Exit Logic
+            if in_position and i > 0 and current_date >= df.iloc[i - 1]['Exit_Date_Target']:
+                exit_price = df.loc[current_date, price_column]
+                entry_price = df.iloc[i - 1]['Entry_Price']
+                p_l = (exit_price - entry_price)
 
-                    # Update Capital and Log Trade
-                    df.loc[current_date, 'Capital'] += p_l
-                    df.loc[current_date, 'P_L'] = p_l
-                    df.loc[current_date, 'Exit_Price'] = exit_price
-                    df.loc[current_date, 'Position'] = 0  # Mark position as closed
+                df.loc[current_date, 'Capital'] += p_l
+                df.loc[current_date, 'P_L'] = p_l
+                df.loc[current_date, 'Exit_Price'] = exit_price
+                df.loc[current_date, 'Position'] = 0
+                in_position = False
 
-                    in_position = False
+            # 2. Entry Logic (Long-Only, Max 1 position)
+            elif not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
+                entry_price = df.loc[current_date, price_column]
+                hold_days = df.loc[current_date, 'Hold_Period_Days']
+                exit_date_target = current_date + timedelta(days=hold_days)
 
-                # 2. Check for Position Entry (BUY)
-                elif not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
-                    # Execute BUY based on today's closing price
-                    entry_price = df.loc[current_date, 'VIX_Close']
+                df.loc[current_date, 'Entry_Price'] = entry_price
+                df.loc[current_date, 'Exit_Date_Target'] = exit_date_target
+                df.loc[current_date, 'Position'] = 1
+                in_position = True
 
-                    # Calculate the target exit date
-                    hold_days = df.loc[current_date, 'Hold_Period_Days']
-                    exit_date_target = current_date + timedelta(days=hold_days)  # Needs refinement for trading days
+        return df
 
-                    # Update Position Status
-                    df.loc[current_date, 'Entry_Price'] = entry_price
-                    df.loc[current_date, 'Exit_Date_Target'] = exit_date_target
-                    df.loc[current_date, 'Position'] = 1  # Mark position as open
+    def test_cot_simulation(self):
 
-                    in_position = True
-
-            return df.dropna(subset=['Position'])
-
-
-
-        # Step 1. getting cot and vix prices
+        # prepare data
         print('... Gettingn data ....')
         key = os.environ['FMPREPKEY']
         vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
@@ -188,11 +200,29 @@ class MyTestCase(unittest.TestCase):
         # 2. Run Signal Generator
         print('... Generatign signaldata ....')
         generator = SignalGenerator(res, optimal_lookback)
-        final_df = generator.get_backtest_data()
+        mock_df = generator.get_backtest_data()
+        initial_capital = 100000.0
 
-        # Example usage (assuming 'final_df' contains all data and signal):
-        final_results_df = run_backtest_simulation(final_df)
-        calculate_metrics(final_results_df)
+        # NOTE: Using the default price_column='close'
+        results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
+
+        # --- Assertions ---
+
+        # Verify Entry (Day 1: 2025-01-01)
+        entry_row = results_df.loc['2025-01-01']
+        self.assertEqual(entry_row['Position'], 1, "Position must be 1 (Long) on entry day.")
+        self.assertEqual(entry_row['Entry_Price'], 10.00, "Entry price must be 10.00.")
+        self.assertTrue(entry_row['Exit_Date_Target'] == datetime(2025, 1, 5), "Exit target date must be 2025-01-05.")
+
+        # Verify Exit (Day 5: 2025-01-05)
+        exit_row = results_df.loc['2025-01-05']
+        expected_pnl = 12.00 - 10.00
+
+        self.assertEqual(exit_row['Position'], 0, "Position must be 0 (Closed) on exit day.")
+        self.assertAlmostEqual(exit_row['P_L'], expected_pnl, 4, "P&L must be +2.00.")
+        self.assertAlmostEqual(exit_row['Capital'], initial_capital + expected_pnl, 4,
+                               "Capital must reflect the realized P&L.")
+
 
 
     def test_cot_pipeline(self):
