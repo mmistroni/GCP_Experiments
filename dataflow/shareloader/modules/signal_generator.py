@@ -51,7 +51,7 @@ class SignalGenerator:
         """Creates the final, comprehensive DataFrame needed for backtesting."""
 
         # Start with a copy of the key data
-        df_out = self.df[['noncomm_net', 'open_interest']].copy()
+        df_out = self.df[['noncomm_net', 'open_interest', 'close']].copy()
 
         # Add the calculated index and dynamic thresholds
         df_out['COT_Index'] = self.cot_index_series

@@ -10,7 +10,7 @@ from shareloader.modules.signal_generator import SignalGenerator
 from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSentimentCalculator, AcquireCOTDataFn, \
                                             AcquireVIXDataFn, CalculateSentimentFn, RunCorrelationAnalysisFn,\
                                             FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
-
+from datetime import timedelta
 import pandas as pd
 import numpy as np
 
@@ -163,7 +163,7 @@ class MyTestCase(unittest.TestCase):
             elif not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
                 entry_price = df.loc[current_date, price_column]
                 hold_days = df.loc[current_date, 'Hold_Period_Days']
-                exit_date_target = current_date + timedelta(days=hold_days)
+                exit_date_target = current_date + timedelta(days=int(hold_days))
 
                 df.loc[current_date, 'Entry_Price'] = entry_price
                 df.loc[current_date, 'Exit_Date_Target'] = exit_date_target
@@ -203,14 +203,13 @@ class MyTestCase(unittest.TestCase):
         print('... Generatign signaldata ....')
         generator = SignalGenerator(res, optimal_lookback)
         mock_df = generator.get_backtest_data()
-        return
+
         initial_capital = 100000.0
 
         # NOTE: Using the default price_column='close'
         results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
 
         # --- Assertions ---
-
         # Verify Entry (Day 1: 2025-01-01)
         entry_row = results_df.loc['2025-01-01']
         self.assertEqual(entry_row['Position'], 1, "Position must be 1 (Long) on entry day.")
