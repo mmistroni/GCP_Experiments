@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/marketstats_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -267,10 +268,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" />
-        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
       </list>
     </recent_temporary>
   </component>
@@ -289,30 +290,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00549" summary="adding genai handler and updated dependencies">
-      <option name="closed" value="true" />
-      <created>1760071123019</created>
-      <option name="number" value="00549" />
-      <option name="presentableId" value="LOCAL-00549" />
-      <option name="project" value="LOCAL" />
-      <updated>1760071123019</updated>
-    </task>
-    <task id="LOCAL-00550" summary="adding genai handler and updated dependencies">
-      <option name="closed" value="true" />
-      <created>1760071162632</created>
-      <option name="number" value="00550" />
-      <option name="presentableId" value="LOCAL-00550" />
-      <option name="project" value="LOCAL" />
-      <updated>1760071162632</updated>
-    </task>
-    <task id="LOCAL-00551" summary="adding genai handler and updated dependencies">
-      <option name="closed" value="true" />
-      <created>1760072203742</created>
-      <option name="number" value="00551" />
-      <option name="presentableId" value="LOCAL-00551" />
-      <option name="project" value="LOCAL" />
-      <updated>1760072203742</updated>
     </task>
     <task id="LOCAL-00552" summary="replacing genai">
       <option name="closed" value="true" />
@@ -682,7 +659,31 @@
       <option name="project" value="LOCAL" />
       <updated>1762969742207</updated>
     </task>
-    <option name="localTasksCounter" value="598" />
+    <task id="LOCAL-00598" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1762969824147</created>
+      <option name="number" value="00598" />
+      <option name="presentableId" value="LOCAL-00598" />
+      <option name="project" value="LOCAL" />
+      <updated>1762969824147</updated>
+    </task>
+    <task id="LOCAL-00599" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763288315615</created>
+      <option name="number" value="00599" />
+      <option name="presentableId" value="LOCAL-00599" />
+      <option name="project" value="LOCAL" />
+      <updated>1763288315616</updated>
+    </task>
+    <task id="LOCAL-00600" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763288732647</created>
+      <option name="number" value="00600" />
+      <option name="presentableId" value="LOCAL-00600" />
+      <option name="project" value="LOCAL" />
+      <updated>1763288732647</updated>
+    </task>
+    <option name="localTasksCounter" value="601" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1099,12 +1100,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>1104</line>
+          <line>1103</line>
           <option name="timeStamp" value="333" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
-          <line>1114</line>
+          <line>1113</line>
           <option name="timeStamp" value="334" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1149,43 +1150,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>235</line>
-          <option name="timeStamp" value="374" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
           <line>41</line>
           <option name="timeStamp" value="380" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>126</line>
-          <option name="timeStamp" value="382" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>203</line>
-          <option name="timeStamp" value="386" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>206</line>
-          <option name="timeStamp" value="387" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>79</line>
-          <option name="timeStamp" value="391" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="395" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>83</line>
-          <option name="timeStamp" value="397" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

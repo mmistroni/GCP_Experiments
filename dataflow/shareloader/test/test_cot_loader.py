@@ -209,6 +209,8 @@ class MyTestCase(unittest.TestCase):
         # NOTE: Using the default price_column='close'
         results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
 
+        results_df.to_csv('c:/Temp/VIXPNL.csv')
+
         # --- Calculating and Printing Final P&L ---
         # 1. Get the final value from the last row of the 'Capital' column
         final_capital = results_df['Capital'].iloc[-1]

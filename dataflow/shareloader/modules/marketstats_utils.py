@@ -1044,7 +1044,6 @@ class AsyncEconomicCalendar(beam.DoFn):
 
 
 import pandas as pd
-import matplotlib.pyplot as plt
 
 
 class SentimentCalculator:
@@ -1118,64 +1117,3 @@ class SentimentCalculator:
             print(f"\nAn error occurred during data processing: {e}")
             return None
 
-    @staticmethod
-    def plot_cot_vix_relationship(analysis_df: pd.DataFrame, file_name: str = 'cot_vix_plot.png'):
-        """
-        Generates a dual-axis plot showing VIX Close Price and COT Percentile Rank,
-        marking extreme Percentile Rank levels (5%, 50%, 95%) for guidance.
-        """
-        if analysis_df.empty:
-            print("Cannot plot: Input DataFrame is empty.")
-            return
-
-        fig, ax1 = plt.subplots(figsize=(14, 7))
-
-        # --- Primary Axis: VIX Closing Price (Blue Line) ---
-        color_vix = 'tab:blue'
-        ax1.set_xlabel('Date')
-        ax1.set_ylabel('VIX Close Price', color=color_vix, fontweight='bold')
-        ax1.plot(analysis_df.index, analysis_df['VIX_Close'], color=color_vix, label='VIX Close Price', linewidth=2)
-        ax1.tick_params(axis='y', labelcolor=color_vix)
-        ax1.grid(True, linestyle='--', alpha=0.6)
-
-        # --- Secondary Axis: COT Percentile Rank (Red Dashed Line) ---
-        ax2 = ax1.twinx()
-        color_cot = 'tab:red'
-        ax2.set_ylabel('COT Percentile Rank (Sentiment)', color=color_cot, fontweight='bold')
-        ax2.plot(analysis_df.index, analysis_df['Percentile_Rank'], color=color_cot, linestyle='--',
-                 label='COT Percentile Rank', linewidth=1.5, alpha=0.7)
-        ax2.tick_params(axis='y', labelcolor=color_cot)
-
-        # Set COT Percentile Rank (ax2) limits from 0 to 1 for visual clarity
-        ax2.set_ylim(0, 1)
-
-        # --- Marking Extremes on Secondary Axis (Percentile Rank) ---
-
-        # Extreme High Sentiment (95% - Historically Bearish for VIX, Bullish for S&P 500)
-        ax2.axhline(y=0.95, color='darkred', linestyle='-', linewidth=1, alpha=0.9, label='95% Extreme High Sentiment')
-        ax2.text(analysis_df.index[-1], 0.95, 'Extreme High (95%)', color='darkred', ha='right', va='bottom',
-                 fontsize=9, bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
-
-        # Neutral Level
-        ax2.axhline(y=0.50, color='gray', linestyle=':', linewidth=1, alpha=0.7, label='50% Neutral')
-
-        # Extreme Low Sentiment (5% - Historically Bullish for VIX, Bearish for S&P 500)
-        ax2.axhline(y=0.05, color='darkgreen', linestyle='-', linewidth=1, alpha=0.9, label='5% Extreme Low Sentiment')
-        ax2.text(analysis_df.index[-1], 0.05, 'Extreme Low (5%)', color='darkgreen', ha='right', va='top', fontsize=9,
-                 bbox=dict(facecolor='white', alpha=0.7, edgecolor='none'))
-
-        # --- Final Plot Aesthetics ---
-
-        # Title and legend
-        plt.title('VIX Price vs. COT Non-Commercial Net Position Percentile Rank', fontweight='bold', pad=15)
-
-        # Combine legends from both axes
-        lines, labels = ax1.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        ax2.legend(lines + lines2, labels + labels2, loc='upper left', frameon=True, fontsize='small')
-
-        # Save and show
-        plt.tight_layout()
-        plt.savefig(file_name)
-        plt.show()
-        print(f"\nPlot generated and saved to {file_name}")
