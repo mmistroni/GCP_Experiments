@@ -119,59 +119,123 @@ class MyTestCase(unittest.TestCase):
     # daily_aligned_df = prepare_daily_backtest_data(weekly_cot_df, daily_vix_df)
     # generator = SignalGenerator(df=daily_aligned_df, ...)
 
-    def run_backtest_simulation(self, df: pd.DataFrame, price_column: str = 'close', initial_capital: float = 100000.0):
+    def run_backtest_simulation(self, df: pd.DataFrame, price_column: str = 'close',
+                                             initial_capital: float = 10000.0,
+                                             trailing_stop_pct: float = 0.10, take_profit_pct: float = 0.20,
+                                             position_sizing_ratio: float = 1.0, commission_per_unit: float = 0.01):
         """
-        Simulates the long-only trading strategy based on BUY/SELL signals and a fixed hold period.
-        Defaults to using the 'close' price column.
+        Simulates the long-only trading strategy incorporating Trailing Stop-Loss and
+        a PERCENTAGE-BASED Take Profit (take_profit_pct) that scales with entry price.
+
+        :param take_profit_pct: Percentage gain from entry price to trigger exit (e.g., 0.30 for 30%).
         """
+        from datetime import timedelta
+        import numpy as np
+
         df.index = pd.to_datetime(df.index)
         df = df.sort_index().copy()
 
-        df['Position'] = np.nan
-        df['Entry_Price'] = np.nan
-        df['Exit_Price'] = np.nan
-        df['Exit_Date_Target'] = pd.NaT
-        df['P_L'] = 0.0
+        # Initialize new tracking columns
+        df['Position_Size'] = 0.0
+        df['Realized_P_L'] = 0.0
         df['Capital'] = initial_capital
+        df['Peak_Price_in_Position'] = np.nan
+        df['Exit_Reason'] = None
 
+        # Position State Variables
         in_position = False
+        units_held = 0.0
+        entry_price = 0.0
+        exit_date_target = pd.NaT
+        peak_price = 0.0
+
+        if not df.empty:
+            df.loc[df.index[0], 'Capital'] = initial_capital
+
+        # Pre-populate capital
+        for i in range(1, len(df)):
+            df.loc[df.index[i], 'Capital'] = df.loc[df.index[i - 1], 'Capital']
 
         for i in range(len(df)):
             current_date = df.index[i]
+            current_price = df.loc[current_date, price_column]
 
             if i > 0:
-                df.loc[current_date, 'Capital'] = df.iloc[i - 1]['Capital']
-                if in_position:
-                    # Carry forward position details
-                    df.loc[current_date, 'Position'] = df.iloc[i - 1]['Position']
-                    df.loc[current_date, 'Entry_Price'] = df.iloc[i - 1]['Entry_Price']
-                    df.loc[current_date, 'Exit_Date_Target'] = df.iloc[i - 1]['Exit_Date_Target']
+                df.loc[current_date, 'Position_Size'] = units_held
+                df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
-            # 1. Exit Logic
-            if in_position and i > 0 and current_date >= df.iloc[i - 1]['Exit_Date_Target']:
-                exit_price = df.loc[current_date, price_column]
-                entry_price = df.iloc[i - 1]['Entry_Price']
-                p_l = (exit_price - entry_price)
+            # --- Exit Check & Logic ---
+            exit_reason = None
+            if in_position:
+                # 1. Update Peak Price for TSL
+                peak_price = max(peak_price, current_price)
+                df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
-                df.loc[current_date, 'Capital'] += p_l
-                df.loc[current_date, 'P_L'] = p_l
-                df.loc[current_date, 'Exit_Price'] = exit_price
-                df.loc[current_date, 'Position'] = 0
-                in_position = False
+                # Determine exit triggers
+                tsl_trigger = peak_price * (1.0 - trailing_stop_pct)
+                tp_trigger_price = entry_price * (1.0 + take_profit_pct)  # NEW TP CALCULATION
 
-            # 2. Entry Logic (Long-Only, Max 1 position)
-            elif not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
-                entry_price = df.loc[current_date, price_column]
+                # 1. Check Trailing Stop-Loss (Highest Priority - Safety Net)
+                if current_price <= tsl_trigger:
+                    exit_reason = 'TSL'
+
+                # 2. Check Take Profit Target (Percentage Gain - Capture Spikes)
+                elif current_price >= tp_trigger_price:
+                    exit_reason = 'TP'
+
+                # 3. Check Time-Based Exit (Soft Target with Loss-Aversion Overlay)
+                elif current_date >= exit_date_target:
+                    if current_price > entry_price:
+                        exit_reason = 'Time'
+
+                # Execute Exit if a reason is found
+                if exit_reason:
+                    exit_price = current_price
+
+                    # Calculate P&L
+                    gross_p_l = (exit_price - entry_price) * units_held
+                    total_commission = units_held * commission_per_unit
+                    net_p_l = gross_p_l - total_commission
+
+                    # Update Capital and Tracking
+                    df.loc[current_date, 'Capital'] += net_p_l
+                    df.loc[current_date, 'Realized_P_L'] = net_p_l
+                    df.loc[current_date, 'Exit_Reason'] = exit_reason
+
+                    # Reset position state
+                    in_position = False
+                    units_held = 0.0
+                    entry_price = 0.0
+                    peak_price = 0.0
+
+            # --- Entry Logic (Long-Only) ---
+            if not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
+                entry_price = current_price
+                capital_to_risk = df.loc[current_date, 'Capital'] * position_sizing_ratio
+                units_held = capital_to_risk / (entry_price + 1e-9)
+
+                df.loc[current_date, 'Position_Size'] = units_held
+                df.loc[current_date, 'Entry_Price'] = entry_price
+
                 hold_days = df.loc[current_date, 'Hold_Period_Days']
                 exit_date_target = current_date + timedelta(days=int(hold_days))
 
-                df.loc[current_date, 'Entry_Price'] = entry_price
-                df.loc[current_date, 'Exit_Date_Target'] = exit_date_target
-                df.loc[current_date, 'Position'] = 1
                 in_position = True
+                peak_price = entry_price
+
+                # --- FINAL LIQUIDATION LOGIC ---
+        if in_position:
+            final_date = df.index[-1]
+            final_price = df.loc[final_date, price_column]
+
+            gross_p_l = (final_price - entry_price) * units_held
+            total_commission = units_held * commission_per_unit
+            net_p_l = gross_p_l - total_commission
+
+            df.loc[final_date, 'Capital'] += net_p_l
+            df.loc[final_date, 'Realized_P_L'] += net_p_l
 
         return df
-
     def test_cot_simulation(self):
 
 
