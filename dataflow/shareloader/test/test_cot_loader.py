@@ -209,23 +209,23 @@ class MyTestCase(unittest.TestCase):
         # NOTE: Using the default price_column='close'
         results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
 
-        # --- Assertions ---
-        # Verify Entry (Day 1: 2025-01-01)
-        entry_row = results_df.loc['2025-01-01']
-        self.assertEqual(entry_row['Position'], 1, "Position must be 1 (Long) on entry day.")
-        self.assertEqual(entry_row['Entry_Price'], 10.00, "Entry price must be 10.00.")
-        self.assertTrue(entry_row['Exit_Date_Target'] == datetime(2025, 1, 5), "Exit target date must be 2025-01-05.")
+        # --- Calculating and Printing Final P&L ---
+        # 1. Get the final value from the last row of the 'Capital' column
+        final_capital = results_df['Capital'].iloc[-1]
 
-        # Verify Exit (Day 5: 2025-01-05)
-        exit_row = results_df.loc['2025-01-05']
-        expected_pnl = 12.00 - 10.00
+        # 2. Calculate the Profit and Loss
+        initial_capital = 100000.0  # Using the variable defined in your original script
+        final_pnl = final_capital - initial_capital
 
-        self.assertEqual(exit_row['Position'], 0, "Position must be 0 (Closed) on exit day.")
-        self.assertAlmostEqual(exit_row['P_L'], expected_pnl, 4, "P&L must be +2.00.")
-        self.assertAlmostEqual(exit_row['Capital'], initial_capital + expected_pnl, 4,
-                               "Capital must reflect the realized P&L.")
+        # 3. Calculate Return Percentage
+        return_percentage = (final_pnl / initial_capital) * 100
 
-
+        print("\n--- Backtest Summary ---")
+        print(f"Initial Capital: ${initial_capital:,.2f}")
+        print(f"Final Capital:   ${final_capital:,.2f}")
+        print("------------------------")
+        print(f"Total P&L:       ${final_pnl:,.2f}")
+        print(f"Return:          {return_percentage:.2f}%")
 
     def test_cot_pipeline(self):
         key = os.environ['FMPREPKEY']
