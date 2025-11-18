@@ -10,6 +10,9 @@ from shareloader.modules.signal_generator import SignalGenerator
 from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSentimentCalculator, AcquireCOTDataFn, \
                                             AcquireVIXDataFn, CalculateSentimentFn, RunCorrelationAnalysisFn,\
                                             FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
+
+import pandas as pd
+
 from datetime import timedelta
 import pandas as pd
 import numpy as np
@@ -26,6 +29,217 @@ def get_historical_prices(ticker, start_date, key):
 def get_latest_cot():
     # async process
     return obb.regulators.cftc.cot(id='1170E1', provider='cftc')
+
+
+import pandas as pd
+import numpy as np
+from datetime import timedelta
+from pydantic import BaseModel, Field
+
+
+# ----------------------------------------------------
+# 1. PARAMETER MODEL (The 'Pydantic' Component)
+# ----------------------------------------------------
+class BacktestParameters(BaseModel):
+    """Defines and validates the key parameters for the backtest."""
+    price_column: str = 'close'
+    initial_capital: float = Field(10000.0, gt=0, description="Starting cash.")
+    trailing_stop_pct: float = Field(0.10, gt=0, lt=1, description="Percentage for TSL.")
+    take_profit_pct: float = Field(0.20, gt=0, lt=1, description="Percentage for TP.")
+    # FIX: Max % of capital to risk per trade (Addresses Max Drawdown)
+    max_risk_pct: float = Field(0.015, gt=0, lt=1, description="Max % of capital to risk per trade (the fix).")
+    commission_per_unit: float = Field(0.01, ge=0, description="Commission per unit traded.")
+
+
+# ----------------------------------------------------
+# 2. STRATEGY AND TRADE SIZING ENGINE
+# ----------------------------------------------------
+def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float,
+                   params: BacktestParameters):
+    """
+    Determines entry signal, calculates position size, and checks exit conditions.
+
+    :returns: (action: str, units_to_trade: float, exit_reason: str or None)
+    """
+
+    # --- Entry Logic (Signal and Sizing) ---
+    if not in_position and current_row['Trade_Signal'] == 'BUY':
+
+        # FIX: Risk-Based Position Sizing
+        max_dollar_risk = current_capital * params.max_risk_pct
+        stop_loss_distance_per_unit = current_row[params.price_column] * params.trailing_stop_pct
+
+        # Calculate units: (Max Dollar Risk) / (Loss per Unit)
+        units_held = max_dollar_risk / (stop_loss_distance_per_unit + 1e-9)
+
+        return 'BUY', units_held, None
+
+    # --- Exit Logic ---
+    elif in_position:
+        peak_price = current_row['Peak_Price_in_Position'] if 'Peak_Price_in_Position' in current_row and not np.isnan(
+            current_row['Peak_Price_in_Position']) else entry_price
+        current_price = current_row[params.price_column]
+
+        tsl_trigger = peak_price * (1.0 - params.trailing_stop_pct)
+        tp_trigger_price = entry_price * (1.0 + params.take_profit_pct)
+
+        # 1. Trailing Stop-Loss
+        if current_price <= tsl_trigger:
+            return 'EXIT', 0.0, 'TSL'
+
+        # 2. Take Profit
+        elif current_price >= tp_trigger_price:
+            return 'EXIT', 0.0, 'TP'
+
+        # 3. Time-Based Exit (RESTORED: Only exit on time if profitable)
+        elif current_row.name >= current_row['Exit_Date_Target']:
+            # The original rule is now enforced: only exit if we've captured gains
+            if current_price > entry_price:
+                return 'EXIT', 0.0, 'Time'
+
+    return 'NEUTRAL', 0.0, None
+
+
+# ----------------------------------------------------
+# 3. MAIN SIMULATION ENGINE
+# ----------------------------------------------------
+def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.DataFrame:
+    """Main loop for backtesting, calling the StrategyEngine for decisions."""
+    df = df.sort_index().copy()
+
+    # Pre-calculate Exit Date Target
+    df['Exit_Date_Target'] = df.index + pd.to_timedelta(df['Hold_Period_Days'], unit='D')
+
+    # Initialize tracking columns
+    df['Position_Size'] = 0.0
+    df['Realized_P_L'] = 0.0
+    df['Capital'] = params.initial_capital
+    df['Peak_Price_in_Position'] = np.nan
+    df['Exit_Reason'] = None
+    df['Entry_Price'] = np.nan
+
+    # Position State Variables
+    in_position = False
+    units_held = 0.0
+    entry_price = 0.0
+    peak_price = 0.0
+
+    # ... (Initialization and Loop Logic as before) ...
+    if not df.empty:
+        df.loc[df.index[0], 'Capital'] = params.initial_capital
+        for i in range(1, len(df)):
+            df.loc[df.index[i], 'Capital'] = df.loc[df.index[i - 1], 'Capital']
+
+    for i in range(len(df)):
+        current_date = df.index[i]
+        current_row = df.loc[current_date]
+        current_price = current_row[params.price_column]
+
+        if i > 0:
+            df.loc[current_date, 'Position_Size'] = units_held
+            df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
+
+        # Update Peak Price if in position
+        if in_position:
+            peak_price = max(peak_price, current_price)
+            df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
+
+        # --- Call External Strategy Engine for Decision ---
+        action, units_to_trade, exit_reason = StrategyEngine(current_row, df.loc[current_date, 'Capital'],
+                                                             in_position, entry_price, params)
+
+        # --- Execute Actions (Entry/Exit) ---
+        if action == 'EXIT':
+            exit_price = current_price
+
+            gross_p_l = (exit_price - entry_price) * units_held
+            total_commission = units_held * params.commission_per_unit
+            net_p_l = gross_p_l - total_commission
+
+            df.loc[current_date, 'Capital'] += net_p_l
+            df.loc[current_date, 'Realized_P_L'] = net_p_l
+            df.loc[current_date, 'Exit_Reason'] = exit_reason
+
+            in_position = False
+            units_held = 0.0
+            entry_price = 0.0
+            peak_price = 0.0
+
+        elif action == 'BUY' and not in_position:
+            units_held = units_to_trade
+            entry_price = current_price
+
+            df.loc[current_date, 'Position_Size'] = units_held
+            df.loc[current_date, 'Entry_Price'] = entry_price
+
+            in_position = True
+            peak_price = entry_price
+
+    # --- FINAL LIQUIDATION LOGIC ---
+    if in_position:
+        final_date = df.index[-1]
+        final_price = df.loc[final_date, params.price_column]
+
+        gross_p_l = (final_price - entry_price) * units_held
+        total_commission = units_held * params.commission_per_unit
+        net_p_l = gross_p_l - total_commission
+
+        df.loc[final_date, 'Capital'] += net_p_l
+        df.loc[final_date, 'Realized_P_L'] += net_p_l
+
+    return df
+
+
+# ----------------------------------------------------
+# 4. P&L REPORTING FUNCTION (Externalized Metrics)
+# ----------------------------------------------------
+def calculate_backtest_metrics(df: pd.DataFrame) -> dict:
+    """Calculates key performance metrics from the simulation results DataFrame."""
+
+    # Filter closed trades
+    closed_trades = df[df['Realized_P_L'].abs() > 0.0001].copy()
+
+    if df.empty or len(closed_trades) == 0:
+        return {'Error': 'No trades executed or DataFrame is empty.'}
+
+    # Capital and P&L
+    initial_capital = df['Capital'].iloc[0]
+    final_capital = df['Capital'].iloc[-1]
+    total_pnl = final_capital - initial_capital
+
+    # Max Drawdown
+    peak_capital = df['Capital'].expanding().max()
+    drawdown = (peak_capital - df['Capital']) / peak_capital
+    max_drawdown = drawdown.max() * 100
+
+    # Win/Loss Metrics
+    win_trades = closed_trades[closed_trades['Realized_P_L'] > 0]
+    loss_trades = closed_trades[closed_trades['Realized_P_L'] < 0]
+
+    win_rate = len(win_trades) / len(closed_trades) * 100
+    avg_win = win_trades['Realized_P_L'].mean()
+    avg_loss = loss_trades['Realized_P_L'].mean()
+
+    # Risk/Reward Ratio
+    risk_reward_ratio = abs(avg_win / avg_loss) if avg_loss is not None and avg_loss != 0 else np.nan
+
+    metrics = {
+        'Initial Capital': initial_capital,
+        'Final Capital': final_capital,
+        'Total P&L': total_pnl,
+        'Max Drawdown (%)': max_drawdown,
+        'Total Closed Trades': len(closed_trades),
+        'Win Rate (%)': win_rate,
+        'Average Win ($)': avg_win,
+        'Average Loss ($)': avg_loss,
+        'Risk/Reward Ratio (AW/AL)': risk_reward_ratio,
+        'Max Drawdown Date': df['Capital'].idxmin().strftime('%Y-%m-%d')
+    }
+
+    return metrics
+
+
+
 
 
 class MyTestCase(unittest.TestCase):
@@ -63,23 +277,6 @@ class MyTestCase(unittest.TestCase):
         generator = SignalGenerator(res, optimal_lookback)
         signal = generator.get_current_signal()
         print(signal)
-
-    import pandas as pd
-    import numpy as np
-    from datetime import timedelta
-
-    # --- ASSUMED INPUT DATA (REPLACE WITH YOUR ACTUAL LOADED DATA) ---
-    # cot_df: DataFrame with Date index and columns like 'noncomm_positions_long_all', 'noncomm_positions_short_all'
-    # vix_df: DataFrame with Date index and daily 'VIX_Close' price
-
-    import pandas as pd
-    import numpy as np
-    from datetime import timedelta
-
-    # --- ASSUMED INPUT DATA ---
-    # cot_df: DataFrame with Date index and columns like 'noncomm_positions_long_all',
-    #         'noncomm_positions_short_all' (used to calculate noncomm_net)
-    # vix_df: DataFrame with Date index and daily 'VIX_Close' price
 
     def prepare_daily_backtest_data(self, cot_df: pd.DataFrame, vix_df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -119,7 +316,7 @@ class MyTestCase(unittest.TestCase):
     # daily_aligned_df = prepare_daily_backtest_data(weekly_cot_df, daily_vix_df)
     # generator = SignalGenerator(df=daily_aligned_df, ...)
 
-    def run_backtest_simulation(self, df: pd.DataFrame, price_column: str = 'close',
+    def run_backtest_simulation(self, mock_df: pd.DataFrame, price_column: str = 'close',
                                              initial_capital: float = 10000.0,
                                              trailing_stop_pct: float = 0.10, take_profit_pct: float = 0.20,
                                              position_sizing_ratio: float = 1.0, commission_per_unit: float = 0.01):
@@ -129,113 +326,23 @@ class MyTestCase(unittest.TestCase):
 
         :param take_profit_pct: Percentage gain from entry price to trigger exit (e.g., 0.30 for 30%).
         """
-        from datetime import timedelta
-        import numpy as np
+        # Example of how you would kick off the backtest:
 
-        df.index = pd.to_datetime(df.index)
-        df = df.sort_index().copy()
+        # 1. (Assume mock_df is your loaded price data)
+        #params = BacktestParameters(initial_capital=20000.0, max_risk_pct=0.015)
+        pa
+        # 2. Run the simulation
+        results_df = run_simulation_engine(mock_df, params)
 
-        # Initialize new tracking columns
-        df['Position_Size'] = 0.0
-        df['Realized_P_L'] = 0.0
-        df['Capital'] = initial_capital
-        df['Peak_Price_in_Position'] = np.nan
-        df['Exit_Reason'] = None
+        # 3. Calculate metrics
+        final_metrics = calculate_backtest_metrics(results_df)
 
-        # Position State Variables
-        in_position = False
-        units_held = 0.0
-        entry_price = 0.0
-        exit_date_target = pd.NaT
-        peak_price = 0.0
+        print(final_metrics)
 
-        if not df.empty:
-            df.loc[df.index[0], 'Capital'] = initial_capital
+        results_df.to_csv('c:/Temp/VIX_NewBacktest.csv')
 
-        # Pre-populate capital
-        for i in range(1, len(df)):
-            df.loc[df.index[i], 'Capital'] = df.loc[df.index[i - 1], 'Capital']
 
-        for i in range(len(df)):
-            current_date = df.index[i]
-            current_price = df.loc[current_date, price_column]
 
-            if i > 0:
-                df.loc[current_date, 'Position_Size'] = units_held
-                df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
-
-            # --- Exit Check & Logic ---
-            exit_reason = None
-            if in_position:
-                # 1. Update Peak Price for TSL
-                peak_price = max(peak_price, current_price)
-                df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
-
-                # Determine exit triggers
-                tsl_trigger = peak_price * (1.0 - trailing_stop_pct)
-                tp_trigger_price = entry_price * (1.0 + take_profit_pct)  # NEW TP CALCULATION
-
-                # 1. Check Trailing Stop-Loss (Highest Priority - Safety Net)
-                if current_price <= tsl_trigger:
-                    exit_reason = 'TSL'
-
-                # 2. Check Take Profit Target (Percentage Gain - Capture Spikes)
-                elif current_price >= tp_trigger_price:
-                    exit_reason = 'TP'
-
-                # 3. Check Time-Based Exit (Soft Target with Loss-Aversion Overlay)
-                elif current_date >= exit_date_target:
-                    if current_price > entry_price:
-                        exit_reason = 'Time'
-
-                # Execute Exit if a reason is found
-                if exit_reason:
-                    exit_price = current_price
-
-                    # Calculate P&L
-                    gross_p_l = (exit_price - entry_price) * units_held
-                    total_commission = units_held * commission_per_unit
-                    net_p_l = gross_p_l - total_commission
-
-                    # Update Capital and Tracking
-                    df.loc[current_date, 'Capital'] += net_p_l
-                    df.loc[current_date, 'Realized_P_L'] = net_p_l
-                    df.loc[current_date, 'Exit_Reason'] = exit_reason
-
-                    # Reset position state
-                    in_position = False
-                    units_held = 0.0
-                    entry_price = 0.0
-                    peak_price = 0.0
-
-            # --- Entry Logic (Long-Only) ---
-            if not in_position and df.loc[current_date, 'Trade_Signal'] == 'BUY':
-                entry_price = current_price
-                capital_to_risk = df.loc[current_date, 'Capital'] * position_sizing_ratio
-                units_held = capital_to_risk / (entry_price + 1e-9)
-
-                df.loc[current_date, 'Position_Size'] = units_held
-                df.loc[current_date, 'Entry_Price'] = entry_price
-
-                hold_days = df.loc[current_date, 'Hold_Period_Days']
-                exit_date_target = current_date + timedelta(days=int(hold_days))
-
-                in_position = True
-                peak_price = entry_price
-
-                # --- FINAL LIQUIDATION LOGIC ---
-        if in_position:
-            final_date = df.index[-1]
-            final_price = df.loc[final_date, price_column]
-
-            gross_p_l = (final_price - entry_price) * units_held
-            total_commission = units_held * commission_per_unit
-            net_p_l = gross_p_l - total_commission
-
-            df.loc[final_date, 'Capital'] += net_p_l
-            df.loc[final_date, 'Realized_P_L'] += net_p_l
-
-        return df
     def test_cot_simulation(self):
 
 
@@ -273,6 +380,7 @@ class MyTestCase(unittest.TestCase):
         # NOTE: Using the default price_column='close'
         results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
 
+        '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')
 
         # --- Calculating and Printing Final P&L ---
@@ -291,7 +399,7 @@ class MyTestCase(unittest.TestCase):
         print("------------------------")
         print(f"Total P&L:       ${final_pnl:,.2f}")
         print(f"Return:          {return_percentage:.2f}%")
-
+        '''
     def test_cot_pipeline(self):
         key = os.environ['FMPREPKEY']
         sink = beam.Map(print)
