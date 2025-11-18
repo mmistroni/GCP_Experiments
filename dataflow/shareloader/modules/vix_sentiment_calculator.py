@@ -67,8 +67,8 @@ class VixSentimentCalculator:
         if 'close' not in vix_df.columns:
             raise ValueError("VIX DataFrame must contain a 'close' column (lowercase).")
 
-        vix_df['date'] = pd.to_datetime(vix_df['date'])
-        vix_df = vix_df.set_index('date').sort_index()
+        #vix_df['date'] = pd.to_datetime(vix_df['date'])
+        vix_df = vix_df.sort_index()
         vix_df = vix_df.rename(columns={'close': 'VIX_close'})
 
         # Keep only the daily VIX price
@@ -91,7 +91,7 @@ class VixSentimentCalculator:
         spx_df['SPX_10D_Change'] = spx_df['SPX_close'].pct_change(10)
 
         # Keep the daily SPX price and the momentum filter
-        return spx_df[['date', 'SPX_close', 'SPX_10D_Change']]
+        return spx_df[['SPX_close', 'SPX_10D_Change']]
 
     # --- Calculation (Unchanged) ---
     def _calculate_cot_index(self, vix_cot_df: pd.DataFrame) -> pd.DataFrame:
