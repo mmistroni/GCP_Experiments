@@ -6,7 +6,7 @@ from apache_beam.testing.test_pipeline import TestPipeline
 import apache_beam as beam
 from openbb import obb
 from shareloader.modules.correlation_analyzer import CorrelationAnalyzer, find_smallest_correlation
-from shareloader.modules.signal_generator import SignalGenerator
+from shareloader.modules.signal_generator import SignalGenerator, DualFactorSignalGenerator
 from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSentimentCalculator, AcquireCOTDataFn, \
                                             AcquireVIXDataFn, CalculateSentimentFn, RunCorrelationAnalysisFn,\
                                             FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
@@ -54,6 +54,7 @@ class BacktestParameters(BaseModel):
 # ----------------------------------------------------
 # 2. STRATEGY AND TRADE SIZING ENGINE
 # ----------------------------------------------------
+COT_SPIKE_FILTER = 10.0
 def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float,
                    params: BacktestParameters):
     """
@@ -63,7 +64,10 @@ def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: 
     """
 
     # --- Entry Logic (Signal and Sizing) ---
-    if not in_position and current_row['Trade_Signal'] == 'BUY':
+    # --- Entry Logic Amendment ---
+    if not in_position and \
+            current_row['Trade_Signal'] == 'BUY' and \
+            current_row['COT_Index'] >= COT_SPIKE_FILTER:
 
         # FIX: Risk-Based Position Sizing
         max_dollar_risk = current_capital * params.max_risk_pct
@@ -329,8 +333,14 @@ class MyTestCase(unittest.TestCase):
         # Example of how you would kick off the backtest:
 
         # 1. (Assume mock_df is your loaded price data)
-        #params = BacktestParameters(initial_capital=20000.0, max_risk_pct=0.015)
-        pa
+        params = params = params = BacktestParameters(
+                initial_capital=initial_capital,
+                trailing_stop_pct=0.10,  # TSL 10%
+                take_profit_pct=0.50,    # TP 50%
+                max_risk_pct=0.040,      # Max Risk 4.0%
+                # commission_per_unit uses your default
+            )
+
         # 2. Run the simulation
         results_df = run_simulation_engine(mock_df, params)
 
@@ -350,11 +360,13 @@ class MyTestCase(unittest.TestCase):
         print('... Gettingn data ....')
         key = os.environ['FMPREPKEY']
         vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
+        spx_prices = get_historical_prices('^GSPC', datetime.date(2004, 7, 20), key)
+
         cot_df = get_latest_cot()
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
-        res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df)
+        res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
         res['close'] = res['vix_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
@@ -378,7 +390,7 @@ class MyTestCase(unittest.TestCase):
         initial_capital = 20000.0
 
         # NOTE: Using the default price_column='close'
-        results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
+        self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
 
         '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')

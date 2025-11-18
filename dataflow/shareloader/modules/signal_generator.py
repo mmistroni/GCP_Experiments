@@ -110,3 +110,117 @@ class SignalGenerator:
         print("Expected Trade Duration: 12 Weeks (60 Trading Days)")
 
         return latest_cot_index, signal
+
+
+import pandas as pd
+import numpy as np
+
+
+class DualFactorSignalGenerator:
+    """
+    Generates VIX long/short trading signals based on a Dual-Factor Strategy:
+    1. VIX COT Index (Extreme Sentiment)
+    2. SPX 10-Day Momentum (Market Shock Filter)
+
+    This class encapsulates the strategy logic and configurable thresholds.
+    """
+
+    def __init__(
+            self,
+            cot_buy_threshold: float = 10.0,
+            spx_shock_threshold: float = -0.010,  # -1.0% drop over 10 days
+            cot_sell_threshold: float = 90.0,
+            spx_rally_threshold: float = 0.005  # 0.5% rally over 10 days (currently unused for entry)
+    ):
+        """
+        Initializes the signal generator with key strategy parameters.
+
+        Args:
+            cot_buy_threshold (float): VIX COT Index level (e.g., 10.0 for 10th percentile)
+                                       to trigger the extreme BUY sentiment condition.
+            spx_shock_threshold (float): Negative SPX 10-Day Change (%) required to confirm
+                                         a market 'shock' (e.g., -0.010 for -1.0%).
+            cot_sell_threshold (float): VIX COT Index level to trigger a SELL signal.
+            spx_rally_threshold (float): Positive SPX 10-Day Change (%) used for exit logic
+                                         or other strategies.
+        """
+        self.cot_buy_threshold = cot_buy_threshold
+        self.spx_shock_threshold = spx_shock_threshold
+        self.cot_sell_threshold = cot_sell_threshold
+        self.spx_rally_threshold = spx_rally_threshold
+
+    def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the Dual-Factor VIX Trading Strategy signals to the prepared daily data.
+
+        A BUY signal for VIX (long S&P Volatility) requires two simultaneous conditions:
+        1. Extreme Contrarian VIX COT Sentiment (VIX COT Index <= cot_buy_threshold)
+        2. Recent S&P 500 Price Shock (SPX 10D Change <= spx_shock_threshold)
+
+        Args:
+            df (pd.DataFrame): The prepared daily DataFrame (must contain 'vix_cot_index'
+                               and 'SPX_10D_Change').
+
+        Returns:
+            pd.DataFrame: DataFrame with the 'Trade_Signal' column updated.
+        """
+        if 'vix_cot_index' not in df.columns or 'SPX_10D_Change' not in df.columns:
+            print("Error: DataFrame missing required columns ('vix_cot_index' and 'SPX_10D_Change').")
+            df['Trade_Signal'] = 'ERROR'
+            return df
+
+        # --- 1. Define Signal Conditions ---
+
+        # Condition A: Extreme VIX COT Sentiment (Contrarian BUY Signal)
+        cot_buy_condition = (df['vix_cot_index'] <= self.cot_buy_threshold)
+
+        # Condition B: SPX Price Shock Filter (Negative Momentum)
+        spx_shock_condition = (df['SPX_10D_Change'] <= self.spx_shock_threshold)
+
+        # Condition C: Extreme VIX COT Sentiment (Contrarian SELL Signal)
+        cot_sell_condition = (df['vix_cot_index'] >= self.cot_sell_threshold)
+
+        # --- 2. Apply Dual-Factor Logic ---
+
+        # The BUY signal requires BOTH the COT sentiment AND the SPX shock filter to be TRUE.
+        df['Trade_Signal'] = np.select(
+            [
+                cot_buy_condition & spx_shock_condition,  # Dual-Factor BUY condition
+                cot_sell_condition  # Single-Factor SELL condition
+            ],
+            [
+                'BUY',
+                'SELL'
+            ],
+            default='NEUTRAL'
+        )
+
+        return df
+
+
+# --- Example Usage (Class instantiation) ---
+if __name__ == '__main__':
+    # --- Mock Data for demonstration ---
+    data = {
+        'vix_cot_index': [5.0, 15.0, 8.0, 12.0, 95.0, 3.0],
+        'SPX_10D_Change': [-0.015, -0.005, -0.012, -0.015, 0.002, -0.020]
+    }
+    dates = pd.to_datetime(['2023-01-01', '2023-01-02', '2023-01-03', '2023-01-04', '2023-01-05', '2023-01-06'])
+    prepared_df = pd.DataFrame(data, index=dates)
+
+    # 1. Initialize the Generator with specific parameters (e.g., 5th percentile COT, -1.5% SPX shock)
+    signal_gen = DualFactorSignalGenerator(
+        cot_buy_threshold=5.0,  # Only use the most extreme 5% of COT data
+        spx_shock_threshold=-0.015  # Only buy after a -1.5% drop or worse
+    )
+
+    # 2. Generate the signals
+    signals_df = signal_gen.generate_signals(prepared_df.copy())
+
+    print("--- Strategy Signals Generated (Class-Based) ---")
+    print(signals_df[['vix_cot_index', 'SPX_10D_Change', 'Trade_Signal']])
+
+    # Interpretation with new thresholds (5.0 and -0.015):
+    # 2023-01-01: COT=5.0 (Hit) AND SPX=-1.5% (Hit) -> BUY
+    # 2023-01-03: COT=8.0 (Miss) -> NEUTRAL
+    # 2023-01-06: COT=3.0 (Hit) AND SPX=-2.0% (Hit) -> BUY
