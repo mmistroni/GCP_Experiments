@@ -44,8 +44,8 @@ class VixSentimentCalculator:
         vix_cot_df = vix_cot_df.rename(columns=self.COT_COLUMNS)
 
         # 1. Standardize COT Index: date is the COT report's Tuesday
-        vix_cot_df['date'] = pd.to_datetime(vix_cot_df['date'])
-        vix_cot_df = vix_cot_df.set_index('date').sort_index()
+        #vix_cot_df['date'] = pd.to_datetime(vix_cot_df['date'])
+        vix_cot_df = vix_cot_df.sort_index() #vix_cot_df.set_index('date')
 
         # 2. Calculate Non-Commercial Net Position
         vix_cot_df['noncomm_net'] = (
@@ -67,8 +67,8 @@ class VixSentimentCalculator:
         if 'close' not in vix_df.columns:
             raise ValueError("VIX DataFrame must contain a 'close' column (lowercase).")
 
-        #vix_df['date'] = pd.to_datetime(vix_df['date'])
-        vix_df = vix_df.sort_index()
+        vix_df['date'] = pd.to_datetime(vix_df['date'])
+        vix_df = vix_df.set_index('date').sort_index()
         vix_df = vix_df.rename(columns={'close': 'VIX_close'})
 
         # Keep only the daily VIX price
