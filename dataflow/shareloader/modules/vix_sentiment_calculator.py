@@ -91,7 +91,7 @@ class VixSentimentCalculator:
         spx_df['SPX_10D_Change'] = spx_df['SPX_close'].pct_change(10)
 
         # Keep the daily SPX price and the momentum filter
-        return spx_df[['SPX_close', 'SPX_10D_Change']]
+        return spx_df[['date', 'SPX_close', 'SPX_10D_Change']]
 
     # --- Calculation (Unchanged) ---
     def _calculate_cot_index(self, vix_cot_df: pd.DataFrame) -> pd.DataFrame:

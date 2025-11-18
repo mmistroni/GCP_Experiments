@@ -367,6 +367,7 @@ class MyTestCase(unittest.TestCase):
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
         res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
+        return
         res['close'] = res['vix_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
@@ -384,7 +385,7 @@ class MyTestCase(unittest.TestCase):
         # Step 5.  Signal Generation
         # 2. Run Signal Generator
         print('... Generatign signaldata ....')
-        generator = SignalGenerator(res, optimal_lookback)
+        generator = DualFactorSignalGenerator() # SignalGenerator(res, optimal_lookback)
         mock_df = generator.get_backtest_data()
 
         initial_capital = 20000.0

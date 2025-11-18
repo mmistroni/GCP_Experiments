@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
@@ -291,14 +290,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00556" summary="fixing genai calls">
-      <option name="closed" value="true" />
-      <created>1760199364883</created>
-      <option name="number" value="00556" />
-      <option name="presentableId" value="LOCAL-00556" />
-      <option name="project" value="LOCAL" />
-      <updated>1760199364883</updated>
     </task>
     <task id="LOCAL-00557" summary="fixing genai calls">
       <option name="closed" value="true" />
@@ -684,7 +675,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763455048202</updated>
     </task>
-    <option name="localTasksCounter" value="605" />
+    <task id="LOCAL-00605" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763486088996</created>
+      <option name="number" value="00605" />
+      <option name="presentableId" value="LOCAL-00605" />
+      <option name="project" value="LOCAL" />
+      <updated>1763486088996</updated>
+    </task>
+    <option name="localTasksCounter" value="606" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1155,14 +1154,14 @@
           <option name="timeStamp" value="380" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>25</line>
-          <option name="timeStamp" value="381" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
+          <line>86</line>
+          <option name="timeStamp" value="385" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>364</line>
-          <option name="timeStamp" value="382" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
+          <line>90</line>
+          <option name="timeStamp" value="386" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
