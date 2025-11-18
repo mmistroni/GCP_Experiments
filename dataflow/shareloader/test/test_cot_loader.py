@@ -268,7 +268,7 @@ class MyTestCase(unittest.TestCase):
         generator = SignalGenerator(res, optimal_lookback)
         mock_df = generator.get_backtest_data()
 
-        initial_capital = 100000.0
+        initial_capital = 20000.0
 
         # NOTE: Using the default price_column='close'
         results_df = self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
@@ -280,7 +280,6 @@ class MyTestCase(unittest.TestCase):
         final_capital = results_df['Capital'].iloc[-1]
 
         # 2. Calculate the Profit and Loss
-        initial_capital = 100000.0  # Using the variable defined in your original script
         final_pnl = final_capital - initial_capital
 
         # 3. Calculate Return Percentage
