@@ -159,7 +159,8 @@ class MyTestCase(unittest.TestCase):
                                              trailing_stop_pct:float ,
                                              take_profit_pct: float,
                                              max_risk_pct:float,
-                                             commission_per_unit: float ):
+                                             commission_per_unit: float,
+                                             vix_ratio_threshold:float):
         """
         Simulates the long-only trading strategy incorporating Trailing Stop-Loss and
         a PERCENTAGE-BASED Take Profit (take_profit_pct) that scales with entry price.
@@ -177,6 +178,7 @@ class MyTestCase(unittest.TestCase):
             max_risk_pct=max_risk_pct,
             price_column='VIX_close',
             commission_per_unit=commission_per_unit,
+            vix_ratio_threshold=vix_ratio_threshold
         )
 
         # 2. INSTANTIATE STRATEGY ENGINE
@@ -227,6 +229,31 @@ class MyTestCase(unittest.TestCase):
         # verify_backtest_input(backtest_input_df)
         # self.run_backtest_simulation(backtest_input_df, initial_capital=10000.0)
 
+
+    def dq_checks(self, prepared_data_df: pd.DataFrame ) -> None:
+        # Check 1: How many days is the VIX COT Index at or below the entry threshold?
+        cot_threshold = 10.0  # Use your actual threshold if different
+        extreme_sentiment_count = (prepared_data_df['vix_cot_index'] <= cot_threshold).sum()
+        print(f"Days with Extreme VIX COT Sentiment (<= {cot_threshold}): {extreme_sentiment_count}")
+
+        # Check 2: How many days is the SPX 10-day change at or below the shock threshold?
+        shock_threshold = -0.010  # Use your actual threshold if different
+        market_shock_count = (prepared_data_df['SPX_10D_Change'] <= shock_threshold).sum()
+        print(f"Days with SPX Market Shock (<= {shock_threshold * 100}%): {market_shock_count}")
+
+        # Check 3: How many days are BOTH conditions met?
+        dual_factor_count = (
+                (prepared_data_df['vix_cot_index'] <= 10.0) &
+                (prepared_data_df['SPX_10D_Change'] <= -0.010)
+        ).sum()
+        print(f"Days with Dual-Factor Entry Signal: {dual_factor_count}")
+
+        # Check 4: Print the column list and a sample of the data
+        print("--- DataFrame Info ---")
+        prepared_data_df.info()
+        print("\n--- Sample Data ---")
+        print(prepared_data_df[['vix_cot_index', 'SPX_10D_Change']].head(10))
+
     def test_cot_simulation(self):
 
 
@@ -259,34 +286,21 @@ class MyTestCase(unittest.TestCase):
         # 2. Run Signal Generator
         print('... Generatign signaldata ....')
 
+        initial_capital = 20000.0
+        trailing_stop_pct = 0.2
+        take_profit_pct = 0.15
+        max_risk_pct = 0.040
+        commission_per_unit = 0.01
+        cot_buy_threshold = 10.0
+        spx_shock_threshold = -0.020
+        vix_ratio_threshold = 2.0
+
         signal_gen = DualFactorSignalGenerator(
-            cot_buy_threshold=20.0,
-            spx_shock_threshold=-0.015,
+            cot_buy_threshold=cot_buy_threshold,
+            spx_shock_threshold=spx_shock_threshold,
             traded_asset_col='VIX_close'  # Specify the price series
         )
         prepared_data_df = res
-        # Check 1: How many days is the VIX COT Index at or below the entry threshold?
-        cot_threshold = 10.0  # Use your actual threshold if different
-        extreme_sentiment_count = (prepared_data_df['vix_cot_index'] <= cot_threshold).sum()
-        print(f"Days with Extreme VIX COT Sentiment (<= {cot_threshold}): {extreme_sentiment_count}")
-
-        # Check 2: How many days is the SPX 10-day change at or below the shock threshold?
-        shock_threshold = -0.010  # Use your actual threshold if different
-        market_shock_count = (prepared_data_df['SPX_10D_Change'] <= shock_threshold).sum()
-        print(f"Days with SPX Market Shock (<= {shock_threshold * 100}%): {market_shock_count}")
-
-        # Check 3: How many days are BOTH conditions met?
-        dual_factor_count = (
-                (prepared_data_df['vix_cot_index'] <= 10.0) &
-                (prepared_data_df['SPX_10D_Change'] <= -0.010)
-        ).sum()
-        print(f"Days with Dual-Factor Entry Signal: {dual_factor_count}")
-
-        # Check 4: Print the column list and a sample of the data
-        print("--- DataFrame Info ---")
-        prepared_data_df.info()
-        print("\n--- Sample Data ---")
-        print(prepared_data_df[['vix_cot_index', 'SPX_10D_Change']].head(10))
 
 
         # 2. Process the data (the single point of entry for the DataFrame)
@@ -302,18 +316,14 @@ class MyTestCase(unittest.TestCase):
 
         self.verify_backtest_input(backtest_input_df)
 
-        initial_capital = 20000.0
-        trailing_stop_pct = 0.1
-        take_profit_pct = 0.15
-        max_risk_pct = 0.040
-        commission_per_unit = 0.01
 
         # NOTE: Using the default price_column='close'
         self.run_backtest_simulation(backtest_input_df, initial_capital=initial_capital,
                                             trailing_stop_pct=trailing_stop_pct,
                                             take_profit_pct=take_profit_pct,
                                             max_risk_pct=max_risk_pct,
-                                            commission_per_unit=commission_per_unit)
+                                            commission_per_unit=commission_per_unit,
+                                           vix_ratio_threshold=vix_ratio_threshold
 
         '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')
