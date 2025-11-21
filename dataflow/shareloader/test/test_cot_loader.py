@@ -49,6 +49,12 @@ import pandas as pd
 import numpy as np
 from typing import Tuple, Union
 
+from pydantic import BaseModel, Field
+from typing import Optional, Any
+import pandas as pd
+import numpy as np
+from typing import Tuple, Union
+
 
 class BacktestParameters(BaseModel):
     """
@@ -56,7 +62,7 @@ class BacktestParameters(BaseModel):
     """
     price_column: str = Field('VIX_close', description="Column name for the traded instrument's price.")
     spx_column: str = Field('SPX_close', description="Column name for the S&P 500 price data.")
-    initial_capital: float = Field(10000.0, gt=0, description="Starting cash.")
+    initial_capital: float = Field(20000.0, gt=0, description="Starting cash.")
 
     # Risk Management Parameters
     trailing_stop_pct: float = Field(0.10, gt=0, lt=1, description="Percentage for TSL.")
@@ -64,40 +70,52 @@ class BacktestParameters(BaseModel):
     max_risk_pct: float = Field(0.015, gt=0, lt=1, description="Max % of capital to risk per trade (the fix).")
     commission_per_unit: float = Field(0.01, ge=0, description="Commission per unit traded.")
 
-    # NEW: Strategy-Specific Entry Filter Parameter
-    cot_entry_threshold: float = Field(10.0, ge=0,
-                                       description="VIX COT Index threshold for entry confirmation (e.g., 10.0 for extreme sentiment).")
-
+    # Strategy-Specific Entry Filter Parameter
+    cot_entry_threshold: float = Field(10.0, ge=0, description="VIX COT Index threshold for entry confirmation.")
 
 # NOTE: The global COT_SPIKE_FILTER is now obsolete and should be removed.
 # ----------------------------------------------------
 # 2. STRATEGY AND TRADE SIZING ENGINE
 # ----------------------------------------------------
+import pandas as pd
+import numpy as np
+from typing import Tuple, Union
+
+
+# Assuming BacktestParameters class is defined elsewhere
+
 def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float,
-                   params: BacktestParameters) -> Tuple[str, float, Union[str, None]]:
+                   params) -> Tuple[str, float, Union[str, None]]:
     """
-    Determines the trading action (BUY, EXIT, HOLD) based on the pre-calculated
-    signal, current factors, and the position state.
+    Determines the trading action (SELL/BUY, EXIT, HOLD) based on the pre-calculated
+    signal and the position state.
 
     :returns: (action: str, units_to_trade: float, exit_reason: str or None)
     """
 
-    # --- Entry Logic (Signal and Sizing) ---
-    # Check for: 1. Not in a trade AND 2. Dual-Factor 'BUY' signal AND 3. VIX COT factor confirms extreme sentiment
-    if not in_position and \
-            current_row['Trade_Signal'] == 'BUY' and \
-            current_row['vix_cot_index'] <= params.cot_entry_threshold:
-        # Using <= because a low VIX COT Index (e.g., <= 10) is the contrarian BUY signal.
+    action = 'NEUTRAL'
+    units_to_trade = 0.0
+    exit_reason = None
 
-        # FIX: Risk-Based Position Sizing
+    # --- Entry Logic (Hypothesis: Invert Long VIX to Short VIX) ---
+    # We rely *only* on the 'Trade_Signal' being 'BUY', as the generator already
+    # ensured the dual factor (COT <= threshold AND SPX Shock) was met.
+    if not in_position and current_row['Trade_Signal'] == 'BUY':
+
+        # 1. Risk-Based Position Sizing
         max_dollar_risk = current_capital * params.max_risk_pct
+
+        # Risk defined by TSL distance (loss if price moves against the short position)
+        # Note: For a SHORT, the stop loss is above the entry price.
+        # For simplicity, we use the Trailing Stop % * current price as the maximum dollar risk per unit.
         stop_loss_distance_per_unit = current_row[params.price_column] * params.trailing_stop_pct
 
         # Calculate units: (Max Dollar Risk) / (Loss per Unit)
-        # Add small epsilon (1e-9) to prevent division by zero if price or TSL is zero
+        # Add small epsilon (1e-9) to prevent division by zero
         units_held = max_dollar_risk / (stop_loss_distance_per_unit + 1e-9)
 
-        return 'BUY', units_held, None
+        # FIX: Action is 'SELL' to initiate a SHORT position, testing the inverted direction.
+        return 'SELL', units_held, None
 
     # --- Exit Logic (Priority Check when in a position) ---
     elif in_position:
@@ -105,26 +123,26 @@ def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: 
             current_row.get('Peak_Price_in_Position', entry_price)) else entry_price
         current_price = current_row[params.price_column]
 
-        # 1. Check for Trailing Stop-Loss (TSL)
-        tsl_trigger = peak_price * (1.0 - params.trailing_stop_pct)
-        if current_price <= tsl_trigger:
+        # Note: TSL/TP triggers below are simplified and assumed to be relative to the entry.
+        # For a short trade, TSL is activated when price RISES and TP is activated when price FALLS.
+
+        # 1. Trailing Stop-Loss (Loss if price rises against the short trade)
+        tsl_trigger = entry_price * (1.0 + params.trailing_stop_pct)  # Price rises above entry + TSL
+        if current_price >= tsl_trigger:
             return 'EXIT', 0.0, 'TSL'
 
-        # 2. Check for Take Profit (TP)
-        tp_trigger_price = entry_price * (1.0 + params.take_profit_pct)
-        if current_price >= tp_trigger_price:
+        # 2. Take Profit (Profit if price falls by TP amount)
+        tp_trigger_price = entry_price * (1.0 - params.take_profit_pct)  # Price falls below entry - TP
+        if current_price <= tp_trigger_price:
             return 'EXIT', 0.0, 'TP'
 
-        # 3. Check for Time-Based Exit (Only exit if profitable AND time is up)
-        # This relies on run_simulation_engine having set 'Exit_Date_Target'
-        # The .name is the current day's date index
-        if current_row.name >= current_row['Exit_Date_Target']:
-            if current_price > entry_price:
-                return 'EXIT', 0.0, 'Time'
-            # Optional: Exit flat-or-loss after time is up to free up capital, but your current logic requires profit.
+        # 3. Time-Based Exit
+        if 'Exit_Date_Target' in current_row and current_row.name >= current_row['Exit_Date_Target']:
+            # Exit after hold period regardless of profit/loss for a clean test
+            return 'EXIT', 0.0, 'Time'
 
     # --- Default: Hold ---
-    return 'NEUTRAL', 0.0, None
+    return action, units_to_trade, exit_reason
 
 
 # ----------------------------------------------------
