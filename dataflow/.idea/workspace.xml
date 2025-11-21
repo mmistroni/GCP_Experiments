@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -288,14 +287,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00564" summary="adding custom instructions">
-      <option name="closed" value="true" />
-      <created>1760592849046</created>
-      <option name="number" value="00564" />
-      <option name="presentableId" value="LOCAL-00564" />
-      <option name="project" value="LOCAL" />
-      <updated>1760592849046</updated>
     </task>
     <task id="LOCAL-00565" summary="adding custom instructions">
       <option name="closed" value="true" />
@@ -681,7 +672,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763735126309</updated>
     </task>
-    <option name="localTasksCounter" value="613" />
+    <task id="LOCAL-00613" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763740219351</created>
+      <option name="number" value="00613" />
+      <option name="presentableId" value="LOCAL-00613" />
+      <option name="project" value="LOCAL" />
+      <updated>1763740219351</updated>
+    </task>
+    <option name="localTasksCounter" value="614" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1158,7 +1157,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>535</line>
+          <line>531</line>
           <option name="timeStamp" value="406" />
         </line-breakpoint>
       </breakpoints>

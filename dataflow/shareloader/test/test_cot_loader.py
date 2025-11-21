@@ -518,17 +518,13 @@ class MyTestCase(unittest.TestCase):
             traded_asset_col='VIX_close',  # Based on your column list
             fixed_hold_period_days=20
         )
-        self.verify_backtest_input(prepared_data_df)
         # 2. Process the data (This is where Trade_Signal is created and stored internally)
         # 'prepared_data_df' is the output from your VixSentimentCalculator
         signal_gen.process_data(prepared_data_df)
 
         # 3. Retrieve the final, backtest-ready data (This DataFrame NOW has 'Trade_Signal')
         backtest_input_df = signal_gen.get_backtest_data()
-
-
-
-
+        self.verify_backtest_input(prepared_data_df)
 
         initial_capital = 20000.0
 
