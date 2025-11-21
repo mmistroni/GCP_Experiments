@@ -6,6 +6,10 @@ import pandas as pd
 import numpy as np
 from typing import Dict, Any
 
+import pandas as pd
+import numpy as np
+from typing import Dict, Any
+
 
 class VixSentimentCalculator:
     def __init__(self, vix_df: pd.DataFrame, spx_df: pd.DataFrame, cot_df: pd.DataFrame):

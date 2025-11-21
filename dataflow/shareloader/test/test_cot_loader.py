@@ -266,8 +266,8 @@ class MyTestCase(unittest.TestCase):
         cot_df = get_latest_cot()
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
-        calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
-        res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
+        calculator = VixSentimentCalculator(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
+        res = calculator.calculate_sentiment()
         res['close'] = res['VIX_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
@@ -323,7 +323,7 @@ class MyTestCase(unittest.TestCase):
                                             take_profit_pct=take_profit_pct,
                                             max_risk_pct=max_risk_pct,
                                             commission_per_unit=commission_per_unit,
-                                           vix_ratio_threshold=vix_ratio_threshold
+                                           vix_ratio_threshold=vix_ratio_threshold)
 
         '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')
