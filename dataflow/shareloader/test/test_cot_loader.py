@@ -12,6 +12,9 @@ from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSenti
                                             FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
 
 import pandas as pd
+import pandas as pd
+import numpy as np
+from typing import Tuple, Union, Any # Import Any for parameter type hinting
 
 from datetime import timedelta
 import pandas as pd
@@ -87,35 +90,27 @@ from typing import Tuple, Union
 def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float,
                    params) -> Tuple[str, float, Union[str, None]]:
     """
-    Determines the trading action (SELL/BUY, EXIT, HOLD) based on the pre-calculated
-    signal and the position state.
-
-    :returns: (action: str, units_to_trade: float, exit_reason: str or None)
+    Determines the trading action (BUY/EXIT, HOLD) for a LONG VIX strategy.
     """
 
     action = 'NEUTRAL'
     units_to_trade = 0.0
     exit_reason = None
 
-    # --- Entry Logic (Hypothesis: Invert Long VIX to Short VIX) ---
-    # We rely *only* on the 'Trade_Signal' being 'BUY', as the generator already
-    # ensured the dual factor (COT <= threshold AND SPX Shock) was met.
+    # --- Entry Logic (FIX: Revert to LONG VIX direction) ---
     if not in_position and current_row['Trade_Signal'] == 'BUY':
 
-        # 1. Risk-Based Position Sizing
+        # 1. Risk-Based Position Sizing (Logic remains the same, based on max risk %)
         max_dollar_risk = current_capital * params.max_risk_pct
 
-        # Risk defined by TSL distance (loss if price moves against the short position)
-        # Note: For a SHORT, the stop loss is above the entry price.
-        # For simplicity, we use the Trailing Stop % * current price as the maximum dollar risk per unit.
+        # TSL distance determines loss per unit
         stop_loss_distance_per_unit = current_row[params.price_column] * params.trailing_stop_pct
 
-        # Calculate units: (Max Dollar Risk) / (Loss per Unit)
-        # Add small epsilon (1e-9) to prevent division by zero
+        # Calculate units
         units_held = max_dollar_risk / (stop_loss_distance_per_unit + 1e-9)
 
-        # FIX: Action is 'SELL' to initiate a SHORT position, testing the inverted direction.
-        return 'SELL', units_held, None
+        # FIX: Action is 'BUY' to initiate a LONG position.
+        return 'BUY', units_held, None
 
     # --- Exit Logic (Priority Check when in a position) ---
     elif in_position:
@@ -123,32 +118,32 @@ def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: 
             current_row.get('Peak_Price_in_Position', entry_price)) else entry_price
         current_price = current_row[params.price_column]
 
-        # Note: TSL/TP triggers below are simplified and assumed to be relative to the entry.
-        # For a short trade, TSL is activated when price RISES and TP is activated when price FALLS.
-
-        # 1. Trailing Stop-Loss (Loss if price rises against the short trade)
-        tsl_trigger = entry_price * (1.0 + params.trailing_stop_pct)  # Price rises above entry + TSL
-        if current_price >= tsl_trigger:
+        # 1. Trailing Stop-Loss (Loss if price falls against the long trade)
+        # TSL is below the peak price.
+        tsl_trigger = peak_price * (1.0 - params.trailing_stop_pct)
+        if current_price <= tsl_trigger:  # Price falls to TSL
             return 'EXIT', 0.0, 'TSL'
 
-        # 2. Take Profit (Profit if price falls by TP amount)
-        tp_trigger_price = entry_price * (1.0 - params.take_profit_pct)  # Price falls below entry - TP
-        if current_price <= tp_trigger_price:
+        # 2. Take Profit (Profit if price rises by TP amount)
+        tp_trigger_price = entry_price * (1.0 + params.take_profit_pct)
+        if current_price >= tp_trigger_price:  # Price rises to TP
             return 'EXIT', 0.0, 'TP'
 
-        # 3. Time-Based Exit
+        # 3. Time-Based Exit (Check for Exit_Date_Target)
         if 'Exit_Date_Target' in current_row and current_row.name >= current_row['Exit_Date_Target']:
-            # Exit after hold period regardless of profit/loss for a clean test
             return 'EXIT', 0.0, 'Time'
 
     # --- Default: Hold ---
     return action, units_to_trade, exit_reason
 
-
 # ----------------------------------------------------
 # 3. MAIN SIMULATION ENGINE
 # ----------------------------------------------------
-def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.DataFrame:
+
+# Assuming BacktestParameters is defined and passed in (from Pydantic class)
+# Assuming StrategyEngine is defined and returns ('SELL' for entry)
+
+def run_simulation_engine(df: pd.DataFrame, params: Any) -> pd.DataFrame:
     df = df.sort_index().copy()
 
     # Pre-calculate Exit Date Target
@@ -157,7 +152,7 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
     # Initialize tracking columns
     df['Position_Size'] = 0.0
     df['Realized_P_L'] = 0.0
-    df['Capital'] = np.nan  # Will be filled iteratively
+    df['Capital'] = np.nan
     df['Peak_Price_in_Position'] = np.nan
     df['Exit_Reason'] = None
     df['Entry_Price'] = np.nan
@@ -167,7 +162,7 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
     units_held = 0.0
     entry_price = 0.0
     peak_price = 0.0
-    running_capital = params.initial_capital  # <-- Use running variable for calculation
+    running_capital = params.initial_capital
 
     # Set initial capital
     if not df.empty:
@@ -178,7 +173,7 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
         current_row = df.loc[current_date]
         current_price = current_row[params.price_column]
 
-        # 1. Update Peak Price and Position Tracking
+        # 1. Update Position Tracking
         df.loc[current_date, 'Position_Size'] = units_held
         df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
@@ -187,24 +182,17 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
             df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
         # --- Call External Strategy Engine for Decision ---
-        # FIX: 'action' is defined here as the first output of the StrategyEngine call
         action, units_to_trade, exit_reason = StrategyEngine(
-            current_row,
-            running_capital,  # Pass the running capital for accurate sizing
-            in_position,
-            entry_price,
-            params
+            current_row, running_capital, in_position, entry_price, params
         )
 
         # --- Execute Actions (Entry/Exit) ---
         if action == 'EXIT':
             exit_price = current_price
 
-            # P&L Calculation: Correct for LONG VIX position
+            # FIX: P&L Calculation for a LONG trade: (Exit Price - Entry Price) * Units
             gross_p_l = (exit_price - entry_price) * units_held
             total_commission = units_held * params.commission_per_unit
-
-            # FIX: 'net_p_l' is now explicitly defined here
             net_p_l = gross_p_l - total_commission
 
             # Update running capital and DataFrame column
@@ -219,6 +207,7 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
             entry_price = 0.0
             peak_price = 0.0
 
+        # FIX: Entry Check for a LONG trade is now 'BUY'
         elif action == 'BUY' and not in_position:
             units_held = units_to_trade
             entry_price = current_price
@@ -226,34 +215,27 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
             df.loc[current_date, 'Position_Size'] = units_held
             df.loc[current_date, 'Entry_Price'] = entry_price
 
-            # NOTE: Capital is NOT reduced on entry (assuming margin/futures)
-            # If you need to deduct cash for the full price, you would update running_capital here.
-
             in_position = True
             peak_price = entry_price
 
         # --- Carry Capital Forward ---
-        # If 'Capital' wasn't updated by an EXIT event today, carry the running_capital forward
         if pd.isna(df.loc[current_date, 'Capital']):
             df.loc[current_date, 'Capital'] = running_capital
 
     # --- FINAL LIQUIDATION LOGIC (at end of loop) ---
     if in_position:
-        # ... (Liquidation logic remains mostly the same, as it defines net_p_l locally) ...
         final_date = df.index[-1]
         final_price = df.loc[final_date, params.price_column]
 
+        # P&L Calculation for final LONG trade liquidation
         gross_p_l = (final_price - entry_price) * units_held
         total_commission = units_held * params.commission_per_unit
         net_p_l = gross_p_l - total_commission
 
-        # Use the last recorded capital value
         df.loc[final_date, 'Capital'] += net_p_l
         df.loc[final_date, 'Realized_P_L'] += net_p_l
 
     return df
-
-
 
 
 # ----------------------------------------------------
@@ -479,8 +461,8 @@ class MyTestCase(unittest.TestCase):
         print('... Generatign signaldata ....')
 
         signal_gen = DualFactorSignalGenerator(
-            cot_buy_threshold=10.0,
-            spx_shock_threshold=-0.015,
+            cot_buy_threshold=20.0,
+            spx_shock_threshold=-0.02,
             traded_asset_col='VIX_close'  # Specify the price series
         )
         prepared_data_df = res
@@ -512,19 +494,14 @@ class MyTestCase(unittest.TestCase):
         # 'prepared_data_df' is the output from your VixSentimentCalculator
 
         # 1. Instantiate the Generator (using your confirmed thresholds)
-        signal_gen = DualFactorSignalGenerator(
-            cot_buy_threshold=10.0,
-            spx_shock_threshold=-0.010,
-            traded_asset_col='VIX_close',  # Based on your column list
-            fixed_hold_period_days=20
-        )
         # 2. Process the data (This is where Trade_Signal is created and stored internally)
         # 'prepared_data_df' is the output from your VixSentimentCalculator
         signal_gen.process_data(prepared_data_df)
 
         # 3. Retrieve the final, backtest-ready data (This DataFrame NOW has 'Trade_Signal')
         backtest_input_df = signal_gen.get_backtest_data()
-        self.verify_backtest_input(prepared_data_df)
+
+        self.verify_backtest_input(backtest_input_df)
 
         initial_capital = 20000.0
 
