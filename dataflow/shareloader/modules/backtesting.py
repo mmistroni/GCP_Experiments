@@ -1,7 +1,7 @@
 from typing import Tuple, Union
 import pandas as pd
 import numpy as np
-
+from pydantic import BaseModel, Field
 
 class StrategyEngine:
     def __init__(self, params):
@@ -193,3 +193,21 @@ class Backtester:
             pass  # Keep your correct final liquidation logic here
 
         return df
+
+
+class BacktestParameters(BaseModel):
+    """
+    Defines and validates the key parameters for the backtest.
+    """
+    price_column: str = Field('VIX_close', description="Column name for the traded instrument's price.")
+    spx_column: str = Field('SPX_close', description="Column name for the S&P 500 price data.")
+    initial_capital: float = Field(20000.0, gt=0, description="Starting cash.")
+
+    # Risk Management Parameters
+    trailing_stop_pct: float = Field(0.10, gt=0, lt=1, description="Percentage for TSL.")
+    take_profit_pct: float = Field(0.20, gt=0, lt=1, description="Percentage for TP.")
+    max_risk_pct: float = Field(0.015, gt=0, lt=1, description="Max % of capital to risk per trade (the fix).")
+    commission_per_unit: float = Field(0.01, ge=0, description="Commission per unit traded.")
+
+    # Strategy-Specific Entry Filter Parameter
+    cot_entry_threshold: float = Field(10.0, ge=0, description="VIX COT Index threshold for entry confirmation.")

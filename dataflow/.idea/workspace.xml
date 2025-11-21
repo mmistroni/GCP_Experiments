@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
-      <change afterPath="$PROJECT_DIR$/shareloader/modules/backtesting.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/backtesting.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/backtesting.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -289,14 +291,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00567" summary="adding custom instructions">
-      <option name="closed" value="true" />
-      <created>1760596059936</created>
-      <option name="number" value="00567" />
-      <option name="presentableId" value="LOCAL-00567" />
-      <option name="project" value="LOCAL" />
-      <updated>1760596059936</updated>
     </task>
     <task id="LOCAL-00568" summary="adding custom instructions">
       <option name="closed" value="true" />
@@ -682,7 +676,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763756759034</updated>
     </task>
-    <option name="localTasksCounter" value="616" />
+    <task id="LOCAL-00616" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763756989111</created>
+      <option name="number" value="00616" />
+      <option name="presentableId" value="LOCAL-00616" />
+      <option name="project" value="LOCAL" />
+      <updated>1763756989111</updated>
+    </task>
+    <option name="localTasksCounter" value="617" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1159,7 +1161,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>508</line>
+          <line>311</line>
           <option name="timeStamp" value="406" />
         </line-breakpoint>
       </breakpoints>

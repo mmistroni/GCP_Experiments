@@ -182,34 +182,49 @@ class DualFactorSignalGenerator:
         # 2. Add the crucial 'Hold_Period_Days' column for the backtester's Exit_Date_Target
         self.df['Hold_Period_Days'] = self.fixed_hold_period_days
 
+    import numpy as np
+    import pandas as pd
+
     def _generate_signals(self) -> None:
         """
-        Applies the Dual-Factor VIX Trading Strategy signals to the internal DataFrame.
+        Applies the Hybrid Strategy signal: Single-Factor SPX Panic Entry.
+
+        This uses a tight 1-day SPX shock filter to generate the 'BUY' signal
+        for a Long VIX position, isolating high-conviction panic days.
         """
         df = self.df
 
-        # Condition A: Extreme VIX COT Sentiment (Contrarian BUY Signal)
-        cot_buy_condition = (df['vix_cot_index'] <= self.cot_buy_threshold)
+        # --- ENTRY CONDITION (Single-Factor Panic Filter) ---
+        # We use the SPX 1-Day Change and the tighter -0.015 threshold
+        # (as defined in your self.spx_shock_threshold parameter)
 
-        # Condition B: SPX Price Shock Filter (Negative Momentum)
-        spx_shock_condition = (df['SPX_10D_Change'] <= self.spx_shock_threshold)
+        # 1. Check for the existence of the required 1-Day Change column
+        if 'SPX_1D_Change' not in df.columns:
+            raise KeyError(
+                "Missing 'SPX_1D_Change' column. "
+                "Ensure the VixSentimentCalculator is updated to calculate 1-day momentum."
+            )
 
-        # Condition C: Extreme VIX COT Sentiment (Contrarian SELL Signal)
-        cot_sell_condition = (df['vix_cot_index'] >= self.cot_sell_threshold)
+        # Condition: SPX drops by at least 1.5% in one day (or the threshold set in params)
+        panic_condition = (df['SPX_1D_Change'] <= self.spx_shock_threshold)
 
-        # Apply Dual-Factor Logic: BUY requires BOTH. SELL is single-factor for simple exit/reversal.
+        # --- SIGNAL GENERATION ---
+        # The signal is simply 'BUY' if the panic condition is met.
+        # We explicitly remove the 'SELL' condition and the dual-factor COT condition.
         df['Trade_Signal'] = np.select(
             [
-                cot_buy_condition & spx_shock_condition,  # Dual-Factor BUY condition
-                cot_sell_condition  # Single-Factor SELL condition
+                panic_condition  # Single-Factor BUY condition
             ],
             [
-                'BUY',
-                'SELL'
+                'BUY'
             ],
             default='NEUTRAL'
         )
 
+        # --- NOTE ON HOLD PERIOD ---
+        # The 'Hold_Period_Days' column, used for time-based exits,
+        # should be calculated elsewhere or set to a large fixed value (e.g., 30 days)
+        # to allow the TSL and TP logic in the StrategyEngine to control the exit.
     def get_backtest_data(self) -> pd.DataFrame:
         """
         Returns the processed DataFrame containing ALL factors, price, and signals

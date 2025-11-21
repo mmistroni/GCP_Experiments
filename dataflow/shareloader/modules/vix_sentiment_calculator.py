@@ -75,24 +75,29 @@ class VixSentimentCalculator:
         return vix_df[['VIX_close']]
 
     # --- NEW METHOD: Prepares SPX daily data and calculates 10D momentum ---
+        # --- MODIFIED METHOD: Prepares SPX daily data and calculates BOTH momentums ---
     def _prepare_spx_data(self, spx_df: pd.DataFrame) -> pd.DataFrame:
         """
-        Ensures SPX price data is indexed by date and calculates the
-        10-day price change (Daily).
+        Ensures SPX price data is indexed by date and calculates both the
+        1-day (for the new strategy) and 10-day (for the original strategy)
+        price changes.
         """
         if 'close' not in spx_df.columns:
             raise ValueError("SPX DataFrame must contain a 'close' column (lowercase).")
 
+        # Standard renaming and indexing
         spx_df['date'] = pd.to_datetime(spx_df['date'])
         spx_df = spx_df.set_index('date').sort_index()
         spx_df = spx_df.rename(columns={'close': 'SPX_close'})
 
-        # Calculate the 10-day Rate of Change for the SPX Close (the 'shock' filter)
+        # 1. Calculate the 1-day Rate of Change (for the high-conviction entry)
+        spx_df['SPX_1D_Change'] = spx_df['SPX_close'].pct_change(1)
+
+        # 2. Calculate the 10-day Rate of Change (for the original dual-factor logic)
         spx_df['SPX_10D_Change'] = spx_df['SPX_close'].pct_change(10)
 
-        # Keep the daily SPX price and the momentum filter
-        return spx_df[['SPX_close', 'SPX_10D_Change']]
-
+        # Return all necessary columns
+        return spx_df[['SPX_close', 'SPX_1D_Change', 'SPX_10D_Change']]
     # --- Calculation (Unchanged) ---
     def _calculate_cot_index(self, vix_cot_df: pd.DataFrame) -> pd.DataFrame:
         """Calculates the COT Index for the Non-Commercial Net Position."""
