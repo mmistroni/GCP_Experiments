@@ -124,6 +124,7 @@ class VixSentimentCalculator:
         return df
 
     # --- MODIFIED MAIN METHOD ---
+        # --- MODIFIED MAIN METHOD ---
     def calculate_sentiment(self, vix_df: pd.DataFrame, cot_df: pd.DataFrame, spx_df: pd.DataFrame) -> pd.DataFrame:
         """
         Combines VIX (Daily), SPX (Daily), and COT (Weekly) data,
@@ -138,19 +139,20 @@ class VixSentimentCalculator:
         daily_price_df = vix_daily_price.join(spx_daily_data, how='inner')
 
         # 2. Prepare and calculate Net Position and OI Ratio from COT data (WEEKLY DataFrame)
-        vix_cot_data = self._prepare_vix_cot_data(cot_df)
+        vix_cot_data = self._prepare_vix_cot_data(
+            cot_df)  # This returns ['noncomm_net', 'open_interest', 'vix_oi_ratio']
 
         # 3. Calculate the VIX COT Index (WEEKLY DataFrame)
-        vix_cot_indexed = self._calculate_cot_index(vix_cot_data)
+        vix_cot_indexed = self._calculate_cot_index(vix_cot_data)  # This adds 'vix_cot_index'
 
         # 4. Add the Sentiment Label (WEEKLY DataFrame)
-        vix_cot_labeled = self._label_sentiment(vix_cot_indexed)
+        vix_cot_labeled = self._label_sentiment(vix_cot_indexed)  # This adds 'sentiment_label'
 
         # 5. Merge Daily Price Data with Weekly COT Data
-        # We perform a left join to keep ALL daily price rows, and fill missing COT values
-        # The weekly COT data columns are: 'noncomm_net', 'open_interest', 'vix_oi_ratio', 'vix_cot_index', 'sentiment_label'
+        # MODIFICATION HERE: Include 'noncomm_net' in the list of columns to join!
         final_df = daily_price_df.join(
             vix_cot_labeled[[
+                'noncomm_net',  # <-- NEWLY ADDED!
                 'vix_cot_index',
                 'sentiment_label'
             ]],
@@ -158,12 +160,13 @@ class VixSentimentCalculator:
         )
 
         # 6. Forward-Fill (ffill) the weekly COT signal to align with daily price data
+        # MODIFICATION HERE: Also forward-fill 'noncomm_net'!
+        final_df['noncomm_net'] = final_df['noncomm_net'].ffill()  # <-- NEWLY ADDED!
         final_df['vix_cot_index'] = final_df['vix_cot_index'].ffill()
         final_df['sentiment_label'] = final_df['sentiment_label'].ffill()
 
         # Drop rows where the COT index is still NaN (initial lookback period)
         return final_df.dropna(subset=['vix_cot_index'])
-
     # The get_text_sentiment method remains unchanged
     def get_text_sentiment(self, final_df: pd.DataFrame) -> str:
         """

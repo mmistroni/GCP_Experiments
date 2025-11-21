@@ -27,7 +27,7 @@ class CorrelationAnalyzer:
     def __init__(self, df: pd.DataFrame):
         self.df = df
         self.cot_index_col = 'vix_cot_index'
-        self.vix_close_col = 'vix_close'
+        self.vix_close_col = 'VIX_close'
         self.results = {}
 
     def _calculate_vix_cot_index(self, lookback_period: int) -> pd.Series:

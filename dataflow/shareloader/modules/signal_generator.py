@@ -115,6 +115,21 @@ class SignalGenerator:
 import pandas as pd
 import numpy as np
 
+import pandas as pd
+import numpy as np
+
+
+# Assuming the DataFrame 'df' is available and contains:
+# 'vix_cot_index', 'SPX_10D_Change', and 'VIX_close' (or whatever price series you trade)
+
+import pandas as pd
+import numpy as np
+from typing import Optional
+
+import pandas as pd
+import numpy as np
+from typing import Optional, Dict
+
 
 class DualFactorSignalGenerator:
     """
@@ -122,7 +137,8 @@ class DualFactorSignalGenerator:
     1. VIX COT Index (Extreme Sentiment)
     2. SPX 10-Day Momentum (Market Shock Filter)
 
-    This class encapsulates the strategy logic and configurable thresholds.
+    This class processes the prepared data and outputs all columns required
+    by an Event-Driven Backtest Engine (e.g., VIX factors, Trade_Signal, Hold_Period).
     """
 
     def __init__(
@@ -130,46 +146,47 @@ class DualFactorSignalGenerator:
             cot_buy_threshold: float = 10.0,
             spx_shock_threshold: float = -0.010,  # -1.0% drop over 10 days
             cot_sell_threshold: float = 90.0,
-            spx_rally_threshold: float = 0.005  # 0.5% rally over 10 days (currently unused for entry)
+            traded_asset_col: str = 'VIX_close',  # The price column for P&L calculation
+            fixed_hold_period_days: int = 20  # Default holding period (e.g., 4 weeks)
     ):
         """
         Initializes the signal generator with key strategy parameters.
-
-        Args:
-            cot_buy_threshold (float): VIX COT Index level (e.g., 10.0 for 10th percentile)
-                                       to trigger the extreme BUY sentiment condition.
-            spx_shock_threshold (float): Negative SPX 10-Day Change (%) required to confirm
-                                         a market 'shock' (e.g., -0.010 for -1.0%).
-            cot_sell_threshold (float): VIX COT Index level to trigger a SELL signal.
-            spx_rally_threshold (float): Positive SPX 10-Day Change (%) used for exit logic
-                                         or other strategies.
         """
         self.cot_buy_threshold = cot_buy_threshold
         self.spx_shock_threshold = spx_shock_threshold
         self.cot_sell_threshold = cot_sell_threshold
-        self.spx_rally_threshold = spx_rally_threshold
+        self.traded_asset_col = traded_asset_col
+        self.fixed_hold_period_days = fixed_hold_period_days
+        self.df: Optional[pd.DataFrame] = None  # Stores the processed data internally
 
-    def generate_signals(self, df: pd.DataFrame) -> pd.DataFrame:
+    def process_data(self, df: pd.DataFrame) -> None:
         """
-        Applies the Dual-Factor VIX Trading Strategy signals to the prepared daily data.
-
-        A BUY signal for VIX (long S&P Volatility) requires two simultaneous conditions:
-        1. Extreme Contrarian VIX COT Sentiment (VIX COT Index <= cot_buy_threshold)
-        2. Recent S&P 500 Price Shock (SPX 10D Change <= spx_shock_threshold)
-
-        Args:
-            df (pd.DataFrame): The prepared daily DataFrame (must contain 'vix_cot_index'
-                               and 'SPX_10D_Change').
-
-        Returns:
-            pd.DataFrame: DataFrame with the 'Trade_Signal' column updated.
+        Accepts the raw, prepared daily DataFrame, validates it, and stores it internally.
+        It then generates the trading signals and the hold period column.
         """
-        if 'vix_cot_index' not in df.columns or 'SPX_10D_Change' not in df.columns:
-            print("Error: DataFrame missing required columns ('vix_cot_index' and 'SPX_10D_Change').")
-            df['Trade_Signal'] = 'ERROR'
-            return df
+        required_input_cols = ['vix_cot_index', 'SPX_10D_Change', self.traded_asset_col]
 
-        # --- 1. Define Signal Conditions ---
+        # Validation checks
+        missing = [col for col in required_input_cols if col not in df.columns]
+        if missing:
+            raise ValueError(
+                f"DataFrame missing required columns: {missing}. "
+                f"Ensure 'vix_cot_index' is calculated with the optimal lookback."
+            )
+
+        self.df = df.copy()
+
+        # 1. Generate the instantaneous signals ('BUY', 'SELL', 'NEUTRAL')
+        self._generate_signals()
+
+        # 2. Add the crucial 'Hold_Period_Days' column for the backtester's Exit_Date_Target
+        self.df['Hold_Period_Days'] = self.fixed_hold_period_days
+
+    def _generate_signals(self) -> None:
+        """
+        Applies the Dual-Factor VIX Trading Strategy signals to the internal DataFrame.
+        """
+        df = self.df
 
         # Condition A: Extreme VIX COT Sentiment (Contrarian BUY Signal)
         cot_buy_condition = (df['vix_cot_index'] <= self.cot_buy_threshold)
@@ -180,9 +197,7 @@ class DualFactorSignalGenerator:
         # Condition C: Extreme VIX COT Sentiment (Contrarian SELL Signal)
         cot_sell_condition = (df['vix_cot_index'] >= self.cot_sell_threshold)
 
-        # --- 2. Apply Dual-Factor Logic ---
-
-        # The BUY signal requires BOTH the COT sentiment AND the SPX shock filter to be TRUE.
+        # Apply Dual-Factor Logic: BUY requires BOTH. SELL is single-factor for simple exit/reversal.
         df['Trade_Signal'] = np.select(
             [
                 cot_buy_condition & spx_shock_condition,  # Dual-Factor BUY condition
@@ -195,8 +210,32 @@ class DualFactorSignalGenerator:
             default='NEUTRAL'
         )
 
-        return df
+    def get_backtest_data(self) -> pd.DataFrame:
+        """
+        Returns the processed DataFrame containing ALL factors, price, and signals
+        required by the Event-Driven Backtest Engine (e.g., run_simulation_engine).
 
+        Requires NO PARAMETERS.
+        """
+        if self.df is None:
+            raise RuntimeError("Data has not been processed. Call .process_data(df) first.")
+
+        # Return all columns needed by the StrategyEngine and the main loop.
+        required_cols = [
+            self.traded_asset_col,
+            'vix_cot_index',
+            'SPX_10D_Change',
+            'Trade_Signal',
+            'Hold_Period_Days'
+        ]
+
+        # Final check on columns
+        missing = [col for col in required_cols if col not in self.df.columns]
+        if missing:
+            # Should not happen if _generate_signals runs correctly, but good for safety
+            raise KeyError(f"Internal processing error: Final DataFrame is missing columns: {missing}")
+
+        return self.df[required_cols].dropna()
 
 # --- Example Usage (Class instantiation) ---
 if __name__ == '__main__':

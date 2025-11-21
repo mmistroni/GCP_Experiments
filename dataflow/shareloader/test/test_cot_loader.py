@@ -333,7 +333,7 @@ class MyTestCase(unittest.TestCase):
         # Example of how you would kick off the backtest:
 
         # 1. (Assume mock_df is your loaded price data)
-        params = params = params = BacktestParameters(
+        params = BacktestParameters(
                 initial_capital=initial_capital,
                 trailing_stop_pct=0.10,  # TSL 10%
                 take_profit_pct=0.50,    # TP 50%
@@ -367,7 +367,7 @@ class MyTestCase(unittest.TestCase):
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(cot_lookback_period=52 * 5, oi_lookback_period=52 * 1)
         res = calculator.calculate_sentiment(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
-        res['close'] = res['vix_close']
+        res['close'] = res['VIX_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
         analyzer = CorrelationAnalyzer(res)
@@ -384,8 +384,21 @@ class MyTestCase(unittest.TestCase):
         # Step 5.  Signal Generation
         # 2. Run Signal Generator
         print('... Generatign signaldata ....')
-        generator = DualFactorSignalGenerator() # SignalGenerator(res, optimal_lookback)
-        mock_df = generator.get_backtest_data()
+
+        signal_gen = DualFactorSignalGenerator(
+            cot_buy_threshold=10.0,
+            spx_shock_threshold=-0.015,
+            traded_asset_col='VIX_close'  # Specify the price series
+        )
+
+        # 2. Process the data (the single point of entry for the DataFrame)
+        # 'prepared_data_df' is the output from your VixSentimentCalculator
+        signal_gen.process_data(res)
+
+        # 3. Retrieve the final, backtest-ready data (NO parameters needed!)
+        mock_df = signal_gen.get_backtest_data()
+        #generator = DualFactorSignalGenerator() # SignalGenerator(res, optimal_lookback)
+        #mock_df = generator.get_backtest_data()
 
         initial_capital = 20000.0
 

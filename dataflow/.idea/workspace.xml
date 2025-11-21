@@ -5,6 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/signal_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,7 +50,7 @@
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest.executor": "Debug",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new.executor": "Run",
-    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Debug",
+    "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
@@ -266,8 +270,8 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation" />
-        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
+        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" />
       </list>
@@ -288,14 +292,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00560" summary="adding custom instructions">
-      <option name="closed" value="true" />
-      <created>1760509318908</created>
-      <option name="number" value="00560" />
-      <option name="presentableId" value="LOCAL-00560" />
-      <option name="project" value="LOCAL" />
-      <updated>1760509318908</updated>
     </task>
     <task id="LOCAL-00561" summary="adding custom instructions">
       <option name="closed" value="true" />
@@ -681,7 +677,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763487087246</updated>
     </task>
-    <option name="localTasksCounter" value="609" />
+    <task id="LOCAL-00609" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763487269512</created>
+      <option name="number" value="00609" />
+      <option name="presentableId" value="LOCAL-00609" />
+      <option name="project" value="LOCAL" />
+      <updated>1763487269512</updated>
+    </task>
+    <option name="localTasksCounter" value="610" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1147,34 +1151,34 @@
           <option name="timeStamp" value="373" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/signal_generator.py</url>
+          <line>75</line>
+          <option name="timeStamp" value="403" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py</url>
+          <line>99</line>
+          <option name="timeStamp" value="404" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>259</line>
-          <option name="timeStamp" value="380" />
+          <line>398</line>
+          <option name="timeStamp" value="405" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>140</line>
-          <option name="timeStamp" value="388" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
+          <line>405</line>
+          <option name="timeStamp" value="406" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>143</line>
-          <option name="timeStamp" value="392" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
+          <line>114</line>
+          <option name="timeStamp" value="407" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>146</line>
-          <option name="timeStamp" value="394" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>151</line>
-          <option name="timeStamp" value="395" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py</url>
-          <line>164</line>
-          <option name="timeStamp" value="396" />
+          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
+          <line>131</line>
+          <option name="timeStamp" value="408" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
