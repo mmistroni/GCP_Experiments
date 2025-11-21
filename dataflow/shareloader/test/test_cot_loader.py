@@ -40,67 +40,90 @@ from pydantic import BaseModel, Field
 # ----------------------------------------------------
 # 1. PARAMETER MODEL (The 'Pydantic' Component)
 # ----------------------------------------------------
+from pydantic import BaseModel, Field
+from typing import Optional
+
+from pydantic import BaseModel, Field
+from typing import Optional, Any
+import pandas as pd
+import numpy as np
+from typing import Tuple, Union
+
+
 class BacktestParameters(BaseModel):
-    """Defines and validates the key parameters for the backtest."""
-    price_column: str = 'close'
+    """
+    Defines and validates the key parameters for the backtest.
+    """
+    price_column: str = Field('VIX_close', description="Column name for the traded instrument's price.")
+    spx_column: str = Field('SPX_close', description="Column name for the S&P 500 price data.")
     initial_capital: float = Field(10000.0, gt=0, description="Starting cash.")
+
+    # Risk Management Parameters
     trailing_stop_pct: float = Field(0.10, gt=0, lt=1, description="Percentage for TSL.")
     take_profit_pct: float = Field(0.20, gt=0, lt=1, description="Percentage for TP.")
-    # FIX: Max % of capital to risk per trade (Addresses Max Drawdown)
     max_risk_pct: float = Field(0.015, gt=0, lt=1, description="Max % of capital to risk per trade (the fix).")
     commission_per_unit: float = Field(0.01, ge=0, description="Commission per unit traded.")
 
+    # NEW: Strategy-Specific Entry Filter Parameter
+    cot_entry_threshold: float = Field(10.0, ge=0,
+                                       description="VIX COT Index threshold for entry confirmation (e.g., 10.0 for extreme sentiment).")
 
+
+# NOTE: The global COT_SPIKE_FILTER is now obsolete and should be removed.
 # ----------------------------------------------------
 # 2. STRATEGY AND TRADE SIZING ENGINE
 # ----------------------------------------------------
-COT_SPIKE_FILTER = 10.0
 def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float,
-                   params: BacktestParameters):
+                   params: BacktestParameters) -> Tuple[str, float, Union[str, None]]:
     """
-    Determines entry signal, calculates position size, and checks exit conditions.
+    Determines the trading action (BUY, EXIT, HOLD) based on the pre-calculated
+    signal, current factors, and the position state.
 
     :returns: (action: str, units_to_trade: float, exit_reason: str or None)
     """
 
     # --- Entry Logic (Signal and Sizing) ---
-    # --- Entry Logic Amendment ---
+    # Check for: 1. Not in a trade AND 2. Dual-Factor 'BUY' signal AND 3. VIX COT factor confirms extreme sentiment
     if not in_position and \
             current_row['Trade_Signal'] == 'BUY' and \
-            current_row['COT_Index'] >= COT_SPIKE_FILTER:
+            current_row['vix_cot_index'] <= params.cot_entry_threshold:
+        # Using <= because a low VIX COT Index (e.g., <= 10) is the contrarian BUY signal.
 
         # FIX: Risk-Based Position Sizing
         max_dollar_risk = current_capital * params.max_risk_pct
         stop_loss_distance_per_unit = current_row[params.price_column] * params.trailing_stop_pct
 
         # Calculate units: (Max Dollar Risk) / (Loss per Unit)
+        # Add small epsilon (1e-9) to prevent division by zero if price or TSL is zero
         units_held = max_dollar_risk / (stop_loss_distance_per_unit + 1e-9)
 
         return 'BUY', units_held, None
 
-    # --- Exit Logic ---
+    # --- Exit Logic (Priority Check when in a position) ---
     elif in_position:
         peak_price = current_row['Peak_Price_in_Position'] if 'Peak_Price_in_Position' in current_row and not np.isnan(
-            current_row['Peak_Price_in_Position']) else entry_price
+            current_row.get('Peak_Price_in_Position', entry_price)) else entry_price
         current_price = current_row[params.price_column]
 
+        # 1. Check for Trailing Stop-Loss (TSL)
         tsl_trigger = peak_price * (1.0 - params.trailing_stop_pct)
-        tp_trigger_price = entry_price * (1.0 + params.take_profit_pct)
-
-        # 1. Trailing Stop-Loss
         if current_price <= tsl_trigger:
             return 'EXIT', 0.0, 'TSL'
 
-        # 2. Take Profit
-        elif current_price >= tp_trigger_price:
+        # 2. Check for Take Profit (TP)
+        tp_trigger_price = entry_price * (1.0 + params.take_profit_pct)
+        if current_price >= tp_trigger_price:
             return 'EXIT', 0.0, 'TP'
 
-        # 3. Time-Based Exit (RESTORED: Only exit on time if profitable)
-        elif current_row.name >= current_row['Exit_Date_Target']:
-            # The original rule is now enforced: only exit if we've captured gains
+        # 3. Check for Time-Based Exit (Only exit if profitable AND time is up)
+        # This relies on run_simulation_engine having set 'Exit_Date_Target'
+        # The .name is the current day's date index
+        if current_row.name >= current_row['Exit_Date_Target']:
             if current_price > entry_price:
                 return 'EXIT', 0.0, 'Time'
+            # Optional: Exit flat-or-loss after time is up to free up capital, but your current logic requires profit.
 
+    # --- Default: Hold ---
     return 'NEUTRAL', 0.0, None
 
 
@@ -108,7 +131,6 @@ def StrategyEngine(current_row: pd.Series, current_capital: float, in_position: 
 # 3. MAIN SIMULATION ENGINE
 # ----------------------------------------------------
 def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.DataFrame:
-    """Main loop for backtesting, calling the StrategyEngine for decisions."""
     df = df.sort_index().copy()
 
     # Pre-calculate Exit Date Target
@@ -117,7 +139,7 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
     # Initialize tracking columns
     df['Position_Size'] = 0.0
     df['Realized_P_L'] = 0.0
-    df['Capital'] = params.initial_capital
+    df['Capital'] = np.nan  # Will be filled iteratively
     df['Peak_Price_in_Position'] = np.nan
     df['Exit_Reason'] = None
     df['Entry_Price'] = np.nan
@@ -127,43 +149,53 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
     units_held = 0.0
     entry_price = 0.0
     peak_price = 0.0
+    running_capital = params.initial_capital  # <-- Use running variable for calculation
 
-    # ... (Initialization and Loop Logic as before) ...
+    # Set initial capital
     if not df.empty:
-        df.loc[df.index[0], 'Capital'] = params.initial_capital
-        for i in range(1, len(df)):
-            df.loc[df.index[i], 'Capital'] = df.loc[df.index[i - 1], 'Capital']
+        df.loc[df.index[0], 'Capital'] = running_capital
 
     for i in range(len(df)):
         current_date = df.index[i]
         current_row = df.loc[current_date]
         current_price = current_row[params.price_column]
 
-        if i > 0:
-            df.loc[current_date, 'Position_Size'] = units_held
-            df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
+        # 1. Update Peak Price and Position Tracking
+        df.loc[current_date, 'Position_Size'] = units_held
+        df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
-        # Update Peak Price if in position
         if in_position:
             peak_price = max(peak_price, current_price)
             df.loc[current_date, 'Peak_Price_in_Position'] = peak_price
 
         # --- Call External Strategy Engine for Decision ---
-        action, units_to_trade, exit_reason = StrategyEngine(current_row, df.loc[current_date, 'Capital'],
-                                                             in_position, entry_price, params)
+        # FIX: 'action' is defined here as the first output of the StrategyEngine call
+        action, units_to_trade, exit_reason = StrategyEngine(
+            current_row,
+            running_capital,  # Pass the running capital for accurate sizing
+            in_position,
+            entry_price,
+            params
+        )
 
         # --- Execute Actions (Entry/Exit) ---
         if action == 'EXIT':
             exit_price = current_price
 
+            # P&L Calculation: Correct for LONG VIX position
             gross_p_l = (exit_price - entry_price) * units_held
             total_commission = units_held * params.commission_per_unit
+
+            # FIX: 'net_p_l' is now explicitly defined here
             net_p_l = gross_p_l - total_commission
 
-            df.loc[current_date, 'Capital'] += net_p_l
+            # Update running capital and DataFrame column
+            running_capital += net_p_l
+            df.loc[current_date, 'Capital'] = running_capital
             df.loc[current_date, 'Realized_P_L'] = net_p_l
             df.loc[current_date, 'Exit_Reason'] = exit_reason
 
+            # Reset position state variables
             in_position = False
             units_held = 0.0
             entry_price = 0.0
@@ -176,11 +208,20 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
             df.loc[current_date, 'Position_Size'] = units_held
             df.loc[current_date, 'Entry_Price'] = entry_price
 
+            # NOTE: Capital is NOT reduced on entry (assuming margin/futures)
+            # If you need to deduct cash for the full price, you would update running_capital here.
+
             in_position = True
             peak_price = entry_price
 
-    # --- FINAL LIQUIDATION LOGIC ---
+        # --- Carry Capital Forward ---
+        # If 'Capital' wasn't updated by an EXIT event today, carry the running_capital forward
+        if pd.isna(df.loc[current_date, 'Capital']):
+            df.loc[current_date, 'Capital'] = running_capital
+
+    # --- FINAL LIQUIDATION LOGIC (at end of loop) ---
     if in_position:
+        # ... (Liquidation logic remains mostly the same, as it defines net_p_l locally) ...
         final_date = df.index[-1]
         final_price = df.loc[final_date, params.price_column]
 
@@ -188,10 +229,13 @@ def run_simulation_engine(df: pd.DataFrame, params: BacktestParameters) -> pd.Da
         total_commission = units_held * params.commission_per_unit
         net_p_l = gross_p_l - total_commission
 
+        # Use the last recorded capital value
         df.loc[final_date, 'Capital'] += net_p_l
         df.loc[final_date, 'Realized_P_L'] += net_p_l
 
     return df
+
+
 
 
 # ----------------------------------------------------
