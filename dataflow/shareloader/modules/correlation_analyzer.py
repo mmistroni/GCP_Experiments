@@ -129,11 +129,3 @@ def find_smallest_correlation(df: pd.DataFrame):
     return optimal_lookback, optimal_holding_period, optimal_correlation
 
 
-if __name__ == 'main':
-    optimal_lookback, optimal_holding_period, optimal_correlation = find_smallest_correlation(results_df)
-
-    print("--- Optimal Parameter Search Results ---")
-    print(f"Based on the analysis, the most predictive signal (smallest correlation) is found at:")
-    print(f"Optimal Lookback Period (Row Index): {optimal_lookback} Weeks")
-    print(f"Optimal Holding Period (Column Name): {optimal_holding_period} Weeks")
-    print(f"Optimal Correlation Value: {optimal_correlation}")
