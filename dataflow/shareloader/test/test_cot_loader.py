@@ -413,7 +413,38 @@ class MyTestCase(unittest.TestCase):
 
         results_df.to_csv('c:/Temp/VIX_NewBacktest.csv')
 
+    def verify_backtest_input(self, df: pd.DataFrame) -> None:
+        """Checks for the presence and content of the 'Trade_Signal' column."""
+        required_col = 'Trade_Signal'
 
+        # Check 1: Column Existence
+        if required_col not in df.columns:
+            raise KeyError(
+                f"ERROR: Missing required column '{required_col}'. "
+                "Ensure you are using the output of DualFactorSignalGenerator.get_backtest_data()."
+            )
+
+        # Check 2: Content Validation
+        valid_signals = ['BUY', 'SELL', 'NEUTRAL']
+
+        # Drop NaNs just in case and check the remaining unique values
+        unique_signals = df[required_col].dropna().unique()
+
+        # Check 3: Presence of an executable trade signal
+        if 'BUY' not in unique_signals and 'SELL' not in unique_signals:
+            raise ValueError(
+                f"ERROR: '{required_col}' column contains no executable signals ('BUY' or 'SELL'). "
+                "Check your DualFactorSignalGenerator thresholds (COT/SPX) or data range."
+            )
+
+        # Check 4: Trade Count (A quick final sanity check)
+        trade_count = df[df[required_col].isin(['BUY', 'SELL'])].shape[0]
+        print(f"✅ Input Verified: Found {trade_count} days with executable signals ('BUY' or 'SELL').")
+
+        # Example usage:
+        # backtest_input_df = signal_gen.get_backtest_data()
+        # verify_backtest_input(backtest_input_df)
+        # self.run_backtest_simulation(backtest_input_df, initial_capital=10000.0)
 
     def test_cot_simulation(self):
 
@@ -452,20 +483,57 @@ class MyTestCase(unittest.TestCase):
             spx_shock_threshold=-0.015,
             traded_asset_col='VIX_close'  # Specify the price series
         )
+        prepared_data_df = res
+        # Check 1: How many days is the VIX COT Index at or below the entry threshold?
+        cot_threshold = 10.0  # Use your actual threshold if different
+        extreme_sentiment_count = (prepared_data_df['vix_cot_index'] <= cot_threshold).sum()
+        print(f"Days with Extreme VIX COT Sentiment (<= {cot_threshold}): {extreme_sentiment_count}")
+
+        # Check 2: How many days is the SPX 10-day change at or below the shock threshold?
+        shock_threshold = -0.010  # Use your actual threshold if different
+        market_shock_count = (prepared_data_df['SPX_10D_Change'] <= shock_threshold).sum()
+        print(f"Days with SPX Market Shock (<= {shock_threshold * 100}%): {market_shock_count}")
+
+        # Check 3: How many days are BOTH conditions met?
+        dual_factor_count = (
+                (prepared_data_df['vix_cot_index'] <= 10.0) &
+                (prepared_data_df['SPX_10D_Change'] <= -0.010)
+        ).sum()
+        print(f"Days with Dual-Factor Entry Signal: {dual_factor_count}")
+
+        # Check 4: Print the column list and a sample of the data
+        print("--- DataFrame Info ---")
+        prepared_data_df.info()
+        print("\n--- Sample Data ---")
+        print(prepared_data_df[['vix_cot_index', 'SPX_10D_Change']].head(10))
+
 
         # 2. Process the data (the single point of entry for the DataFrame)
         # 'prepared_data_df' is the output from your VixSentimentCalculator
-        signal_gen.process_data(res)
 
-        # 3. Retrieve the final, backtest-ready data (NO parameters needed!)
-        mock_df = signal_gen.get_backtest_data()
-        #generator = DualFactorSignalGenerator() # SignalGenerator(res, optimal_lookback)
-        #mock_df = generator.get_backtest_data()
+        # 1. Instantiate the Generator (using your confirmed thresholds)
+        signal_gen = DualFactorSignalGenerator(
+            cot_buy_threshold=10.0,
+            spx_shock_threshold=-0.010,
+            traded_asset_col='VIX_close',  # Based on your column list
+            fixed_hold_period_days=20
+        )
+        self.verify_backtest_input(prepared_data_df)
+        # 2. Process the data (This is where Trade_Signal is created and stored internally)
+        # 'prepared_data_df' is the output from your VixSentimentCalculator
+        signal_gen.process_data(prepared_data_df)
+
+        # 3. Retrieve the final, backtest-ready data (This DataFrame NOW has 'Trade_Signal')
+        backtest_input_df = signal_gen.get_backtest_data()
+
+
+
+
 
         initial_capital = 20000.0
 
         # NOTE: Using the default price_column='close'
-        self.run_backtest_simulation(mock_df, initial_capital=initial_capital)
+        self.run_backtest_simulation(backtest_input_df, initial_capital=initial_capital)
 
         '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')
