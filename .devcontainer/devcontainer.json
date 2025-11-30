@@ -1,49 +1,35 @@
 {
-    "name": "Python Project with Poetry",
+    "name": "GCP Experiments (Python Venv)",
+    
     "build": {
-        "dockerfile": "../Dockerfile"
+        "dockerfile": "Dockerfile"
     },
     
-    
-    "forwardPorts": [], // List any ports your application needs to expose (e.g., 8000)
+    // NO FEATURES SECTION
 
     "customizations": {
         "vscode": {
             "settings": {
-                "python.defaultInterpreterPath": "/usr/bin/python", // Default Python in the container
-                "python.terminal.activateEnvironment": true, // Automatically activate the venv in new terminals
-                "python.poetryPath": "/root/.poetry/bin/poetry", // Path to Poetry executable
-                "python.analysis.extraPaths": ["/app/.venv/lib/python3.10/site-packages"], // Adjust for your Python version and venv location
-                "terminal.integrated.profiles.linux": {
-                    "bash": {
-                        "path": "bash"
-                    }
-                },
-                "terminal.integrated.defaultProfile.linux": "bash",
-                "files.exclude": {
-                    "**/.git": true,
-                    "**/.svn": true,
-                    "**/.hg": true,
-                    "**/CVS": true,
-                    "**/.DS_Store": true,
-                    "**/.venv": false // Don't exclude the .venv folder from VS Code explorer
-                }
+                // Must be the absolute path to the venv python executable
+                "python.defaultInterpreterPath": "/workspaces/GCP_Experiments/.venv/bin/python", 
+                
+                // Keep activation settings
+                "python.terminal.activateEnvironment": true,
+                "python.analysis.extraPaths": ["/workspaces/GCP_Experiments/.venv/lib/python3.10/site-packages"],
+                
+                "terminal.integrated.defaultProfile.linux": "bash"
             },
+            
             "extensions": [
-                "ms-python.python",        // Python extension
-                "ms-python.vscode-pylance", // Pylance for language server
-                "ms-vscode.live-server",    // Useful for web development
-                "eamodio.gitlens",          // Enhanced Git capabilities
-                "humao.rest-client"         // For testing APIs
+                "ms-python.python",        
+                "ms-python.vscode-pylance", 
+                // ... rest of extensions ...
+                "ms-vscode.live-server",    
+                "eamodio.gitlens",          
+                "humao.rest-client"         
             ]
         }
     },
-
-    // A command that will be run every time the container is created.
-    // This activates the Poetry virtual environment for the current shell and future shells.
-    // It's crucial for making your installed dependencies available in the terminal.
-    "postCreateCommand": "poetry env use python && poetry shell",
-
-    // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-    // "remoteUser": "vscode"
+    
+    "remoteUser": "vscode"
 }
