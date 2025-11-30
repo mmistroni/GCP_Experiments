@@ -2,7 +2,8 @@
     "name": "GCP Experiments (Python Venv)",
     
     "build": {
-        "dockerfile": "Dockerfile"
+        "dockerfile": "Dockerfile",
+        "context": ".." // <--- ADD THIS LINE
     },
     
     // NO FEATURES SECTION
