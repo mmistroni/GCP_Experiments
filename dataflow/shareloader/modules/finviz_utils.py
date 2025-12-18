@@ -396,6 +396,44 @@ def get_high_low():
     return {'VALUE' : len(highs) - len(lows), 'NEW_HIGH' : len(highs), 'NEW_LOW' : len(lows),
             'HIGH_TICKERS' : high_ticks, 'LOW_TICKERS' : low_ticks}
 
+def get_finviz_marketdown():
+    # Categories > Money, Banking, & Finance > Interest Rates > Corporate Bonds
+    # https://fred.stlouisfed.org/series/BAMLH0A0HYM2
+    '''
+
+    Descriptive Parameters:
+
+
+    :return:
+    '''
+
+    desc_filters = {
+        'Exchange' : 'NASDAQ',
+        'Market Cap.': '+Mid (over $2bln)',
+        'Option/Short': 'Optionable',
+        'Short Float': 'High (>20%)',
+    }
+    fund_filters = {
+        'EPS growthnext year': 'Negative (<0%)'
+    }
+
+    tech_filters = {
+        'Performance': 'Quarter Down',
+        'Performance 2': 'Month DownDown',
+        '20-Day Simple Moving Average': 'Price below SMA20',
+        
+    }
+
+    filters_dict = tech_filters
+    filters_dict.update(desc_filters)
+    filters_dict.update(fund_filters)
+
+    dt = _run_screener(filters_dict)
+    logging.info(f' Finviz Market Down: {len(dt)}')
+    return dt
+
+
+
 def overnight_return():
     '''
     Hello Marco,

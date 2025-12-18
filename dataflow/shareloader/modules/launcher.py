@@ -16,7 +16,7 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    StockSelectionCombineFn, write_to_ai_stocks, \
                                                    run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
                                                    run_test_pipeline2, run_plus500_pipeline, run_gemini_pipeline, \
-                                                   run_congresstrades_pipeline
+                                                   run_congresstrades_pipeline, run_finviz_marketdown
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 
@@ -352,10 +352,10 @@ def run(argv = None, save_main_session=True):
 
         elif known_args.runtype == 'marketdown':
             plus500 = run_test_pipeline(p, known_args.fmprepkey, price_change=-0.10)
-
+            finviz_md = run_finviz_marketdown(p, known_args.fmprepkey, price_change=-0.10)
             stp = run_swingtrader_pipeline(p, known_args.fmprepkey, price_change=-0.10)
 
-            all_pipelines = ((plus500, stp, ) | "fmaprun all" >> beam.Flatten())
+            all_pipelines = ((plus500, finviz_md, stp, ) | "fmaprun all" >> beam.Flatten())
             premarket_results = (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(
                 StockSelectionCombineFn()))
 

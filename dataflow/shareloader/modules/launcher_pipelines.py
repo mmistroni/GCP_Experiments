@@ -5,7 +5,7 @@ from datetime import date
 from shareloader.modules.obb_utils import AsyncProcess, create_bigquery_ppln, AsyncFMPProcess
 from shareloader.modules.superperformers import combine_tickers
 from shareloader.modules.finviz_utils import get_extra_watchlist, get_leaps, get_universe_stocks, overnight_return,\
-                                            get_eod_screener, get_new_highs, get_peter_lynch
+                                            get_eod_screener, get_new_highs, get_peter_lynch, get_finviz_marketdown
 from shareloader.modules.obb_processes import AsyncProcessFinvizTester
 from shareloader.modules.sectors_utils import get_finviz_performance
 import itertools
@@ -119,6 +119,15 @@ def run_newhigh_pipeline(p, fmpkey, tolerance=0.01):#even 1% will be godod for n
                 | 'Filtering nh ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers from nh' >> beam.CombineGlobally(lambda x: ','.join(x))
                | 'NHighs' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='NewHigh'))
+             )
+
+def run_finviz_marketdown(p, fmpkey, tolerance=-0.05):#even 1% will be godod for ne w hight
+    cob = date.today()
+    return  (p  | 'Starting finviz md' >> beam.Create(get_finviz_marketdown())
+                | 'nh FinvizMarketDown' >> beam.Map(lambda d: d['Ticker'])
+                | 'Filtering finvix md ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
+                | 'Combine all tickers from fmd' >> beam.CombineGlobally(lambda x: ','.join(x))
+               | 'FinvixMd' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='FinvizMarketDown'))
              )
 
 
