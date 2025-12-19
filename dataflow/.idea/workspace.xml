@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +66,7 @@
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_canslim.executor": "Run",
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_disclosures.executor": "Run",
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_extra_watchlist.executor": "Run",
+    "Python tests.Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown.executor": "Run",
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_finvizloader.executor": "Run",
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_gdefensive.executor": "Run",
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_genterprise.executor": "Run",
@@ -188,7 +190,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation">
+  <component name="RunManager" selected="Python tests.Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown">
     <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -201,21 +203,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_sentiment_backtest&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
@@ -264,13 +251,28 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_finviz_marketdown&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new" />
-        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_backtest" />
       </list>
     </recent_temporary>
   </component>
@@ -289,14 +291,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00570" summary="adding custom instructions">
-      <option name="closed" value="true" />
-      <created>1760624157480</created>
-      <option name="number" value="00570" />
-      <option name="presentableId" value="LOCAL-00570" />
-      <option name="project" value="LOCAL" />
-      <updated>1760624157480</updated>
     </task>
     <task id="LOCAL-00571" summary="debugging inference run">
       <option name="closed" value="true" />
@@ -682,7 +676,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763759447432</updated>
     </task>
-    <option name="localTasksCounter" value="619" />
+    <task id="LOCAL-00619" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1763759600849</created>
+      <option name="number" value="00619" />
+      <option name="presentableId" value="LOCAL-00619" />
+      <option name="project" value="LOCAL" />
+      <updated>1763759600849</updated>
+    </task>
+    <option name="localTasksCounter" value="620" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -850,7 +852,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>161</line>
+          <line>160</line>
           <option name="timeStamp" value="94" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -860,17 +862,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>543</line>
+          <line>581</line>
           <option name="timeStamp" value="106" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>538</line>
+          <line>576</line>
           <option name="timeStamp" value="107" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>536</line>
+          <line>574</line>
           <option name="timeStamp" value="109" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -899,57 +901,57 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>521</line>
+          <line>559</line>
           <option name="timeStamp" value="193" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>584</line>
+          <line>622</line>
           <option name="timeStamp" value="217" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>614</line>
+          <line>652</line>
           <option name="timeStamp" value="220" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>610</line>
+          <line>648</line>
           <option name="timeStamp" value="221" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>605</line>
+          <line>643</line>
           <option name="timeStamp" value="222" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>627</line>
+          <line>665</line>
           <option name="timeStamp" value="223" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>598</line>
+          <line>636</line>
           <option name="timeStamp" value="224" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/finviz_utils.py</url>
-          <line>607</line>
+          <line>645</line>
           <option name="timeStamp" value="225" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>241</line>
+          <line>240</line>
           <option name="timeStamp" value="226" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>240</line>
+          <line>239</line>
           <option name="timeStamp" value="227" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>234</line>
+          <line>233</line>
           <option name="timeStamp" value="228" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -959,7 +961,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_finviz_utils.py</url>
-          <line>256</line>
+          <line>255</line>
           <option name="timeStamp" value="251" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1159,7 +1161,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>320</line>
+          <line>327</line>
           <option name="timeStamp" value="406" />
         </line-breakpoint>
       </breakpoints>

@@ -6,7 +6,7 @@ from shareloader.modules.finviz_utils import get_universe_stocks, get_canslim, g
                                             get_buffett_six, get_finviz_obb_data, get_advance_decline_sma, \
                                             AsyncProcessFinviz, _run_screener, get_universe_stocks, \
                                             get_eod_screener, get_peter_lynch, get_gics_to_finviz_mappings, \
-                                            get_companies_for_industry
+                                            get_companies_for_industry, get_finviz_marketdown
 
 from pprint import pprint
 import os
@@ -108,7 +108,6 @@ class MyTestCase(unittest.TestCase):
     def test_highlow(self):
         res = get_high_low()
         print(res)
-
 
     def parse_xml_from_zip_http(self, url):
         """Parses XML from a ZIP file accessed via HTTP.
@@ -309,7 +308,17 @@ class MyTestCase(unittest.TestCase):
 
 
         print(res_dict['Utilities'])
-        
+
+    def test_finviz_marketdown(self):
+        key = os.environ['FMPREPKEY']
+        with TestPipeline(options=PipelineOptions()) as p:
+            input = (p | 'Start' >> beam.Create(get_finviz_marketdown())
+                     | self.debugSink
+                     )
+
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

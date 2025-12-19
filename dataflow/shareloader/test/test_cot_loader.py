@@ -262,8 +262,15 @@ class MyTestCase(unittest.TestCase):
         key = os.environ['FMPREPKEY']
         vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
         spx_prices = get_historical_prices('^GSPC', datetime.date(2004, 7, 20), key)
-
         cot_df = get_latest_cot()
+
+        cot_df.to_csv('C:/Temp/cot.csv', index=False)
+        df2 = pd.DataFrame(spx_prices)
+        df2.to_csv('C:/Temp/spx.csv', index=False)
+
+        df3 = pd.DataFrame(vix_prices)
+        df3.to_csv('C:/Temp/vix.csv', index=False)
+
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))

@@ -411,7 +411,7 @@ def get_finviz_marketdown():
         'Exchange' : 'NASDAQ',
         'Market Cap.': '+Mid (over $2bln)',
         'Option/Short': 'Optionable',
-        'Short Float': 'High (>20%)',
+        'Float Short': 'High (>20%)',
     }
     fund_filters = {
         'EPS growthnext year': 'Negative (<0%)'
@@ -419,7 +419,7 @@ def get_finviz_marketdown():
 
     tech_filters = {
         'Performance': 'Quarter Down',
-        'Performance 2': 'Month DownDown',
+        'Performance 2': 'Month Down',
         '20-Day Simple Moving Average': 'Price below SMA20',
         
     }
