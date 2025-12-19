@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/finviz_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_finviz_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -291,14 +289,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00571" summary="debugging inference run">
-      <option name="closed" value="true" />
-      <created>1760676796275</created>
-      <option name="number" value="00571" />
-      <option name="presentableId" value="LOCAL-00571" />
-      <option name="project" value="LOCAL" />
-      <updated>1760676796275</updated>
     </task>
     <task id="LOCAL-00572" summary="debugging inference run">
       <option name="closed" value="true" />
@@ -684,7 +674,15 @@
       <option name="project" value="LOCAL" />
       <updated>1763759600849</updated>
     </task>
-    <option name="localTasksCounter" value="620" />
+    <task id="LOCAL-00620" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1766127583113</created>
+      <option name="number" value="00620" />
+      <option name="presentableId" value="LOCAL-00620" />
+      <option name="project" value="LOCAL" />
+      <updated>1766127583113</updated>
+    </task>
+    <option name="localTasksCounter" value="621" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">

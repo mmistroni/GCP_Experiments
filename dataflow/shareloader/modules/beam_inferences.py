@@ -167,7 +167,7 @@ class ContentRouter(beam.DoFn):
         prompt_content = element.strip()
         if not prompt_content or prompt_content == '[]':
             # Route to the 'empty' path
-            yield beam.pvalue.TaggedOutput(EMPTY_PROMPT_TAG, 'No ddddata')
+            yield beam.pvalue.TaggedOutput(EMPTY_PROMPT_TAG, 'No data fetched from query')
         else:
             # Route to the 'non-empty' path for inference
             yield element
