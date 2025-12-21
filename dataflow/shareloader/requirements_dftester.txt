@@ -122,6 +122,7 @@ pydantic_core==2.33.2
 pydot==1.4.2
 PyJWT==2.10.1
 pymongo==4.12.1
+pykalman
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0

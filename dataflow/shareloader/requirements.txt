@@ -10,6 +10,7 @@ backoff==2.2.1
 backports.tarfile==1.2.0
 beautifulsoup4==4.13.4
 cachetools==5.5.2
+pykalman
 certifi==2025.4.26
 cffi==1.17.1
 charset-normalizer==3.4.1

@@ -23,5 +23,5 @@ openbb-fmp
 openbb-multpl
 openbb-yfinance
 openbb-cftc
-
+pykalman
 
