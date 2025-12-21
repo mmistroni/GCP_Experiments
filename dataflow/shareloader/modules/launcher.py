@@ -385,7 +385,7 @@ def run(argv = None, save_main_session=True):
             #run_congresstrades_pipeline(p, known_args.googleapikey)
             obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-                   | 'test to finvizsink' >> finviz_sink)
+                   | 'test to finvizsink' >> sink)
 
         else:
 
