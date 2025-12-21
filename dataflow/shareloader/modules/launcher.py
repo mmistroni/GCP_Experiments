@@ -150,6 +150,12 @@ def map_to_bq_dict(input_dict):
     custom_dict["SMA50"] =  input_dict.get('SMA50')
     custom_dict["SMA200"] =  input_dict.get('SMA200')
     custom_dict['slope'] = input_dict.get('slope')
+    custom_dict['previous_obv'] = input_dict.get('previous_obv')
+    custom_dict['current_obv'] = input_dict.get('current_obv')
+    custom_dict['previous_cmf'] = input_dict.get('previous_cmf')
+    custom_dict['last_cmf'] = input_dict.get('last_cmf')
+    custom_dict['obv_last_20_days'] = input_dict.get('obv_historical', [])
+    custom_dict['cmf_last_20_days'] = input_dict.get('cmf_historical', [])
     return custom_dict
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
