@@ -333,7 +333,6 @@ def run(argv = None, save_main_session=True):
         if known_args.runtype == 'eod':
             obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
 
-            #all_pipelines_eod = ((obb) | "fmaprun all eod" >> beam.Flatten())
             premarket_results_eod = (obb | 'Combine Premarkets Reseults EOD' >> beam.CombineGlobally(
                 StockSelectionCombineFn()))
 
@@ -353,6 +352,10 @@ def run(argv = None, save_main_session=True):
 
             obb | 'oBB2 TO SINK' >>sink
 
+            (obb | 'obb2 mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                   | 'obb2 to finvizsink' >> finviz_sink)
+
+
             #write_to_ai_stocks(llm_out_eod, ai_sink)
 
 
@@ -365,6 +368,10 @@ def run(argv = None, save_main_session=True):
             premarket_results = (all_pipelines | 'Combine Premarkets Reseults' >> beam.CombineGlobally(
                 StockSelectionCombineFn()))
 
+            (all_pipelines | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                   | 'allp to finvizsink' >> finviz_sink)
+
+            
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
 
             
@@ -405,8 +412,14 @@ def run(argv = None, save_main_session=True):
             nhp = run_newhigh_pipeline(p, known_args.fmprepkey)
             nhp | 'newhighgs to sink' >> sink
 
+            
             stp = run_swingtrader_pipeline(p, known_args.fmprepkey)
             stp | 'stp to sink' >> sink
+
+            
+            (nhp | 'nhp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                   | 'nhp to finvizsink' >> finviz_sink)
+
 
             (stp | 'stp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'stp to finvizsink' >> finviz_sink)
