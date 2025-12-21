@@ -121,7 +121,7 @@ def run_newhigh_pipeline(p, fmpkey, tolerance=0.01):#even 1% will be godod for n
                | 'NHighs' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='NewHigh'))
              )
 
-def run_finviz_marketdown(p, fmpkey, tolerance=-0.05):#even 1% will be godod for ne w hight
+def run_finviz_marketdown(p, fmpkey, price_change=-0.05):#even 1% will be godod for ne w hight
     cob = date.today()
     return  (p  | 'Starting finviz md' >> beam.Create(get_finviz_marketdown())
                 | 'nh FinvizMarketDown' >> beam.Map(lambda d: d['Ticker'])
