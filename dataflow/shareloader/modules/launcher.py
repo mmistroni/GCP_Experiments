@@ -154,8 +154,8 @@ def map_to_bq_dict(input_dict):
     custom_dict['current_obv'] = input_dict.get('current_obv')
     custom_dict['previous_cmf'] = input_dict.get('previous_cmf')
     custom_dict['last_cmf'] = input_dict.get('last_cmf')
-    custom_dict['obv_last_20_days'] = input_dict.get('obv_historical', [])
-    custom_dict['cmf_last_20_days'] = input_dict.get('cmf_historical', [])
+    custom_dict['obv_last_20_days'] = input_dict.get('obv_historical', [0]*20)
+    custom_dict['cmf_last_20_days'] = input_dict.get('cmf_historical', [0]*20)
     return custom_dict
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
