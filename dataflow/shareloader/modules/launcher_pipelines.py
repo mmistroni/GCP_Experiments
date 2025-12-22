@@ -127,7 +127,7 @@ def run_finviz_marketdown(p, fmpkey, price_change=-0.05):#even 1% will be godod 
                 | 'nh FinvizMarketDown' >> beam.Map(lambda d: d['Ticker'])
                 | 'Filtering finvix md ' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers from fmd' >> beam.CombineGlobally(lambda x: ','.join(x))
-               | 'FinvixMd' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=tolerance, selection='FinvizMarketDown'))
+               | 'FinvixMd' >> beam.ParDo(AsyncProcess({'key':fmpkey}, cob, price_change=price_change, selection='FinvizMarketDown'))
              )
 
 
