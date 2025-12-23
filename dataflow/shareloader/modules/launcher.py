@@ -98,12 +98,20 @@ def get_finviz_schema():
         "SMA20": "FLOAT",
         "SMA50": "FLOAT",
         "SMA200": "FLOAT",
+        "previous_obv" : "FLOAT",
+        "current_obv" : "FLOAT",
+        "previous_cmf" : "FLOAT",
+        "last_cmf" : "FLOAT",
+        "obv_last_20_days" : "FLOAT",
+        "cmf_last_20_days" : "FLOAT"
     }
 
     schemaFields = []
     for fname, ftype in field_dict.items():
-        schemaFields.append({"name": fname, "type": ftype, "mode": "NULLABLE"})
-
+        if fname not in ['obv_last_20_days', 'cmf_last_20_days']:
+            schemaFields.append({"name": fname, "type": ftype, "mode": "NULLABLE"})
+        else:
+            schemaFields.append({"name": fname, "type": ftype, "mode": "REPEATED"})
     schema = {
         "fields": schemaFields
     }
