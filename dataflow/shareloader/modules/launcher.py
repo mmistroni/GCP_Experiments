@@ -390,7 +390,7 @@ def run(argv = None, save_main_session=True):
 
         elif known_args.runtype == 'tester':
             #run_congresstrades_pipeline(p, known_args.googleapikey)
-            obb = run_test_pipeline(p, known_args.fmprepkey)
+            obb = run_extra_pipeline(p, known_args.fmprepkey)
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'test to sink' >> sink)
 
