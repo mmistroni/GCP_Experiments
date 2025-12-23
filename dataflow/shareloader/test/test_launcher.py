@@ -1,7 +1,9 @@
 import unittest
 from shareloader.modules.launcher import run_etoro_pipeline, run_test_pipeline,\
                                          StockSelectionCombineFn, run_swingtrader_pipeline, \
-                                            run_sector_performance, FinvizCombineFn, send_email, create_row
+                                            run_sector_performance, FinvizCombineFn, send_email, create_row,\
+                                        map_to_bq_dict
+
 from shareloader.modules.launcher_pipelines import run_extra_pipeline, run_newhigh_pipeline
 from shareloader.modules.finviz_utils import  overnight_return
 from pprint import pprint
@@ -133,7 +135,13 @@ class MyTestCase(unittest.TestCase):
 
         print(df.tail(3).T)
 
-    
+    def test_multi_pipelines(self):
+        fmprepkey = os.environ['FMPREPKEY']
+        sink = beam.Map(print)
+        with TestPipeline(options=PipelineOptions()) as p:
+            tester = run_extra_pipeline(p, fmprepkey)
+            (tester | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+                    | 'allp o finvizsink' >> sink)
 
 
 

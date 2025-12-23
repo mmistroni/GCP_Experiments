@@ -390,9 +390,13 @@ def run(argv = None, save_main_session=True):
 
         elif known_args.runtype == 'tester':
             #run_congresstrades_pipeline(p, known_args.googleapikey)
-            obb = run_eodmarket_pipeline(p, known_args.fmprepkey)
+            obb = run_test_pipeline(p, known_args.fmprepkey)
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-                   | 'test to finvizsink' >> sink)
+                   | 'test to sink' >> sink)
+
+            (obb | 'bq obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+             | 'bq test to finvizsink' >> finviz_sink)
+
 
         else:
 
