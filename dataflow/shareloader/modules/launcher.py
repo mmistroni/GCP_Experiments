@@ -361,7 +361,7 @@ def run(argv = None, save_main_session=True):
             obb | 'oBB2 TO SINK' >>sink
 
             (obb | 'obb2 mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-                   | 'obb2 to finvizsink' >> sink)
+                   | 'obb2 to finvizsink' >> finviz_sink)
 
 
             #write_to_ai_stocks(llm_out_eod, ai_sink)
@@ -377,7 +377,7 @@ def run(argv = None, save_main_session=True):
                 StockSelectionCombineFn()))
 
             (all_pipelines | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-                   | 'allp to finvizsink' >> sink)
+                   | 'allp to finvizsink' >> finviz_sink)
 
             
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
@@ -433,7 +433,7 @@ def run(argv = None, save_main_session=True):
             all_pipelines = ((plus500, tester, etoro, stp, nhp) |  "fmaprun all" >> beam.Flatten())
 
             (all_pipelines | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-             | 'allp o finvizsink' >> sink)
+             | 'allp o finvizsink' >> finviz_sink)
 
             premarket_results =  (all_pipelines |'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
