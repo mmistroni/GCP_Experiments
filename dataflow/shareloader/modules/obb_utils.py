@@ -12,6 +12,9 @@ from scipy.stats import linregress
 import pandas as pd
 import pandas as pd
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
+from ta.trend import ChoppinessIndexIndicator
+from ta.trend import EMAIndicator
+from ta.momentum import DeMarkerIndicator
 from typing import List
 
 def create_bigquery_ppln(p):
@@ -33,6 +36,12 @@ def fetch_historical_data(ticker, fmpKey):
         return []
 
 
+
+def get_tech_indicators(df: pd.DataFrame):
+    # 8-Day EMA
+    
+    return df.tail(1) # Return the most recent values
+
 def get_ta_indicators(data:List[dict]) -> dict:
     try:
         df = pd.DataFrame(data)
@@ -51,12 +60,34 @@ def get_ta_indicators(data:List[dict]) -> dict:
         )
         df['cmf'] = cmf_indicator.chaikin_money_flow()
 
+        df['ema_8'] = EMAIndicator(close=df['Close'], window=8).ema_indicator()
+        df['ema_21'] = EMAIndicator(close=df['Close'], window=21).ema_indicator()
+
+        chop_ind = ChoppinessIndexIndicator(high=df['High'], low=df['Low'], close=df['Close'], window=14)
+        df['chop'] = chop_ind.choppiness_index    
+        # DeMarker
+        df['demarker'] = DeMarkerIndicator(high=df['High'], low=df['Low'], window=14).demarker()
+        
+        # Manual Fib (Example using max/min of the current window)
+        high = df['High'].max()
+        low = df['Low'].min()
+        diff = high - low
+        df['fib_161'] = high + (diff * 0.618)
+    
+
+
         # Get column names
         cmf_column = [col for col in df.columns if 'cmf' in col][0]
         obv_column = 'obv'  # pandas_ta default name for OBV
 
         # Extract the last two rows and convert to a dictionary for clear output
-        last_two_values = df.iloc[-2:][[obv_column, cmf_column]].to_dict(orient='records')
+        last_two_values = df.iloc[-2:][[obv_column, cmf_column,
+                                        'ema_8', 'ema_21',
+                                        'fib_161', 'demarker',
+                                        'chop'
+                                        
+                                        
+                                        ]].to_dict(orient='records')
 
         obvlist = df['obv'].tolist()[-20:]
         cmflist = df['cmf'].tolist()[-20:]
@@ -73,7 +104,13 @@ def get_ta_indicators(data:List[dict]) -> dict:
                        'previous_cmf' : last_two_values[0][cmf_column],
                        'last_cmf'     : last_two_values[1][cmf_column],
                        'obv_historical' : obvlist,
-                       'cmf_historical' : cmflist
+                       'cmf_historical' : cmflist,
+                       'ema_8' :          last_two_values[1]['ema_8'], 
+                       'ema_21' :         last_two_values[1]['ema_21'],
+                        'fib_161' :       last_two_values[1]['fib_161'], 
+                        'demarker' :      last_two_values[1]['demarker'],
+                        'chop' :          last_two_values[1]['chop']
+                                        
                        }
 
         return volume_dict
