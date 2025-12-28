@@ -62,7 +62,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
 
         df['ema_8'] = EMAIndicator(close=df['Close'], window=8).ema_indicator()
         df['ema_21'] = EMAIndicator(close=df['Close'], window=21).ema_indicator()
-
+        df['trend_velocity_gap'] = df['ema_8'] - df['ema_21']
         chop_ind = ChoppinessIndexIndicator(high=df['High'], low=df['Low'], close=df['Close'], window=14)
         df['chop'] = chop_ind.choppiness_index    
         # DeMarker
@@ -84,7 +84,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
         last_two_values = df.iloc[-2:][[obv_column, cmf_column,
                                         'ema_8', 'ema_21',
                                         'fib_161', 'demarker',
-                                        'chop'
+                                        'chop', 'trend_velocity_gap']
                                         
                                         
                                         ]].to_dict(orient='records')
@@ -105,8 +105,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
                        'last_cmf'     : last_two_values[1][cmf_column],
                        'obv_historical' : obvlist,
                        'cmf_historical' : cmflist,
-                       'ema_8' :          last_two_values[1]['ema_8'], 
-                       'ema_21' :         last_two_values[1]['ema_21'],
+                       'trend_velocity_gap' :          last_two_values[1]['trend_velocity_gap'],
                         'fib_161' :       last_two_values[1]['fib_161'], 
                         'demarker' :      last_two_values[1]['demarker'],
                         'chop' :          last_two_values[1]['chop']
