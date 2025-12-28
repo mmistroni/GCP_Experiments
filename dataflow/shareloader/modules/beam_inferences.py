@@ -47,6 +47,9 @@ You are to recommend stocks that are candidates to buy or to sell based on the f
 12 - current_cmf: current day Chaikin Money Flow (CMF) (20 days)
 13 - obv_historical: on balance volumes for the last 20 days
 14 - cmf_historical: cmf values for past 20 days
+15 - trend_velocity_gap: difference between ema_8 and ema_21
+16 - chop: choppiness indicator
+17  -demarker: demarker indicator
 
 **Analysis Tasks:**
 1. Based on the data, identify which stocks are candidates to **rise** (BUY/WATCH) in the next days.
