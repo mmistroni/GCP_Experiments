@@ -9,12 +9,11 @@ import asyncio
 from openbb_multpl.models.sp500_multiples import MultplSP500MultiplesFetcher
 import time
 from scipy.stats import linregress
-import pandas as pd
+import numpy as np
 import pandas as pd
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
-from ta.trend import ChoppinessIndexIndicator
 from ta.trend import EMAIndicator
-from ta.momentum import DeMarkerIndicator
+
 from typing import List
 
 def create_bigquery_ppln(p):
@@ -24,6 +23,39 @@ def create_bigquery_ppln(p):
         beam.io.BigQuerySource(query=plus500_sql, use_standard_sql=True))
 
             )
+
+
+def get_demarker_and_chopppye(df: pd.DataFrame, window: int = 14) -> pd.DataFrame:
+    """
+    Adds Choppiness Index and DeMarker to an existing DataFrame.
+    Expects columns: 'high', 'low', 'close'
+    """
+    # --- 1. Calculate Choppiness Index ---
+    high_low = df['high'] - df['low']
+    high_close = np.abs(df['high'] - df['close'].shift(1))
+    low_close = np.abs(df['low'] - df['close'].shift(1))
+    tr = pd.concat([high_low, high_close, low_close], axis=1).max(axis=1)
+
+    tr_sum = tr.rolling(window=window).sum()
+    max_h = df['high'].rolling(window=window).max()
+    min_l = df['low'].rolling(window=window).min()
+
+    # Adding 'chop' column
+    df['choppiness'] = 100 * (np.log10(tr_sum / (max_h - min_l)) / np.log10(window))
+
+    # --- 2. Calculate DeMarker ---
+    high_diff = df['high'] - df['high'].shift(1)
+    demax = high_diff.where(high_diff > 0, 0.0)
+
+    low_diff = df['low'].shift(1) - df['low']
+    demin = low_diff.where(low_diff > 0, 0.0)
+
+    # Adding 'demarker' column
+    df['demarker'] = demax.rolling(window=window).mean() / (
+            demax.rolling(window=window).mean() + demin.rolling(window=window).mean()
+    )
+
+    return df
 
 def fetch_historical_data(ticker, fmpKey):
     logging.info(f'Fetching historical for {ticker}')
@@ -63,18 +95,13 @@ def get_ta_indicators(data:List[dict]) -> dict:
         df['ema_8'] = EMAIndicator(close=df['Close'], window=8).ema_indicator()
         df['ema_21'] = EMAIndicator(close=df['Close'], window=21).ema_indicator()
         df['trend_velocity_gap'] = df['ema_8'] - df['ema_21']
-        chop_ind = ChoppinessIndexIndicator(high=df['High'], low=df['Low'], close=df['Close'], window=14)
-        df['chop'] = chop_ind.choppiness_index    
-        # DeMarker
-        df['demarker'] = DeMarkerIndicator(high=df['High'], low=df['Low'], window=14).demarker()
-        
         # Manual Fib (Example using max/min of the current window)
         high = df['High'].max()
         low = df['Low'].min()
         diff = high - low
         df['fib_161'] = high + (diff * 0.618)
-    
 
+        df = get_demarker_and_chopppye(df)
 
         # Get column names
         cmf_column = [col for col in df.columns if 'cmf' in col][0]
@@ -84,9 +111,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
         last_two_values = df.iloc[-2:][[obv_column, cmf_column,
                                         'ema_8', 'ema_21',
                                         'fib_161', 'demarker',
-                                        'chop', 'trend_velocity_gap']
-                                        
-                                        
+                                        'chop', 'trend_velocity_gap'
                                         ]].to_dict(orient='records')
 
         obvlist = df['obv'].tolist()[-20:]
