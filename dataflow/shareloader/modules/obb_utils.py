@@ -543,3 +543,4 @@ class AsyncFMPProcess(AsyncProcess):
 
 
 
+# https://medium.com/@sayedalimi19/trade-only-when-this-indicator-turns-green-ignore-everything-else-48c184107cde
