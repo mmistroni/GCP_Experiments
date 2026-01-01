@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 from ta.trend import EMAIndicator
+from ta.momentum import AwesomeOscillatorIndicator
 
 from typing import List
 
@@ -54,6 +55,11 @@ def get_demarker_and_chopppye(df: pd.DataFrame, window: int = 14) -> pd.DataFram
     df['demarker'] = demax.rolling(window=window).mean() / (
             demax.rolling(window=window).mean() + demin.rolling(window=window).mean()
     )
+
+    indicator = AwesomeOscillatorIndicator(high=df['High'], low=df['Low'])
+    df['ewo'] = indicator.awesome_oscillator()
+
+
 
     return df
 
@@ -111,7 +117,8 @@ def get_ta_indicators(data:List[dict]) -> dict:
         last_two_values = df.iloc[-2:][[obv_column, cmf_column,
                                         'ema_8', 'ema_21',
                                         'fib_161', 'demarker',
-                                        'chop', 'trend_velocity_gap'
+                                        'chop', 'trend_velocity_gap',
+                                        'ewo'
                                         ]].to_dict(orient='records')
 
         obvlist = df['obv'].tolist()[-20:]
@@ -133,7 +140,8 @@ def get_ta_indicators(data:List[dict]) -> dict:
                        'trend_velocity_gap' :          last_two_values[1]['trend_velocity_gap'],
                         'fib_161' :       last_two_values[1]['fib_161'], 
                         'demarker' :      last_two_values[1]['demarker'],
-                        'chop' :          last_two_values[1]['chop']
+                        'chop' :          last_two_values[1]['chop'],
+                        'ewo'  :          last_two_values[1]['ewo'],
                                         
                        }
 
