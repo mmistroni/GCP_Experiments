@@ -78,10 +78,20 @@ def fetch_historical_data(ticker, fmpKey):
 
 
 
-def get_tech_indicators(df: pd.DataFrame):
+def get_spx_choppiness(fmpApiKey):
     # 8-Day EMA
-    
-    return df.tail(1) # Return the most recent values
+    try:
+        spx_hist = fetch_historical_data('^GSPC', fmpApiKey)
+        df = pd.DataFrame(spx_hist)
+        spx_chop = get_demarker_and_chopppye(df)
+        records  = spx_chop.iloc[-1:][['chop']].to_dict(orient='records')
+        spx_choppyness = None
+        if records:
+            spx_choppyness  = records[0]['chop']
+    except Exception as e:
+        logging.info(f'Cannot find spx choppy:{str(e)} ')
+    return {'spx_choppyness' : spx_choppyness}
+        
 
 def get_ta_indicators(data:List[dict]) -> dict:
     try:
@@ -147,7 +157,6 @@ def get_ta_indicators(data:List[dict]) -> dict:
                         'ewo'  :          last_two_values[1]['ewo'],
                                         
                        }
-
         return volume_dict
     except Exception as e:
         logging.info(f'Faile dto fetch obv for {str(e)}')
@@ -292,7 +301,10 @@ class AsyncProcess(beam.DoFn):
 
     def get_pandas_ta_indicators(self, ticker):
         data = fetch_historical_data(ticker, self.fmpKey)[::-1]
-        return get_ta_indicators(data)
+        all_indics =  get_ta_indicators(data)
+        spx_chop_dict = get_spx_choppiness(self.fmpKey)
+        all_indics.update(spx_chop_dict)
+        return all_indics
 
     def get_profile(self, ticker):
         profile_url = f'https://financialmodelingprep.com/api/v3/profile/{ticker}?apikey={self.fmpKey}'
