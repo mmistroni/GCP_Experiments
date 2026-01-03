@@ -19,6 +19,6 @@
         }
     },
     // Use '.' instead of 'source' for universal compatibility during setup
-    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt",
+    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install -r requirements_dftester.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc"
     "remoteUser": "vscode"
 }
