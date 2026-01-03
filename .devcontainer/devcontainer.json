@@ -20,6 +20,6 @@
     },
     // Use '.' instead of 'source' for universal compatibility during setup
     // Fix: Using single quotes inside the string and double ampersands for chaining
-    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install -r requirements_dftester.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc",
+    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install -r dataflow/shareloader/requirements_dftester.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc",
     "remoteUser": "vscode"
 }
