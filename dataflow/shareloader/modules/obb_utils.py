@@ -14,6 +14,9 @@ import pandas as pd
 from ta.volume import OnBalanceVolumeIndicator, ChaikinMoneyFlowIndicator
 from ta.trend import EMAIndicator
 from ta.momentum import AwesomeOscillatorIndicator
+import httpx
+import json
+from typing import Dict, Any
 
 from typing import List
 
@@ -545,9 +548,170 @@ class AsyncFMPProcess(AsyncProcess):
             return runner.run(self.fetch_data(element))
 
 
+class AsyncCloudRunAgent(AsyncProcess):
+
+    def __init__(self):
+        # --- Configuration (Dynamic) ---
+        self.APP_URL = "https://stock-agent-service-682143946483.us-central1.run.app"
+        self.USER_ID = "user_123"
+        # Generate a single session ID for the entire conversation loop
+        self.SESSION_ID = f"session_{datetime.now().strftime('%Y%m%d%H%M%S')}" 
+        self.APP_NAME = "stock_agent"
+        
 
 
+    # --- Authentication Function (ASYNC) ---
 
+    async def get_auth_token(self) -> str:
+        """
+        Executes 'gcloud auth print-identity-token' asynchronously to get the token.
+        """
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                "gcloud", "auth", "print-identity-token",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+            stdout, stderr = await proc.communicate()
+            
+            if proc.returncode != 0:
+                raise RuntimeError(f"gcloud command failed: {stderr.decode().strip()}")
+                
+            return stdout.decode().strip()
+        except FileNotFoundError:
+            raise RuntimeError("gcloud command not found. Please ensure Google Cloud CLI is installed.")
+
+    # --- API Interaction Functions (ASYNC) ---
+
+    async def make_request(self, client: httpx.AsyncClient, method: str, endpoint: str, data: Dict[str, Any] = None) -> httpx.Response:
+        """Helper function for authenticated asynchronous requests using httpx."""
+        token = await self.get_auth_token()
+        headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        }
+        url = f"{self.APP_URL}{endpoint}"
+        
+        try:
+            if method.upper() == 'POST':
+                response = await client.post(url, headers=headers, json=data)
+            elif method.upper() == 'DELETE':
+                response = await client.delete(url, headers=headers)
+            else:
+                raise ValueError(f"Unsupported method: {method}")
+
+            response.raise_for_status() 
+            return response
+        except httpx.HTTPStatusError as errh:
+            print(f"\n❌ **HTTP ERROR:** Status {response.status_code} for {url}")
+            print(f"❌ **Server Response (Raw):**\n{response.text}")
+            raise
+        except httpx.RequestError as err:
+            print(f"\n❌ An unexpected request error occurred: {err}")
+            raise
+
+    async def run_agent_request(self, client: httpx.AsyncClient, session_id: str, message: str):
+        """Executes a single POST request to the /run_sse endpoint."""
+        
+        print(f"\n[User] -> Sending message: '{message}'")
+        
+        run_data = {
+            "app_name": self.APP_NAME,
+            "user_id": self.USER_ID,
+            "session_id": session_id,
+            "new_message": {"role": "user", "parts": [{"text": message}]},
+            "streaming": False 
+        }
+        
+        try:
+            response = await self.make_request(client, "POST", "/run_sse", data=run_data)
+            current_status = response.status_code
+            # print(f"**Request Status Code:** {current_status}") 
+
+            raw_text = response.text.strip()
+            
+            # Multi-line SSE parsing logic
+            data_lines = [
+                line.strip() 
+                for line in raw_text.split('\n') 
+                if line.strip().startswith("data:")
+            ]
+            
+            if not data_lines:
+                raise json.JSONDecodeError("No 'data:' lines found in 200 response.", raw_text, 0)
+            
+            last_data_line = data_lines[-1]
+            json_payload = last_data_line[len("data:"):].strip()
+            agent_response = json.loads(json_payload)
+            
+            # Extract the final text 
+            final_text = agent_response.get('content', {}).get('parts', [{}])[0].get('text', 'Agent response structure not recognized.')
+            
+            print(f"[Agent] -> {final_text}")
+        
+        except json.JSONDecodeError as e:
+            print(f"\n🚨 **JSON PARSING FAILED**!")
+            print(f"   Error: {e}")
+            print("   --- RAW SERVER CONTENT ---")
+            print(raw_text)
+            print("   --------------------------")
+            
+        except Exception as e:
+            print(f"❌ Agent request failed: {e}")
+
+    # --- Interactive Chat Loop ---
+
+    async def chat(self, client: httpx.AsyncClient, session_id: str):
+        """Runs the main conversation loop, handling user input asynchronously."""
+        print("--- 💬 Start Chatting ---")
+        
+        try:
+            # Use asyncio.to_thread to run blocking input() without freezing the event loop
+            user_input = await asyncio.to_thread(input, f"[{self.USER_ID}]: ")
+            
+            # Send the message to the agent
+            await self.run_agent_request(client, session_id, user_input)
+
+        except Exception as e:
+            print(f"An unexpected error occurred in the loop: {e}")
+            raise e
+
+    # --- Main Logic (ASYNC) ---
+
+    async def amain(self, element):
+        """Main asynchronous function to set up the session and start the loop."""
+        print(f"\n🤖 Starting Interactive Client with Session ID: **{self.SESSION_ID}**")
+        session_data = {"state": {"preferred_language": "English", "visit_count": 5}}
+        current_session_endpoint = f"/apps/{self.APP_NAME}/users/{self.USER_ID}/sessions/{self.SESSION_ID}"
+        
+        # httpx.AsyncClient is used as a context manager to manage connections
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            
+            # 1. Create Session
+            print("\n## 1. Creating Session")
+            try:
+                await self.make_request(client, "POST", current_session_endpoint, data=session_data)
+                print(f"✅ Session created successfully. Status 200.")
+            except Exception as e:
+                print(f"❌ Could not start session: {e}")
+                return
+
+            # 2. Start the Interactive Loop
+            await self.chat(client, self.SESSION_ID)
+            
+            # 3. Cleanup: Delete Session (Best Practice)
+            print(f"\n## 3. Deleting Session: {self.SESSION_ID}")
+            try:
+                await self.make_request(client, "DELETE", current_session_endpoint)
+                print("✅ Session deleted successfully.")
+            except Exception as e:
+                print(f"⚠️ Warning: Failed to delete session. {e}")
+
+    def process(self, element: str):
+        logging.info(f'Input elements:{element}')
+        with asyncio.Runner() as runner:
+            return runner.run(self.amain(element))
+    
 
 
 
