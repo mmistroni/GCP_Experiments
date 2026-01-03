@@ -1,36 +1,24 @@
 {
-    "name": "GCP Experiments (Python Venv)",
-    
+    "name": "GCP Experiments",
     "build": {
         "dockerfile": "Dockerfile",
-        "context": ".." // <--- ADD THIS LINE
+        "context": ".."
     },
-    
-    // NO FEATURES SECTION
-
     "customizations": {
         "vscode": {
             "settings": {
-                // Must be the absolute path to the venv python executable
-                "python.defaultInterpreterPath": "/workspaces/GCP_Experiments/.venv/bin/python", 
-                
-                // Keep activation settings
-                "python.terminal.activateEnvironment": true,
-                "python.analysis.extraPaths": ["/workspaces/GCP_Experiments/.venv/lib/python3.10/site-packages"],
-                
-                "terminal.integrated.defaultProfile.linux": "bash"
+                // Force Bash so 'source' works in the future
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "python.defaultInterpreterPath": "/workspaces/GCP_Experiments/.venv/bin/python",
+                "python.terminal.activateEnvironment": true
             },
-            
             "extensions": [
-                "ms-python.python",        
-                "ms-python.vscode-pylance", 
-                // ... rest of extensions ...
-                "ms-vscode.live-server",    
-                "eamodio.gitlens",          
-                "humao.rest-client"         
+                "ms-python.python",
+                "ms-python.vscode-pylance"
             ]
         }
     },
-    
+    // Use '.' instead of 'source' for universal compatibility during setup
+    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install -r requirements.txt",
     "remoteUser": "vscode"
 }
