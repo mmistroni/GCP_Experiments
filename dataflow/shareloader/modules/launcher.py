@@ -164,6 +164,14 @@ def map_to_bq_dict(input_dict):
     custom_dict['last_cmf'] = input_dict.get('last_cmf')
     custom_dict['obv_last_20_days'] = input_dict.get('obv_historical', [0]*20)
     custom_dict['cmf_last_20_days'] = input_dict.get('cmf_historical', [0]*20)
+    
+    custom_dict['trend_velocity_gap'] = input_dict.get('trend_velocity_gap', 0)
+    custom_dict['fib_161'] = input_dict.get('fib_161', 0)
+    custom_dict['demarker'] = input_dict.get('demarker', 0)
+    custom_dict['choppiness'] = input_dict.get('choppiness', 0)
+    custom_dict['ewo'] = input_dict.get('ewo', 0)
+    custom_dict['spx_choppyness'] = input_dict.get('spx_choppyness', 0)
+    
     return custom_dict
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
