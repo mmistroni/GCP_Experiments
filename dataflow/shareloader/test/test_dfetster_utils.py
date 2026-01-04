@@ -14,7 +14,7 @@ from datetime import date
 from shareloader.modules.obb_utils import ProcessHistorical
 from shareloader.modules.finviz_utils import get_extra_watchlist
 from shareloader.modules.launcher_pipelines import   run_etoro_pipeline,\
-                                    run_test_pipeline
+                                    run_extra_pipeline
 from datetime import datetime
 import json
 
@@ -116,6 +116,28 @@ class TestDfTesterLoader(unittest.TestCase):
 
             #res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
             #        | 'tosink' >> self.debugSink)
+
+    def test_dftester_pipeline(self):
+        key = os.environ['FMPREPKEY']
+
+        def to_json_string(element):
+            def datetime_converter(o):
+                if isinstance(o, datetime):
+                    return o.isoformat()  # Convert datetime to ISO 8601 string
+                raise TypeError(f"Object of type {o.__class__.__name__} is not JSON serializable")
+
+            return json.dumps(element, default=datetime_converter)
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            input2 = run_extra_pipeline(p, key, 0.0001)
+
+            jsons = (input2 | "ToJson" >> beam.Map(to_json_string)
+                            | 'tosink' >> self.debugSink)
+
+            #res = ( (input2, input2) |  "fmaprun" >> beam.Flatten()
+            #        | 'tosink' >> self.debugSink)
+
+
 
     def test_combine_tester_and_etoro(self):
         from shareloader.modules.obb_utils import AsyncProcess

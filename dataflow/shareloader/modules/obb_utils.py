@@ -59,7 +59,7 @@ def get_demarker_and_chopppye(df: pd.DataFrame, window: int = 14) -> pd.DataFram
             demax.rolling(window=window).mean() + demin.rolling(window=window).mean()
     )
 
-    indicator = AwesomeOscillatorIndicator(high=df['High'], low=df['Low'])
+    indicator = AwesomeOscillatorIndicator(high=df['high'], low=df['low'])
     df['ewo'] = indicator.awesome_oscillator()
 
 
@@ -80,14 +80,14 @@ def fetch_historical_data(ticker, fmpKey):
 
 def get_spx_choppiness(fmpApiKey):
     # 8-Day EMA
+    spx_choppyness = None
     try:
         spx_hist = fetch_historical_data('^GSPC', fmpApiKey)
         df = pd.DataFrame(spx_hist)
         spx_chop = get_demarker_and_chopppye(df)
-        records  = spx_chop.iloc[-1:][['chop']].to_dict(orient='records')
-        spx_choppyness = None
+        records  = spx_chop.iloc[-1:][['choppiness']].to_dict(orient='records')
         if records:
-            spx_choppyness  = records[0]['chop']
+            spx_choppyness  = records[0]['choppiness']
     except Exception as e:
         logging.info(f'Cannot find spx choppy:{str(e)} ')
     return {'spx_choppyness' : spx_choppyness}
@@ -111,12 +111,12 @@ def get_ta_indicators(data:List[dict]) -> dict:
         )
         df['cmf'] = cmf_indicator.chaikin_money_flow()
 
-        df['ema_8'] = EMAIndicator(close=df['Close'], window=8).ema_indicator()
-        df['ema_21'] = EMAIndicator(close=df['Close'], window=21).ema_indicator()
+        df['ema_8'] = EMAIndicator(close=df['close'], window=8).ema_indicator()
+        df['ema_21'] = EMAIndicator(close=df['close'], window=21).ema_indicator()
         df['trend_velocity_gap'] = df['ema_8'] - df['ema_21']
         # Manual Fib (Example using max/min of the current window)
-        high = df['High'].max()
-        low = df['Low'].min()
+        high = df['high'].max()
+        low = df['low'].min()
         diff = high - low
         df['fib_161'] = high + (diff * 0.618)
 
@@ -130,7 +130,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
         last_two_values = df.iloc[-2:][[obv_column, cmf_column,
                                         'ema_8', 'ema_21',
                                         'fib_161', 'demarker',
-                                        'chop', 'trend_velocity_gap',
+                                        'choppiness', 'trend_velocity_gap',
                                         'ewo'
                                         ]].to_dict(orient='records')
 
@@ -153,7 +153,7 @@ def get_ta_indicators(data:List[dict]) -> dict:
                        'trend_velocity_gap' :          last_two_values[1]['trend_velocity_gap'],
                         'fib_161' :       last_two_values[1]['fib_161'], 
                         'demarker' :      last_two_values[1]['demarker'],
-                        'chop' :          last_two_values[1]['chop'],
+                        'choppiness' :          last_two_values[1]['choppiness'],
                         'ewo'  :          last_two_values[1]['ewo'],
                                         
                        }
@@ -347,7 +347,7 @@ class AsyncProcess(beam.DoFn):
         # https://medium.com/@wl8380/a-simple-yet-powerful-trading-strategy-the-moving-average-slope-method-b06de9d91455
         logging.info('Calculating slope for {ticker}')
         try:
-            data = self.fetch_data(ticker)
+            data = fetch_historical_data(ticker, self.fmpKey)[::-1]
             if data:
                 prices =  [d['adjClose'] for d in data[:self.linregdays]][::-1]
 
