@@ -14,7 +14,7 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="8">
+          <list size="9">
             <item index="0" class="java.lang.String" itemvalue="protobuf" />
             <item index="1" class="java.lang.String" itemvalue="pandas_ta" />
             <item index="2" class="java.lang.String" itemvalue="httpx" />
@@ -23,6 +23,7 @@
             <item index="5" class="java.lang.String" itemvalue="apache-beam" />
             <item index="6" class="java.lang.String" itemvalue="requests" />
             <item index="7" class="java.lang.String" itemvalue="openbb-cot" />
+            <item index="8" class="java.lang.String" itemvalue="typing_extensions" />
           </list>
         </value>
       </option>
