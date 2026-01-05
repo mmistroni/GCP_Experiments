@@ -277,90 +277,83 @@ class MyTestCase(unittest.TestCase):
         print(prepared_data_df[['vix_cot_index', 'SPX_10D_Change']].head(10))
 
     def test_cot_simulation(self):
-
         from shareloader.modules.vix_market_data import get_vix_market_data
+        import os
+        import pandas as pd
 
-        # prepare data
-        print('... Gettingn data ....')
-        key = os.environ['FMPREPKEY']
-        vix_prices = get_vix_market_data() #get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
-        spx_prices = get_historical_prices('^GSPC', datetime.date(2004, 7, 20), key)
+        # --- Step 1: Data Acquisition ---
+        print('... Getting data ....')
+        key = os.environ.get('FMPREPKEY')
+        # Assuming these return DataFrames with a DatetimeIndex
+        vix_prices = get_vix_market_data()
         cot_df = get_latest_cot()
+        # Note: Ensure spx_prices is merged into vix_prices or available for SignalGenerator
 
-        cot_df.to_csv('C:/Temp/cot.csv', index=False)
-        df2 = pd.DataFrame(spx_prices)
-        df2.to_csv('C:/Temp/spx.csv', index=False)
+        # --- Step 2: Optimal Parameter Search (Optimization Loop) ---
+        print('... Finding Optimal Parameters ....')
 
-        df3 = pd.DataFrame(vix_prices)
-        df3.to_csv('C:/Temp/vix.csv', index=False)
+        lookbacks_to_test = [52, 104, 156]
+        master_results = {}
 
-        # Step 2. calcuclate sentiment
-        print('... Calculating Sentiment ....')
-        calculator = VixSentimentCalculator()
-        res = calculator.calculate_sentiment(vix_prices, cot_df)
-        #res['close'] = res['VIX_close']
-        # Step 3. Correlation analysis
-        print('... Correlation analysis ....')
-        analyzer = CorrelationAnalyzer(res)
-        results_df = analyzer.get_results_table()
-        # Step 4:  Find optimal correlation
-        print('... Optimal corr ....')
-        optimal_lookback, optimal_holding_period, optimal_correlation = find_smallest_correlation(results_df)
-        print("--- Optimal Parameter Search Results ---")
-        print(f"Based on the analysis, the most predictive signal (smallest correlation) is found at:")
-        print(f"Optimal Lookback Period (Row Index): {optimal_lookback} Weeks")
-        print(f"Optimal Holding Period (Column Name): {optimal_holding_period} Weeks")
-        print(f"Optimal Correlation Value: {optimal_correlation}")
-        # Step 5.  Signal Generation
-        # 2. Run Signal Generator
-        print('... Generatign signaldata ....')
+        for lb in lookbacks_to_test:
+            # Calculate sentiment for this specific lookback candidate
+            calculator = VixSentimentCalculator(cot_lookback_period=lb)
+            temp_res = calculator.calculate_sentiment(vix_prices, cot_df)
 
+            # Analyze the predictive power (correlations) of this lookback
+            analyzer = CorrelationAnalyzer(temp_res)
+            master_results[lb] = analyzer.run_analysis(lags=[4, 8, 12])
+
+        # Find which (Lookback, Lag) had the strongest predictive signal
+        optimal_lookback, optimal_holding_weeks, optimal_correlation = find_smallest_correlation(master_results)
+
+        print("\n--- Optimal Parameter Search Results ---")
+        print(f"Optimal Lookback Period: {optimal_lookback} Weeks")
+        print(f"Optimal Holding Period: {optimal_holding_weeks} Weeks")
+        print(f"Strongest Correlation: {optimal_correlation:.4f}")
+
+        # --- Step 3: Final Data Preparation ---
+        print('... Preparing Final Sentiment Data ....')
+        # Generate the FINAL sentiment dataframe using the optimal lookback found above
+        res = calculator.calculate_sentiment(vix_prices, cot_df, lookback=optimal_lookback)
+
+        # --- Step 4: Signal Generation ---
+        print('... Generating Signals ....')
+        # Instantiate the Generator with your strategy thresholds
+        signal_gen = DualFactorSignalGenerator(
+            cot_buy_threshold=20.0,
+            spx_shock_threshold=-0.020
+        )
+
+        # Process the data to add 'Trade_Signal' and 'Hold_Period_Days'
+        # We convert optimal_holding_weeks to days for the backtester
+        prepared_data_df = signal_gen.process_data(res, hold_days=optimal_holding_weeks * 5)
+
+        # --- Step 5: Backtest Simulation ---
+        print('... Running Backtest ....')
+
+        # Strategy Parameters
         initial_capital = 20000.0
         trailing_stop_pct = 0.2
         take_profit_pct = 0.15
-        max_risk_pct = 0.040
+        max_risk_pct = 0.04
         commission_per_unit = 0.01
-        cot_buy_threshold = 10.0
-        spx_shock_threshold = -0.020
-        vix_ratio_threshold = 2.0
 
-
-        prepared_data_df = res
-
-
-        # 2. Process the data (the single point of entry for the DataFrame)
-        # 'prepared_data_df' is the output from your VixSentimentCalculator
-
-        # 1. Instantiate the Generator (using your confirmed thresholds)
-        # 2. Process the data (This is where Trade_Signal is created and stored internally)
-        # 'prepared_data_df' is the output from your VixSentimentCalculator
-
-        signal_gen = DualFactorSignalGenerator(
-            cot_buy_threshold=20.0,
-            fixed_hold_period_days=opt_hold * 5  # Convert weeks to trading days
+        # Run the simulation using the orchestration method
+        # Note: We pass the optimized holding period to the simulation
+        results_df, final_metrics = self.run_backtest_simulation(
+            prepared_df=prepared_data_df,
+            initial_capital=initial_capital,
+            trailing_stop_pct=trailing_stop_pct,
+            take_profit_pct=take_profit_pct,
+            max_risk_pct=max_risk_pct,
+            commission_per_unit=commission_per_unit,
+            optimal_lookback=optimal_lookback,
+            optimal_hold_weeks=optimal_holding_weeks
         )
 
-        # 6. Run Backtest
-        params = BacktestParameters(
-            price_column='vix_close',
-            initial_capital=20000.0
-        )
-        engine = StrategyEngine(params)
-        tester = Backtester(params, engine)
-
-        final_results = tester.run_simulation(res)
-
-        #self.verify_backtest_input(backtest_input_df)
-
-
-        # NOTE: Using the default price_column='close'
-        self.run_backtest_simulation(res, initial_capital=initial_capital,
-                                            trailing_stop_pct=trailing_stop_pct,
-                                            take_profit_pct=take_profit_pct,
-                                            max_risk_pct=max_risk_pct,
-                                            commission_per_unit=commission_per_unit,
-                                           vix_ratio_threshold=vix_ratio_threshold)
-
+        print("\n--- Final Backtest Metrics ---")
+        print(final_metrics)
         '''
         results_df.to_csv('c:/Temp/VIXPNL.csv')
 
@@ -381,97 +374,7 @@ class MyTestCase(unittest.TestCase):
         print(f"Total P&L:       ${final_pnl:,.2f}")
         print(f"Return:          {return_percentage:.2f}%")
         '''
-    def test_cot_pipeline(self):
-        key = os.environ['FMPREPKEY']
-        sink = beam.Map(print)
-        KEY_BY_DATE = lambda record_list: [(record['date'], record) for record in record_list]
 
-        with TestPipeline() as p:
-            # Note: Best practice for production is to use --environment=sdk to pass keys securely
-            fmp_key = os.environ.get('FMPREPKEY', 'DUMMY_KEY')
-
-            # The starting PCollection is a single element used to trigger the fetches
-            start_pcoll = p | 'Create Trigger' >> beam.Create(['Test'])
-
-            # --- PARALLEL ACQUISITION STAGE (Stage 1) ---
-
-            # 1.1 Acquire VIX Data (Keyed by 'A')
-            vix_records = (
-                    start_pcoll
-                    | 'Acquire VIX Data' >> beam.ParDo(AcquireVIXDataFn(fmp_key=fmp_key))
-            )
-
-            # 2. Key VIX Records
-            keyed_vix = (
-                    vix_records
-                    | 'Key VIX by Date' >> beam.Map(lambda record: (record['date'], record))
-            )
-
-
-            # 1.2 Acquire COT Data
-            # FIX: Add a step to convert the list of records into (date, record) pairs.
-            keyed_cot = (
-                    start_pcoll
-                    | 'Acquire COT Data' >> beam.ParDo(AcquireCOTDataFn(credentials={}))
-            )
-
-            # 1.2 Acquire COT Data and Explode to Daily Keys
-            keyed_cot_daily = (
-                    keyed_cot  # This is your PCollection of raw COT records
-                    | 'Explode COT to Daily Keys' >> beam.ParDo(ExplodeCotToDailyFn())
-            )
-
-            return
-            # 1.3 Combine VIX and COT Data (CoGroupByKey on the Daily Date)
-            combined_data_list = (
-                    {'vix': keyed_vix, 'cot': keyed_cot_daily}  # Use the exploded COT collection
-                    | 'CoGroup VIX and COT' >> beam.CoGroupByKey()
-            )
-
-            return
-
-
-            # --- SENTIMENT CALCULATION STAGE (Stage 2) ---
-            # Output is a single DataFrame
-            sentiment_data = (
-                    combined_data_list
-                    | 'Calculate Sentiment Metrics' >> beam.ParDo(
-                CalculateSentimentFn(cot_lookback=52 * 5, oi_lookback=52 * 1))
-            )
-
-            # --- CORRELATION ANALYSIS STAGE (Stage 3) ---
-            correlation_results = (
-                    sentiment_data
-                    | 'Run Correlation Analysis' >> beam.ParDo(RunCorrelationAnalysisFn())
-            )
-
-            # --- OPTIMAL PARAMETER FINDING STAGE (Stage 4) ---
-            # Output is a single JSON string, keyed by 'B' for the final join
-            optimal_params_pcollection = (
-                    correlation_results
-                    | 'Find Optimal Parameters' >> beam.ParDo(FindOptimalCorrelationFn())
-            )
-
-            # --- SIGNAL GENERATION STAGE (Stage 5) ---
-
-            # 5a. Key the Sentiment Data for the final join (Keyed by 'B')
-            keyed_sentiment_for_join = sentiment_data | 'Key Sentiment for Join' >> beam.Map(lambda x: ('B', x))
-
-            # 5b. Join the Sentiment Data (Stage 2) and Optimal Parameters (Stage 4)
-            joined_data = (
-                    {'sentiment': keyed_sentiment_for_join, 'optimal': optimal_params_pcollection}
-                    | 'Join Data for Signal Generation' >> beam.CoGroupByKey()
-            )
-
-            # 5c. Generate the Signal
-            final_signal = (
-                    joined_data
-                    | 'Generate Final Signal' >> beam.ParDo(GenerateSignalFn())
-                    | 'Print Final Signal' >> beam.Map(lambda x: print(f"--- Final Signal: {x} ---"))
-            )
-            
-            final_signal | 'to sink' >> sink
-            ###
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="ading classes for cots">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="updated vix analyiss">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/vix_sentiment_calculator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_cot_loader.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,11 +50,12 @@
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentiment_new.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente.executor": "Run",
     "Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Debug",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_combine_tester_and_etoro.executor": "Run",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_dftester_pipeline.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_etoro.executor": "Debug",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_launcher.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_obb_pipeline.executor": "Run",
-    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor": "Debug",
+    "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_premarket_pipeline.executor": "Run",
     "Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_run_pipeline.executor": "Run",
     "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_create_pipeline.executor": "Debug",
     "Python tests.Python tests for test_ecoonomic_utils.EconomicUtilsTestCase.test_get_company_dissolutions.executor": "Run",
@@ -83,11 +85,13 @@
     "Python tests.Python tests for test_finviz_utils.MyTestCase.test_universe.executor": "Run",
     "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_fred_URLS.executor": "Run",
     "Python tests.Python tests for test_fred_utils.FedUtilsTestCase.test_high_yield_spreads.executor": "Run",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_cloudrunagent.executor": "Run",
     "Python tests.Python tests for test_launcher.MyTestCase.test_etoro.executor": "Run",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_extras.executor": "Run",
     "Python tests.Python tests for test_launcher.MyTestCase.test_finviz_with_combiner.executor": "Debug",
     "Python tests.Python tests for test_launcher.MyTestCase.test_get_historical.executor": "Debug",
     "Python tests.Python tests for test_launcher.MyTestCase.test_multi_pipelines.executor": "Run",
-    "Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor": "Debug",
+    "Python tests.Python tests for test_launcher.MyTestCase.test_swingtrader.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_decline.executor": "Run",
     "Python tests.Python tests for test_marketstats.TestMarketStats.test_advance_declinesma50.executor": "Run",
@@ -190,22 +194,7 @@
       <recent name="C:\Users\Marco And Sofia\GitHubProjects\GCP_Experiments\dataflow\shareloader\src\mypackage" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_launcher.MyTestCase.test_multi_pipelines">
-    <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="dataflow" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_cot_loader.MyTestCase.test_cot_pipeline&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation">
     <configuration name="Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
@@ -236,7 +225,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_dfetster_utils.TestDfTesterLoader.test_dftester_pipeline" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -247,11 +236,11 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_finviz_utils.MyTestCase.test_finviz_marketdown&quot;" />
+      <option name="_new_target" value="&quot;test_dfetster_utils.TestDfTesterLoader.test_dftester_pipeline&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for test_launcher.MyTestCase.test_multi_pipelines" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for test_launcher.MyTestCase.test_cloudrunagent" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="dataflow" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -262,17 +251,32 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_multi_pipelines&quot;" />
+      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_cloudrunagent&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for test_launcher.MyTestCase.test_etoro" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="dataflow" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/shareloader/test" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_launcher.MyTestCase.test_etoro&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_multi_pipelines" />
-        <item itemvalue="Python tests.Python tests for test_finviz_utils.MyTestCase.test_finviz_marketdown" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_simulation" />
         <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_sentimente" />
-        <item itemvalue="Python tests.Python tests for test_cot_loader.MyTestCase.test_cot_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_cloudrunagent" />
+        <item itemvalue="Python tests.Python tests for test_dfetster_utils.TestDfTesterLoader.test_dftester_pipeline" />
+        <item itemvalue="Python tests.Python tests for test_launcher.MyTestCase.test_etoro" />
       </list>
     </recent_temporary>
   </component>
@@ -291,70 +295,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00578" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761474253546</created>
-      <option name="number" value="00578" />
-      <option name="presentableId" value="LOCAL-00578" />
-      <option name="project" value="LOCAL" />
-      <updated>1761474253547</updated>
-    </task>
-    <task id="LOCAL-00579" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761474345673</created>
-      <option name="number" value="00579" />
-      <option name="presentableId" value="LOCAL-00579" />
-      <option name="project" value="LOCAL" />
-      <updated>1761474345673</updated>
-    </task>
-    <task id="LOCAL-00580" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761736045680</created>
-      <option name="number" value="00580" />
-      <option name="presentableId" value="LOCAL-00580" />
-      <option name="project" value="LOCAL" />
-      <updated>1761736045681</updated>
-    </task>
-    <task id="LOCAL-00581" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761736104118</created>
-      <option name="number" value="00581" />
-      <option name="presentableId" value="LOCAL-00581" />
-      <option name="project" value="LOCAL" />
-      <updated>1761736104118</updated>
-    </task>
-    <task id="LOCAL-00582" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761757507273</created>
-      <option name="number" value="00582" />
-      <option name="presentableId" value="LOCAL-00582" />
-      <option name="project" value="LOCAL" />
-      <updated>1761757507273</updated>
-    </task>
-    <task id="LOCAL-00583" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761847694335</created>
-      <option name="number" value="00583" />
-      <option name="presentableId" value="LOCAL-00583" />
-      <option name="project" value="LOCAL" />
-      <updated>1761847694335</updated>
-    </task>
-    <task id="LOCAL-00584" summary="adding congress trdes">
-      <option name="closed" value="true" />
-      <created>1761847878447</created>
-      <option name="number" value="00584" />
-      <option name="presentableId" value="LOCAL-00584" />
-      <option name="project" value="LOCAL" />
-      <updated>1761847878447</updated>
-    </task>
-    <task id="LOCAL-00585" summary="committing sentimetn calculator">
-      <option name="closed" value="true" />
-      <created>1762241919862</created>
-      <option name="number" value="00585" />
-      <option name="presentableId" value="LOCAL-00585" />
-      <option name="project" value="LOCAL" />
-      <updated>1762241919864</updated>
     </task>
     <task id="LOCAL-00586" summary="committing sentimetn calculator">
       <option name="closed" value="true" />
@@ -684,7 +624,71 @@
       <option name="project" value="LOCAL" />
       <updated>1766476398985</updated>
     </task>
-    <option name="localTasksCounter" value="627" />
+    <task id="LOCAL-00627" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1766476444683</created>
+      <option name="number" value="00627" />
+      <option name="presentableId" value="LOCAL-00627" />
+      <option name="project" value="LOCAL" />
+      <updated>1766476444683</updated>
+    </task>
+    <task id="LOCAL-00628" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1766491635295</created>
+      <option name="number" value="00628" />
+      <option name="presentableId" value="LOCAL-00628" />
+      <option name="project" value="LOCAL" />
+      <updated>1766491635295</updated>
+    </task>
+    <task id="LOCAL-00629" summary="ading classes for cots">
+      <option name="closed" value="true" />
+      <created>1767022502631</created>
+      <option name="number" value="00629" />
+      <option name="presentableId" value="LOCAL-00629" />
+      <option name="project" value="LOCAL" />
+      <updated>1767022502632</updated>
+    </task>
+    <task id="LOCAL-00630" summary="fixed issues">
+      <option name="closed" value="true" />
+      <created>1767529978083</created>
+      <option name="number" value="00630" />
+      <option name="presentableId" value="LOCAL-00630" />
+      <option name="project" value="LOCAL" />
+      <updated>1767529978085</updated>
+    </task>
+    <task id="LOCAL-00631" summary="fixed issues">
+      <option name="closed" value="true" />
+      <created>1767597250541</created>
+      <option name="number" value="00631" />
+      <option name="presentableId" value="LOCAL-00631" />
+      <option name="project" value="LOCAL" />
+      <updated>1767597250541</updated>
+    </task>
+    <task id="LOCAL-00632" summary="updated vix analyiss">
+      <option name="closed" value="true" />
+      <created>1767605214124</created>
+      <option name="number" value="00632" />
+      <option name="presentableId" value="LOCAL-00632" />
+      <option name="project" value="LOCAL" />
+      <updated>1767605214124</updated>
+    </task>
+    <task id="LOCAL-00633" summary="updated vix analyiss">
+      <option name="closed" value="true" />
+      <created>1767605254638</created>
+      <option name="number" value="00633" />
+      <option name="presentableId" value="LOCAL-00633" />
+      <option name="project" value="LOCAL" />
+      <updated>1767605254638</updated>
+    </task>
+    <task id="LOCAL-00634" summary="updated vix analyiss">
+      <option name="closed" value="true" />
+      <created>1767606338088</created>
+      <option name="number" value="00634" />
+      <option name="presentableId" value="LOCAL-00634" />
+      <option name="project" value="LOCAL" />
+      <updated>1767606338088</updated>
+    </task>
+    <option name="localTasksCounter" value="635" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -710,8 +714,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="added new runtuype" />
-    <MESSAGE value="increased tolerance" />
     <MESSAGE value="ADDED NY COJMPOSITE" />
     <MESSAGE value="added pandas ta" />
     <MESSAGE value="replaced pandas ta" />
@@ -735,7 +737,9 @@
     <MESSAGE value="committing sentimetn calculator" />
     <MESSAGE value="cleaning inference" />
     <MESSAGE value="ading classes for cots" />
-    <option name="LAST_COMMIT_MESSAGE" value="ading classes for cots" />
+    <MESSAGE value="fixed issues" />
+    <MESSAGE value="updated vix analyiss" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated vix analyiss" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -966,7 +970,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/launcher.py</url>
-          <line>188</line>
+          <line>197</line>
           <option name="timeStamp" value="257" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -983,11 +987,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/superperf_pipelines.py</url>
           <line>194</line>
           <option name="timeStamp" value="274" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>274</line>
-          <option name="timeStamp" value="275" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_launcher.py</url>
@@ -1016,33 +1015,8 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>385</line>
+          <line>471</line>
           <option name="timeStamp" value="295" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>468</line>
-          <option name="timeStamp" value="296" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>470</line>
-          <option name="timeStamp" value="297" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>437</line>
-          <option name="timeStamp" value="298" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>440</line>
-          <option name="timeStamp" value="299" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>279</line>
-          <option name="timeStamp" value="301" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
@@ -1071,7 +1045,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>87</line>
+          <line>90</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1093,11 +1067,6 @@
           <url>file://$PROJECT_DIR$/shareloader/modules/sectors_utils.py</url>
           <line>205</line>
           <option name="timeStamp" value="329" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
-          <line>29</line>
-          <option name="timeStamp" value="330" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/marketstats_utils.py</url>
@@ -1156,13 +1125,38 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/correlation_analyzer.py</url>
-          <line>99</line>
+          <line>24</line>
           <option name="timeStamp" value="404" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_cot_loader.py</url>
-          <line>327</line>
-          <option name="timeStamp" value="406" />
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>440</line>
+          <option name="timeStamp" value="410" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>469</line>
+          <option name="timeStamp" value="411" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>366</line>
+          <option name="timeStamp" value="424" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>353</line>
+          <option name="timeStamp" value="425" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>355</line>
+          <option name="timeStamp" value="426" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/shareloader/modules/obb_utils.py</url>
+          <line>363</line>
+          <option name="timeStamp" value="427" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
