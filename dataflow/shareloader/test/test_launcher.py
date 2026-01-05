@@ -143,6 +143,21 @@ class MyTestCase(unittest.TestCase):
             (tester | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                     | 'allp o finvizsink' >> sink)
 
+    def test_cloudrunagent(self):
+        from shareloader.modules.obb_utils import AsyncCloudRunAgent, create_bigquery_ppln, ProcessHistorical
+        from datetime import date
+        key = os.environ['FMPREPKEY']
+
+        def combine_tickers(input):
+            return ','.join([i for i in input if bool(i)])
+
+        with TestPipeline(options=PipelineOptions()) as p:
+            (p | 'Sourcinig overnight' >> beam.Create(["Run a technical analysis for today's stock picks and give me your recommendations"])
+                    | 'Plus500YFRun' >> beam.ParDo(AsyncCloudRunAgent())
+                     |  self.debugSink
+                    )
+
+
 
 
 if __name__ == '__main__':

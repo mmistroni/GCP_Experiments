@@ -16,7 +16,8 @@ from shareloader.modules.launcher_pipelines import run_test_pipeline, run_eodmar
                                                    StockSelectionCombineFn, write_to_ai_stocks, \
                                                    run_peterlynch_pipeline, run_extra_pipeline, run_newhigh_pipeline,\
                                                    run_test_pipeline2, run_plus500_pipeline, run_gemini_pipeline, \
-                                                   run_congresstrades_pipeline, run_finviz_marketdown
+                                                   run_congresstrades_pipeline, run_finviz_marketdown, \
+                                                   run_gcloud_agent
                                                    
 from shareloader.modules.launcher_email import EmailSender, send_email
 
@@ -410,9 +411,7 @@ def run(argv = None, save_main_session=True):
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'test to sink' >> sink)
 
-            (obb | 'bq obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-             | 'bq test to finvizsink' >> finviz_sink)
-
+            res = run_gcloud_agent(p, sink)
 
         else:
 

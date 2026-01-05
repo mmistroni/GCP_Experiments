@@ -17,6 +17,8 @@ from ta.momentum import AwesomeOscillatorIndicator
 import httpx
 import json
 from typing import Dict, Any
+from google.oauth2 import id_token
+import google.auth.transport.requests
 
 from typing import List
 
@@ -576,23 +578,22 @@ class AsyncCloudRunAgent(AsyncProcess):
 
     async def get_auth_token(self) -> str:
         """
-        Executes 'gcloud auth print-identity-token' asynchronously to get the token.
+        Programmatically fetches an ID token for the Cloud Run service audience.
+        'target_audience' should be the URL of your Cloud Run service.
         """
-        try:
-            proc = await asyncio.create_subprocess_exec(
-                "gcloud", "auth", "print-identity-token",
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
-            )
-            stdout, stderr = await proc.communicate()
-            
-            if proc.returncode != 0:
-                raise RuntimeError(f"gcloud command failed: {stderr.decode().strip()}")
-                
-            return stdout.decode().strip()
-        except FileNotFoundError:
-            raise RuntimeError("gcloud command not found. Please ensure Google Cloud CLI is installed.")
+        # Run the synchronous google-auth call in a thread to keep it async-friendly
+        loop = asyncio.get_event_loop()
 
+        def fetch_token():
+            auth_req = google.auth.transport.requests.Request()
+            # This automatically uses the Dataflow Worker Service Account
+            return id_token.fetch_id_token(auth_req, self.APP_URL)
+
+        try:
+            token = await loop.run_in_executor(None, fetch_token)
+            return token
+        except Exception as e:
+            raise RuntimeError(f"Failed to fetch ID token: {e}")
     # --- API Interaction Functions (ASYNC) ---
 
     async def make_request(self, client: httpx.AsyncClient, method: str, endpoint: str, data: Dict[str, Any] = None) -> httpx.Response:

@@ -245,6 +245,15 @@ def write_to_ai_stocks(pipeline, ai_sink):
      
     )
 
+def run_gcloud_agent(pipeline, debugSink):
+    from shareloader.modules.obb_utils import AsyncCloudRunAgent
+    (pipeline | 'Sourcinig prompt' >> beam.Create(["Run a technical analysis for today's stock picks and give me your recommendations"])
+            | 'ClouodagentRun' >> beam.ParDo(AsyncCloudRunAgent())
+             |  debugSink
+            )
+
+
+
         
 
 
