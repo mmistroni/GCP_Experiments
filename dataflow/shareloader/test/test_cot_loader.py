@@ -296,9 +296,9 @@ class MyTestCase(unittest.TestCase):
 
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
-        calculator = VixSentimentCalculator(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
+        calculator = VixSentimentCalculator()
         res = calculator.calculate_sentiment(vix_prices, cot_df)
-        res['close'] = res['VIX_close']
+        #res['close'] = res['VIX_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
         analyzer = CorrelationAnalyzer(res)
