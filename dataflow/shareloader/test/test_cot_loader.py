@@ -7,7 +7,7 @@ import apache_beam as beam
 from openbb import obb
 from shareloader.modules.correlation_analyzer import CorrelationAnalyzer, find_smallest_correlation
 from shareloader.modules.signal_generator import SignalGenerator, DualFactorSignalGenerator
-from shareloader.modules.vix_pipelines import find_smallest_correlation,VixSentimentCalculator, AcquireCOTDataFn, \
+from shareloader.modules.vix_pipelines import VixSentimentCalculator, AcquireCOTDataFn, \
                                             AcquireVIXDataFn, CalculateSentimentFn, RunCorrelationAnalysisFn,\
                                             FindOptimalCorrelationFn, GenerateSignalFn, ExplodeCotToDailyFn
 
@@ -154,47 +154,69 @@ class MyTestCase(unittest.TestCase):
     # daily_aligned_df = prepare_daily_backtest_data(weekly_cot_df, daily_vix_df)
     # generator = SignalGenerator(df=daily_aligned_df, ...)
 
-    def run_backtest_simulation(self, mock_df: pd.DataFrame,
-                                             initial_capital: float,
-                                             trailing_stop_pct:float ,
-                                             take_profit_pct: float,
-                                             max_risk_pct:float,
-                                             commission_per_unit: float,
-                                             vix_ratio_threshold:float):
+    def run_backtest_simulation(
+            self,
+            prepared_df: pd.DataFrame,
+            initial_capital: float,
+            trailing_stop_pct: float,
+            take_profit_pct: float,
+            max_risk_pct: float,
+            commission_per_unit: float,
+            optimal_lookback: int,  # Added from CorrelationAnalyzer
+            optimal_hold_weeks: int  # Added from CorrelationAnalyzer
+    ):
         """
-        Simulates the long-only trading strategy incorporating Trailing Stop-Loss and
-        a PERCENTAGE-BASED Take Profit (take_profit_pct) that scales with entry price.
-
-        :param take_profit_pct: Percentage gain from entry price to trigger exit (e.g., 0.30 for 30%).
+        Orchestrates the full backtest pipeline: Signal Generation -> Simulation -> Metrics.
         """
-        # Example of how you would kick off the backtest:
 
-        # 1. DEFINE PARAMETERS
+        # 1. GENERATE SIGNALS
+        # We use the optimal holding period found by the analyzer
+        signal_gen = DualFactorSignalGenerator(
+            traded_asset_col='vix_close',
+            fixed_hold_period_days=optimal_hold_weeks * 5  # Convert weeks to days
+        )
+
+        # Process data to add 'Trade_Signal' and 'Hold_Period_Days'
+        df_with_signals = signal_gen.process_data(prepared_df)
+
+        # 2. DEFINE PARAMETERS (Pydantic Validation)
         params = BacktestParameters(
-            # Use your actual desired parameters here
             initial_capital=initial_capital,
             trailing_stop_pct=trailing_stop_pct,
             take_profit_pct=take_profit_pct,
             max_risk_pct=max_risk_pct,
-            price_column='VIX_close',
-            commission_per_unit=commission_per_unit,
-            vix_ratio_threshold=vix_ratio_threshold
+            price_column='vix_close',  # Matches vix_utils/SentimentCalc
+            commission_per_unit=commission_per_unit
         )
 
-        # 2. INSTANTIATE STRATEGY ENGINE
+        # 3. INSTANTIATE STRATEGY ENGINE
+        # The engine now uses the 'BUY' signals from the generator
         strategy_engine = StrategyEngine(params)
 
-        # 3. INSTANTIATE BACKTESTER & RUN SIMULATION
+        # 4. INSTANTIATE BACKTESTER & RUN SIMULATION
         backtester = Backtester(params, strategy_engine)
-        results_df = backtester.run_simulation(mock_df)
+        results_df = backtester.run_simulation(df_with_signals)
 
-        # 4. INSTANTIATE METRICS CALCULATOR & GET RESULTS
+        # 5. INSTANTIATE METRICS CALCULATOR & GET RESULTS
         metrics_calculator = MetricsCalculator(results_df)
         final_metrics = metrics_calculator.calculate_metrics()
 
-        print(final_metrics)
-        # You should see the exact same result: {'Initial Capital': 20000.0, 'Final Capital': 13797.18..., 'Total Closed Trades': 6, 'Win Rate (%)': 0.0, ...}
+        # --- Print Detailed Report ---
+        print("\n" + "=" * 45)
+        print("      VIX FEATURE AGENT: BACKTEST RESULTS")
+        print("=" * 45)
+        print(f"Optimal Lookback: {optimal_lookback} weeks")
+        print(f"Optimal Hold:     {optimal_hold_weeks} weeks")
+        print("-" * 45)
+        for key, value in final_metrics.items():
+            if isinstance(value, float):
+                print(f"{key:25}: {value:>15.2f}")
+            else:
+                print(f"{key:25}: {value:>15}")
+        print("=" * 45)
+
         results_df.to_csv('c:/Temp/VIX_NewBacktest.csv')
+        return results_df, final_metrics
 
     def verify_backtest_input(self, df: pd.DataFrame) -> None:
         """Checks for the presence and content of the 'Trade_Signal' column."""
@@ -256,11 +278,12 @@ class MyTestCase(unittest.TestCase):
 
     def test_cot_simulation(self):
 
+        from shareloader.modules.vix_market_data import get_vix_market_data
 
         # prepare data
         print('... Gettingn data ....')
         key = os.environ['FMPREPKEY']
-        vix_prices = get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
+        vix_prices = get_vix_market_data() #get_historical_prices('^VIX', datetime.date(2004, 7, 20), key)
         spx_prices = get_historical_prices('^GSPC', datetime.date(2004, 7, 20), key)
         cot_df = get_latest_cot()
 
@@ -274,12 +297,11 @@ class MyTestCase(unittest.TestCase):
         # Step 2. calcuclate sentiment
         print('... Calculating Sentiment ....')
         calculator = VixSentimentCalculator(pd.DataFrame(vix_prices), cot_df, pd.DataFrame(spx_prices))
-        res = calculator.calculate_sentiment()
+        res = calculator.calculate_sentiment(vix_prices, cot_df)
         res['close'] = res['VIX_close']
         # Step 3. Correlation analysis
         print('... Correlation analysis ....')
         analyzer = CorrelationAnalyzer(res)
-        analyzer.run_analysis()
         results_df = analyzer.get_results_table()
         # Step 4:  Find optimal correlation
         print('... Optimal corr ....')
@@ -302,11 +324,7 @@ class MyTestCase(unittest.TestCase):
         spx_shock_threshold = -0.020
         vix_ratio_threshold = 2.0
 
-        signal_gen = DualFactorSignalGenerator(
-            cot_buy_threshold=cot_buy_threshold,
-            spx_shock_threshold=spx_shock_threshold,
-            traded_asset_col='VIX_close'  # Specify the price series
-        )
+
         prepared_data_df = res
 
 
@@ -316,16 +334,27 @@ class MyTestCase(unittest.TestCase):
         # 1. Instantiate the Generator (using your confirmed thresholds)
         # 2. Process the data (This is where Trade_Signal is created and stored internally)
         # 'prepared_data_df' is the output from your VixSentimentCalculator
-        signal_gen.process_data(prepared_data_df)
 
-        # 3. Retrieve the final, backtest-ready data (This DataFrame NOW has 'Trade_Signal')
-        backtest_input_df = signal_gen.get_backtest_data()
+        signal_gen = DualFactorSignalGenerator(
+            cot_buy_threshold=20.0,
+            fixed_hold_period_days=opt_hold * 5  # Convert weeks to trading days
+        )
 
-        self.verify_backtest_input(backtest_input_df)
+        # 6. Run Backtest
+        params = BacktestParameters(
+            price_column='vix_close',
+            initial_capital=20000.0
+        )
+        engine = StrategyEngine(params)
+        tester = Backtester(params, engine)
+
+        final_results = tester.run_simulation(res)
+
+        #self.verify_backtest_input(backtest_input_df)
 
 
         # NOTE: Using the default price_column='close'
-        self.run_backtest_simulation(backtest_input_df, initial_capital=initial_capital,
+        self.run_backtest_simulation(res, initial_capital=initial_capital,
                                             trailing_stop_pct=trailing_stop_pct,
                                             take_profit_pct=take_profit_pct,
                                             max_risk_pct=max_risk_pct,

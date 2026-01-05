@@ -12,49 +12,39 @@ class StrategyEngine:
 
     def get_action(self, current_row: pd.Series, current_capital: float, in_position: bool, entry_price: float) -> \
     Tuple[str, float, Union[str, None]]:
-        """
-        Determines the trading action (SELL/EXIT, HOLD) for a SHORT VIX strategy.
-        """
         params = self.params
-        action = 'NEUTRAL'
-        units_to_trade = 0.0
-        exit_reason = None
 
-        # --- Entry Logic (SHORT VIX Mean Reversion) ---
-        # The threshold (e.g., 2.0) is assumed to be passed via params
-        if not in_position and current_row['VIX_Ratio'] >= params.vix_ratio_threshold:
-
-            # Risk-Based Position Sizing: Risk is defined by TSL distance (loss if price rises)
+        # --- ENTRY LOGIC (LONG VIX PANIC) ---
+        # We now look for the 'BUY' signal from your SignalGenerator
+        if not in_position and current_row.get('Trade_Signal') == 'BUY':
+            # Risk-Based Position Sizing
             max_dollar_risk = current_capital * params.max_risk_pct
+            # Stop loss distance (VIX is volatile, so we use the params.trailing_stop_pct)
+            stop_loss_dist = current_row[params.price_column] * params.trailing_stop_pct
+            units_to_buy = max_dollar_risk / (stop_loss_dist + 1e-9)
 
-            # For SHORT: Stop loss is above the entry price (TSL % increase)
-            stop_loss_distance_per_unit = current_row[params.price_column] * params.trailing_stop_pct
-            units_held = max_dollar_risk / (stop_loss_distance_per_unit + 1e-9)
+            return 'BUY', units_to_buy, None
 
-            return 'SELL', units_held, None  # <-- SELL action initiates the SHORT position
-
-        # --- Exit Logic (Priority Check when in a position) ---
+        # --- EXIT LOGIC (LONG POSITION) ---
         elif in_position:
-            # Note: For Short, peak tracking is irrelevant unless using Trailing TP/TSL logic.
-            # We will use simple fixed TSL/TP relative to entry.
             current_price = current_row[params.price_column]
 
-            # 1. Trailing Stop-Loss (Loss if price rises against the short trade)
-            tsl_trigger = entry_price * (1.0 + params.trailing_stop_pct)
-            if current_price >= tsl_trigger:
-                return 'EXIT', 0.0, 'TSL'  # Price rises to TSL
+            # 1. Trailing Stop-Loss (Price falls below TSL trigger)
+            tsl_trigger = entry_price * (1.0 - params.trailing_stop_pct)
+            if current_price <= tsl_trigger:
+                return 'EXIT', 0.0, 'TSL'
 
-            # 2. Take Profit (Profit if price falls by TP amount)
-            tp_trigger_price = entry_price * (1.0 - params.take_profit_pct)
-            if current_price <= tp_trigger_price:
-                return 'EXIT', 0.0, 'TP'  # Price falls to TP
+            # 2. Take Profit (Price rises above TP trigger)
+            tp_trigger = entry_price * (1.0 + params.take_profit_pct)
+            if current_price >= tp_trigger:
+                return 'EXIT', 0.0, 'TP'
 
-            # 3. Time-Based Exit (Assuming a long hold period for now)
+            # 3. Time-Based Exit (Check if we reached the end of the holding period)
+            # This requires 'Exit_Date' to be calculated in the backtest loop
             if 'Exit_Date_Target' in current_row and current_row.name >= current_row['Exit_Date_Target']:
                 return 'EXIT', 0.0, 'Time'
 
-        return action, units_to_trade, exit_reason
-
+        return 'NEUTRAL', 0.0, None
 from typing import Dict, Any
 
 
@@ -116,95 +106,112 @@ class Backtester:
         self.params = params
         self.strategy = strategy_engine
 
-    def run_simulation(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Runs the short VIX mean reversion backtest simulation."""
 
-        params = self.params
-        df = df.sort_index().copy()
+def run_simulation(self, df: pd.DataFrame) -> pd.DataFrame:
+    """Runs the Long VIX backtest based on Trade_Signal entries."""
+    params = self.params
+    df = df.sort_index().copy()
 
-        # ... (Initialization and state variables remain the same) ...
-        # Assume df column initialization is handled here.
+    # --- Initialize Result Columns ---
+    df['Capital'] = np.nan
+    df['Realized_P_L'] = 0.0
+    df['Position_Size'] = 0.0
+    df['Entry_Price'] = np.nan
+    df['Exit_Reason'] = None
 
-        in_position, units_held, entry_price, peak_price = False, 0.0, 0.0, 0.0
-        running_capital = params.initial_capital
+    # State variables
+    in_position = False
+    units_held = 0.0
+    entry_price = 0.0
+    running_capital = params.initial_capital
+    exit_target_date = None
 
-        # Set initial capital
-        if not df.empty:
-            df.loc[df.index[0], 'Capital'] = running_capital
+    # Set starting capital
+    if not df.empty:
+        df.loc[df.index[0], 'Capital'] = running_capital
 
-        for i in range(len(df)):
-            current_date = df.index[i]
-            current_row = df.loc[current_date]
-            current_price = current_row[params.price_column]
+    for i in range(len(df)):
+        current_date = df.index[i]
+        current_row = df.loc[current_date]
+        current_price = current_row[params.price_column]
 
-            # ... (Position tracking updates remain the same) ...
+        # --- 1. Call Strategy Engine for Action ---
+        # Note: We pass exit_target_date to handle time-based exits
+        action, units_to_trade, exit_reason = self.strategy.get_action(
+            current_row, running_capital, in_position, entry_price
+        )
 
-            # --- Call Strategy Engine ---
-            action, units_to_trade, exit_reason = self.strategy.get_action(
-                current_row, running_capital, in_position, entry_price
-            )
+        # --- 2. Execution Logic ---
 
-            # --- Execute Actions (Entry/Exit) ---
-            if action == 'EXIT':
-                exit_price = current_price
+        # A. EXIT LOGIC (Long Position)
+        if action == 'EXIT' and in_position:
+            exit_price = current_price
 
-                # FIX: P&L Calculation for a SHORT trade: (Entry Price - Exit Price) * Units
-                gross_p_l = (entry_price - exit_price) * units_held  # <--- SHORT P&L
-                total_commission = units_held * params.commission_per_unit
-                net_p_l = gross_p_l - total_commission
-
-                running_capital += net_p_l
-                df.loc[current_date, 'Capital'] = running_capital
-                df.loc[current_date, 'Realized_P_L'] = net_p_l
-                df.loc[current_date, 'Exit_Reason'] = exit_reason
-
-                # Reset state
-                in_position, units_held, entry_price, peak_price = False, 0.0, 0.0, 0.0
-
-            # Entry Check: 'SELL' for SHORT trade
-            elif action == 'SELL' and not in_position:
-                units_held = units_to_trade
-                entry_price = current_price
-
-                df.loc[current_date, 'Position_Size'] = units_held
-                df.loc[current_date, 'Entry_Price'] = entry_price
-
-                in_position = True
-                peak_price = entry_price  # Start peak tracking
-
-            # Carry Capital Forward
-            if pd.isna(df.loc[current_date, 'Capital']):
-                df.loc[current_date, 'Capital'] = running_capital
-
-        # --- FINAL LIQUIDATION LOGIC ---
-        if in_position:
-            final_date = df.index[-1]
-            final_price = df.loc[final_date, params.price_column]
-
-            # SHORT P&L Calculation for final liquidation
-            gross_p_l = (entry_price - final_price) * units_held
+            # P&L Calculation: (Exit - Entry) * Units
+            gross_p_l = (exit_price - entry_price) * units_held
             total_commission = units_held * params.commission_per_unit
             net_p_l = gross_p_l - total_commission
 
-            df.loc[final_date, 'Capital'] += net_p_l
-            df.loc[final_date, 'Realized_P_L'] += net_p_l
+            running_capital += net_p_l
+            df.loc[current_date, 'Capital'] = running_capital
+            df.loc[current_date, 'Realized_P_L'] = net_p_l
+            df.loc[current_date, 'Exit_Reason'] = exit_reason
 
-        return df
+            # Reset State
+            in_position, units_held, entry_price = False, 0.0, 0.0
+            exit_target_date = None
+
+        # B. ENTRY LOGIC (Long Position)
+        elif action == 'BUY' and not in_position:
+            units_held = units_to_trade
+            entry_price = current_price
+            in_position = True
+
+            # Store Entry Info
+            df.loc[current_date, 'Position_Size'] = units_held
+            df.loc[current_date, 'Entry_Price'] = entry_price
+
+            # Calculate Time-Based Exit Target if Hold_Period_Days exists
+            if 'Hold_Period_Days' in current_row:
+                days_to_hold = int(current_row['Hold_Period_Days'])
+                # Find the date index 'days_to_hold' steps ahead
+                future_idx = i + days_to_hold
+                if future_idx < len(df):
+                    exit_target_date = df.index[future_idx]
+
+        # C. CARRY CAPITAL FORWARD
+        if pd.isna(df.loc[current_date, 'Capital']):
+            df.loc[current_date, 'Capital'] = running_capital
+
+    # --- 3. Final Liquidation (End of Data) ---
+    if in_position:
+        final_date = df.index[-1]
+        final_price = df.loc[final_date, params.price_column]
+        net_p_l = ((final_price - entry_price) * units_held) - (units_held * params.commission_per_unit)
+        df.loc[final_date, 'Capital'] += net_p_l
+        df.loc[final_date, 'Realized_P_L'] += net_p_l
+        df.loc[final_date, 'Exit_Reason'] = 'Final_Liquidation'
+
+    return df
+from pydantic import BaseModel, Field
+
 
 class BacktestParameters(BaseModel):
     """
-    Defines and validates the key parameters for the backtest.
+    Validated parameters for the Long VIX Panic Strategy.
     """
-    price_column: str = Field('VIX_close', description="Column name for the traded instrument's price.")
-    spx_column: str = Field('SPX_close', description="Column name for the S&P 500 price data.")
-    initial_capital: float = Field(20000.0, gt=0, description="Starting cash.")
+    # Column Names
+    price_column: str = Field('vix_close', description="The price used for P&L (from vix_utils/SentimentCalc)")
+    signal_column: str = Field('Trade_Signal', description="The BUY/SELL signal column")
 
-    # Risk Management Parameters
-    trailing_stop_pct: float = Field(0.10, gt=0, lt=1, description="Percentage for TSL.")
-    take_profit_pct: float = Field(0.20, gt=0, lt=1, description="Percentage for TP.")
-    max_risk_pct: float = Field(0.015, gt=0, lt=1, description="Max % of capital to risk per trade (the fix).")
-    commission_per_unit: float = Field(0.01, ge=0, description="Commission per unit traded.")
-    vix_ratio_threshold:float = Field(2.0, ge=0, description="Commission per unit traded.")
+    # Capital & Sizing
+    initial_capital: float = Field(20000.0, gt=0)
+    max_risk_pct: float = Field(0.02, gt=0, lt=1, description="Risk 2% of capital per trade")
 
-    # Strategy-Specific Entry Filter Parameter
-    cot_entry_threshold: float = Field(10.0, ge=0, description="VIX COT Index threshold for entry confirmation.")
+    # Exit Logic
+    trailing_stop_pct: float = Field(0.15, gt=0, lt=1, description="TSL distance (e.g., 15%)")
+    take_profit_pct: float = Field(0.30, gt=0, lt=1, description="TP target (e.g., 30%)")
+    commission_per_unit: float = Field(0.01, ge=0)
+
+    # Time-based exit (if signal generator provides it)
+    use_time_exit: bool = Field(True, description="Whether to use the Hold_Period_Days as an exit trigger")
