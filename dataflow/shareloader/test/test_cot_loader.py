@@ -315,7 +315,8 @@ class MyTestCase(unittest.TestCase):
         # --- Step 3: Final Data Preparation ---
         print('... Preparing Final Sentiment Data ....')
         # Generate the FINAL sentiment dataframe using the optimal lookback found above
-        res = calculator.calculate_sentiment(vix_prices, cot_df, lookback=optimal_lookback)
+        calculator = VixSentimentCalculator(cot_lookback_period=optimal_lookback)
+        res = calculator.calculate_sentiment(vix_prices, cot_df)
 
         # --- Step 4: Signal Generation ---
         print('... Generating Signals ....')
@@ -332,6 +333,13 @@ class MyTestCase(unittest.TestCase):
         # --- Step 5: Backtest Simulation ---
         print('... Running Backtest ....')
 
+        print(prepared_data_df.tail(10))
+
+        prepared_data_df.to_csv('c:/Temp/vix_signal.csv', header=True, index=False)
+
+
+
+        return
         # Strategy Parameters
         initial_capital = 20000.0
         trailing_stop_pct = 0.2

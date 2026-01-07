@@ -145,20 +145,17 @@ class DualFactorSignalGenerator:
     def __init__(
             self,
             cot_buy_threshold: float = 20.0,
-            spx_shock_threshold: float = -0.015,  # -1.5% daily drop
-            traded_asset_col: str = 'vix_close',  # Matches previous calculator
-            fixed_hold_period_days: int = 20
+            spx_shock_threshold: float = -0.015,
+            traded_asset_col: str = 'vix_close'
     ):
         self.cot_buy_threshold = cot_buy_threshold
         self.spx_shock_threshold = spx_shock_threshold
         self.traded_asset_col = traded_asset_col
-        self.fixed_hold_period_days = fixed_hold_period_days
         self.df: Optional[pd.DataFrame] = None
 
-    def process_data(self, df: pd.DataFrame) -> pd.DataFrame:
+    def process_data(self, df: pd.DataFrame, hold_days: int = 20) -> pd.DataFrame:
         """
-        Expects a DataFrame with 'vix_cot_index', 'SPX_1D_Change',
-        and the price column.
+        AMENDED: Now accepts hold_days dynamically from the Analyzer results.
         """
         # Ensure we use the lowercase name from your VixSentimentCalculator
         if self.traded_asset_col not in df.columns and 'Spot_VIX' in df.columns:
@@ -166,43 +163,35 @@ class DualFactorSignalGenerator:
 
         self.df = df.copy()
 
-        # 1. Forward-fill weekly COT data if the DF is daily
-        # This allows the 'Tuesday' COT value to be valid for the whole week
+        # 1. Forward-fill weekly COT data to make it daily-ready
         if 'vix_cot_index' in self.df.columns:
             self.df['vix_cot_index'] = self.df['vix_cot_index'].ffill()
 
-        # 2. Generate Signals
+        # 2. Generate Signals (COT + SPX Panic)
         self._generate_signals()
 
-        # 3. Add Hold Period
-        self.df['Hold_Period_Days'] = self.fixed_hold_period_days
+        # 3. Add Dynamic Hold Period found by the Analyzer
+        self.df['Hold_Period_Days'] = hold_days
 
         return self.get_backtest_data()
 
     def _generate_signals(self) -> None:
         df = self.df
 
-        # Ensure the 1-Day Change exists
+        # Ensure SPX shock exists
         if 'SPX_1D_Change' not in df.columns:
-            # Simple calculation if missing: (Close / Close.shift(1)) - 1
-            # Assuming you have an 'SPX_Close' column
-            if 'SPX_Close' in df.columns:
-                df['SPX_1D_Change'] = df['SPX_Close'].pct_change()
+            if 'SPX_close' in df.columns:  # Matches your get_vix_market_data output
+                df['SPX_1D_Change'] = df['SPX_close'].pct_change()
             else:
-                df['SPX_1D_Change'] = 0  # Fallback
+                df['SPX_1D_Change'] = 0
 
-        # --- DUAL FACTOR LOGIC ---
-        # Logic: We only buy if (Speculators are SHORT VIX) AND (SPX is PANICKING)
+                # --- DUAL FACTOR LOGIC ---
         buy_condition = (
                 (df['vix_cot_index'] <= self.cot_buy_threshold) &
                 (df['SPX_1D_Change'] <= self.spx_shock_threshold)
         )
 
-        df['Trade_Signal'] = np.select(
-            [buy_condition],
-            ['BUY'],
-            default='NEUTRAL'
-        )
+        df['Trade_Signal'] = np.where(buy_condition, 'BUY', 'NEUTRAL')
 
     def get_backtest_data(self) -> pd.DataFrame:
         if self.df is None:
@@ -216,7 +205,6 @@ class DualFactorSignalGenerator:
             'Hold_Period_Days'
         ]
 
-        # Add Contango_Pct to the output if it exists (from your vix_utils)
         if 'Contango_Pct' in self.df.columns:
             required_cols.append('Contango_Pct')
 
