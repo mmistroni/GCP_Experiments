@@ -296,14 +296,6 @@
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
     </task>
-    <task id="LOCAL-00587" summary="committing sentimetn calculator">
-      <option name="closed" value="true" />
-      <created>1762272139612</created>
-      <option name="number" value="00587" />
-      <option name="presentableId" value="LOCAL-00587" />
-      <option name="project" value="LOCAL" />
-      <updated>1762272139613</updated>
-    </task>
     <task id="LOCAL-00588" summary="cleaning inference">
       <option name="closed" value="true" />
       <created>1762274403267</created>
@@ -688,7 +680,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767615065873</updated>
     </task>
-    <option name="localTasksCounter" value="636" />
+    <task id="LOCAL-00636" summary="updated vix analyiss">
+      <option name="closed" value="true" />
+      <created>1767769762285</created>
+      <option name="number" value="00636" />
+      <option name="presentableId" value="LOCAL-00636" />
+      <option name="project" value="LOCAL" />
+      <updated>1767769762286</updated>
+    </task>
+    <option name="localTasksCounter" value="637" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">

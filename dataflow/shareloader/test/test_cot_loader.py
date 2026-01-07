@@ -284,9 +284,21 @@ class MyTestCase(unittest.TestCase):
         # --- Step 1: Data Acquisition ---
         print('... Getting data ....')
         key = os.environ.get('FMPREPKEY')
+
+
         # Assuming these return DataFrames with a DatetimeIndex
-        vix_prices = get_vix_market_data()
         cot_df = get_latest_cot()
+        vix_prices = get_vix_market_data()  # Returns DF with 'Spot_VIX', etc.
+        spx_prices = get_historical_prices('^GSPC', datetime.date(2004, 7, 20), key)
+
+        # CONVERT spx_prices to a Series/DataFrame and merge
+        df_spx = pd.DataFrame(spx_prices).set_index('date')['close'].rename('SPX_close')
+
+        # MERGE SPX into VIX so the calculator sees both
+        vix_prices = vix_prices.join(df_spx, how='inner')
+
+        # CALCULATE the change here so it definitely exists
+        vix_prices['SPX_1D_Change'] = vix_prices['SPX_close'].pct_change()
         # Note: Ensure spx_prices is merged into vix_prices or available for SignalGenerator
 
         # --- Step 2: Optimal Parameter Search (Optimization Loop) ---

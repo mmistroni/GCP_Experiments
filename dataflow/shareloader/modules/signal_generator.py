@@ -178,20 +178,27 @@ class DualFactorSignalGenerator:
     def _generate_signals(self) -> None:
         df = self.df
 
-        # Ensure SPX shock exists
-        if 'SPX_1D_Change' not in df.columns:
-            if 'SPX_close' in df.columns:  # Matches your get_vix_market_data output
-                df['SPX_1D_Change'] = df['SPX_close'].pct_change()
-            else:
-                df['SPX_1D_Change'] = 0
+        # 1. Forward-fill the COT Index so it's available every day of the week
+        df['vix_cot_index'] = df['vix_cot_index'].ffill()
 
-                # --- DUAL FACTOR LOGIC ---
-        buy_condition = (
-                (df['vix_cot_index'] <= self.cot_buy_threshold) &
-                (df['SPX_1D_Change'] <= self.spx_shock_threshold)
+        # 2. Relax the SPX threshold slightly (e.g., -1.5% instead of -2%)
+        # And check for the "Decimal vs Percent" issue
+        spx_panic = df['SPX_1D_Change'] <= self.spx_shock_threshold
+
+        # 3. COT Condition (Speculators are heavily short VIX)
+        cot_bullish = df['vix_cot_index'] <= self.cot_buy_threshold
+
+        # --- DUAL FACTOR LOGIC ---
+        # We use np.where for speed and clarity
+        df['Trade_Signal'] = np.where(
+            spx_panic & cot_bullish,
+            'BUY',
+            'NEUTRAL'
         )
 
-        df['Trade_Signal'] = np.where(buy_condition, 'BUY', 'NEUTRAL')
+        # DEBUG: Print how many signals were found
+        signal_count = (df['Trade_Signal'] == 'BUY').sum()
+        print(f"DEBUG: Found {signal_count} BUY signals out of {len(df)} rows.")
 
     def get_backtest_data(self) -> pd.DataFrame:
         if self.df is None:

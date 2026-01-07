@@ -39,18 +39,19 @@ class VixSentimentCalculator:
         return vix_cot_df
 
     def _prepare_vix_price_data(self, vix_df: pd.DataFrame) -> pd.DataFrame:
-        """Resamples daily VIX/Contango data to Tuesday (COT Release Day)."""
-        vix_df = vix_df.copy()
         vix_df.index = pd.to_datetime(vix_df.index)
 
-        # Resample to Tuesday (W-TUE) to match COT alignment
-        vix_weekly = vix_df.resample('W-TUE').agg({
+        # We need to include SPX_1D_Change in the aggregation
+        agg_dict = {
             'Spot_VIX': 'last',
             'Contango_Pct': 'mean'
-        })
+        }
 
+        if 'SPX_1D_Change' in vix_df.columns:
+            agg_dict['SPX_1D_Change'] = 'last'  # Take Tuesday's SPX shock
+
+        vix_weekly = vix_df.resample('W-TUE').agg(agg_dict)
         return vix_weekly.rename(columns={'Spot_VIX': 'vix_close'})
-
     def _label_sentiment(self, df: pd.DataFrame) -> pd.DataFrame:
         """Applies human-readable labels to the COT Index scores."""
         conditions = [
