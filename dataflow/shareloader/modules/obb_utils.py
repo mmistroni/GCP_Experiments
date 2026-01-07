@@ -562,170 +562,74 @@ class AsyncFMPProcess(AsyncProcess):
             return runner.run(self.fetch_data(element))
 
 
-class AsyncCloudRunAgent(AsyncProcess):
-
-    def __init__(self):
-        # --- Configuration (Dynamic) ---
-        self.APP_URL = "https://stock-agent-service-682143946483.us-central1.run.app"
-        self.USER_ID = "user_123"
-        # Generate a single session ID for the entire conversation loop
-        self.SESSION_ID = f"session_{datetime.now().strftime('%Y%m%d%H%M%S')}" 
-        self.APP_NAME = "stock_agent"
-        
+import json
+import asyncio
+import httpx
+import google.auth.transport.requests
+from google.oauth2 import id_token
+from typing import Any, Dict, Iterable, Sequence
+from apache_beam.ml.inference.base import RemoteModelHandler, RunInference, PredictionResult
 
 
-    # --- Authentication Function (ASYNC) ---
+class CloudRunAgentHandler(RemoteModelHandler):
+    def __init__(self, app_url: str, app_name: str, user_id: str):
+        super().__init__()
+        self.app_url = app_url
+        self.app_name = app_name
+        self.user_id = user_id
 
-    async def get_auth_token(self) -> str:
-        """
-        Programmatically fetches an ID token for the Cloud Run service audience.
-        'target_audience' should be the URL of your Cloud Run service.
-        """
-        # Run the synchronous google-auth call in a thread to keep it async-friendly
-        loop = asyncio.get_event_loop()
+    def create_client(self) -> httpx.AsyncClient:
+        # Beam handles the event loop; we just provide the client
+        return httpx.AsyncClient(timeout=60.0)
 
-        def fetch_token():
-            auth_req = google.auth.transport.requests.Request()
-            # This automatically uses the Dataflow Worker Service Account
-            return id_token.fetch_id_token(auth_req, self.APP_URL)
+    def _get_token(self) -> str:
+        """Helper to fetch ID token (Synchronous call used inside the async handler)"""
+        auth_req = google.auth.transport.requests.Request()
+        # This will use the Dataflow Worker's Service Account automatically
+        return id_token.fetch_id_token(auth_req, self.app_url)
 
-        try:
-            token = await loop.run_in_executor(None, fetch_token)
-            return token
-        except Exception as e:
-            raise RuntimeError(f"Failed to fetch ID token: {e}")
-    # --- API Interaction Functions (ASYNC) ---
+    async def run_inference(
+            self,
+            batch: Sequence[str],
+            client: httpx.AsyncClient,
+            inference_args: Dict[str, Any] = None
+    ) -> Iterable[PredictionResult]:
 
-    async def make_request(self, client: httpx.AsyncClient, method: str, endpoint: str, data: Dict[str, Any] = None) -> httpx.Response:
-        """Helper function for authenticated asynchronous requests using httpx."""
-        token = await self.get_auth_token()
+        token = self._get_token()
         headers = {
             "Authorization": f"Bearer {token}",
             "Content-Type": "application/json"
         }
-        url = f"{self.APP_URL}{endpoint}"
-        
-        try:
-            if method.upper() == 'POST':
-                response = await client.post(url, headers=headers, json=data)
-            elif method.upper() == 'DELETE':
-                response = await client.delete(url, headers=headers)
-            else:
-                raise ValueError(f"Unsupported method: {method}")
 
-            response.raise_for_status() 
-            return response
-        except httpx.HTTPStatusError as errh:
-            print(f"\n❌ **HTTP ERROR:** Status {response.status_code} for {url}")
-            print(f"❌ **Server Response (Raw):**\n{response.text}")
-            raise
-        except httpx.RequestError as err:
-            print(f"\n❌ An unexpected request error occurred: {err}")
-            raise
+        predictions = []
+        for message in batch:
+            # Note: We reuse your specific SSE parsing logic here
+            run_data = {
+                "app_name": self.app_name,
+                "user_id": self.user_id,
+                "session_id": f"beam_task_{hash(message)}",  # Dynamic session ID
+                "new_message": {"role": "user", "parts": [{"text": message}]},
+                "streaming": False
+            }
 
-    async def run_agent_request(self, client: httpx.AsyncClient, session_id: str, message: str):
-        """Executes a single POST request to the /run_sse endpoint."""
-        
-        print(f"\n[User] -> Sending message: '{message}'")
-        
-        run_data = {
-            "app_name": self.APP_NAME,
-            "user_id": self.USER_ID,
-            "session_id": session_id,
-            "new_message": {"role": "user", "parts": [{"text": message}]},
-            "streaming": False 
-        }
-        
-        try:
-            response = await self.make_request(client, "POST", "/run_sse", data=run_data)
-            current_status = response.status_code
-            # print(f"**Request Status Code:** {current_status}") 
+            response = await client.post(
+                f"{self.app_url}/run_sse",
+                headers=headers,
+                json=run_data
+            )
 
+            # Parsing the last SSE line as per your original logic
             raw_text = response.text.strip()
-            
-            # Multi-line SSE parsing logic
-            data_lines = [
-                line.strip() 
-                for line in raw_text.split('\n') 
-                if line.strip().startswith("data:")
-            ]
-            
-            if not data_lines:
-                raise json.JSONDecodeError("No 'data:' lines found in 200 response.", raw_text, 0)
-            
-            last_data_line = data_lines[-1]
-            json_payload = last_data_line[len("data:"):].strip()
-            agent_response = json.loads(json_payload)
-            
-            # Extract the final text 
-            final_text = agent_response.get('content', {}).get('parts', [{}])[0].get('text', 'Agent response structure not recognized.')
-            
-            print(f"[Agent] -> {final_text}")
-        
-        except json.JSONDecodeError as e:
-            print(f"\n🚨 **JSON PARSING FAILED**!")
-            print(f"   Error: {e}")
-            print("   --- RAW SERVER CONTENT ---")
-            print(raw_text)
-            print("   --------------------------")
-            
-        except Exception as e:
-            print(f"❌ Agent request failed: {e}")
+            data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
 
-    # --- Interactive Chat Loop ---
+            if data_lines:
+                last_json = json.loads(data_lines[-1][5:])  # Strip 'data:'
+                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
+                predictions.append(PredictionResult(example=message, inference=final_text))
+            else:
+                predictions.append(PredictionResult(example=message, inference="Error: No Data"))
 
-    async def chat(self, client: httpx.AsyncClient, session_id: str):
-        """Runs the main conversation loop, handling user input asynchronously."""
-        print("--- 💬 Start Chatting ---")
-        
-        try:
-            # Use asyncio.to_thread to run blocking input() without freezing the event loop
-            user_input = await asyncio.to_thread(input, f"[{self.USER_ID}]: ")
-            
-            # Send the message to the agent
-            await self.run_agent_request(client, session_id, user_input)
-
-        except Exception as e:
-            print(f"An unexpected error occurred in the loop: {e}")
-            raise e
-
-    # --- Main Logic (ASYNC) ---
-
-    async def amain(self, element):
-        """Main asynchronous function to set up the session and start the loop."""
-        print(f"\n🤖 Starting Interactive Client with Session ID: **{self.SESSION_ID}**")
-        session_data = {"state": {"preferred_language": "English", "visit_count": 5}}
-        current_session_endpoint = f"/apps/{self.APP_NAME}/users/{self.USER_ID}/sessions/{self.SESSION_ID}"
-        
-        # httpx.AsyncClient is used as a context manager to manage connections
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            
-            # 1. Create Session
-            print("\n## 1. Creating Session")
-            try:
-                await self.make_request(client, "POST", current_session_endpoint, data=session_data)
-                print(f"✅ Session created successfully. Status 200.")
-            except Exception as e:
-                print(f"❌ Could not start session: {e}")
-                return
-
-            # 2. Start the Interactive Loop
-            await self.chat(client, self.SESSION_ID)
-            
-            # 3. Cleanup: Delete Session (Best Practice)
-            print(f"\n## 3. Deleting Session: {self.SESSION_ID}")
-            try:
-                await self.make_request(client, "DELETE", current_session_endpoint)
-                print("✅ Session deleted successfully.")
-            except Exception as e:
-                print(f"⚠️ Warning: Failed to delete session. {e}")
-
-    def process(self, element: str):
-        logging.info(f'Input elements:{element}')
-        with asyncio.Runner() as runner:
-            return runner.run(self.amain(element))
-    
-
+        return predictions
 
 
 # https://medium.com/@sayedalimi19/trade-only-when-this-indicator-turns-green-ignore-everything-else-48c184107cde

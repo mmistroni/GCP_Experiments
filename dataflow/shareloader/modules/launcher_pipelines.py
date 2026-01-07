@@ -246,7 +246,12 @@ def write_to_ai_stocks(pipeline, ai_sink):
     )
 
 def run_gcloud_agent(pipeline, debugSink):
-    from shareloader.modules.obb_utils import AsyncCloudRunAgent
+    from shareloader.modules.obb_utils import CloudRunAgentHandler
+    agent_handler = CloudRunAgentHandler(
+        app_url="https://stock-agent-service-682143946483.us-central1.run.app",
+        app_name="stock_agent",
+        user_id="user_123"
+    )
     (pipeline | 'Sourcinig prompt' >> beam.Create(["Run a technical analysis for today's stock picks and give me your recommendations"])
             | 'ClouodagentRun' >> beam.ParDo(AsyncCloudRunAgent())
              |  debugSink
