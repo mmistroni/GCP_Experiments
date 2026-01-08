@@ -4,12 +4,6 @@
         "dockerfile": "Dockerfile",
         "context": ".."
     },
-    "features": {
-        // This installs gcloud, gsutil, and bq automatically
-        "ghcr.io/devcontainers/features/google-cloud-cli:1": {
-            "version": "latest"
-        }
-    },
     "customizations": {
         "vscode": {
             "settings": {
@@ -20,11 +14,10 @@
             "extensions": [
                 "ms-python.python",
                 "ms-python.vscode-pylance",
-                "googlecloudtools.cloudcode", // For Cloud Run/BigQuery integration
-                "njpwerner.autodocstring"      // Helps with Pydantic documentation
+                "googlecloudtools.cloudcode"
             ]
         }
     },
     "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -r requirements.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc",
-    "remoteUser": "vscode"
+    "remoteUser": "root"
 }
