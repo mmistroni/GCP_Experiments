@@ -42,6 +42,87 @@ MODEL_NAME = "gemini-2.5-flash"
 # Number of threads to use for the local DirectRunner.
 NUM_WORKERS = 1
 
+
+import json
+import asyncio
+import httpx
+import google.auth.transport.requests
+from google.oauth2 import id_token
+from typing import Any, Dict, Iterable, Sequence
+from apache_beam.ml.inference.base import RemoteModelHandler, RunInference, PredictionResult
+
+from typing import Any, Dict, Iterable, Sequence
+import httpx
+import google.auth.transport.requests
+from google.oauth2 import id_token
+from apache_beam.ml.inference.base import PredictionResult
+from apache_beam.ml.inference.base import RemoteModelHandler
+
+import json
+import httpx
+import google.auth.transport.requests
+from google.oauth2 import id_token
+from typing import Any, Dict, Optional
+
+# Correct imports for the current SDK
+from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
+
+
+class CloudRunAgentHandler(RemoteModelHandler):
+    def __init__(self, app_url: str, app_name: str, user_id: str):
+        # We initialize with a model_id to ensure the metrics namespace is populated
+        self._model_id = f"CloudRun_{app_name}"
+        super().__init__()
+        self.app_url = app_url
+        self.app_name = app_name
+        self.user_id = user_id
+
+    def get_metrics_namespace(self) -> str:
+        # Explicitly return the model_id as the namespace
+        return self._model_id
+
+    def create_client(self) -> httpx.AsyncClient:
+        return httpx.AsyncClient(timeout=60.0)
+
+    def _get_token(self) -> str:
+        auth_req = google.auth.transport.requests.Request()
+        return id_token.fetch_id_token(auth_req, self.app_url)
+
+    async def request(
+            self,
+            item: str,
+            client: httpx.AsyncClient,
+            inference_args: Optional[Dict[str, Any]] = None
+    ) -> PredictionResult:
+        token = self._get_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+        run_data = {
+            "app_name": self.app_name,
+            "user_id": self.user_id,
+            "session_id": f"beam_task_{hash(item)}",
+            "new_message": {"role": "user", "parts": [{"text": item}]},
+            "streaming": False
+        }
+
+        response = await client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
+
+        raw_text = response.text.strip()
+        data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
+
+        if data_lines:
+            try:
+                import json
+                last_json = json.loads(data_lines[-1][5:])
+                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
+                return PredictionResult(example=item, inference=final_text)
+            except Exception as e:
+                return PredictionResult(example=item, inference=f"Error: {e}")
+
+        return PredictionResult(example=item, inference="No Data")
+
+
+
 class Check(beam.PTransform):
     def __init__(self, checker):
         self._checker = checker
@@ -97,7 +178,6 @@ def run_test_gemini_pipeline(p, google_key, prompts=None, custom_instructions=No
 class TestBeamInferencesr(unittest.TestCase):
 
 
-
     def test_anotherllm_on_bean(self):
         prompts = [
             "What is 1+2? ",
@@ -111,6 +191,24 @@ class TestBeamInferencesr(unittest.TestCase):
             res = run_test_gemini_pipeline(p, key, prompts=prompts)
             (res | "extracting" >> beam.Map(lambda it: it[it.find('<STARTJSON')+ 11: it.find('</END')])
                 | 'out' >> sink)
+
+    def test_cloudagent(self):
+        from apache_beam.ml.inference.base import RunInference, PredictionResult
+
+        agent_handler = CloudRunAgentHandler(
+            app_url="https://stock-agent-service-682143946483.us-central1.run.app",
+            app_name="stock_agent",
+            user_id="user_123"
+        )
+        sink = beam.Map(print)
+        with TestPipeline(options=PipelineOptions()) as pipeline:
+            (pipeline | 'Sourcinig prompt' >> beam.Create(
+                ["Run a technical analysis for today's stock picks and give me your recommendations"])
+             | 'ClouodagentRun' >> RunInference(agent_handler)
+             | sink
+             )
+
+
 
 
 
