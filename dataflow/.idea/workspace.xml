@@ -7,7 +7,6 @@
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="attepmted clou dagent run">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
     </list>
@@ -297,62 +296,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00592" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762880822347</created>
-      <option name="number" value="00592" />
-      <option name="presentableId" value="LOCAL-00592" />
-      <option name="project" value="LOCAL" />
-      <updated>1762880822347</updated>
-    </task>
-    <task id="LOCAL-00593" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762950630254</created>
-      <option name="number" value="00593" />
-      <option name="presentableId" value="LOCAL-00593" />
-      <option name="project" value="LOCAL" />
-      <updated>1762950630255</updated>
-    </task>
-    <task id="LOCAL-00594" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762956217017</created>
-      <option name="number" value="00594" />
-      <option name="presentableId" value="LOCAL-00594" />
-      <option name="project" value="LOCAL" />
-      <updated>1762956217017</updated>
-    </task>
-    <task id="LOCAL-00595" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762965638589</created>
-      <option name="number" value="00595" />
-      <option name="presentableId" value="LOCAL-00595" />
-      <option name="project" value="LOCAL" />
-      <updated>1762965638589</updated>
-    </task>
-    <task id="LOCAL-00596" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762969091208</created>
-      <option name="number" value="00596" />
-      <option name="presentableId" value="LOCAL-00596" />
-      <option name="project" value="LOCAL" />
-      <updated>1762969091208</updated>
-    </task>
-    <task id="LOCAL-00597" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762969742207</created>
-      <option name="number" value="00597" />
-      <option name="presentableId" value="LOCAL-00597" />
-      <option name="project" value="LOCAL" />
-      <updated>1762969742207</updated>
-    </task>
-    <task id="LOCAL-00598" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762969824147</created>
-      <option name="number" value="00598" />
-      <option name="presentableId" value="LOCAL-00598" />
-      <option name="project" value="LOCAL" />
-      <updated>1762969824147</updated>
     </task>
     <task id="LOCAL-00599" summary="ading classes for cots">
       <option name="closed" value="true" />
@@ -690,7 +633,63 @@
       <option name="project" value="LOCAL" />
       <updated>1768379645857</updated>
     </task>
-    <option name="localTasksCounter" value="641" />
+    <task id="LOCAL-00641" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768380894961</created>
+      <option name="number" value="00641" />
+      <option name="presentableId" value="LOCAL-00641" />
+      <option name="project" value="LOCAL" />
+      <updated>1768380894961</updated>
+    </task>
+    <task id="LOCAL-00642" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768388221880</created>
+      <option name="number" value="00642" />
+      <option name="presentableId" value="LOCAL-00642" />
+      <option name="project" value="LOCAL" />
+      <updated>1768388221880</updated>
+    </task>
+    <task id="LOCAL-00643" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768388336167</created>
+      <option name="number" value="00643" />
+      <option name="presentableId" value="LOCAL-00643" />
+      <option name="project" value="LOCAL" />
+      <updated>1768388336167</updated>
+    </task>
+    <task id="LOCAL-00644" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768390439282</created>
+      <option name="number" value="00644" />
+      <option name="presentableId" value="LOCAL-00644" />
+      <option name="project" value="LOCAL" />
+      <updated>1768390439282</updated>
+    </task>
+    <task id="LOCAL-00645" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768396724662</created>
+      <option name="number" value="00645" />
+      <option name="presentableId" value="LOCAL-00645" />
+      <option name="project" value="LOCAL" />
+      <updated>1768396724662</updated>
+    </task>
+    <task id="LOCAL-00646" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768403817461</created>
+      <option name="number" value="00646" />
+      <option name="presentableId" value="LOCAL-00646" />
+      <option name="project" value="LOCAL" />
+      <updated>1768403817461</updated>
+    </task>
+    <task id="LOCAL-00647" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768412203501</created>
+      <option name="number" value="00647" />
+      <option name="presentableId" value="LOCAL-00647" />
+      <option name="project" value="LOCAL" />
+      <updated>1768412203501</updated>
+    </task>
+    <option name="localTasksCounter" value="648" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1041,13 +1040,8 @@
           <option name="timeStamp" value="320" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/shareloader/test/test_beam_inferences.py</url>
-          <line>130</line>
-          <option name="timeStamp" value="321" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>90</line>
+          <line>96</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

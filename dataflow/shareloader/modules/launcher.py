@@ -454,9 +454,6 @@ def run(argv = None, save_main_session=True):
             full_ppln | 'allp o debug sink' >> sink
 
 
-            (all_pipelines | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
-             | 'allp o finvizsink' >> finviz_sink)
-
             premarket_results =  (all_pipelines |'Combine Premarkets Reseults' >> beam.CombineGlobally(StockSelectionCombineFn()))
 
             keyed_etoro = premarket_results | beam.Map(lambda element: (1, element))
