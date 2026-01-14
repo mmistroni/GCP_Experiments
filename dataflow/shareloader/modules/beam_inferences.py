@@ -313,6 +313,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
         response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
 
         raw_text = response.text.strip()
+        logging.info(f'----------------- Raw text returned\n{raw_text}')
         data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
 
         if data_lines:
