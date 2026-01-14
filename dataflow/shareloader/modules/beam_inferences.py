@@ -48,9 +48,9 @@ You are to recommend stocks that are candidates to buy or to sell based on the f
 13 - obv_historical: on balance volumes for the last 20 days
 14 - cmf_historical: cmf values for past 20 days
 15 - trend_velocity_gap: difference between ema_8 and ema_21
-16 - chop: choppiness indicator
+16 - choppiness: choppiness indicator
 17  -demarker: demarker indicator
-
+18 - spx_choppiness: choppiness indicator  for  spx
 **Analysis Tasks:**
 1. Based on the data, identify which stocks are candidates to **rise** (BUY/WATCH) in the next days.
 2. For any stock that has dropped more than 10%, evaluate if it is worth to **short sell** (SELL) them based on the same criteria.

@@ -104,7 +104,15 @@ def get_finviz_schema():
         "previous_cmf" : "FLOAT",
         "last_cmf" : "FLOAT",
         "obv_last_20_days" : "FLOAT",
-        "cmf_last_20_days" : "FLOAT"
+        "cmf_last_20_days" : "FLOAT",
+        "slope": "FLOAT",
+        "trend_velocity_gap": "FLOAT",
+        "fib_161": "FLOAT",
+        "demarker": "FLOAT",
+        "choppiness": "FLOAT",
+        "ewo": "FLOAT",
+        "spx_choppiness": "FLOAT"
+
     }
 
     schemaFields = []

@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="updated vix analyiss">
+    <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="attepmted clou dagent run">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/build_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/build_dftester.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/launcher_pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/obb_utils.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/test/test_beam_inferences.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/run_dftester.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/run_dftester.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -297,22 +297,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00590" summary="cleaning inference">
-      <option name="closed" value="true" />
-      <created>1762376542546</created>
-      <option name="number" value="00590" />
-      <option name="presentableId" value="LOCAL-00590" />
-      <option name="project" value="LOCAL" />
-      <updated>1762376542546</updated>
-    </task>
-    <task id="LOCAL-00591" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1762880617967</created>
-      <option name="number" value="00591" />
-      <option name="presentableId" value="LOCAL-00591" />
-      <option name="project" value="LOCAL" />
-      <updated>1762880617967</updated>
     </task>
     <task id="LOCAL-00592" summary="ading classes for cots">
       <option name="closed" value="true" />
@@ -690,7 +674,23 @@
       <option name="project" value="LOCAL" />
       <updated>1767771268928</updated>
     </task>
-    <option name="localTasksCounter" value="639" />
+    <task id="LOCAL-00639" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768127515016</created>
+      <option name="number" value="00639" />
+      <option name="presentableId" value="LOCAL-00639" />
+      <option name="project" value="LOCAL" />
+      <updated>1768127515016</updated>
+    </task>
+    <task id="LOCAL-00640" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768379645856</created>
+      <option name="number" value="00640" />
+      <option name="presentableId" value="LOCAL-00640" />
+      <option name="project" value="LOCAL" />
+      <updated>1768379645857</updated>
+    </task>
+    <option name="localTasksCounter" value="641" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -716,7 +716,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ADDED NY COJMPOSITE" />
     <MESSAGE value="added pandas ta" />
     <MESSAGE value="replaced pandas ta" />
     <MESSAGE value="fixing formula for market down" />
@@ -741,7 +740,8 @@
     <MESSAGE value="ading classes for cots" />
     <MESSAGE value="fixed issues" />
     <MESSAGE value="updated vix analyiss" />
-    <option name="LAST_COMMIT_MESSAGE" value="updated vix analyiss" />
+    <MESSAGE value="attepmted clou dagent run" />
+    <option name="LAST_COMMIT_MESSAGE" value="attepmted clou dagent run" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -972,7 +972,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/launcher.py</url>
-          <line>197</line>
+          <line>204</line>
           <option name="timeStamp" value="257" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1042,7 +1042,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/test/test_beam_inferences.py</url>
-          <line>132</line>
+          <line>130</line>
           <option name="timeStamp" value="321" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
