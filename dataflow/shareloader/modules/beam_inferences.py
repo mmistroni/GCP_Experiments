@@ -261,7 +261,7 @@ def run_gemini_congress_pipeline(p, google_key):
 
 
 from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
-
+import  logging
 
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
@@ -277,9 +277,19 @@ class CloudRunAgentHandler(RemoteModelHandler):
         return httpx.Client(timeout=60.0)
 
     def _get_token(self) -> str:
+        # 1. Get the default credentials (service account identity)
+        # This won't try to write to site-packages
         auth_req = google.auth.transport.requests.Request()
-        return id_token.fetch_id_token(auth_req, self.app_url)
 
+        try:
+            # 2. Fetch the ID token specifically for the target app_url (Audience)
+            return id_token.fetch_id_token(auth_req, self.app_url)
+        except Exception as e:
+            logging.error(f"Failed to fetch ID token: {e}")
+            # Fallback for local testing if needed
+            credentials, _ = google.auth.default()
+            credentials.refresh(auth_req)
+            return credentials.id_token
     # REMOVE 'async' here
     def request(
             self,
@@ -287,6 +297,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
             client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
+        logging.info('------------- Running cloud urn req')
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
