@@ -291,7 +291,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
-            "session_id": f"beam_task_{hash(item)}",
+            "session_id": f"beam_task_{str(item)}",
             "new_message": {"role": "user", "parts": [{"text": item}]},
             "streaming": False
         }
