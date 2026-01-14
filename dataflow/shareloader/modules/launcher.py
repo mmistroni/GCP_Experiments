@@ -447,7 +447,7 @@ def run(argv = None, save_main_session=True):
 
             all_pipelines = ((plus500, tester, etoro, stp, nhp) |  "fmaprun all" >> beam.Flatten())
 
-            full_ppln = (all_pipelines | 'allp mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
+            full_ppln = (all_pipelines | 'allp mapped to map' >> beam.Map(lambda d: map_to_bq_dict(d))
                          )
             full_ppln | 'allp o finvizsink' >> finviz_sink
 

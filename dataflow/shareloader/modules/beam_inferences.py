@@ -15,6 +15,8 @@ from typing import Any, Sequence, Optional, Dict
 import httpx
 import google.auth.transport.requests
 from google.oauth2 import id_token
+from datetime import datetime
+import random
 
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
@@ -291,7 +293,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
-            "session_id": f"beam_task_{str(item)}",
+            "session_id": f"beam_task_{str(datetime.now())}",
             "new_message": {"role": "user", "parts": [{"text": item}]},
             "streaming": False
         }
