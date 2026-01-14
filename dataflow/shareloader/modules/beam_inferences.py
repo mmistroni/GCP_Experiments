@@ -11,7 +11,11 @@ from shareloader.modules.dftester_utils import to_json_string
 from google.genai import types
 from google.genai import Client as GenAIClient
 import logging
-from typing import Any, Sequence
+from typing import Any, Sequence, Optional, Dict
+import httpx
+import google.auth.transport.requests
+from google.oauth2 import id_token
+
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
 
