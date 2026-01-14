@@ -69,29 +69,27 @@ from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
 
 
 class CloudRunAgentHandler(RemoteModelHandler):
-    def __init__(self, app_url: str, app_name: str, user_id: str):
-        # We initialize with a model_id to ensure the metrics namespace is populated
+    def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
         self._model_id = f"CloudRun_{app_name}"
-        super().__init__()
+        super().__init__(namespace=metric_namespace)
         self.app_url = app_url
         self.app_name = app_name
         self.user_id = user_id
+        self.metric_namespace = metric_namespace
 
-    def get_metrics_namespace(self) -> str:
-        # Explicitly return the model_id as the namespace
-        return self._model_id
-
-    def create_client(self) -> httpx.AsyncClient:
-        return httpx.AsyncClient(timeout=60.0)
+    def create_client(self) -> httpx.Client:
+        # Use synchronous Client
+        return httpx.Client(timeout=60.0)
 
     def _get_token(self) -> str:
         auth_req = google.auth.transport.requests.Request()
         return id_token.fetch_id_token(auth_req, self.app_url)
 
-    async def request(
+    # REMOVE 'async' here
+    def request(
             self,
             item: str,
-            client: httpx.AsyncClient,
+            client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
         token = self._get_token()
@@ -105,7 +103,8 @@ class CloudRunAgentHandler(RemoteModelHandler):
             "streaming": False
         }
 
-        response = await client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
+        # Use synchronous post
+        response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
 
         raw_text = response.text.strip()
         data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
@@ -114,14 +113,13 @@ class CloudRunAgentHandler(RemoteModelHandler):
             try:
                 import json
                 last_json = json.loads(data_lines[-1][5:])
+                # Critique Agent Check: Ensure price/non-price data exists in the final_text
                 final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
                 return PredictionResult(example=item, inference=f"Error: {e}")
 
         return PredictionResult(example=item, inference="No Data")
-
-
 
 class Check(beam.PTransform):
     def __init__(self, checker):
@@ -196,9 +194,10 @@ class TestBeamInferencesr(unittest.TestCase):
         from apache_beam.ml.inference.base import RunInference, PredictionResult
 
         agent_handler = CloudRunAgentHandler(
-            app_url="https://stock-agent-service-682143946483.us-central1.run.app",
+            app_url="xxxxxxxxxx",
             app_name="stock_agent",
-            user_id="user_123"
+            user_id="user_123",
+            metric_namespace="stock_agent_inference"
         )
         sink = beam.Map(print)
         with TestPipeline(options=PipelineOptions()) as pipeline:
