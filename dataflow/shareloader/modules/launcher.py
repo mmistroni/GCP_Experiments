@@ -221,6 +221,7 @@ def parse_known_args(argv):
   parser.add_argument('--sendgridkey')
   parser.add_argument('--openaikey')
   parser.add_argument('--googleapikey')
+  parser.add_argument('--agent_url')
   return parser.parse_known_args(argv)
 
 
@@ -296,7 +297,7 @@ def run(argv = None, save_main_session=True):
     logging.info(f'fmp key:{known_args.fmprepkey}')
     logging.info(f'RUNTYPEy:{known_args.runtype}')
     logging.info(f'GKEY:{known_args.googleapikey}')
-
+    logging.info(f'AgentUrl:{known_args.agent_url}')
     bq_sink = beam.io.WriteToBigQuery(
         bigquery.TableReference(
             projectId="datascience-projects",
@@ -417,7 +418,8 @@ def run(argv = None, save_main_session=True):
             obb = run_extra_pipeline(p, known_args.fmprepkey)
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'test to sink' >> sink)
-
+            if known_args.agent_url:
+                run_gcloud_agent(p, known_args.agent_url)
 
         else:
 

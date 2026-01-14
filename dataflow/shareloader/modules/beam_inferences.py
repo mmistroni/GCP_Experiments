@@ -254,3 +254,58 @@ def run_gemini_congress_pipeline(p, google_key):
     debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
 
 
+from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
+
+
+class CloudRunAgentHandler(RemoteModelHandler):
+    def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
+        self._model_id = f"CloudRun_{app_name}"
+        super().__init__(namespace=metric_namespace)
+        self.app_url = app_url
+        self.app_name = app_name
+        self.user_id = user_id
+        self.metric_namespace = metric_namespace
+
+    def create_client(self) -> httpx.Client:
+        # Use synchronous Client
+        return httpx.Client(timeout=60.0)
+
+    def _get_token(self) -> str:
+        auth_req = google.auth.transport.requests.Request()
+        return id_token.fetch_id_token(auth_req, self.app_url)
+
+    # REMOVE 'async' here
+    def request(
+            self,
+            item: str,
+            client: httpx.Client,
+            inference_args: Optional[Dict[str, Any]] = None
+    ) -> PredictionResult:
+        token = self._get_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
+
+        run_data = {
+            "app_name": self.app_name,
+            "user_id": self.user_id,
+            "session_id": f"beam_task_{hash(item)}",
+            "new_message": {"role": "user", "parts": [{"text": item}]},
+            "streaming": False
+        }
+
+        # Use synchronous post
+        response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
+
+        raw_text = response.text.strip()
+        data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
+
+        if data_lines:
+            try:
+                import json
+                last_json = json.loads(data_lines[-1][5:])
+                # Critique Agent Check: Ensure price/non-price data exists in the final_text
+                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
+                return PredictionResult(example=item, inference=final_text)
+            except Exception as e:
+                return PredictionResult(example=item, inference=f"Error: {e}")
+
+        return PredictionResult(example=item, inference="No Data")

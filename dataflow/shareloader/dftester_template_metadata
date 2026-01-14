@@ -57,6 +57,12 @@
       "helpText": "Google Key",
       "label": "google key",
       "isOptional" : true
+    },
+    {
+      "name": "agent_url",
+      "helpText": "Cloud Agent Url",
+      "label": "cloud_agent_url",
+      "isOptional" : true
     }
   ]
 }

@@ -30,6 +30,8 @@ steps:
           , '--parameters'
           ,'googleapikey=$_GOOGLEAPIKEY'
           , '--parameters'
+          ,'agent_url=$_AGENT_URL'
+        , '--parameters'
           , 'sdk_container_image=$_SDK_CONTAINER_IMAGE'
           ,'--region=$_REGION'
           ,'--subnetwork=regions/us-central1/subnetworks/default'
@@ -46,6 +48,7 @@ substitutions:
   _SENDGRIDKEY: ''
   _OPENAIKEY: ''
   _GOOGLEAPIKEY: ''
+  _AGENT_URL: ''
   _RUNTYPE: ''
   _JOB_NAME: 'dftester'
   _PROJECT_ID: datascience-projects
