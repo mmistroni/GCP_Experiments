@@ -3,7 +3,7 @@ aiohttp==3.11.18
 aiosignal==1.3.2
 annotated-types==0.7.0
 anyio==4.9.0
-apache-beam==2.64.0
+apache-beam
 attrs==25.3.0
 avro-python3==1.10.2
 backoff==2.2.1
@@ -53,6 +53,8 @@ google-cloud-storage==2.19.0
 google-cloud-videointelligence==2.16.1
 google-cloud-vision==3.10.1
 google-crc32c==1.7.1
+google-genai==1.21.1
+httpx
 google-resumable-media==2.7.2
 googleapis-common-protos==1.70.0
 grpc-google-iam-v1==0.14.2
@@ -86,15 +88,14 @@ numpy==2.2.5
 oauth2client==4.1.3
 objsize==0.7.1
 openai==1.76.2
-openbb-benzinga
-openbb-core
-openbb-finviz
-openbb-fmp
-openbb-multpl
-openbb-yfinance
-openpyxl==3.1.5
+openbb-benzinga==1.4.1
+openbb-core==1.4.7
+openbb-finviz==1.3.0
+openbb-fmp==1.4.2
+openbb-multpl==1.1.0
+openbb-yfinance==1.4.4
 openbb-cftc
-openbb-core
+openpyxl==3.1.5
 opentelemetry-api==1.32.1
 opentelemetry-sdk==1.32.1
 opentelemetry-semantic-conventions==0.53b1
@@ -120,8 +121,8 @@ pydantic==2.11.4
 pydantic_core==2.33.2
 pydot==1.4.2
 PyJWT==2.10.1
-PyHamcrest==2.1
 pymongo==4.12.1
+pykalman
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 python-dotenv==1.1.0
@@ -147,7 +148,7 @@ soupsieve==2.7
 sqlparse==0.5.3
 starkbank-ecdsa==2.2.0
 starlette==0.46.2
-ta
+ta==0.11.0
 tqdm==4.67.1
 typing-inspection==0.4.0
 typing_extensions==4.13.2
@@ -163,3 +164,5 @@ yarl==1.20.0
 yfinance==0.2.59
 zipp==3.21.0
 zstandard==0.23.0
+matplotlib
+vix_utils
