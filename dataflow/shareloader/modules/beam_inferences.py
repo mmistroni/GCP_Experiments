@@ -298,20 +298,30 @@ class CloudRunAgentHandler(RemoteModelHandler):
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
         logging.info(f"------------- Running cloud urn req on item:{item} of type \n {type(item)}")
-        token = self._get_token()
-        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-
+        # 1. Define the session ID and endpoint (matching your client)
+        session_id = f"beam_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        session_endpoint = f"{self.app_url}/apps/{self.app_name}/users/{self.user_id}/sessions/{session_id}"
+        
+        # 2. MANDATORY: Register the session first
+        session_data = {"state": {"preferred_language": "English", "visit_count": 1}}
+        try:
+            # Note: Using synchronous client.post here since Dataflow handler is sync
+            client.post(session_endpoint, headers=headers, json=session_data)
+            logging.info(f"✅ Session {session_id} registered successfully.")
+        except Exception as e:
+            logging.error(f"❌ Failed to register session: {e}")
+            # Depending on your needs, you might want to return an error here
+        
+        # 3. Now run the actual agent request
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
-            "session_id": f"beam_task_manual_test_001",
+            "session_id": session_id,
             "new_message": {"role": "user", "parts": [{"text": item[0]}]},
             "streaming": False
         }
 
-        # Use synchronous post
         response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
-
         raw_text = response.text.strip()
         logging.info(f'----------------- Raw text returned\n{raw_text}')
         data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
