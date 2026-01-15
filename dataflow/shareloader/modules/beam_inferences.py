@@ -293,7 +293,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
     # REMOVE 'async' here
     def request(
             self,
-            item: str,
+            item: list,
             client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
@@ -305,7 +305,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
             "app_name": self.app_name,
             "user_id": self.user_id,
             "session_id": f"beam_task_{str(datetime.now())}",
-            "new_message": {"role": "user", "parts": [{"text": item}]},
+            "new_message": {"role": "user", "parts": [{"text": item[o]}]},
             "streaming": False
         }
 
