@@ -297,6 +297,8 @@ class CloudRunAgentHandler(RemoteModelHandler):
             client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
+        token = self._get_token()
+        headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
         logging.info(f"------------- Running cloud urn req on item:{item} of type \n {type(item)}")
         # 1. Define the session ID and endpoint (matching your client)
         session_id = f"beam_{datetime.now().strftime('%Y%m%d%H%M%S')}"
