@@ -111,7 +111,7 @@ def get_finviz_schema():
         "demarker": "FLOAT",
         "choppiness": "FLOAT",
         "ewo": "FLOAT",
-        "spx_choppiness": "FLOAT"
+        "spx_choppyness": "FLOAT"
 
     }
 
