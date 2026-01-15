@@ -297,7 +297,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
             client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
-        logging.info('------------- Running cloud urn req')
+        logging.info('------------- Running cloud urn req on item:{item} of type \n {type(item)')
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
