@@ -124,7 +124,6 @@ def get_finviz_schema():
     schema = {
         "fields": schemaFields
     }
-
     return schema
 
 def get_ai_stocks_schema():
