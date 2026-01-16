@@ -52,7 +52,7 @@ substitutions:
   _RUNTYPE: ''
   _JOB_NAME: 'dftester'
   _PROJECT_ID: datascience-projects
-  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest51
+  _SDK_CONTAINER_IMAGE: gcr.io/datascience-projects/dftester:latest52
 
 
 

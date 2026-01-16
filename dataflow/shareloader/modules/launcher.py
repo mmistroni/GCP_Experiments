@@ -105,7 +105,7 @@ def get_finviz_schema():
         "last_cmf" : "FLOAT",
         "obv_last_20_days" : "FLOAT",
         "cmf_last_20_days" : "FLOAT",
-        "slope": "INTEGER",
+        "slope": "FLOAT",
         "trend_velocity_gap": "FLOAT",
         "fib_161": "FLOAT",
         "demarker": "FLOAT",
