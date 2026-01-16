@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 import logging
 
-from cloud_run.sec_scraper.scraper import run_master_scraper
+from scraper import run_master_scraper
 
 app = FastAPI(title="SEC 13F Scraper: Manual & Smart Mode")
 
