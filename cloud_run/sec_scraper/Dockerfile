@@ -9,8 +9,9 @@ WORKDIR /app/cloud_run/sec_scraper
 # 2. Install system dependencies (The ONLY place for --no-install-recommends)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    libxml2-dev \
+    libxslt-dev \
     && rm -rf /var/lib/apt/lists/*
-
 # 3. Install Python dependencies
 # We copy only the requirements first to leverage Docker's layer caching
 COPY requirements.txt .
