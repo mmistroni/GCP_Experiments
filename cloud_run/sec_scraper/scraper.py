@@ -22,37 +22,53 @@ def get_existing_accessions(client, table_id, filing_date):
         return set()
 
 def parse_sec_xml(xml_content, cik, manager_name, filing_date, acc):
-    """Parses 13F-HR XML into list of dicts with Python 3.11 speed."""
+    """Parses 13F-HR XML by stripping namespaces to avoid XPath errors."""
     try:
         tree = etree.fromstring(xml_content)
-        namespaces = {'ns': tree.nsmap.get(None, '')}
-        nodes = tree.xpath('//ns:infoTable', namespaces=namespaces) or tree.xpath('//*[local-name()="infoTable"]')
+        
+        # 1. STRIP NAMESPACES: Removes the 'xmlns' baggage entirely
+        for elem in tree.getiterator():
+            if not (isinstance(elem, etree._Comment) or isinstance(elem, etree._ProcessingInstruction)):
+                elem.tag = etree.QName(elem).localname
+        etree.cleanup_namespaces(tree)
+
+        # 2. Simple XPath: Now we don't need 'ns:' or 'local-name()'
+        nodes = tree.xpath('//infoTable')
         
         holdings = []
         for node in nodes:
+            # Helper to find text safely in the cleaned tree
             def find_text(tag):
-                res = node.xpath(f'.//ns:{tag}', namespaces=namespaces) or node.xpath(f'.//*[local-name()="{tag}"]')
+                res = node.xpath(f'./{tag}') # Single dot means relative to current node
                 return res[0].text if res else None
 
             val = find_text("value")
             shares = find_text("sshPrnamt")
             
             if val and shares:
+                # Basic cleanup of numbers
+                try:
+                    val_float = float(val)
+                    shares_float = float(shares)
+                except (ValueError, TypeError):
+                    continue
+
                 holdings.append({
-                    "accession_number": acc, # Added for deduplication logic
+                    "accession_number": acc,
                     "cik": str(cik),
                     "manager_name": manager_name,
                     "issuer_name": find_text("nameOfIssuer"),
                     "cusip": find_text("cusip"),
-                    "value_usd": int(float(val) * 1000),
-                    "shares": int(float(shares)),
+                    "value_usd": int(val_float * 1000), # 13F values are reported in thousands
+                    "shares": int(shares_float),
                     "put_call": find_text("putCall"),
                     "filing_date": filing_date
                 })
         return holdings
     except Exception as e:
-        logger.error(f"Error parsing CIK {cik}: {e}")
+        logger.error(f"Error parsing CIK {cik}: {str(e)}")
         return []
+
 
 def run_master_scraper(year: int, qtr: int, limit: int = 10000):
     client = bigquery.Client()
