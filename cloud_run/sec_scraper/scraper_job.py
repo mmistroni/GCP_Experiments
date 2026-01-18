@@ -3,23 +3,41 @@ import sys
 import time
 from google.cloud import bigquery
 
+import os
+import requests
+from google.cloud import bigquery
+
+# SEC requires a specific User-Agent
+HEADERS = {'User-Agent': 'YourName your@email.com'}
+
 def run_scraper(year: int, qtr: int):
-    print(f"🕵️ SCRAPER START: Processing {year} Quarter {qtr}")
+    client = bigquery.Client()
+    table_id = "datascience-projects.your_dataset.your_table"
+
+    print(f"🕵️ Fetching SEC index for {year} Q{qtr}...")
+    index_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
     
-    # --- YOUR CORE SCRAPING LOGIC GOES HERE ---
-    # client = bigquery.Client()
-    # 1. Fetch SEC Index
-    # 2. Loop through 8,000 filings
-    # 3. Parse XML
-    # 4. Insert to BigQuery
-    # ------------------------------------------
+    response = requests.get(index_url, headers=HEADERS)
+    if response.status_code != 200:
+        print(f"❌ Failed to fetch index: {response.status_code}")
+        return
+
+    # Logic to parse the index and find 13F filings...
+    # For each filing found:
+    # 1. Download XML
+    # 2. Parse XML
+    # 3. Prepare row for BigQuery
     
-    # Simulation for verify
-    for i in range(1, 6):
-        print(f"Working... {i*20}% complete")
-        time.sleep(1)
-        
-    print(f"✅ SCRAPER FINISHED: Data for {year} Q{qtr} is in BigQuery.")
+    rows_to_insert = [
+        {"filing_date": "2025-01-18", "ticker": "AAPL", "shares": 1000}, # Example row
+    ]
+
+    errors = client.insert_rows_json(table_id, rows_to_insert)
+    if not errors:
+        print("✅ New rows have been added.")
+    else:
+        print(f"❌ Errors encountered: {errors}")
+
 
 if __name__ == "__main__":
     # Pull variables injected by the Manager
