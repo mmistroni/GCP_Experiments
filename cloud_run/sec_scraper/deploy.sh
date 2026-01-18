@@ -1,34 +1,21 @@
 #!/bin/bash
-set -e # Exit on error
+IMAGE_NAME="gcr.io/datascience-projects/sec-scraper"
 
-PROJECT_ID=$(gcloud config get-value project)
-REGION="us-central1"
-SERVICE_NAME="sec-13f-gateway"
-JOB_NAME="sec-13f-worker-job"
-IMAGE_URL="gcr.io/$PROJECT_ID/sec-13f-unified"
+# 1. Build and push the image
+gcloud builds submit --tag $IMAGE_NAME .
 
-# 1. Build the Unified Image
-echo "🛠️ Building container image..."
-gcloud builds submit --tag $IMAGE_URL
+# 2. Deploy the Web App (Manager)
+gcloud run deploy sec-13f-gateway \
+  --image $IMAGE_NAME \
+  --region us-central1 \
+  --allow-unauthenticated
 
-# 2. Deploy/Update the Gateway Service
-echo "🚀 Deploying Gateway (API)..."
-gcloud run deploy $SERVICE_NAME \
-  --image $IMAGE_URL \
-  --region $REGION \
-  --allow-unauthenticated \
-  --set-env-vars PROJECT_ID=$PROJECT_ID,JOB_NAME=$JOB_NAME,REGION=$REGION
-
-# 3. Create/Update the Worker Job
-echo "🏗️ Ensuring Worker Job exists..."
-gcloud run jobs deploy $JOB_NAME \
-  --image $IMAGE_URL \
-  --command "/entrypoint.sh" \
-  --args "job" \
+# 3. Deploy the Worker (Chef)
+# Note: We override the entrypoint to run the scraper script specifically
+gcloud run jobs deploy sec-13f-worker-job \
+  --image $IMAGE_NAME \
+  --command "python" \
+  --args "scraper_job.py" \
+  --region us-central1 \
   --tasks 1 \
-  --max-retries 0 \
-  --task-timeout 3600 \
-  --memory 2Gi \
-  --cpu 1 \
-  --region $REGION \
-  --set-env-vars PROJECT_ID=$PROJECT_ID
+  --max-retries 0
