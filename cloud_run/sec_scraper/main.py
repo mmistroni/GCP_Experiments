@@ -1,67 +1,46 @@
-from fastapi import FastAPI, BackgroundTasks
-from pydantic import BaseModel, Field
-from datetime import datetime
-from typing import Optional
-import logging
+import os
+from fastapi import FastAPI, HTTPException
+from google.cloud import run_v2
 
-from scraper import run_master_scraper
+app = FastAPI()
 
-app = FastAPI(title="SEC 13F Scraper: Manual & Smart Mode")
+# Make sure these match your actual setup
+PROJECT_ID = os.getenv("PROJECT_ID", "datascience-projects")
+REGION = "us-central1"
+JOB_NAME = "sec-13f-worker-job"
 
-# --- MODELS ---
-class ScrapeRequest(BaseModel):
-    # Notice we use Optional here to allow the override
-    year: Optional[int] = Field(None, ge=2021, le=2026)
-    qtr: Optional[int] = Field(None, ge=1, le=4)
-    limit: int = Field(default=10000, gt=0)
-
-# --- SMART LOGIC HELPER ---
-def get_automated_period():
-    now = datetime.now()
-    month = now.month
-    year = now.year
-
-    if month == 3:   return year - 1, 4
-    elif month == 6: return year, 1
-    elif month == 9: return year, 2
-    elif month == 12: return year, 3
-    else:
-        # Fallback: get the most recently completed quarter
-        target_qtr = (month - 1) // 3
-        return (year, target_qtr) if target_qtr > 0 else (year - 1, 4)
-
-# --- ENDPOINT ---
 @app.post("/scrape")
-async def trigger_scrape(background_tasks: BackgroundTasks, request: Optional[ScrapeRequest] = None):
-    """
-    Priority:
-    1. Manual Override (if year/qtr provided in JSON)
-    2. Smart Logic (if JSON is empty or fields are null)
-    """
-    # 1. Check for Manual Override
-    if request and request.year and request.qtr:
-        target_year = request.year
-        target_qtr = request.qtr
-        mode = "MANUAL OVERRIDE"
-    else:
-        # 2. Apply Smart Logic
-        target_year, target_qtr = get_automated_period()
-        mode = "SMART LOGIC"
-
-    limit = request.limit if request else 10000
-
-    logging.info(f"Running in {mode} for {target_year} Q{target_qtr}")
-
-    background_tasks.add_task(
-        run_master_scraper, 
-        year=target_year, 
-        qtr=target_qtr, 
-        limit=limit
-    )
-
-    return {
-        "status": "Accepted",
-        "mode": mode,
-        "target": f"{target_year} Q{target_qtr}",
-        "limit": limit
+async def trigger_scrape(year: int, qtr: int):
+    # The client needs the PROJECT_ID to initialize
+    client = run_v2.JobsClient()
+    
+    parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME}"
+    
+    overrides = {
+        "container_overrides": [
+            {
+                "env": [
+                    {"name": "YEAR", "value": str(year)},
+                    {"name": "QTR", "value": str(qtr)}
+                ]
+            }
+        ]
     }
+    
+    try:
+        # Construct the formal request message
+        request = run_v2.RunJobRequest(
+            name=parent,
+            overrides=overrides
+        )
+        
+        operation = client.run_job(request=request)
+        return {
+            "status": "Job Started", 
+            "execution_id": operation.operation.name,
+            "details": f"Scraping {year} Q{qtr}"
+        }
+    except Exception as e:
+        # Print the error to logs so you can see it in Cloud Run
+        print(f"ERROR: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to launch job: {str(e)}")
