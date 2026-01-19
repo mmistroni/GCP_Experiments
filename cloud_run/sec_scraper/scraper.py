@@ -73,77 +73,96 @@ def parse_sec_xml(xml_content, cik, manager_name, filing_date, acc):
 
 # ... (imports and parse_sec_xml remain the same)
 
-def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = False, batch_size: int = 15000):
-    client = bigquery.Client()
-    table_id = f"{client.project}.gcp_shareloader.all_holdings_master"
-    partition_date = f"{year}-{(qtr*3):02d}-30"
+import os
 
-    # 1. Skip BQ check if debugging
+
+# ... (keep your existing imports and parse_sec_xml function)
+
+def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = False, batch_size: int = 500):
+    client = bigquery.Client()
+    # Ensure this dataset and table actually exist in your project
+    table_id = f"{client.project}.gcp_shareloader.all_holdings_master"
+
+    # FIX: Using a safer date format for BigQuery partitions
+    partition_date = f"{year}-{min(qtr * 3, 12):02d}-01"
+
     if debug:
-        logger.info("🛠️ DEBUG MODE ACTIVE: BigQuery uploads disabled.")
+        logger.info("🛠️ DEBUG MODE: Uploads disabled.")
         existing_accs = set()
     else:
         existing_accs = get_existing_accessions(client, table_id, partition_date)
-        logger.info(f"Found {len(existing_accs)} already processed filings for {year} Q{qtr}")
+        logger.info(f"Found {len(existing_accs)} existing filings. Destination: {table_id}")
 
-    # 2. Fetch Master Index
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
-    logger.info(f"Fetching master index from {idx_url}...")
     r = requests.get(idx_url, headers=HEADERS)
     lines = [l for l in r.text.splitlines() if '13F-HR' in l][:limit]
-    total_to_process = len(lines)
-    logger.info(f"Filtered {total_to_process} 13F-HR filings to evaluate.")
 
     batch = []
-    new_entries_count = 0
-    processed_counter = 0
+    processed_count = 0
 
     for line in lines:
-        processed_counter += 1
-        if processed_counter % 100 == 0: # More frequent logging for small tests
-            logger.info(f"📊 Progress: {processed_counter}/{total_to_process} filings checked.")
-
+        processed_count += 1
         parts = line.split('|')
         cik, name, path = parts[0], parts[1], parts[4]
         acc = path.split('/')[-1].replace('.txt', '').replace('-', '')
 
         if acc in existing_accs:
             continue
-        
-        new_entries_count += 1
+
         try:
+            # VOCAL LOGGING: See exactly what we are doing
             dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
-            dir_data = requests.get(dir_url, headers=HEADERS).json()
-            items = dir_data.get('directory', {}).get('item', [])
+            dir_res = requests.get(dir_url, headers=HEADERS)
+            dir_res.raise_for_status()  # Crash if SEC blocks us
+
+            items = dir_res.json().get('directory', {}).get('item', [])
             xml_name = next(i['name'] for i in items if 'infotable' in i['name'].lower() and i['name'].endswith('.xml'))
-            
+
             xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{xml_name}"
             xml_content = requests.get(xml_url, headers=HEADERS).content
-            rows = parse_sec_xml(xml_content, cik, name, partition_date, acc)
-            batch.extend(rows)
 
-            # 4. CONDITIONAL UPLOAD
+            rows = parse_sec_xml(xml_content, cik, name, partition_date, acc)
+
+            if rows:
+                batch.extend(rows)
+                if processed_count % 10 == 0:
+                    logger.info(f"✅ Found {len(rows)} holdings for {name} ({acc})")
+            else:
+                logger.warning(f"⚠️ No holdings found in XML for {name} ({acc})")
+
+            # UPLOAD LOGIC
+            logger.info(f'Batcch is {len(batch)}')
             if len(batch) >= batch_size:
-                if debug:
-                    logger.info(f"🔍 DEBUG: Would have uploaded {len(batch)} rows. Sample: {batch[0] if batch else 'None'}")
-                else:
-                    logger.info(f"💾 Flushing {len(batch)} rows to BigQuery...")
-                    client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
+                if not debug:
+                    logger.info(f"💾 Flushing {len(batch)} rows to BQ...")
+                    job = client.load_table_from_dataframe(pd.DataFrame(batch), table_id)
+                    job.result()  # Wait for it to finish
                 batch = []
-            
-            time.sleep(0.12)
+
+            time.sleep(0.12)  # Respect SEC limits
+
         except Exception as e:
+            logger.error(f"❌ Error on {acc}: {str(e)}")
             continue
 
+    # FINAL FLUSH (The part that was missing/skipped)
     if batch:
         if debug:
-            logger.info(f"🔍 DEBUG FINAL: Would have uploaded {len(batch)} rows. Total new: {new_entries_count}")
+            logger.info(f"🔍 DEBUG: Final batch would have sent {len(batch)} rows.")
         else:
-            logger.info(f"💾 Final flush: Sending last {len(batch)} rows to BigQuery...")
+            logger.info(f"💾 Final flush: Sending last {len(batch)} rows...")
             client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
-    
-    logger.info(f"✅ Scrape Complete. New filings processed: {new_entries_count}")
+
+    logger.info(f"✅ JOB COMPLETE. Processed {processed_count} filings.")
+
 
 if __name__ == "__main__":
-    # Test your 30 filings WITHOUT touching BigQuery
-    run_master_scraper(year=2025, qtr=4, limit=30, debug=True)
+    # DYNAMIC CONFIG: Listens to Cloud Run but defaults to safe values
+    y = int(os.getenv("YEAR", 2025))
+    q = int(os.getenv("QTR", 1))
+
+    # IMPORTANT: Ensure debug is False when running in Cloud Run
+    # You can set DEBUG=True in your local terminal to test safely
+    is_debug = os.getenv("DEBUG", "false").lower() == "true"
+
+    run_master_scraper(year=y, qtr=q, debug=is_debug)
