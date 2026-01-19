@@ -164,7 +164,7 @@ def process_queue_batch(client, limit=500):
         logger.info(f"💾 Uploaded {len(final_holdings)} holdings rows.")
 
 # --- ENTRY POINT ---
-def run_main_scraper(year, qtr):
+def run_master_scraper(year, qtr):
     client = bigquery.Client()
     logger.info('Checking if scraping table exist')
     ensure_tables_exist()
@@ -183,4 +183,4 @@ if __name__ == "__main__":
     # Get Year/Qtr from ENV for Cloud Run
     y = int(os.getenv("YEAR", 2026))
     q = int(os.getenv("QTR", 1))
-    run_main_scraper(y, q)
+    run_master_scraper(y, q)
