@@ -14,7 +14,7 @@ logger = logging.getLogger("13f_scraper")
 
 # SEC-Friendly Headers
 HEADERS = {
-    'User-Agent': 'Institutional Research (mmapplausetest@gmail.com)', # Use a real-looking email
+    'User-Agent': 'Institutional Research (mmapplausetest@gmail.com)', 
     'Accept-Encoding': 'gzip, deflate',
     'Host': 'www.sec.gov',
     'Connection': 'keep-alive'
@@ -24,13 +24,13 @@ def get_with_retry(url, headers, max_retries=3, sleep_time=5):
     """Helper to handle SEC throttling by retrying on empty/short responses."""
     for attempt in range(max_retries):
         try:
-            res = requests.get(url, headers=headers, timeout=10)
-            # If SEC throttles, they often return a 200 with a tiny HTML body or empty JSON
+            res = requests.get(url, headers=headers, timeout=15)
+            # Valid SEC responses for indices/XMLs are almost always > 150 bytes
             if res.status_code == 200 and len(res.content) > 150:
                 return res
             
             logger.warning(f"⚠️ Throttled or empty response from {url} (Attempt {attempt+1}/{max_retries})")
-            time.sleep(sleep_time * (attempt + 1)) # Exponential-ish backoff
+            time.sleep(sleep_time * (attempt + 1)) 
         except Exception as e:
             logger.error(f"📡 Network error on {url}: {e}")
             time.sleep(sleep_time)
@@ -103,11 +103,19 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
 
             items = dir_res.json().get('directory', {}).get('item', [])
             
-            # 3. SAFE NEXT: Avoid StopIteration crash
-            xml_name = next((i['name'] for i in items if 'infotable' in i['name'].lower() and i['name'].endswith('.xml')), None)
+            # 3. SMART XML SEARCH: Broaden the search patterns
+            xml_name = next((i['name'] for i in items if 
+                            i['name'].lower().endswith('.xml') and 
+                            any(p in i['name'].lower() for p in ['infotable', 'informationtable', 'holdings'])), None)
+
+            # FALLBACK: If patterns fail, take the largest XML that isn't the primary doc
+            if not xml_name:
+                xml_files = [i for i in items if i['name'].lower().endswith('.xml') and 'primary_doc' not in i['name'].lower()]
+                if xml_files:
+                    xml_name = max(xml_files, key=lambda x: int(x.get('size', 0)))['name']
 
             if not xml_name:
-                logger.warning(f"❓ No XML filename found in directory for {acc}. Items found: {len(items)}")
+                logger.warning(f"❓ No holdings XML found for {acc}. Files: {[i['name'] for i in items]}")
                 continue
 
             # 4. Get XML Content with Retry
@@ -115,7 +123,6 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
             xml_res = get_with_retry(xml_url, HEADERS)
             
             if not xml_res:
-                logger.error(f"❌ Skipping {acc}: Could not fetch XML content.")
                 continue
             
             rows = parse_sec_xml(xml_res.content, cik, name, partition_date, acc)
@@ -123,21 +130,20 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
             if rows:
                 batch.extend(rows)
                 if processed_count % 10 == 0:
-                    logger.info(f"✅ Found {len(rows)} holdings for {name} ({acc})")
+                    logger.info(f"✅ Processed {name} ({acc}) - Batch size: {len(batch)}")
             
-            # 5. Batch Upload to BigQuery
+            # 5. Batch Upload
             if len(batch) >= batch_size and not debug:
                 logger.info(f"💾 Flushing {len(batch)} rows to BQ...")
                 client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
                 batch = []
 
-            time.sleep(0.3) # Slow down slightly for Cloud Run stability
+            time.sleep(0.3) 
 
         except Exception as e:
             logger.error(f"❌ Unexpected Error on {acc}: {str(e)}")
             continue
 
-    # Final Flush
     if batch and not debug:
         client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
     
