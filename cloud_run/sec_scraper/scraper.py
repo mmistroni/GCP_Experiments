@@ -6,45 +6,46 @@ from lxml import etree
 from google.cloud import bigquery
 from datetime import datetime
 import traceback
+import os
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("13f_scraper")
 
+# SEC-Friendly Headers
 HEADERS = {
-    'User-Agent': 'Individual Research (your-email@gmail.com)',
+    'User-Agent': 'Institutional Research (mmapplausetest@gmail.com)', # Use a real-looking email
     'Accept-Encoding': 'gzip, deflate',
-    'Host': 'www.sec.gov'
+    'Host': 'www.sec.gov',
+    'Connection': 'keep-alive'
 }
 
-def get_existing_accessions(client, table_id, filing_date):
-    """Checks BigQuery so we don't re-download what we already have."""
-    query = f"SELECT DISTINCT accession_number FROM `{table_id}` WHERE filing_date = '{filing_date}'"
-    try:
-        query_job = client.query(query)
-        results = query_job.result()
-        return {row.accession_number for row in results}
-    except Exception as e:
-        logger.warning(f"Could not fetch existing accessions (might be a new table): {e}")
-        return set()
+def get_with_retry(url, headers, max_retries=3, sleep_time=5):
+    """Helper to handle SEC throttling by retrying on empty/short responses."""
+    for attempt in range(max_retries):
+        try:
+            res = requests.get(url, headers=headers, timeout=10)
+            # If SEC throttles, they often return a 200 with a tiny HTML body or empty JSON
+            if res.status_code == 200 and len(res.content) > 150:
+                return res
+            
+            logger.warning(f"⚠️ Throttled or empty response from {url} (Attempt {attempt+1}/{max_retries})")
+            time.sleep(sleep_time * (attempt + 1)) # Exponential-ish backoff
+        except Exception as e:
+            logger.error(f"📡 Network error on {url}: {e}")
+            time.sleep(sleep_time)
+    return None
 
 def parse_sec_xml(xml_content, cik, manager_name, filing_date, acc):
-    """Parses 13F-HR XML by stripping namespaces to avoid XPath errors."""
+    """Parses 13F-HR XML by stripping namespaces."""
     try:
         tree = etree.fromstring(xml_content)
-        
-        # 1. THE FIX: Strip Namespaces
         for elem in tree.getiterator():
             if not (isinstance(elem, etree._Comment) or isinstance(elem, etree._ProcessingInstruction)):
                 elem.tag = etree.QName(elem).localname
         etree.cleanup_namespaces(tree)
 
-        # 2. Simple XPath: No more 'ns:' needed
         nodes = tree.xpath('//infoTable')
-        
         holdings = []
         for node in nodes:
             def find_text(tag):
@@ -53,51 +54,31 @@ def parse_sec_xml(xml_content, cik, manager_name, filing_date, acc):
 
             val = find_text("value")
             shares = find_text("sshPrnamt")
-            
             if val and shares:
                 try:
-                    val_float = float(val)
-                    shares_float = float(shares)
                     holdings.append({
                         "accession_number": acc,
                         "cik": str(cik),
                         "manager_name": manager_name,
                         "issuer_name": find_text("nameOfIssuer"),
                         "cusip": find_text("cusip"),
-                        "value_usd": int(val_float * 1000),
-                        "shares": int(shares_float),
+                        "value_usd": int(float(val) * 1000),
+                        "shares": int(float(shares)),
                         "put_call": find_text("putCall") or "LONG",
                         "filing_date": filing_date
                     })
-                except (ValueError, TypeError):
-                    continue
+                except: continue
         return holdings
     except Exception as e:
-        logger.error(f"Error parsing CIK {cik}: {str(e)}")
+        logger.error(f"Error parsing XML for {acc}: {e}")
         return []
-
-# ... (imports and parse_sec_xml remain the same)
-
-import os
-
-
-# ... (keep your existing imports and parse_sec_xml function)
 
 def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = False, batch_size: int = 500):
     client = bigquery.Client()
-    # Ensure this dataset and table actually exist in your project
     table_id = f"{client.project}.gcp_shareloader.all_holdings_master"
-
-    # FIX: Using a safer date format for BigQuery partitions
     partition_date = f"{year}-{min(qtr * 3, 12):02d}-01"
 
-    if debug:
-        logger.info("🛠️ DEBUG MODE: Uploads disabled.")
-        existing_accs = set()
-    else:
-        existing_accs = get_existing_accessions(client, table_id, partition_date)
-        logger.info(f"Found {len(existing_accs)} existing filings. Destination: {table_id}")
-
+    # 1. Fetch Master Index
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
     r = requests.get(idx_url, headers=HEADERS)
     lines = [l for l in r.text.splitlines() if '13F-HR' in l][:limit]
@@ -111,70 +92,58 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
         cik, name, path = parts[0], parts[1], parts[4]
         acc = path.split('/')[-1].replace('.txt', '').replace('-', '')
 
-        if acc in existing_accs:
-            continue
-
         try:
-            # VOCAL LOGGING: See exactly what we are doing
+            # 2. Get Directory JSON with Retry
             dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
-            dir_res = requests.get(dir_url, headers=HEADERS)
-            dir_res.raise_for_status()  # Crash if SEC blocks us
+            dir_res = get_with_retry(dir_url, HEADERS)
+            
+            if not dir_res:
+                logger.error(f"❌ Skipping {acc}: SEC repeatedly blocked directory access.")
+                continue
 
             items = dir_res.json().get('directory', {}).get('item', [])
-            xml_name = next(i['name'] for i in items if 'infotable' in i['name'].lower() and i['name'].endswith('.xml'))
-
-            xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{xml_name}"
-            xml_content = requests.get(xml_url, headers=HEADERS).content
-
-            if len(xml_content) < 100:
-                logger.warning(f"🛑 THROTTLED: SEC sent empty response for {acc} ({len(xml_content)} bytes). Waiting 5s...")
-                time.sleep(5)  # Penalize the scraper for going too fast
-                continue       # Skip this filing and move to the next
-                        
             
-            rows = parse_sec_xml(xml_content, cik, name, partition_date, acc)
+            # 3. SAFE NEXT: Avoid StopIteration crash
+            xml_name = next((i['name'] for i in items if 'infotable' in i['name'].lower() and i['name'].endswith('.xml')), None)
+
+            if not xml_name:
+                logger.warning(f"❓ No XML filename found in directory for {acc}. Items found: {len(items)}")
+                continue
+
+            # 4. Get XML Content with Retry
+            xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{xml_name}"
+            xml_res = get_with_retry(xml_url, HEADERS)
+            
+            if not xml_res:
+                logger.error(f"❌ Skipping {acc}: Could not fetch XML content.")
+                continue
+            
+            rows = parse_sec_xml(xml_res.content, cik, name, partition_date, acc)
 
             if rows:
                 batch.extend(rows)
                 if processed_count % 10 == 0:
                     logger.info(f"✅ Found {len(rows)} holdings for {name} ({acc})")
-            else:
-                logger.warning(f"⚠️ No holdings found in XML for {name} ({acc})")
-
-            # UPLOAD LOGIC
-            logger.info(f'Batcch is {len(batch)}')
-            if len(batch) >= batch_size:
-                if not debug:
-                    logger.info(f"💾 Flushing {len(batch)} rows to BQ...")
-                    job = client.load_table_from_dataframe(pd.DataFrame(batch), table_id)
-                    job.result()  # Wait for it to finish
+            
+            # 5. Batch Upload to BigQuery
+            if len(batch) >= batch_size and not debug:
+                logger.info(f"💾 Flushing {len(batch)} rows to BQ...")
+                client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
                 batch = []
 
-            time.sleep(0.25)  # Respect SEC limits
+            time.sleep(0.3) # Slow down slightly for Cloud Run stability
 
         except Exception as e:
-            logger.error(f"❌ Error on {acc}: {str(e)}")
-            logger.error(traceback.format_exc()) # This will show the real culprit
+            logger.error(f"❌ Unexpected Error on {acc}: {str(e)}")
             continue
 
-    # FINAL FLUSH (The part that was missing/skipped)
-    if batch:
-        if debug:
-            logger.info(f"🔍 DEBUG: Final batch would have sent {len(batch)} rows.")
-        else:
-            logger.info(f"💾 Final flush: Sending last {len(batch)} rows...")
-            client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
-
+    # Final Flush
+    if batch and not debug:
+        client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
+    
     logger.info(f"✅ JOB COMPLETE. Processed {processed_count} filings.")
 
-
 if __name__ == "__main__":
-    # DYNAMIC CONFIG: Listens to Cloud Run but defaults to safe values
     y = int(os.getenv("YEAR", 2025))
     q = int(os.getenv("QTR", 1))
-
-    # IMPORTANT: Ensure debug is False when running in Cloud Run
-    # You can set DEBUG=True in your local terminal to test safely
-    is_debug = os.getenv("DEBUG", "false").lower() == "true"
-
-    run_master_scraper(year=y, qtr=q, debug=is_debug)
+    run_master_scraper(year=y, qtr=q)
