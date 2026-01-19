@@ -295,22 +295,6 @@
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
     </task>
-    <task id="LOCAL-00604" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1763455048202</created>
-      <option name="number" value="00604" />
-      <option name="presentableId" value="LOCAL-00604" />
-      <option name="project" value="LOCAL" />
-      <updated>1763455048202</updated>
-    </task>
-    <task id="LOCAL-00605" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1763486088996</created>
-      <option name="number" value="00605" />
-      <option name="presentableId" value="LOCAL-00605" />
-      <option name="project" value="LOCAL" />
-      <updated>1763486088996</updated>
-    </task>
     <task id="LOCAL-00606" summary="ading classes for cots">
       <option name="closed" value="true" />
       <created>1763486523197</created>
@@ -687,7 +671,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768474335700</updated>
     </task>
-    <option name="localTasksCounter" value="653" />
+    <task id="LOCAL-00653" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768819852840</created>
+      <option name="number" value="00653" />
+      <option name="presentableId" value="LOCAL-00653" />
+      <option name="project" value="LOCAL" />
+      <updated>1768819852841</updated>
+    </task>
+    <task id="LOCAL-00654" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768819870063</created>
+      <option name="number" value="00654" />
+      <option name="presentableId" value="LOCAL-00654" />
+      <option name="project" value="LOCAL" />
+      <updated>1768819870063</updated>
+    </task>
+    <option name="localTasksCounter" value="655" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1039,7 +1039,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>100</line>
+          <line>96</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">

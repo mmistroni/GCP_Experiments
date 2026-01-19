@@ -17,10 +17,6 @@ import google.auth.transport.requests
 from google.oauth2 import id_token
 from datetime import datetime
 import random
-import json
-import logging
-from datetime import datetime
-
 
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
@@ -295,65 +291,47 @@ class CloudRunAgentHandler(RemoteModelHandler):
             credentials.refresh(auth_req)
             return credentials.id_token
     # REMOVE 'async' here
-
-
     def request(
             self,
             item: list,
             client: httpx.Client,
             inference_args: Optional[Dict[str, Any]] = None
     ) -> PredictionResult:
+        logging.info(f"------------- Running cloud urn req on item:{item} of type \n {type(item)}")
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
-        # Session Management
-        session_id = f"beam_{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        session_endpoint = f"{self.app_url}/apps/{self.app_name}/users/{self.user_id}/sessions/{session_id}"
-
-        # 1. Register Session
-        session_data = {"state": {"preferred_language": "English", "visit_count": 1}}
-        try:
-            client.post(session_endpoint, headers=headers, json=session_data)
-        except Exception as e:
-            logging.error(f"❌ Session Error: {e}")
-
-        # 2. Run Agent Request
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
-            "session_id": session_id,
+            "session_id": f"beam_task_manual_test_001",
             "new_message": {"role": "user", "parts": [{"text": item[0]}]},
             "streaming": False
         }
 
+        # Use synchronous post
         response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
+
         raw_text = response.text.strip()
+        logging.info(f'----------------- Raw text returned\n{raw_text}')
+        data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
 
-        # 3. Enhanced SSE Parsing Logic
-        final_signal = "No trade signal generated."
-
-        # Split by 'data: ' and clean up
-        events = [line[5:].strip() for line in raw_text.split('\n') if line.startswith("data:")]
-
-        for event_str in reversed(events):
+        if data_lines:
             try:
-                data = json.loads(event_str)
+                import json
+                last_json = json.loads(data_lines[-1][5:])
 
-                # CHECK 1: Look for 'final_trade_signal' in stateDelta (from your logs)
-                state_delta = data.get("actions", {}).get("stateDelta", {})
-                if "final_trade_signal" in state_delta:
-                    final_signal = state_delta["final_trade_signal"]
-                    break
+                logging.info(''''last jsobn par do process:\n{last_json} \n --------------------------------''')
 
-                # CHECK 2: Fallback to the last standard text part if no stateDelta found
-                content_parts = data.get("content", {}).get("parts", [])
-                if content_parts and "text" in content_parts[0]:
-                    text_val = content_parts[0]["text"].strip()
-                    if text_val:  # Ensure it's not an empty string
-                        final_signal = text_val
-                        break
 
-            except json.JSONDecodeError:
-                continue
+                # Critique Agent Check: Ensure price/non-price data exists in the final_text
+                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
 
-        return PredictionResult(example=item, inference=final_signal)
+                logging.info(f'Final Text:\n{final_text}')
+
+
+                return PredictionResult(example=item, inference=final_text)
+            except Exception as e:
+                return PredictionResult(example=item, inference=f"Error: {e}")
+
+        return PredictionResult(example=item, inference="No Data")
