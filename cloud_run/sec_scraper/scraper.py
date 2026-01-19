@@ -23,31 +23,44 @@ HEADERS = {
     'Connection': 'keep-alive'
 }
 
+
 def get_with_retry(session, url, name="Request"):
-    """Enhanced retry with deep header and status logging."""
+    """Enhanced retry with mandatory governor and aggressive backoff."""
     for attempt in range(1, 4):
         try:
+            # 🏎️ THE GOVERNOR: Mandatory 0.15s sleep before EVERY request.
+            # This keeps you at ~6.6 requests per second, safely below the 10 limit.
+            time.sleep(0.15) 
+
             logger.info(f"📡 {name} | Attempt {attempt} | URL: {url}")
             start_time = time.time()
             
-            # Explicit timeout is the #1 fix for Cloud Run hangs
             res = session.get(url, timeout=15)
             duration = time.time() - start_time
             
-            logger.info(f"📥 {name} | Status: {res.status_code} | Time: {duration:.2f}s | Size: {len(res.content)} bytes")
-            
-            if res.status_code == 200:
-                if len(res.content) > 150:
+            # SEC sometimes returns 200 with a "Rate Limit" HTML body
+            is_rate_limited_html = res.status_code == 200 and b"Request Rate Threshold Exceeded" in res.content
+
+            if res.status_code == 200 and not is_rate_limited_html:
+                if len(res.content) > 200: # Slightly higher threshold for safety
+                    logger.info(f"📥 {name} | Status: 200 | Time: {duration:.2f}s | Size: {len(res.content)}")
                     return res
                 else:
-                    logger.warning(f"⚠️ {name} | Tiny response received (possible block). Content: {res.text[:100]}")
+                    logger.warning(f"⚠️ {name} | Tiny/Empty response. Content: {res.text[:100]}")
+            
+            elif res.status_code == 429 or is_rate_limited_html:
+                # 🛑 AGGRESSIVE BACKOFF: Wait longer on Cloud Run
+                wait_time = 10 * attempt 
+                logger.warning(f"⏳ {name} | RATE LIMIT (429). Sleeping {wait_time}s...")
+                time.sleep(wait_time)
             
             elif res.status_code == 403:
-                logger.error(f"🚫 {name} | 403 FORBIDDEN. SEC has blocked this IP/User-Agent.")
+                logger.error(f"🚫 {name} | 403 FORBIDDEN. Check User-Agent or IP.")
+                return None
             
-            time.sleep(2 * attempt)
         except requests.exceptions.Timeout:
-            logger.error(f"⏳ {name} | TIMEOUT after 15s. SEC is not responding.")
+            logger.error(f"⏳ {name} | TIMEOUT. SEC is slow.")
+            time.sleep(5)
         except Exception as e:
             logger.error(f"💥 {name} | Unexpected Error: {str(e)}")
             
