@@ -167,7 +167,7 @@ def process_queue_batch(client, limit=500):
 def run_master_scraper(year, qtr):
     client = bigquery.Client()
     logger.info('Checking if scraping table exist')
-    ensure_tables_exist()
+    ensure_tables_exist(client)
     # Check if queue exists/has pending items
     check_query = f"SELECT count(*) as count FROM `{client.project}.gcp_shareloader.scraping_queue` WHERE status='pending'"
     pending_count = list(client.query(check_query))[0].count
