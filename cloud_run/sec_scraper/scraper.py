@@ -14,18 +14,19 @@ logger = logging.getLogger("13f_scraper")
 
 # SEC-Friendly Headers
 HEADERS = {
-    # The SEC specifically asks for 'Company Name AdminContact@email.com'
     'User-Agent': 'Institutional Research mmapplausetest@gmail.com', 
-    'Accept-Encoding': 'gzip, deflate',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Connection': 'keep-alive',
     'Host': 'www.sec.gov'
 }
 
-def get_with_retry(url, headers, max_retries=3, sleep_time=5):
-    """Helper to handle SEC throttling by retrying on empty/short responses."""
+def get_with_retry(session, url, max_retries=3, sleep_time=5):
+    """Helper to handle SEC throttling using the persistent session."""
     for attempt in range(max_retries):
         try:
-            res = requests.get(url, headers=headers, timeout=15)
-            # Valid SEC responses for indices/XMLs are almost always > 150 bytes
+            # Explicit timeout to prevent Cloud Run 'hanging'
+            res = session.get(url, timeout=20)
             if res.status_code == 200 and len(res.content) > 150:
                 return res
             
@@ -78,10 +79,24 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
     table_id = f"{client.project}.gcp_shareloader.all_holdings_master"
     partition_date = f"{year}-{min(qtr * 3, 12):02d}-01"
 
-    # 1. Fetch Master Index
+    # 1. Fetch Master Index WITH PERSISTENT SESSION & TIMEOUT
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
-    r = requests.get(idx_url, headers=HEADERS)
+    logger.info(f"🌐 Attempting to fetch index: {idx_url}")
+    
+    try:
+        # Timeout is critical for Cloud Run to avoid infinite 'Pending' logs
+        r = session.get(idx_url, timeout=30)
+        r.raise_for_status()
+        logger.info(f"📥 Index fetched. Size: {len(r.text)} characters.")
+    except Exception as e:
+        logger.error(f"💥 Failed to fetch Master Index: {e}")
+        return
+
     lines = [l for l in r.text.splitlines() if '13F-HR' in l][:limit]
+    logger.info(f"📊 Filtered {len(lines)} 13F-HR filings to process.")
 
     batch = []
     processed_count = 0
@@ -93,34 +108,33 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
         acc = path.split('/')[-1].replace('.txt', '').replace('-', '')
 
         try:
-            # 2. Get Directory JSON with Retry
+            # 2. Get Directory JSON
             dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/index.json"
-            dir_res = get_with_retry(dir_url, HEADERS)
+            dir_res = get_with_retry(session, dir_url)
             
             if not dir_res:
-                logger.error(f"❌ Skipping {acc}: SEC repeatedly blocked directory access.")
+                logger.error(f"❌ Skipping {acc}: Could not reach directory.")
                 continue
 
             items = dir_res.json().get('directory', {}).get('item', [])
             
-            # 3. SMART XML SEARCH: Broaden the search patterns
+            # 3. SMART XML SEARCH
             xml_name = next((i['name'] for i in items if 
                             i['name'].lower().endswith('.xml') and 
                             any(p in i['name'].lower() for p in ['infotable', 'informationtable', 'holdings'])), None)
 
-            # FALLBACK: If patterns fail, take the largest XML that isn't the primary doc
             if not xml_name:
                 xml_files = [i for i in items if i['name'].lower().endswith('.xml') and 'primary_doc' not in i['name'].lower()]
                 if xml_files:
                     xml_name = max(xml_files, key=lambda x: int(x.get('size', 0)))['name']
 
             if not xml_name:
-                logger.warning(f"❓ No holdings XML found for {acc}. Files: {[i['name'] for i in items]}")
+                logger.warning(f"❓ No holdings XML found for {acc}. Files present: {[i['name'] for i in items]}")
                 continue
 
-            # 4. Get XML Content with Retry
+            # 4. Get XML Content
             xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{xml_name}"
-            xml_res = get_with_retry(xml_url, HEADERS)
+            xml_res = get_with_retry(session, xml_url)
             
             if not xml_res:
                 continue
@@ -130,7 +144,7 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
             if rows:
                 batch.extend(rows)
                 if processed_count % 10 == 0:
-                    logger.info(f"✅ Processed {name} ({acc}) - Batch size: {len(batch)}")
+                    logger.info(f"✅ [{processed_count}] Processed {name} - Batch: {len(batch)}")
             
             # 5. Batch Upload
             if len(batch) >= batch_size and not debug:
@@ -138,16 +152,18 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
                 client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
                 batch = []
 
-            time.sleep(0.3) 
+            # Respect the SEC 10 requests per second rule
+            time.sleep(0.15) 
 
         except Exception as e:
             logger.error(f"❌ Unexpected Error on {acc}: {str(e)}")
             continue
 
     if batch and not debug:
+        logger.info(f"💾 Final flush: {len(batch)} rows.")
         client.load_table_from_dataframe(pd.DataFrame(batch), table_id).result()
     
-    logger.info(f"✅ JOB COMPLETE. Processed {processed_count} filings.")
+    logger.info(f"✅ JOB COMPLETE. Total filings processed: {processed_count}")
 
 if __name__ == "__main__":
     y = int(os.getenv("YEAR", 2025))
