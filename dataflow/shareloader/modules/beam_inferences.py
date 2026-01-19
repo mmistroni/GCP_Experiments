@@ -17,6 +17,10 @@ import google.auth.transport.requests
 from google.oauth2 import id_token
 from datetime import datetime
 import random
+import json
+import logging
+from datetime import datetime
+
 
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
@@ -291,6 +295,8 @@ class CloudRunAgentHandler(RemoteModelHandler):
             credentials.refresh(auth_req)
             return credentials.id_token
     # REMOVE 'async' here
+
+
     def request(
             self,
             item: list,
@@ -299,22 +305,19 @@ class CloudRunAgentHandler(RemoteModelHandler):
     ) -> PredictionResult:
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-        logging.info(f"------------- Running cloud urn req on item:{item} of type \n {type(item)}")
-        # 1. Define the session ID and endpoint (matching your client)
+
+        # Session Management
         session_id = f"beam_{datetime.now().strftime('%Y%m%d%H%M%S')}"
         session_endpoint = f"{self.app_url}/apps/{self.app_name}/users/{self.user_id}/sessions/{session_id}"
-        
-        # 2. MANDATORY: Register the session first
+
+        # 1. Register Session
         session_data = {"state": {"preferred_language": "English", "visit_count": 1}}
         try:
-            # Note: Using synchronous client.post here since Dataflow handler is sync
             client.post(session_endpoint, headers=headers, json=session_data)
-            logging.info(f"✅ Session {session_id} registered successfully.")
         except Exception as e:
-            logging.error(f"❌ Failed to register session: {e}")
-            # Depending on your needs, you might want to return an error here
-        
-        # 3. Now run the actual agent request
+            logging.error(f"❌ Session Error: {e}")
+
+        # 2. Run Agent Request
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
@@ -325,17 +328,32 @@ class CloudRunAgentHandler(RemoteModelHandler):
 
         response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
         raw_text = response.text.strip()
-        logging.info(f'----------------- Raw text returned\n{raw_text}')
-        data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
 
-        if data_lines:
+        # 3. Enhanced SSE Parsing Logic
+        final_signal = "No trade signal generated."
+
+        # Split by 'data: ' and clean up
+        events = [line[5:].strip() for line in raw_text.split('\n') if line.startswith("data:")]
+
+        for event_str in reversed(events):
             try:
-                import json
-                last_json = json.loads(data_lines[-1][5:])
-                # Critique Agent Check: Ensure price/non-price data exists in the final_text
-                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
-                return PredictionResult(example=item, inference=final_text)
-            except Exception as e:
-                return PredictionResult(example=item, inference=f"Error: {e}")
+                data = json.loads(event_str)
 
-        return PredictionResult(example=item, inference="No Data")
+                # CHECK 1: Look for 'final_trade_signal' in stateDelta (from your logs)
+                state_delta = data.get("actions", {}).get("stateDelta", {})
+                if "final_trade_signal" in state_delta:
+                    final_signal = state_delta["final_trade_signal"]
+                    break
+
+                # CHECK 2: Fallback to the last standard text part if no stateDelta found
+                content_parts = data.get("content", {}).get("parts", [])
+                if content_parts and "text" in content_parts[0]:
+                    text_val = content_parts[0]["text"].strip()
+                    if text_val:  # Ensure it's not an empty string
+                        final_signal = text_val
+                        break
+
+            except json.JSONDecodeError:
+                continue
+
+        return PredictionResult(example=item, inference=final_signal)
