@@ -5,6 +5,7 @@ import pandas as pd
 from lxml import etree
 from google.cloud import bigquery
 from datetime import datetime
+import traceback
 
 # Setup logging
 logging.basicConfig(
@@ -13,7 +14,11 @@ logging.basicConfig(
 )
 logger = logging.getLogger("13f_scraper")
 
-HEADERS = {'User-Agent': 'Institutional Research (researcher@data-science.org)'}
+HEADERS = {
+    'User-Agent': 'Individual Research (your-email@gmail.com)',
+    'Accept-Encoding': 'gzip, deflate',
+    'Host': 'www.sec.gov'
+}
 
 def get_existing_accessions(client, table_id, filing_date):
     """Checks BigQuery so we don't re-download what we already have."""
@@ -121,6 +126,12 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
             xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{acc}/{xml_name}"
             xml_content = requests.get(xml_url, headers=HEADERS).content
 
+            if len(xml_content) < 100:
+                logger.warning(f"🛑 THROTTLED: SEC sent empty response for {acc} ({len(xml_content)} bytes). Waiting 5s...")
+                time.sleep(5)  # Penalize the scraper for going too fast
+                continue       # Skip this filing and move to the next
+                        
+            
             rows = parse_sec_xml(xml_content, cik, name, partition_date, acc)
 
             if rows:
@@ -139,10 +150,11 @@ def run_master_scraper(year: int, qtr: int, limit: int = 10000, debug: bool = Fa
                     job.result()  # Wait for it to finish
                 batch = []
 
-            time.sleep(0.12)  # Respect SEC limits
+            time.sleep(0.25)  # Respect SEC limits
 
         except Exception as e:
             logger.error(f"❌ Error on {acc}: {str(e)}")
+            logger.error(traceback.format_exc()) # This will show the real culprit
             continue
 
     # FINAL FLUSH (The part that was missing/skipped)
