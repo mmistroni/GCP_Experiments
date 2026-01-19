@@ -14,10 +14,10 @@ logger = logging.getLogger("13f_scraper")
 
 # SEC-Friendly Headers
 HEADERS = {
-    'User-Agent': 'Institutional Research (mmapplausetest@gmail.com)', 
+    # The SEC specifically asks for 'Company Name AdminContact@email.com'
+    'User-Agent': 'Institutional Research mmapplausetest@gmail.com', 
     'Accept-Encoding': 'gzip, deflate',
-    'Host': 'www.sec.gov',
-    'Connection': 'keep-alive'
+    'Host': 'www.sec.gov'
 }
 
 def get_with_retry(url, headers, max_retries=3, sleep_time=5):
