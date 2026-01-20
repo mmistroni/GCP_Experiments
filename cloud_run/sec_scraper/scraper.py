@@ -140,37 +140,37 @@ def process_queue_batch(client, limit=500):
             # --- UPDATED STAGE 2 PARSING LOGIC ---
 
             # 1. Parse the XML
+            # --- STAGE 2: PARSING LOGIC (Aligned with your existing Schema) ---
+
             root = etree.fromstring(xml_res.content)
+            nodes = root.xpath("//*[local-name()='infoTable']")
 
-            # 2. Use local-name() to ignore namespaces
-            # This finds 'infoTable' regardless of whether it's <ns1:infoTable> or <infoTable>
-            holdings_nodes = root.xpath("//*[local-name()='infoTable']")
-
-            for info in holdings_nodes:
+            for info in nodes:
                 try:
-                    # local-name() works for child elements too
-                    issuer = info.xpath("string(*[local-name()='nameOfIssuer'])")
-                    cusip  = info.xpath("string(*[local-name()='cusip'])")
-                    value  = info.xpath("string(*[local-name()='value'])")
-                    shares = info.xpath("string(*[local-name()='shrsOrPrnAmt']/*[local-name()='sshPrnAmt'])")
+                    # Extract values using local-name to ignore namespaces
+                    issuer   = info.xpath("string(*[local-name()='nameOfIssuer'])")
+                    cusip    = info.xpath("string(*[local-name()='cusip'])")
+                    val_str  = info.xpath("string(*[local-name()='value'])")
+                    shrs_str = info.xpath("string(*[local-name()='shrsOrPrnAmt']/*[local-name()='sshPrnAmt'])")
+                    pc_str   = info.xpath("string(*[local-name()='putCall'])") # NEW: Extract Put/Call
 
-                    if issuer:
-                        final_holdings.append({
-                            "cik": row['cik'],
-                            "company_name": row['company_name'],
-                            "accession_number": row['accession_number'],
-                            "issuer": issuer,
-                            "cusip": cusip,
-                            "shares": float(shares.replace(',', '') or 0),
-                            "value": float(value.replace(',', '') or 0),
-                            "year": int(row['year']),
-                            "qtr": int(row['qtr'])
-                        })
+                    # Mapping to YOUR specific BigQuery columns and types
+                    final_holdings.append({
+                        "cik": str(row['cik']),                          # Type: STRING
+                        "manager_name": row['company_name'],             # Type: STRING
+                        "issuer_name": issuer,                           # Type: STRING
+                        "cusip": cusip,                                  # Type: STRING
+                        "value_usd": int(float(val_str.replace(',', '') or 0)), # Type: INTEGER
+                        "shares": int(float(shrs_str.replace(',', '') or 0)),    # Type: INTEGER
+                        "put_call": pc_str if pc_str else None,          # Type: STRING
+                        "filing_date": row['filing_date'],               # Type: DATETIME
+                        "accession_number": row['accession_number']      # Type: STRING
+                    })
                 except Exception as e:
-                    logger.warning(f"⚠️ Row parse error in {row['company_name']}: {e}")
+                    logger.warning(f"Row error: {e}")
 
-                    # This will fix the 'setting default namespace' error permanently.
-                            
+
+
             # 4. Mark as Done
             client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number='{row['accession_number']}'")
             logger.info(f"✅ Processed {row['company_name']}")
