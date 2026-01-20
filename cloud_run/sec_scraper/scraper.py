@@ -136,21 +136,41 @@ def process_queue_batch(client, limit=500):
             xml_url = row['dir_url'].replace('index.json', xml_name)
             xml_res = session.get(xml_url, timeout=15)
             
-            root = etree.fromstring(xml_res.content)
-            ns = {"ns": root.nsmap.get(None, "")}
             
-            for info in root.xpath("//ns:infoTable", namespaces=ns):
-                final_holdings.append({
-                    "cik": row['cik'],
-                    "company_name": row['company_name'],
-                    "accession_number": row['accession_number'],
-                    "issuer": info.findtext("ns:nameOfIssuer", namespaces=ns),
-                    "cusip": info.findtext("ns:cusip", namespaces=ns),
-                    "shares": info.findtext("ns:shrsOrPrnAmt/ns:sshPrnAmt", namespaces=ns),
-                    "year": row['year'],
-                    "qtr": row['qtr']
-                })
+            # --- UPDATED STAGE 2 PARSING LOGIC ---
 
+            # 1. Parse the XML
+            root = etree.fromstring(xml_res.content)
+
+            # 2. Use local-name() to ignore namespaces
+            # This finds 'infoTable' regardless of whether it's <ns1:infoTable> or <infoTable>
+            holdings_nodes = root.xpath("//*[local-name()='infoTable']")
+
+            for info in holdings_nodes:
+                try:
+                    # local-name() works for child elements too
+                    issuer = info.xpath("string(*[local-name()='nameOfIssuer'])")
+                    cusip  = info.xpath("string(*[local-name()='cusip'])")
+                    value  = info.xpath("string(*[local-name()='value'])")
+                    shares = info.xpath("string(*[local-name()='shrsOrPrnAmt']/*[local-name()='sshPrnAmt'])")
+
+                    if issuer:
+                        final_holdings.append({
+                            "cik": row['cik'],
+                            "company_name": row['company_name'],
+                            "accession_number": row['accession_number'],
+                            "issuer": issuer,
+                            "cusip": cusip,
+                            "shares": float(shares.replace(',', '') or 0),
+                            "value": float(value.replace(',', '') or 0),
+                            "year": int(row['year']),
+                            "qtr": int(row['qtr'])
+                        })
+                except Exception as e:
+                    logger.warning(f"⚠️ Row parse error in {row['company_name']}: {e}")
+
+                    # This will fix the 'setting default namespace' error permanently.
+                            
             # 4. Mark as Done
             client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number='{row['accession_number']}'")
             logger.info(f"✅ Processed {row['company_name']}")
