@@ -85,7 +85,7 @@ def build_scraping_queue(client, year, qtr):
             acc = path.split('/')[-1].replace('.txt', '').replace('-', '')
             
             queue_rows.append({
-                "cik": parts[0],
+                "cik": str(parts[0]),
                 "company_name": parts[1],
                 "accession_number": acc,
                 "dir_url": f"https://www.sec.gov/Archives/edgar/data/{parts[0]}/{acc}/index.json",
