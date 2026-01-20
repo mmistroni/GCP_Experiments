@@ -21,6 +21,8 @@ HEADERS = {
 }
 
 
+
+
 def ensure_tables_exist(client):
     """Checks for Dataset and Tables; creates them if missing."""
     dataset_id = f"{client.project}.gcp_shareloader"
@@ -99,11 +101,17 @@ def build_scraping_queue(client, year, qtr):
         logger.info(f"✅ Queue built with {len(queue_rows)} filings.")
 
 # --- STAGE 2: THE CONSUMER (Process the URLs) ---
-def process_queue_batch(client, limit=500):
+def process_queue_batch(client, year, qtr, limit=500):
     """Queries BigQuery for pending URLs and scrapes them."""
     queue_table = f"{client.project}.gcp_shareloader.scraping_queue"
     master_table = f"{client.project}.gcp_shareloader.all_holdings_master"
     
+    quarter_dates = {1: f"{year}-03-31", 2: f"{year}-06-30", 
+                     3: f"{year}-09-30", 4: f"{year}-12-31"}
+    
+    PARTITION_DATE = quarter_dates[qtr]
+
+
     # 1. Get batch from Queue
     query = f"SELECT * FROM `{queue_table}` WHERE status = 'pending' LIMIT {limit}"
     batch_df = client.query(query).to_dataframe()
@@ -163,7 +171,7 @@ def process_queue_batch(client, limit=500):
                         "value_usd": int(float(val_str.replace(',', '') or 0)), # Type: INTEGER
                         "shares": int(float(shrs_str.replace(',', '') or 0)),    # Type: INTEGER
                         "put_call": pc_str if pc_str else None,          # Type: STRING
-                        "filing_date": row['filing_date'],               # Type: DATETIME
+                        "filing_date": PARTITION_DATE,               # Type: DATETIME
                         "accession_number": row['accession_number']      # Type: STRING
                     })
                 except Exception as e:
@@ -197,7 +205,7 @@ def run_master_scraper(year, qtr):
         build_scraping_queue(client, year, qtr)
     
     # Always try to process a batch (Stage 2)
-    process_queue_batch(client)
+    process_queue_batch(client, year, qtr)
 
 if __name__ == "__main__":
     # Get Year/Qtr from ENV for Cloud Run
