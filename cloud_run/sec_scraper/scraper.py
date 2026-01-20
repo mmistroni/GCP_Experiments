@@ -94,7 +94,7 @@ def build_scraping_queue(client, year, qtr):
 
     if queue_rows:
         # WRITE_TRUNCATE clears old queue for the new quarter run
-        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE", schema=queue_schema)
+        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE")
         client.load_table_from_json(queue_rows, queue_table, job_config=job_config).result()
         logger.info(f"✅ Queue built with {len(queue_rows)} filings.")
 
