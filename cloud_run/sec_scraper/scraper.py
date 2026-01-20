@@ -186,10 +186,38 @@ def process_queue_batch(client, year, qtr, limit=500):
         except Exception as e:
             logger.error(f"💥 Failed {row['accession_number']}: {e}")
 
-    # 5. Bulk Upload Holdings
+    # 5. Bulk Upload Holdings (The Safe Way)
     if final_holdings:
-        client.load_table_from_json(final_holdings, master_table).result()
-        logger.info(f"💾 Uploaded {len(final_holdings)} holdings rows.")
+        # Define the schema to match your historical data exactly
+        master_schema = [
+            bigquery.SchemaField("cik", "STRING"),
+            bigquery.SchemaField("manager_name", "STRING"),
+            bigquery.SchemaField("issuer_name", "STRING"),
+            bigquery.SchemaField("cusip", "STRING"),
+            bigquery.SchemaField("value_usd", "INTEGER"),
+            bigquery.SchemaField("shares", "INTEGER"),
+            bigquery.SchemaField("put_call", "STRING"),
+            bigquery.SchemaField("filing_date", "DATETIME"),
+            bigquery.SchemaField("accession_number", "STRING"),
+        ]
+
+        # Use LoadJobConfig to turn OFF Autodetect
+        job_config = bigquery.LoadJobConfig(
+            schema=master_schema,
+            write_disposition="WRITE_APPEND",
+            autodetect=False  # <--- THIS IS THE MAGIC LINE
+        )
+
+        try:
+            job = client.load_table_from_json(
+                final_holdings, 
+                master_table, 
+                job_config=job_config
+            )
+            job.result()  # Wait for upload to finish
+            logger.info(f"💾 SUCCESS: Appended {len(final_holdings)} rows to historical records.")
+        except Exception as e:
+            logger.error(f"❌ BigQuery Insert Failed: {e}")
 
 # --- ENTRY POINT ---
 def run_master_scraper(year, qtr):
