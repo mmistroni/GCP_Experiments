@@ -164,6 +164,14 @@ def process_queue_batch(client, year, qtr, limit=500):
                     cusip    = info.xpath("string(*[local-name()='cusip'])")
                     val_str  = info.xpath("string(*[local-name()='value'])")
                     shrs_str = info.xpath("string(*[local-name()='shrsOrPrnAmt']/*[local-name()='sshPrnAmt'])")
+
+                    # This looks for the tag regardless of whether the 'a' is capital or lowercase
+                    shares_xpath = "*[local-name()='shrsOrPrnAmt']/*[translate(local-name(), 'A', 'a')='sshprnamt']"
+                    shares_val = info.xpath(f"string({shares_xpath})")
+
+
+
+
                     pc_str   = info.xpath("string(*[local-name()='putCall'])") # NEW: Extract Put/Call
 
                     # Mapping to YOUR specific BigQuery columns and types
@@ -173,7 +181,7 @@ def process_queue_batch(client, year, qtr, limit=500):
                         "issuer_name": issuer,                           # Type: STRING
                         "cusip": cusip,                                  # Type: STRING
                         "value_usd": int(float(val_str.replace(',', '') or 0)), # Type: INTEGER
-                        "shares": int(float(shrs_str.replace(',', '') or 0)),    # Type: INTEGER
+                        "shares": int(float(shares_val.replace(',', '') or 0)),    # Type: INTEGER
                         "put_call": pc_str if pc_str else None,          # Type: STRING
                         "filing_date": PARTITION_DATE,               # Type: DATETIME
                         "accession_number": row['accession_number']      # Type: STRING
