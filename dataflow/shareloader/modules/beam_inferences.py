@@ -330,6 +330,10 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 logging.info(f'Final Text:\n{final_text}')
 
 
+
+
+
+
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
                 return PredictionResult(example=item, inference=f"Error: {e}")
