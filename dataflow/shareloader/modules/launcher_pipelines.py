@@ -263,10 +263,6 @@ def  run_gcloud_agent(pipeline, agent_url):
 
         handler_result | "handler to sink" >> sink
 
-        llm_response = (handler_result | "Checking PostProcess" >> beam.ParDo(PostProcessor()))
-
-
-        llm_response | 'llm response to sink' >> sink
 
 
 
