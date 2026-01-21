@@ -55,6 +55,10 @@ def ensure_tables_exist(client):
         bigquery.SchemaField("accession_number", "STRING"),
     ]
 
+     
+
+
+
     # Create tables if they don't exist
     for table_id, schema in [(queue_table_id, queue_schema), (master_table_id, master_schema)]:
         table = bigquery.Table(table_id, schema=schema)
