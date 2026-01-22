@@ -247,7 +247,7 @@ def write_to_ai_stocks(pipeline, ai_sink):
 
 def  run_gcloud_agent(pipeline, agent_url):
         from apache_beam.ml.inference.base import RunInference, PredictionResult
-        from shareloader.modules.beam_inferences import CloudRunAgentHandler, PostProcessor
+        from shareloader.modules.beam_inferences import CloudRunAgentHandler, CloudRunPostProcessor
 
         agent_handler = CloudRunAgentHandler(
             app_url=agent_url,
@@ -263,6 +263,10 @@ def  run_gcloud_agent(pipeline, agent_url):
 
         handler_result | "handler to sink" >> sink
 
+        llm_response = (handler_result | "Checking PostProcess" >> beam.ParDo(CloudRunPostProcessor()))
+
+
+        llm_response | 'llm response to sink' >> sink
 
 
 

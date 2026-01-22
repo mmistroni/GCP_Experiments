@@ -17,6 +17,14 @@ import google.auth.transport.requests
 from google.oauth2 import id_token
 from datetime import datetime
 import random
+from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
+import  logging
+import apache_beam as beam
+import json
+import logging
+from typing import Iterable
+
+
 
 # Python Packag'gemini-2.0-flash-001'e Version
 MODEL_NAME = "gemini-2.5-flash" #"gemini-2.5-flash"
@@ -260,8 +268,38 @@ def run_gemini_congress_pipeline(p, google_key):
     debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
 
 
-from apache_beam.ml.inference.base import RemoteModelHandler, PredictionResult
-import  logging
+class CloudRunPostProcessor(beam.DoFn):
+    """Parses the PredictionResult to extract the final trade signal narrative."""
+
+    def process(self, element: Any) -> Iterable[str]:
+        """
+        Extracts the final_trade_signal from the inference string.
+        Based on your CloudRunAgentHandler, element.inference is already a string.
+        """
+        input_prompt = element.example
+        raw_inference = element.inference
+
+        try:
+            logging.info(f"Processing inference: {raw_inference}")
+
+            # Check if the inference is a JSON string containing the signal
+            # Your logs show 'final_trade_signal' is inside a JSON stateDelta
+            if isinstance(raw_inference, str) and raw_inference.strip().startswith('{'):
+                try:
+                    data = json.loads(raw_inference)
+                    # Use the narrative string if it exists, otherwise use the whole JSON
+                    output_text = data.get("final_trade_signal", raw_inference)
+                except json.JSONDecodeError:
+                    output_text = raw_inference
+            else:
+                output_text = raw_inference
+
+            # Yield the final formatted string as requested
+            yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
+
+        except Exception as e:
+            logging.error(f"Error processing element: {e}")
+            yield f"Input:\n{input_prompt}\n\nOutput:\nError processing response.\n"
 
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
@@ -340,10 +378,6 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
 
                 logging.info(f'Final Text:\n{final_text}')
-
-
-
-
 
 
                 return PredictionResult(example=item, inference=final_text)
