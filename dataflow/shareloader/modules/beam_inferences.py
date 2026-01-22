@@ -301,10 +301,22 @@ class CloudRunAgentHandler(RemoteModelHandler):
         token = self._get_token()
         headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 
+        # Session Management
+        session_id = f"beam_{datetime.now().strftime('%Y%m%d%H%M%S')}"
+        session_endpoint = f"{self.app_url}/apps/{self.app_name}/users/{self.user_id}/sessions/{session_id}"
+
+        # 1. Register Session
+        session_data = {"state": {"preferred_language": "English", "visit_count": 1}}
+        try:
+            client.post(session_endpoint, headers=headers, json=session_data)
+        except Exception as e:
+            logging.error(f"❌ Session Error: {e}")
+
+        # 2. Run Agent Request
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
-            "session_id": f"beam_task_manual_test_001",
+            "session_id": session_id,
             "new_message": {"role": "user", "parts": [{"text": item[0]}]},
             "streaming": False
         }
