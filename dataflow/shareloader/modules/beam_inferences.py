@@ -276,8 +276,8 @@ class CloudRunPostProcessor(beam.DoFn):
         Extracts the final_trade_signal from the inference string.
         Based on your CloudRunAgentHandler, element.inference is already a string.
         """
-        input_prompt = element.example
-        raw_inference = element.inference
+        input_prompt = element[0].example
+        raw_inference = element[0].inference
 
         try:
             logging.info(f"Processing inference: {raw_inference}")
