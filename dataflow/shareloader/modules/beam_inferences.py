@@ -268,37 +268,58 @@ def run_gemini_congress_pipeline(p, google_key):
     debug = llm_response | 'Debugging inference output' >> beam.Map(logging.info)
 
 
+import json
+import re
+import logging
+
 class CloudRunPostProcessor(beam.DoFn):
     def process(self, element: Any) -> Iterable[str]:
-        from apache_beam.ml.inference.base import PredictionResult
+        # Reminder: Finish the Feature Agent tomorrow and keep studying Pydantic_AI!
         
-        # LOGGING IS KEY HERE: check if it's a dict or a PredictionResult
-        logging.info(f'Element type: {type(element)}') 
-        
+        # 1. Get the raw text
         try:
-            # Check if Beam passed it as a dict (common in some runners)
             if isinstance(element, dict):
-                input_prompt = element.get('example')
-                raw_inference = element.get('inference')
+                raw_text = element.get('inference', '')
+            elif hasattr(element, 'inference'):
+                raw_text = element.inference
             else:
-                # Standard attribute access
-                input_prompt = element.example
-                raw_inference = element.inference
+                raw_text = str(element)
 
-            # The rest of your logic...
-            if isinstance(raw_inference, str) and raw_inference.strip().startswith('{'):
-                data = json.loads(raw_inference)
-                output_text = data.get("final_trade_signal", raw_inference)
+            # 2. Handle SSE format (splitting by 'data:' prefix)
+            # Your log shows multiple JSON blocks starting with 'data:'
+            parts = raw_text.split('data: ')
+            
+            final_signal = None
+
+            for part in parts:
+                part = part.strip()
+                if not part: continue
+                
+                try:
+                    data = json.loads(part)
+                    # We are looking for the 'final_trade_signal' inside 'stateDelta'
+                    # specifically from the 'QuantAnalyzer' author
+                    if data.get("author") == "QuantAnalyzer":
+                        signal = data.get("actions", {}).get("stateDelta", {}).get("final_trade_signal")
+                        if signal:
+                            final_signal = signal
+                except json.JSONDecodeError:
+                    # Some parts might be truncated or metadata
+                    continue
+
+            if final_signal:
+                yield f"STOCKS ANALYSIS REPORT:\n{final_signal}"
             else:
-                output_text = raw_inference
-
-            yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
+                # If JSON parsing fails, fallback to a regex to find the signal in the mess
+                match = re.search(r'"final_trade_signal":\s*"(.*?)"', raw_text, re.DOTALL)
+                if match:
+                    yield f"Recovered via Regex:\n{match.group(1).replace('\\n', '\n')}"
+                else:
+                    yield "Error: Could not extract final_trade_signal from response."
 
         except Exception as e:
-            logging.error(f"Error in PostProcessor: {e}")
-            yield f"Error processing response: {str(e)}"
-
-
+            logging.error(f"PostProcessor Critical Failure: {e}")
+            yield f"Processing Error: {str(e)}"
 
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
@@ -310,9 +331,9 @@ class CloudRunAgentHandler(RemoteModelHandler):
         self.metric_namespace = metric_namespace
 
     def create_client(self) -> httpx.Client:
-        # Use synchronous Client
-        return httpx.Client(timeout=60.0)
-
+        # INCREASE TIMEOUT: Technical analysis takes time!
+        return httpx.Client(timeout=300.0)
+    
     def _get_token(self) -> str:
         # 1. Get the default credentials (service account identity)
         # This won't try to write to site-packages
@@ -350,37 +371,43 @@ class CloudRunAgentHandler(RemoteModelHandler):
             logging.error(f"❌ Session Error: {e}")
 
         # 2. Run Agent Request
+        # 2. Run Agent Request
         run_data = {
             "app_name": self.app_name,
             "user_id": self.user_id,
             "session_id": session_id,
             "new_message": {"role": "user", "parts": [{"text": item[0]}]},
-            "streaming": False
+            "streaming": False # Keep as False for easier parsing in Beam
         }
 
         # Use synchronous post
+        # Use synchronous post
         response = client.post(f"{self.app_url}/run_sse", headers=headers, json=run_data)
+        response.raise_for_status() # Good practice to catch 4xx/5xx errors
 
         raw_text = response.text.strip()
-        logging.info(f'----------------- Raw text returned\n{raw_text}')
+        # The split logic below handles the SSE format correctly
         data_lines = [l for l in raw_text.split('\n') if l.strip().startswith("data:")]
 
         if data_lines:
             try:
                 import json
+                # Get the very last data chunk
                 last_json = json.loads(data_lines[-1][5:])
+                
+                # CRITIQUE FIX: Navigate the actual structure returned by your agent
+                # Priority 1: Check stateDelta for the specific trading signal
+                state_delta = last_json.get('actions', {}).get('stateDelta', {})
+                final_text = state_delta.get('final_trade_signal')
 
-                logging.info(''''last jsobn par do process:\n{last_json} \n --------------------------------''')
-
-
-                # Critique Agent Check: Ensure price/non-price data exists in the final_text
-                final_text = last_json.get('content', {}).get('parts', [{}])[0].get('text', '')
-
-                logging.info(f'Final Text:\n{final_text}')
-
+                # Priority 2: Fallback to standard text parts
+                if not final_text:
+                    parts = last_json.get('content', {}).get('parts', [{}])
+                    final_text = parts[0].get('text', 'No text in response')
 
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
-                return PredictionResult(example=item, inference=f"Error: {e}")
+                logging.error(f"Mapping Error: {e}")
+                return PredictionResult(example=item, inference=f"Mapping Error: {str(e)}")
 
         return PredictionResult(example=item, inference="No Data")
