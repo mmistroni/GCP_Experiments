@@ -313,7 +313,7 @@ class CloudRunPostProcessor(beam.DoFn):
                 # If JSON parsing fails, fallback to a regex to find the signal in the mess
                 match = re.search(r'"final_trade_signal":\s*"(.*?)"', raw_text, re.DOTALL)
                 if match:
-                    yield f"Recovered via Regex:\n{match.group(1).replace('\\n', '\n')}"
+                    yield f"Recovered via Regex:\n{match.group(1)}"
                 else:
                     yield "Error: Could not extract final_trade_signal from response."
 
