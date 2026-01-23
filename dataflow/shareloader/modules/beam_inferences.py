@@ -269,37 +269,36 @@ def run_gemini_congress_pipeline(p, google_key):
 
 
 class CloudRunPostProcessor(beam.DoFn):
-    """Parses the PredictionResult to extract the final trade signal narrative."""
-
     def process(self, element: Any) -> Iterable[str]:
-        """
-        Extracts the final_trade_signal from the inference string.
-        Based on your CloudRunAgentHandler, element.inference is already a string.
-        """
-        input_prompt = element[0].example
-        raw_inference = element[0].inference
-
+        from apache_beam.ml.inference.base import PredictionResult
+        
+        # LOGGING IS KEY HERE: check if it's a dict or a PredictionResult
+        logging.info(f'Element type: {type(element)}') 
+        
         try:
-            logging.info(f"Processing inference: {raw_inference}")
+            # Check if Beam passed it as a dict (common in some runners)
+            if isinstance(element, dict):
+                input_prompt = element.get('example')
+                raw_inference = element.get('inference')
+            else:
+                # Standard attribute access
+                input_prompt = element.example
+                raw_inference = element.inference
 
-            # Check if the inference is a JSON string containing the signal
-            # Your logs show 'final_trade_signal' is inside a JSON stateDelta
+            # The rest of your logic...
             if isinstance(raw_inference, str) and raw_inference.strip().startswith('{'):
-                try:
-                    data = json.loads(raw_inference)
-                    # Use the narrative string if it exists, otherwise use the whole JSON
-                    output_text = data.get("final_trade_signal", raw_inference)
-                except json.JSONDecodeError:
-                    output_text = raw_inference
+                data = json.loads(raw_inference)
+                output_text = data.get("final_trade_signal", raw_inference)
             else:
                 output_text = raw_inference
 
-            # Yield the final formatted string as requested
             yield f"Input:\n{input_prompt}\n\nOutput:\n{output_text.strip()}\n"
 
         except Exception as e:
-            logging.error(f"Error processing element: {e}")
-            yield f"Input:\n{input_prompt}\n\nOutput:\nError processing response.\n"
+            logging.error(f"Error in PostProcessor: {e}")
+            yield f"Error processing response: {str(e)}"
+
+
 
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
