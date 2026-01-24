@@ -399,7 +399,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 # Priority 1: Check stateDelta for the specific trading signal
                 state_delta = last_json.get('actions', {}).get('stateDelta', {})
                 final_text = state_delta.get('final_trade_signal')
-
+                logging.info(f'======== Final Text is:\n {final_text}')
                 # Priority 2: Fallback to standard text parts
                 if not final_text:
                     parts = last_json.get('content', {}).get('parts', [{}])
