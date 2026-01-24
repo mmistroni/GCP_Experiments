@@ -275,7 +275,7 @@ import logging
 class CloudRunPostProcessor(beam.DoFn):
     def process(self, element: Any) -> Iterable[str]:
         # Reminder: Finish the Feature Agent tomorrow and keep studying Pydantic_AI!
-        
+        logging.info(f'Type of Response is:{type(element)}')
         # 1. Get the raw text
         try:
             if isinstance(element, dict):
@@ -404,7 +404,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 if not final_text:
                     parts = last_json.get('content', {}).get('parts', [{}])
                     final_text = parts[0].get('text', 'No text in response')
-
+                logging.info(f'Passing to Next levvel Item:{item}\n Inference:{final_text}')
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
                 logging.error(f"Mapping Error: {e}")
