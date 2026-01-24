@@ -299,7 +299,8 @@ class CloudRunPostProcessor(beam.DoFn):
                     data = json.loads(part)
                     # We are looking for the 'final_trade_signal' inside 'stateDelta'
                     # specifically from the 'QuantAnalyzer' author
-                    logging.info('Processing Data foromm Json: {type(data)} and it is :\n{data}')
+                    logging.info(f'Processing Data foromm Json: {type(data)} and it is :\n{data}')
+                    data = data[0]
                     if data.get("author") == "QuantAnalyzer":
                         signal = data.get("actions", {}).get("stateDelta", {}).get("final_trade_signal")
                         if signal:
