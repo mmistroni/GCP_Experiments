@@ -272,57 +272,48 @@ import json
 import re
 import logging
 
+
 class CloudRunPostProcessor(beam.DoFn):
     def process(self, element: Any) -> Iterable[str]:
-        # Reminder: Finish the Feature Agent tomorrow and keep studying Pydantic_AI!
-        logging.info(f'Type of Response is:{type(element)}')
-        # 1. Get the raw text
+        # Reminder: Finish the Feature Agent today!
+        # Study tip: Pydantic_AI agents love structured outputs.
+
+        logging.info(f'===== Received Element Type: {type(element)}')
+        logging.info('===== ELEMENT IS \n {element}')
         try:
-            if isinstance(element, dict):
-                raw_text = element.get('inference', '')
-            elif hasattr(element, 'inference'):
+            # 1. IDENTIFY THE DATA
+            raw_text = None
+
+            # Check if it's the standard PredictionResult
+            if hasattr(element, 'inference'):
                 raw_text = element.inference
+            # If Beam passed the inference string directly
+            elif isinstance(element, str):
+                raw_text = element
+            # If it's the 'example' (the prompt list), we don't need to process it here
+            elif isinstance(element, list):
+                logging.info("Skipping 'example' list element")
+                return
             else:
-                raw_text = str(element)
+                logging.warning(f"Unexpected element type: {type(element)}")
+                return
 
-            # 2. Handle SSE format (splitting by 'data:' prefix)
-            # Your log shows multiple JSON blocks starting with 'data:'
-            parts = raw_text.split('data: ')
-            
-            final_signal = None
+            if not raw_text:
+                return
 
-            for part in parts:
-                part = part.strip()
-                if not part: continue
-                
-                try:
-                    data = json.loads(part)
-                    # We are looking for the 'final_trade_signal' inside 'stateDelta'
-                    # specifically from the 'QuantAnalyzer' author
-                    logging.info(f'Processing Data foromm Json: {type(data)} and it is :\n{data}')
-                    data = data[0]
-                    if data.get("author") == "QuantAnalyzer":
-                        signal = data.get("actions", {}).get("stateDelta", {}).get("final_trade_signal")
-                        if signal:
-                            final_signal = signal
-                except json.JSONDecodeError:
-                    # Some parts might be truncated or metadata
-                    continue
+            # 2. PARSE THE TEXT
+            # Since your Handler already extracted the 'final_trade_signal',
+            # raw_text IS the report. We don't need to split by 'data:' again!
 
-            if final_signal:
-                yield f"STOCKS ANALYSIS REPORT:\n{final_signal}"
+            if "STOCKS ANALYSIS REPORT" in raw_text or "Recommendation" in raw_text:
+                yield f"FINAL OUTPUT:\n{raw_text}"
             else:
-                # If JSON parsing fails, fallback to a regex to find the signal in the mess
-                match = re.search(r'"final_trade_signal":\s*"(.*?)"', raw_text, re.DOTALL)
-                if match:
-                    yield f"Recovered via Regex:\n{match.group(1)}"
-                else:
-                    yield "Error: Could not extract final_trade_signal from response."
+                # If for some reason the full JSON came through:
+                yield f"CLEANED REPORT:\n{raw_text.strip()}"
 
         except Exception as e:
             logging.error(f"PostProcessor Critical Failure: {e}")
             yield f"Processing Error: {str(e)}"
-
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
         self._model_id = f"CloudRun_{app_name}"
@@ -335,7 +326,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
     def create_client(self) -> httpx.Client:
         # INCREASE TIMEOUT: Technical analysis takes time!
         return httpx.Client(timeout=300.0)
-    
+
     def _get_token(self) -> str:
         # 1. Get the default credentials (service account identity)
         # This won't try to write to site-packages
@@ -396,7 +387,7 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 import json
                 # Get the very last data chunk
                 last_json = json.loads(data_lines[-1][5:])
-                
+
                 # CRITIQUE FIX: Navigate the actual structure returned by your agent
                 # Priority 1: Check stateDelta for the specific trading signal
                 state_delta = last_json.get('actions', {}).get('stateDelta', {})

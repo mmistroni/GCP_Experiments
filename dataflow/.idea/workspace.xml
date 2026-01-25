@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="fd8aba5f-85b7-4564-9838-5f6e6e5960a7" name="Changes" comment="attepmted clou dagent run">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" beforeDir="false" afterPath="$PROJECT_DIR$/shareloader/modules/beam_inferences.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -293,22 +294,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1711376626483</updated>
-    </task>
-    <task id="LOCAL-00610" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1763715912286</created>
-      <option name="number" value="00610" />
-      <option name="presentableId" value="LOCAL-00610" />
-      <option name="project" value="LOCAL" />
-      <updated>1763715912286</updated>
-    </task>
-    <task id="LOCAL-00611" summary="ading classes for cots">
-      <option name="closed" value="true" />
-      <created>1763734884803</created>
-      <option name="number" value="00611" />
-      <option name="presentableId" value="LOCAL-00611" />
-      <option name="project" value="LOCAL" />
-      <updated>1763734884803</updated>
     </task>
     <task id="LOCAL-00612" summary="ading classes for cots">
       <option name="closed" value="true" />
@@ -686,7 +671,23 @@
       <option name="project" value="LOCAL" />
       <updated>1768979188451</updated>
     </task>
-    <option name="localTasksCounter" value="659" />
+    <task id="LOCAL-00659" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1768983170966</created>
+      <option name="number" value="00659" />
+      <option name="presentableId" value="LOCAL-00659" />
+      <option name="project" value="LOCAL" />
+      <updated>1768983170966</updated>
+    </task>
+    <task id="LOCAL-00660" summary="attepmted clou dagent run">
+      <option name="closed" value="true" />
+      <created>1769008685297</created>
+      <option name="number" value="00660" />
+      <option name="presentableId" value="LOCAL-00660" />
+      <option name="project" value="LOCAL" />
+      <updated>1769008685297</updated>
+    </task>
+    <option name="localTasksCounter" value="661" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -1038,7 +1039,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/shareloader/modules/beam_inferences.py</url>
-          <line>96</line>
+          <line>104</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
