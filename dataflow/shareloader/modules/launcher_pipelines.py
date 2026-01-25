@@ -266,6 +266,9 @@ def  run_gcloud_agent(pipeline, agent_url):
         llm_response = (handler_result | "Checking PostProcess" >> beam.ParDo(CloudRunPostProcessor()))
 
 
+        # Debug: Log everything coming out of PostProcessor
+        llm_response | 'Debug Output' >> beam.Map(lambda x: logging.info(f"Sink receiving: {x}") or x)
+
         llm_response | 'llm response to sink' >> sink
 
 
