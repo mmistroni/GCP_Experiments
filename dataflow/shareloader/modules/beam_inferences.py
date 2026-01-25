@@ -279,7 +279,7 @@ class CloudRunPostProcessor(beam.DoFn):
         # Study tip: Pydantic_AI agents love structured outputs.
 
         logging.info(f'===== Received Element Type: {type(element)}')
-        logging.info('===== ELEMENT IS \n {element}')
+        logging.info(f'===== ELEMENT IS \n {element}')
         try:
             # 1. IDENTIFY THE DATA
             raw_text = None
@@ -304,7 +304,7 @@ class CloudRunPostProcessor(beam.DoFn):
             # 2. PARSE THE TEXT
             # Since your Handler already extracted the 'final_trade_signal',
             # raw_text IS the report. We don't need to split by 'data:' again!
-
+            logging.info(f'===== About to return osmething:{raw_text}') 
             if "STOCKS ANALYSIS REPORT" in raw_text or "Recommendation" in raw_text:
                 yield f"FINAL OUTPUT:\n{raw_text}"
             else:
