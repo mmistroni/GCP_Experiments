@@ -269,8 +269,7 @@ def  run_gcloud_agent(pipeline, agent_url):
         # Debug: Log everything coming out of PostProcessor
         llm_response | 'Debug Output' >> beam.Map(lambda x: logging.info(f"Sink receiving: {x}") or x)
 
-        llm_response | 'llm response to sink' >> sink
-
+        
 
 
 
