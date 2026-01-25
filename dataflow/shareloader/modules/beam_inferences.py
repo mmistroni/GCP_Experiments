@@ -410,6 +410,8 @@ class CloudRunAgentHandler(RemoteModelHandler):
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
                 logging.error(f"Mapping Error: {e}")
+                if final_text is None:
+                    final_text = "Error: Agent returned null response."
                 return PredictionResult(example=item, inference=f"Mapping Error: {str(e)}")
 
         return PredictionResult(example=item, inference="No Data")
