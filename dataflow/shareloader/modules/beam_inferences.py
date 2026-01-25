@@ -272,48 +272,53 @@ import json
 import re
 import logging
 
-
 class CloudRunPostProcessor(beam.DoFn):
     def process(self, element: Any) -> Iterable[str]:
-        # Reminder: Finish the Feature Agent today!
-        # Study tip: Pydantic_AI agents love structured outputs.
-
         logging.info(f'===== Received Element Type: {type(element)}')
         logging.info(f'===== ELEMENT IS \n {element}')
-        try:
-            # 1. IDENTIFY THE DATA
-            raw_text = None
 
-            # Check if it's the standard PredictionResult
-            if hasattr(element, 'inference'):
-                raw_text = element.inference
-            # If Beam passed the inference string directly
-            elif isinstance(element, str):
-                raw_text = element
-            # If it's the 'example' (the prompt list), we don't need to process it here
-            elif isinstance(element, list):
-                logging.info("Skipping 'example' list element")
+        raw_text = None
+
+        # Handle PredictionResult
+        if hasattr(element, 'inference'):
+            raw_text = element.inference
+            if raw_text is None:
+                logging.warning("inference field is None")
+                yield "ERROR: Inference result was None"
                 return
-            else:
-                logging.warning(f"Unexpected element type: {type(element)}")
-                return
+        # Handle direct string
+        elif isinstance(element, str):
+            raw_text = element
+        # Skip lists (assume they are examples/prompt inputs)
+        elif isinstance(element, list):
+            logging.debug("Skipping list input (likely prompt/example)")
+            # Don't return here — just don't process
+            return  # It's safe to skip non-results
+        else:
+            logging.error(f"Unexpected element type: {type(element)}, value: {element}")
+            yield f"ERROR: Unexpected type {type(element)}"
+            return
 
-            if not raw_text:
-                return
+        # Now safely process raw_text
+        if not raw_text or not raw_text.strip():
+            logging.warning("Empty raw_text received")
+            yield "ERROR: Empty response from agent"
+            return
 
-            # 2. PARSE THE TEXT
-            # Since your Handler already extracted the 'final_trade_signal',
-            # raw_text IS the report. We don't need to split by 'data:' again!
-            logging.info(f'===== About to return osmething:{raw_text}') 
-            if "STOCKS ANALYSIS REPORT" in raw_text or "Recommendation" in raw_text or "yesterday's" in raw_text:
-                yield f"FINAL OUTPUT:\n{raw_text}"
-            else:
-                # If for some reason the full JSON came through:
-                yield f"CLEANED REPORT:\n{raw_text.strip()}"
+        raw_text = raw_text.strip()
 
-        except Exception as e:
-            logging.error(f"PostProcessor Critical Failure: {e}")
-            yield f"Processing Error: {str(e)}"
+        # Emit final cleaned output
+        if ("STOCKS ANALYSIS REPORT" in raw_text or 
+            "Recommendation" in raw_text or 
+            "yesterday's" in raw_text):
+            yield f"FINAL OUTPUT:\n{raw_text}"
+        else:
+            yield f"CLEANED REPORT:\n{raw_text}"
+
+
+
+
+
 class CloudRunAgentHandler(RemoteModelHandler):
     def __init__(self, app_url: str, app_name: str, user_id: str, metric_namespace: str):
         self._model_id = f"CloudRun_{app_name}"
