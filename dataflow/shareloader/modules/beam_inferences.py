@@ -279,42 +279,41 @@ class CloudRunPostProcessor(beam.DoFn):
 
         raw_text = None
 
-        # Handle PredictionResult
+        # CASE 1: PredictionResult with .inference
         if hasattr(element, 'inference'):
             raw_text = element.inference
             if raw_text is None:
-                logging.warning("inference field is None")
-                yield "ERROR: Inference result was None"
-                return
-        # Handle direct string
+                logging.warning("Dropping element with inference=None")
+                return  # 🔴 SILENTLY SKIP, DO NOT YIELD ERROR
+
+        # CASE 2: Direct string input (e.g., for testing)
         elif isinstance(element, str):
             raw_text = element
-        # Skip lists (assume they are examples/prompt inputs)
-        elif isinstance(element, list):
-            logging.debug("Skipping list input (likely prompt/example)")
-            # Don't return here — just don't process
-            return  # It's safe to skip non-results
-        else:
-            logging.error(f"Unexpected element type: {type(element)}, value: {element}")
-            yield f"ERROR: Unexpected type {type(element)}"
-            return
 
-        # Now safely process raw_text
+        # CASE 3: List/tuple → likely the original prompt
+        elif isinstance(element, (list, tuple)):
+            logging.debug(f"Skipping prompt list: {element}")
+            return  # 🔴 SILENTLY SKIP
+
+        # CASE 4: Any other type (unexpected)
+        else:
+            logging.warning(f"Unexpected element type: {type(element)}, value: {element}")
+            return  # 🔴 SILENTLY SKIP — do not yield error string
+
+        # CASE 5: raw_text exists but is empty
         if not raw_text or not raw_text.strip():
-            logging.warning("Empty raw_text received")
-            yield "ERROR: Empty response from agent"
-            return
+            logging.warning("Empty raw_text received — skipping")
+            return  # 🔴 SILENTLY SKIP
 
         raw_text = raw_text.strip()
 
-        # Emit final cleaned output
+        # ✅ Only now: valid non-empty response → emit cleaned output
         if ("STOCKS ANALYSIS REPORT" in raw_text or 
             "Recommendation" in raw_text or 
             "yesterday's" in raw_text):
             yield f"FINAL OUTPUT:\n{raw_text}"
         else:
             yield f"CLEANED REPORT:\n{raw_text}"
-
 
 
 
