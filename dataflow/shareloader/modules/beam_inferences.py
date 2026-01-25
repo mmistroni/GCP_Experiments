@@ -403,6 +403,10 @@ class CloudRunAgentHandler(RemoteModelHandler):
                     parts = last_json.get('content', {}).get('parts', [{}])
                     final_text = parts[0].get('text', 'No text in response')
                 logging.info(f'Passing to Next levvel Item:{item}\n Inference:{final_text}')
+
+                if final_text is None:
+                    final_text = "Error: Agent returned null response."
+                
                 return PredictionResult(example=item, inference=final_text)
             except Exception as e:
                 logging.error(f"Mapping Error: {e}")
