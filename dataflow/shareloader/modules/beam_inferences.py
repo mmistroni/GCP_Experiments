@@ -305,7 +305,7 @@ class CloudRunPostProcessor(beam.DoFn):
             # Since your Handler already extracted the 'final_trade_signal',
             # raw_text IS the report. We don't need to split by 'data:' again!
             logging.info(f'===== About to return osmething:{raw_text}') 
-            if "STOCKS ANALYSIS REPORT" in raw_text or "Recommendation" in raw_text:
+            if "STOCKS ANALYSIS REPORT" in raw_text or "Recommendation" in raw_text or "yesterday's" in raw_text:
                 yield f"FINAL OUTPUT:\n{raw_text}"
             else:
                 # If for some reason the full JSON came through:
