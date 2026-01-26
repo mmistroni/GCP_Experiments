@@ -16,6 +16,7 @@ from shareloader.modules.beam_inferences import run_gemini_pipeline, run_gemini_
 from shareloader.modules.beam_inferences import GeminiModelHandler
 import csv
 from io import StringIO
+from shareloader.modules.launcher_email import send_email
 import re
 
 def parse_csv_line(line):
@@ -245,7 +246,7 @@ def write_to_ai_stocks(pipeline, ai_sink):
      
     )
 
-def  run_gcloud_agent(pipeline, agent_url):
+def  run_gcloud_agent(pipeline, agent_url, sendgridkey):
         from apache_beam.ml.inference.base import RunInference, PredictionResult
         from shareloader.modules.beam_inferences import CloudRunAgentHandler, CloudRunPostProcessor
 
@@ -255,7 +256,7 @@ def  run_gcloud_agent(pipeline, agent_url):
             user_id="user_123",
             metric_namespace="stock_agent_inference"
         )
-        sink = beam.Map(print)
+        sink = beam.Map(logging.info)
         handler_result = (pipeline | 'Sourcinig prompt' >> beam.Create(
             ["Run a technical analysis for yesterday's stock picks and give me your recommendations"])
          | 'ClouodagentRun' >> RunInference(agent_handler)
@@ -267,7 +268,17 @@ def  run_gcloud_agent(pipeline, agent_url):
 
 
         # Debug: Log everything coming out of PostProcessor
-        llm_response | 'Debug Output' >> beam.Map(lambda x: logging.info(f"Sink receiving: {x}") or x)
+        llm_response | 'Debug Output' >> sink
+
+        keyed_llm = llm_response | 'mapping llm2' >> beam.Map(lambda element: (1, element))
+
+        combined = ({'collection1': [], 'collection2': [],
+                     'collection3': keyed_llm
+                     }
+                    | beam.CoGroupByKey())
+
+        send_email(combined, sendgridkey)
+
 
         
 

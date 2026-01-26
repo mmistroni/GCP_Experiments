@@ -418,7 +418,7 @@ def run(argv = None, save_main_session=True):
             (obb | 'obb new test mapped' >> beam.Map(lambda d: map_to_bq_dict(d))
                    | 'test to sink' >> sink)
             if known_args.agent_url:
-                run_gcloud_agent(p, known_args.agent_url)
+                run_gcloud_agent(p, known_args.agent_url, known_args.sendgridkey)
 
         else:
 
