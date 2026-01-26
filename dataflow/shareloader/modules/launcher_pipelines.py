@@ -277,7 +277,7 @@ def  run_gcloud_agent(pipeline, agent_url, sendgridkey):
                      }
                     | beam.CoGroupByKey())
 
-        send_email(combined, sendgridkey)
+        send_email(combined, sendgridkey, subject='StockAgent End of Day WrapUp')
 
 
         
