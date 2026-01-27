@@ -65,16 +65,27 @@ You are to recommend stocks that are candidates to buy or to sell based on the f
 16 - choppiness: choppiness indicator
 17  -demarker: demarker indicator
 18 - spx_choppiness: choppiness indicator  for  spx
-**Analysis Tasks:**
-1. Based on the data, identify which stocks are candidates to **rise** (BUY/WATCH) in the next days.
-2. For any stock that has dropped more than 10%, evaluate if it is worth to **short sell** (SELL) them based on the same criteria.
 
-**Final Output:**
-Summarize your findings, indicating the recommendation (buy, watch, or sell) and the reason for each stock.
-At the end of the message, you **must** generate a JSON message for all recommended stocks.
-The JSON must have fields `ticker`, `action` (buy, watch, or sell), and `explanation`.
-The JSON string should be written between a <STARTJSON> and <ENDJSON> tags.
-'''
+**Analysis Tasks:**
+### 1. Indicator Hierarchy
+Categorize and assess 18 indicators, focusing on both trends and volume confirmation.
+
+### 2. Execution Logic
+**Step A: Market Regime Assessment**  
+- If `choppiness` > 60: "Range-Bound" – avoid BUY/SELL unless volume confirms (20-day high).
+  
+**Step B: Trend Bias Detection**  
+- Assess stock for bullish/bearish bias using SMA and slope indicators.
+
+**Step C: Volume and Momentum Validation**  
+- Issue **BUY** if there’s strong bullish momentum and confirmation from volume indicators (`current_obv`, `current_cmf`). Watch for divergence and overbought conditions, labeling them accordingly.
+
+**Output Requirements**:  
+For each stock, include:
+- **Trend Status**: (Bullish/Bearish/Neutral)
+- **Volume Confirmation**: (Confirmed/Divergent/Insufficient Data)
+- **Final Recommendation**: (BUY/SELL/HOLD/WATCH)
+- **Technical Justification**: Cite specific indicators influencing the decision.'''
 
 
 CONGRESS_TRADES_TEMPLATE = '''
