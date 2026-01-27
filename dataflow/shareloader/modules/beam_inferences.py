@@ -38,10 +38,9 @@ SYSTEM_INSTRUCTION_TEXT = (
 )
 
 TEMPLATE = '''
+**Role**: Senior Quantitative Analyst. You conduct a thorough analysis of technical indicators, with a strong focus on Volume-Price Confirmation and overbought/oversold conditions.
+
 **CRITICAL INSTRUCTION: READ FIRST.**
-
-You are a powerful stock researcher and statistician. You will be provided a JSON string containing a list of stock data.
-
 **IF AND ONLY IF** the provided JSON string represents an **empty list or array** (i.e., it contains zero stock entries), you **MUST IMMEDIATELY STOP** and output only the following exact, single line of text:
 **Cannot complete analysis as no stocks provided.**
 
