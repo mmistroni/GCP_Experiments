@@ -44,21 +44,40 @@ def get_daily_index_rows(client, target_date):
 
 # --- STAGE 2: PARSE FORM 4 XML ---
 def parse_form4_xml(xml_content, acc):
-    """Parses the specific Form 4 XML structure."""
     root = etree.fromstring(xml_content)
     trades = []
+
+    # 1. EXTRACT IDENTITY (The "Who")
+    # This sits in the reportingOwnerRelationship block
+    rel_node = root.xpath("//reportingOwnerRelationship")[0]
+
+    # SEC uses '1' or 'true' for boolean flags
+    is_dir = rel_node.xpath("string(isDirector)") in ('1', 'true')
+    is_off = rel_node.xpath("string(isOfficer)") in ('1', 'true')
+    is_10p = rel_node.xpath("string(isTenPercentOwner)") in ('1', 'true')
+    title = rel_node.xpath("string(officerTitle)")  # e.g., "CEO"
+
     ticker = root.xpath("string(//issuerTradingSymbol)")
     owner = root.xpath("string(//reportingOwnerName)")
 
+    # 2. EXTRACT TRANSACTIONS (The "What")
     for tx in root.xpath("//nonDerivativeTransaction"):
+        # The 'Code' is vital: 'P' is a market buy (strong), 'A' is a grant (weak)
+        trans_code = tx.xpath("string(.//transactionCoding/transactionCode)")
+
         shares = tx.xpath("string(.//transactionShares/value)")
         price = tx.xpath("string(.//transactionPricePerShare/value)")
-        code = tx.xpath("string(.//transactionAcquiredDisposedCode/value)")
+        code = tx.xpath("string(.//transactionAcquiredDisposedCode/value)")  # A=Acquired, D=Disposed
         date = tx.xpath("string(.//transactionDate/value)")
 
         trades.append({
             "ticker": ticker,
-            "owner": owner,
+            "owner_name": owner,
+            "officer_title": title if is_off else None,
+            "is_director": is_dir,
+            "is_officer": is_off,
+            "is_ten_percent": is_10p,
+            "transaction_code": trans_code,  # LOOK FOR 'P'
             "shares": float(shares) if shares else 0,
             "price": float(price) if price else 0,
             "side": "BUY" if code == 'A' else "SELL",
@@ -66,7 +85,6 @@ def parse_form4_xml(xml_content, acc):
             "accession_number": acc
         })
     return trades
-
 
 # --- STAGE 3: SAFE MERGE TO BIGQUERY ---
 def run_form4_job():
