@@ -74,7 +74,7 @@ def run_form4_job():
     all_parsed_trades = []
 
     # Fetch last 3 days to catch late filers
-    for i in range(3):
+    for i in range(5):
         target_date = datetime.now() - timedelta(days=i)
         filings = get_daily_index_rows(client, target_date)
 
