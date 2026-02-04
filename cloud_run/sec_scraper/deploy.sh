@@ -19,3 +19,22 @@ gcloud run jobs deploy sec-13f-worker-job \
   --region us-central1 \
   --tasks 1 \
   --max-retries 0
+
+
+# 4. Deploy the f orm4 backfill Worker (Chef)
+# Note: We override the entrypoint to run the scraper script specifically
+gcloud run jobs deploy form4-backfill-worker-job \
+  --image $IMAGE_NAME \
+  --command "python" \
+  --args "scraper_form4_backfill.py" \
+  --region us-central1 \
+  --tasks 1 \
+
+# 5. Deploy the f orm4 backfill Worker (Chef)
+# Note: We override the entrypoint to run the scraper script specifically
+gcloud run jobs deploy form4-manual-worker-job \
+  --image $IMAGE_NAME \
+  --command "python" \
+  --args "scraper_form4.py" \
+  --region us-central1 \
+  --tasks 1 \

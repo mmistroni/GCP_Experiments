@@ -9,6 +9,8 @@ app = FastAPI()
 PROJECT_ID = "datascience-projects"
 REGION = "us-central1"
 JOB_NAME = "sec-13f-worker-job"
+JOB_NAME_FORM4_BACKFILL = "form4-backfill-worker-job"
+JOB_NAME_FORM4_MANUAL = "form4-manual-worker-job"
 
 @app.post("/scrape")
 async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
@@ -58,6 +60,39 @@ async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
             "status": "Worker Dispatched",
             "execution": operation.operation.name,
             "message": f"Scraping {target_year} Q{target_qtr} in the background."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/form4_backfill")
+async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
+    client = run_v2.JobsClient()
+    parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME_FORM4_BACKFILL}"
+
+    try:
+        request = run_v2.RunJobRequest(name=parent)
+        operation = client.run_job(request=request)
+        return {
+            "status": "Worker Dispatched",
+            "execution": operation.operation.name,
+            "message": f"Scraping form4 bkfill"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/form4_manual")
+async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
+    client = run_v2.JobsClient()
+    parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME_FORM4_MANUAL}"
+
+    try:
+        request = run_v2.RunJobRequest(name=parent)
+        operation = client.run_job(request=request)
+        return {
+            "status": "Worker Dispatched",
+            "execution": operation.operation.name,
+            "message": f"Scraping form4 DAILY"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
