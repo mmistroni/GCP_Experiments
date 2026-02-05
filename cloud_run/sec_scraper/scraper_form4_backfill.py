@@ -4,6 +4,7 @@ import logging
 import time
 from lxml import etree
 from google.cloud import bigquery
+from scraper_form4 import parse_form4_xml  # Reuse your existing XML parsing logic
 
 # Identity required by SEC
 HEADERS = {'User-Agent': 'Institutional Research your-email@example.com'}
@@ -48,7 +49,7 @@ def manual_backfill(years=[2024, 2025]):
 
             # SEC Rate Limit: 10 requests per second.
             # We process in small chunks to avoid being blocked.
-            for i, f in enumerate(filings[:500]):  # Start with a small limit to test!
+            for i, f in enumerate(filings[:10]):  # Start with a small limit to test!
                 try:
                     # Construct the directory URL to find the XML
                     base_url = f"https://www.sec.gov/Archives/{f['path'].replace('.txt', '-index.json')}"
@@ -87,4 +88,4 @@ def manual_backfill(years=[2024, 2025]):
 
 if __name__ == "__main__":
     # WARNING: This could take hours for full years. Start with small limits.
-    manual_backfill(years=[2024, 2025])
+    manual_backfill(years=[2024])
