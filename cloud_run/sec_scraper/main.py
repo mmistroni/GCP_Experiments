@@ -85,7 +85,7 @@ async def trigger_scrape4_backfill(years: str, limit: int=50000):
 
 
     try:
-        request = run_v2.RunJobRequest(name=parent)
+        request = run_v2.RunJobRequest(name=parent, )
         operation = client.run_job(request=request)
         return {
             "status": "Worker Dispatched",
@@ -114,12 +114,12 @@ async def trigger_scrape4_manual(limit: int = 5000):
 
 
     try:
-        request = run_v2.RunJobRequest(name=parent)
+        request = run_v2.RunJobRequest(name=parent, overrides=overrides)
         operation = client.run_job(request=request)
         return {
             "status": "Worker Dispatched",
             "execution": operation.operation.name,
-            "message": f"Scraping form4 bkfill"
+            "message": f"Scraping form4 manual with limit {limit}"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
