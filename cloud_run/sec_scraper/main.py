@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from google.cloud import run_v2
 from typing import Optional
-
+from datetime import datetime
 app = FastAPI()
 
 # Config - Adjust these to your actual IDs
@@ -66,9 +66,23 @@ async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
 
 
 @app.post("/form4_backfill")
-async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
+async def trigger_scrape4_backfill(years: str, limit: int=50000):
     client = run_v2.JobsClient()
     parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME_FORM4_BACKFILL}"
+
+    # Injecting parameters as Environment Variables for the Worker
+    overrides = {
+        "container_overrides": [
+            {
+                "env": [
+                    {"name": "MODE", "value": "BACKFILL"},
+                    {"name": "YEARS", "value": str(years)},
+                    {"name": "LIMIT", "value": str(limit)}
+                ]
+            }
+        ]
+    }
+
 
     try:
         request = run_v2.RunJobRequest(name=parent)
@@ -82,9 +96,22 @@ async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/form4_manual")
-async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
+async def trigger_scrape4_manual(limit: int = 5000):
     client = run_v2.JobsClient()
-    parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME_FORM4_MANUAL}"
+    parent = f"projects/{PROJECT_ID}/locations/{REGION}/jobs/{JOB_NAME_FORM4_BACKFILL}"
+
+    # Injecting parameters as Environment Variables for the Worker
+    overrides = {
+        "container_overrides": [
+            {
+                "env": [
+                    {"name": "MODE", "value": "DAILY"},
+                    {"name": "LIMIT", "value": str(limit)}
+                ]
+            }
+        ]
+    }
+
 
     try:
         request = run_v2.RunJobRequest(name=parent)
@@ -92,7 +119,7 @@ async def trigger_scrape(year: Optional[int], qtr: Optional[int]):
         return {
             "status": "Worker Dispatched",
             "execution": operation.operation.name,
-            "message": f"Scraping form4 DAILY"
+            "message": f"Scraping form4 bkfill"
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -96,61 +96,144 @@ def load_and_merge(trades_list):
 
 # --- STAGE 4: FLOW CONTROL ---
 def run_form4(mode: str, years: list = None, limit: int = 50):
+    """
+    The central switchboard for SEC Form 4 data ingestion.
+    
+    Args:
+        mode (str): Execution mode. 
+            'DAILY' scans the last 5 calendar days of SEC daily indices.
+            'BACKFILL' scans the quarterly master indices for the specified years.
+        years (list, optional): A list of years (integers) to process if in BACKFILL mode.
+            Defaults to [2024] if None.
+        limit (int): The maximum number of filings to process per day (DAILY) 
+            or per quarter (BACKFILL). Set high (e.g., 200000) for a full scrape.
+            
+    Notes:
+        - Processes data in batches (daily or quarterly) to manage memory usage.
+        - Commits to BigQuery at the end of every batch.
+        - Respects the SEC's 10 requests-per-second limit via time.sleep(0.11).
+    """
     session = get_session()
-    all_trades = []
     mode = mode.upper()
-    filings_to_process = []
 
-    # 1. Collect Filing URLs
     if mode == "DAILY":
+        logger.info("📅 Starting DAILY flow: Processing last 5 days.")
         for i in range(5):
             target_date = datetime.now() - timedelta(days=i)
-            # Skip weekends to save requests
-            if target_date.weekday() >= 5: continue 
+            # Skip weekends as the SEC does not update daily indices then
+            if target_date.weekday() >= 5: 
+                continue 
             
             date_str = target_date.strftime("%Y%m%d")
-            url = f"https://www.sec.gov/Archives/edgar/daily-index/{target_date.year}/QTR{(target_date.month-1)//3+1}/master.{date_str}.idx"
+            qtr = (target_date.month - 1) // 3 + 1
+            url = f"https://www.sec.gov/Archives/edgar/daily-index/{target_date.year}/QTR{qtr}/master.{date_str}.idx"
+            
+            daily_trades = []
+            logger.info(f"🔍 Checking Daily Index: {date_str}")
+            
+            # Fetch the day's index and extract filings
             res = session.get(url, timeout=10)
             if res.status_code == 200:
+                filings = []
                 for line in res.text.splitlines():
                     if '|4|' in line:
                         p = line.split('|')
                         acc = p[4].split('/')[-1].replace('.txt', '').replace('-', '')
-                        filings_to_process.append({"cik": p[0], "acc": acc, "url": f"https://www.sec.gov/Archives/edgar/data/{p[0]}/{acc}/index.json"})
+                        filings.append({
+                            "cik": p[0], 
+                            "acc": acc, 
+                            "url": f"https://www.sec.gov/Archives/edgar/data/{p[0]}/{acc}/index.json"
+                        })
+                
+                # Process the day's filings
+                num_to_scrape = min(len(filings), limit)
+                for f in tqdm(filings[:num_to_scrape], desc=f"🚀 Daily {date_str}"):
+                    try:
+                        # Standard SEC Directory Traversal
+                        dir_res = session.get(f['url'], timeout=5).json()
+                        xml_name = next(item['name'] for item in dir_res['directory']['item'] if item['name'].endswith('.xml'))
+                        xml_url = f['url'].replace('index.json', xml_name)
+                        xml_res = session.get(xml_url, timeout=5)
+                        
+                        trades = parse_form4_xml(xml_res.content, f['acc'])
+                        daily_trades.extend(trades)
+                        time.sleep(0.11) # Maintain ~9 requests per second
+                    except Exception:
+                        continue
+
+                # Batch Ingest for the day
+                if daily_trades:
+                    load_and_merge(daily_trades)
+                    daily_trades.clear() # Free up memory
+            else:
+                logger.warning(f"⚠️ No index found for {date_str}.")
 
     elif mode == "BACKFILL":
-        for year in (years or [2024]):
+        target_years = years or [2024]
+        logger.info(f"💾 Starting BACKFILL flow for years: {target_years}")
+        
+        for year in target_years:
             for qtr in range(1, 5):
+                logger.info(f"⏳ Processing Batch: {year} Q{qtr}")
+                qtr_trades = []
+                
+                # Fetch Quarterly Index
                 url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
                 res = session.get(url, timeout=15)
+                
                 if res.status_code == 200:
-                    for line in res.text.splitlines():
+                    lines = res.text.splitlines()
+                    # Quarterly master.idx contains a longer header; '|4|' identifies Form 4s
+                    filings = []
+                    for line in lines:
                         if '|4|' in line:
                             p = line.split('|')
-                            acc = p[4].split('/')[-1].replace('.txt', '').replace('-', '')
-                            filings_to_process.append({"cik": p[0], "acc": acc, "url": f"https://www.sec.gov/Archives/edgar/data/{p[0]}/{acc}/index.json"})
+                            acc_path = p[4] # Format: edgar/data/CIK/ACC-NUMBER.txt
+                            acc = acc_path.split('/')[-1].replace('.txt', '').replace('-', '')
+                            filings.append({
+                                "cik": p[0], 
+                                "acc": acc, 
+                                "url": f"https://www.sec.gov/Archives/{acc_path.replace('.txt', '-index.json')}"
+                            })
 
-    # 2. Process with Progress Bar
-    logger.info(f"🔍 Found {len(filings_to_process)} filings. Processing up to {limit}...")
-    for f in tqdm(filings_to_process[:limit], desc=f"Processing {mode}"):
-        try:
-            dir_res = session.get(f['url'], timeout=5).json()
-            xml_name = next(i['name'] for i in dir_res['directory']['item'] if i['name'].endswith('.xml'))
-            xml_url = f['url'].replace('index.json', xml_name)
-            xml_res = session.get(xml_url, timeout=5)
-            all_trades.extend(parse_form4_xml(xml_res.content, f['acc']))
-            time.sleep(0.11) # Maintain ~9 requests per second
-        except Exception:
-            continue
+                    # Process the quarter's filings
+                    num_to_scrape = min(len(filings), limit)
+                    for f in tqdm(filings[:num_to_scrape], desc=f"📦 {year} Q{qtr}"):
+                        try:
+                            dir_res = session.get(f['url'], timeout=5).json()
+                            xml_item = next(i['name'] for i in dir_res['directory']['item'] if i['name'].endswith('.xml'))
+                            # Build URL from the directory structure
+                            xml_url = f"https://www.sec.gov/Archives/edgar/data/{f['cik']}/{f['acc']}/{xml_item}"
+                            xml_res = session.get(xml_url, timeout=5)
+                            
+                            trades = parse_form4_xml(xml_res.content, f['acc'])
+                            qtr_trades.extend(trades)
+                            time.sleep(0.11)
+                        except Exception:
+                            continue
 
-    # 3. Final Load
-    load_and_merge(all_trades)
+                    # Batch Ingest for the quarter
+                    if qtr_trades:
+                        load_and_merge(qtr_trades)
+                        logger.info(f"✅ Year {year} Q{qtr} complete. Committing records.")
+                        qtr_trades.clear() # Essential for memory management
+                else:
+                    logger.warning(f"⚠️ Could not access index for {year} Q{qtr}.")
+
+    logger.info("🏁 Form 4 Flow Execution Finished.")
+
 
 if __name__ == "__main__":
+    '''
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", choices=["DAILY", "BACKFILL"], required=True)
     parser.add_argument("--years", nargs="+", type=int)
     parser.add_argument("--limit", type=int, default=50)
     args = parser.parse_args()
-
-    run_form4(mode=args.mode, years=args.years, limit=args.limit)
+    '''
+    mode = os.getenv("MODE")
+    years = os.getenv("YEARS")
+    limit = int(os.getenv("LIMIT", "50"))
+    years_list = [int(y) for y in years.split(',')] if years else None
+    print(f"🚀 Starting Form 4 Scraper in {mode} mode for years: {years_list} with limit: {limit}")
+    run_form4(mode=mode, years=years_list, limit=limit)

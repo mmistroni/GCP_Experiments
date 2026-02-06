@@ -26,7 +26,7 @@ gcloud run jobs deploy sec-13f-worker-job \
 gcloud run jobs deploy form4-backfill-worker-job \
   --image $IMAGE_NAME \
   --command "python" \
-  --args "scraper_form4_backfill.py" \
+  --args "scraper_form4.py" \
   --region us-central1 \
   --tasks 1 \
 
