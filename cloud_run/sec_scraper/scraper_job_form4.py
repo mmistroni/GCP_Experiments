@@ -85,7 +85,7 @@ def load_and_merge(trades_list):
     logger.info("💾 Saved local 'debug_payload.json' for inspection.")
 
     client = bigquery.Client(project=os.environ['GOOGLE_CLOUD_PROJECT'])
-    stg_ref = f"{PROJECT_ID}.{DATASET}.{STAGING_TABLE}"
+    stg_ref = f"{PROJECT_ID}.{DATASET}.{MASTER_TABLE}"
     
     # We remove autodetect=True if the table already exists to prevent 
     # BigQuery from guessing a new (and wrong) schema.
