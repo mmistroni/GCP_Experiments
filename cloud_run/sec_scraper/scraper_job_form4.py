@@ -68,31 +68,32 @@ def parse_form4_xml(xml_content, acc):
         return []
 
 # --- STAGE 3: BIGQUERY MERGE ---
+
 def load_and_merge(trades_list):
     if not trades_list:
-        logger.warning("📭 No trades found to load.")
+        logger.info("📭 No trades to load.")
         return
 
     client = bigquery.Client()
     stg_ref = f"{PROJECT_ID}.{DATASET}.{STAGING_TABLE}"
-    mst_ref = f"{PROJECT_ID}.{DATASET}.{MASTER_TABLE}"
-
-    # Load to Staging
+    
     job_config = bigquery.LoadJobConfig(
         write_disposition="WRITE_TRUNCATE",
-        autodetect=True,
-        create_disposition="CREATE_IF_NEEDED"
+        autodetect=True, # Ensure this matches your existing table schema
     )
-    client.load_table_from_json(trades_list, stg_ref, job_config=job_config).result()
 
-    # Deduplicated Merge
-    merge_sql = f"""
-    MERGE `{mst_ref}` T USING `{stg_ref}` S
-    ON T.accession_number = S.accession_number AND T.shares = S.shares AND T.ticker = S.ticker
-    WHEN NOT MATCHED THEN INSERT ROW
-    """
-    client.query(merge_sql).result()
-    logger.info(f"✅ Merged {len(trades_list)} rows into {MASTER_TABLE}")
+    try:
+        # Load data to staging
+        job = client.load_table_from_json(trades_list, stg_ref, job_config=job_config)
+        result = job.result()  # This is where the 400 error happens
+        
+    except Exception as e:
+        # This will print the SPECIFIC field that caused the 400 error
+        if hasattr(job, 'errors'):
+            logger.error(f"❌ BigQuery Load Errors: {job.errors}")
+        raise e
+
+
 
 # --- STAGE 4: FLOW CONTROL ---
 def run_form4(mode: str, years: list = None, limit: int = 50):
