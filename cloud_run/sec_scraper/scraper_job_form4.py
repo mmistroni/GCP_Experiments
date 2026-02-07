@@ -9,6 +9,10 @@ from google.cloud import bigquery
 from tqdm import tqdm
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import sys
+import os
+
+
 
 # --- CONFIGURATION ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -16,7 +20,7 @@ logger = logging.getLogger("form4_agent")
 
 # SEC Identity - REQUIRED
 HEADERS = {'User-Agent': 'Institutional Research your-email@example.com'}
-PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT")
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", )
 DATASET = "gcp_shareloader"
 MASTER_TABLE = "form4_master"
 STAGING_TABLE = "stg_form4"
@@ -68,29 +72,45 @@ def parse_form4_xml(xml_content, acc):
         return []
 
 # --- STAGE 3: BIGQUERY MERGE ---
+import json
 
 def load_and_merge(trades_list):
     if not trades_list:
         logger.info("📭 No trades to load.")
         return
 
+    # LOCAL DEBUG: Save the problematic data to a file you can inspect
+    with open("debug_payload.json", "w") as f:
+        json.dump(trades_list, f, indent=2)
+    logger.info("💾 Saved local 'debug_payload.json' for inspection.")
+
     client = bigquery.Client()
     stg_ref = f"{PROJECT_ID}.{DATASET}.{STAGING_TABLE}"
     
+    # We remove autodetect=True if the table already exists to prevent 
+    # BigQuery from guessing a new (and wrong) schema.
     job_config = bigquery.LoadJobConfig(
         write_disposition="WRITE_TRUNCATE",
-        autodetect=True, # Ensure this matches your existing table schema
+        source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
     )
 
     try:
-        # Load data to staging
         job = client.load_table_from_json(trades_list, stg_ref, job_config=job_config)
-        result = job.result()  # This is where the 400 error happens
-        
+        result = job.result() 
+        logger.info(f"✅ Loaded {len(trades_list)} rows to staging.")
     except Exception as e:
-        # This will print the SPECIFIC field that caused the 400 error
-        if hasattr(job, 'errors'):
-            logger.error(f"❌ BigQuery Load Errors: {job.errors}")
+        # --- THIS IS THE KEY DEBUGGING BLOCK ---
+        logger.error("❌ BIGQUERY REJECTION REASON:")
+        if hasattr(e, 'errors'):
+            for error in e.errors:
+                logger.error(f"  - {error['message']}")
+        else:
+            logger.error(f"  - Technical error: {str(e)}")
+        
+        # Check for common JSON issues manually
+        for i, trade in enumerate(trades_list[:3]): # Check first 3
+            logger.debug(f"Row {i} sample: {trade}")
+        
         raise e
 
 
@@ -225,16 +245,27 @@ def run_form4(mode: str, years: list = None, limit: int = 50):
 
 
 if __name__ == "__main__":
-    '''
     parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["DAILY", "BACKFILL"], required=True)
+    parser.add_argument("--mode", choices=["DAILY", "BACKFILL"])
     parser.add_argument("--years", nargs="+", type=int)
-    parser.add_argument("--limit", type=int, default=50)
+    parser.add_argument("--limit", type=int) # Remove default here to check fallback
+    
     args = parser.parse_args()
-    '''
-    mode = os.getenv("MODE")
-    years = os.getenv("YEARS")
-    limit = int(os.getenv("LIMIT", "50"))
-    years_list = [int(y) for y in years.split(',')] if years else None
-    print(f"🚀 Starting Form 4 Scraper in {mode} mode for years: {years_list} with limit: {limit}")
-    run_form4(mode=mode, years=years_list, limit=limit)
+
+    # --- FALLBACK LOGIC ---
+    # Check if no arguments were passed (length is 1 because sys.argv[0] is the script name)
+    if len(sys.argv) == 1:
+        logger.info("No CLI arguments detected. Falling back to Environment Variables.")
+        
+    # Priority: CLI Arg -> Environment Variable -> Hardcoded Default
+    mode = args.mode or os.getenv("AGENT_MODE", "DAILY")
+    
+    # Handle the years list (env vars are strings, so we must split and convert)
+    env_years = os.getenv("AGENT_YEARS")
+    years = args.years or ([int(y) for y in env_years.split(",")] if env_years else [2024])
+    
+    # Handle the limit
+    limit = args.limit or int(os.getenv("AGENT_LIMIT", 50))
+
+    # Trigger the agent
+    run_form4(mode=mode, years=years, limit=limit)
