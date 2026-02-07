@@ -90,7 +90,7 @@ def load_and_merge(trades_list):
     # We remove autodetect=True if the table already exists to prevent 
     # BigQuery from guessing a new (and wrong) schema.
     job_config = bigquery.LoadJobConfig(
-        write_disposition="WRITE_TRUNCATE",
+        write_disposition="WRITE_APPEND",
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
     )
 
