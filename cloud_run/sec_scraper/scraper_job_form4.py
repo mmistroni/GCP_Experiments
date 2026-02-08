@@ -74,46 +74,63 @@ def parse_form4_xml(xml_content, acc):
 # --- STAGE 3: BIGQUERY MERGE ---
 import json
 
+from google.cloud import bigquery
+import os
+import json
+
 def load_and_merge(trades_list):
     if not trades_list:
         logger.info("📭 No trades to load.")
         return
 
-    # LOCAL DEBUG: Save the problematic data to a file you can inspect
+    # 1. DATA CLEANING: Ensure filing_date is a string 'YYYY-MM-DD' 
+    # and numbers are actual floats/ints before sending to BQ
+    for trade in trades_list:
+        if 'filing_date' in trade and hasattr(trade['filing_date'], 'strftime'):
+            trade['filing_date'] = trade['filing_date'].strftime('%Y-%m-%d')
+
+    # LOCAL DEBUG
     with open("debug_payload.json", "w") as f:
         json.dump(trades_list, f, indent=2)
     logger.info("💾 Saved local 'debug_payload.json' for inspection.")
 
     client = bigquery.Client(project=os.environ['GOOGLE_CLOUD_PROJECT'])
-    stg_ref = f"{PROJECT_ID}.{DATASET}.{MASTER_TABLE}"
+    master_ref = f"{PROJECT_ID}.{DATASET}.{MASTER_TABLE}"
     
-    # We remove autodetect=True if the table already exists to prevent 
-    # BigQuery from guessing a new (and wrong) schema.
+    # 2. EXPLICIT SCHEMA: This prevents the "STRING vs DATE" errors
+    # Add/remove fields here based on your actual Form 4 JSON keys
+    schema = [
+        bigquery.SchemaField("filing_date", "DATE"),
+        bigquery.SchemaField("ticker", "STRING"),
+        bigquery.SchemaField("issuer", "STRING"), # Note: Your parser doesn't actually create this yet!
+        bigquery.SchemaField("owner_name", "STRING"),
+        bigquery.SchemaField("transaction_code", "STRING"),
+        bigquery.SchemaField("shares", "FLOAT64"),
+        bigquery.SchemaField("price", "FLOAT64"),
+        bigquery.SchemaField("transaction_side", "STRING"), # <--- ADDED THIS
+        bigquery.SchemaField("accession_number", "STRING"),
+        bigquery.SchemaField("ingested_at", "TIMESTAMP"),    # <--- ADDED THIS
+    ]
+
     job_config = bigquery.LoadJobConfig(
+        schema=schema,
         write_disposition="WRITE_APPEND",
         source_format=bigquery.SourceFormat.NEWLINE_DELIMITED_JSON,
     )
 
     try:
-        job = client.load_table_from_json(trades_list, stg_ref, job_config=job_config)
-        result = job.result() 
-        logger.info(f"✅ Loaded {len(trades_list)} rows to staging.")
+        logger.info(f"⏳ Loading {len(trades_list)} rows to {master_ref}...")
+        job = client.load_table_from_json(trades_list, master_ref, job_config=job_config)
+        job.result() 
+        logger.info(f"✅ Successfully appended data to {MASTER_TABLE}.")
     except Exception as e:
-        # --- THIS IS THE KEY DEBUGGING BLOCK ---
         logger.error("❌ BIGQUERY REJECTION REASON:")
         if hasattr(e, 'errors'):
             for error in e.errors:
                 logger.error(f"  - {error['message']}")
         else:
             logger.error(f"  - Technical error: {str(e)}")
-        
-        # Check for common JSON issues manually
-        for i, trade in enumerate(trades_list[:3]): # Check first 3
-            logger.debug(f"Row {i} sample: {trade}")
-        
         raise e
-
-
 
 # --- STAGE 4: FLOW CONTROL ---
 def run_form4(mode: str, years: list = None, limit: int = 50):
