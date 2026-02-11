@@ -564,6 +564,51 @@ def get_senate_disclosures(key):
     return holder
 
 
+def fetch_congress_trades(api_key, chamber='senate'):
+    """
+    Fetches structured trades.
+    chamber: 'senate' or 'house'
+    """
+    base_url = "https://financialmodelingprep.com/api/v4"
+    endpoint = f"{chamber}-trading-rss-feed"  # or house-disclosure-rss-feed
+
+    page = 0
+    all_trades = []
+
+    while True:
+        url = f"{base_url}/{endpoint}?page={page}&apikey={api_key}"
+        response = requests.get(url)
+        data = response.json()
+
+        if not data: break  # End of pages
+
+        for trade in data:
+            # STOP condition (e.g. check date)
+            trade_date = trade.get('transactionDate')
+            if trade_date < '2024-01-01': return all_trades  # Stop fetching old data
+
+            # Clean Ticker
+            ticker = trade.get('symbol')
+            if not ticker or ticker == 'NA': continue
+
+            # Structure for BigQuery
+            clean_trade = {
+                "representative": f"{trade.get('firstName')} {trade.get('lastName')}",
+                "transaction_date": trade_date,
+                "disclosure_date": trade.get('dateRecieved'),
+                "ticker": ticker,
+                "type": trade.get('type'),  # Purchase / Sale / Exchange
+                "amount": trade.get('amount'),
+                "asset_description": trade.get('assetDescription')
+            }
+            all_trades.append(clean_trade)
+
+        page += 1
+
+    return all_trades
+
+
+
 def get_prices2(tpl, fmprepkey):
     try:
         ticker = tpl
