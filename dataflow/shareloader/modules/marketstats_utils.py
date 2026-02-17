@@ -640,7 +640,7 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
                 "chamber": chamber,
                  'AS_OF_DATE': disclosure_date.strftime('%Y-%m-%d'), 
                  'LABEL': 'SENATE_DISCLOSURES', 
-                 'VALUE': value})
+                 'VALUE': value
                 
             }
             all_trades.append(clean_trade)
