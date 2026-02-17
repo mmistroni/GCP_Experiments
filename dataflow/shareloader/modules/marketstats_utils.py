@@ -626,6 +626,7 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
             ticker = trade.get('symbol')
             if not ticker or ticker == 'NA': 
                 continue
+            value = f"Ticker:{ticker}|Type:{trade.get('type')}"
             
             # Structure Data
             clean_trade = {
@@ -636,7 +637,11 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
                 "type": trade.get('type'),
                 "amount": trade.get('amount'),
                 "asset_description": trade.get('assetDescription'),
-                "chamber": chamber
+                "chamber": chamber,
+                 'AS_OF_DATE': disclosure_date.strftime('%Y-%m-%d'), 
+                 'LABEL': 'SENATE_DISCLOSURES', 
+                 'VALUE': value})
+                
             }
             all_trades.append(clean_trade)
             

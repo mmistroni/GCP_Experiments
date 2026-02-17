@@ -14,7 +14,8 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_mcclellan, get_cftc_spfutures, parse_consumer_sentiment_index,\
                         get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
                         OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator, \
-                        AsyncEconomicCalendar, generate_cotc_data, get_cot_futures, SentimentCalculator
+                        AsyncEconomicCalendar, generate_cotc_data, get_cot_futures, SentimentCalculator,\
+                        fetch_daily_trades
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -700,6 +701,17 @@ class TestMarketStats(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
 
+
+    def test_fetch_daily_trades(self):
+
+        key = os.environ['FMPREPKEY']
+        print('======== senate trades========')
+        res = fetch_daily_trades('senate')
+        from pprint import pprint
+        pprint(res)
+        print('========= HOuse of rep')
+        hres = fetch_daily_trades('house')
+        pprint(hres)
 
 
     def test_get_cotc_futures_obb(self):
