@@ -563,6 +563,99 @@ def get_senate_disclosures(key):
             holder.append({'AS_OF_DATE': asOfDate.strftime('%Y-%m-%d'), 'LABEL': label, 'VALUE': value})
     return holder
 
+import requests
+from datetime import datetime
+
+def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
+    """
+    Fetches trades based on DISCLOSURE DATE (dateRecieved).
+    This captures everything filed on or after the target date.
+    
+    chamber: 'senate' or 'house'
+    target_date_str: 'YYYY-MM-DD'. If left None, it defaults to today's date.
+    """
+    
+    # 1. Default to "Today" if no date is provided
+    if target_date_str is None:
+        target_date_str = datetime.now().strftime('%Y-%m-%d')
+        
+    # 2. Use the "stable" URL structure you provided
+    base_url = "https://financialmodelingprep.com/stable"
+    endpoint = f"{chamber}-latest" # 'senate-latest' or 'house-latest'
+    
+    page = 0
+    all_trades = []
+    finished = False
+    
+    print(f"Fetching {chamber} trades disclosed on or after: {target_date_str}")
+
+    while not finished:
+        url = f"{base_url}/{endpoint}?page={page}&limit=100&apikey={api_key}"
+        
+        try:
+            response = requests.get(url)
+            if response.status_code != 200:
+                print(f"Error: API returned status code {response.status_code}")
+                break
+            data = response.json()
+        except Exception as e:
+            print(f"Connection error: {e}")
+            break
+        
+        # If API returns empty list, we have reached the absolute end
+        if not data:
+            break 
+        
+        for trade in data:
+            # --- CRITICAL CHANGE ---
+            # We check 'dateRecieved' (Filing Date).
+            # This handles the logic: "Give me everything published today."
+            disclosure_date = trade.get('dateRecieved')
+            
+            # Safety check if date is missing
+            if not disclosure_date:
+                continue
+            
+            # STOP condition:
+            # If the disclosure date is older than our target, we are done.
+            if disclosure_date < target_date_str:
+                finished = True
+                break # Exit the for-loop
+            
+            # Clean Ticker
+            ticker = trade.get('symbol')
+            if not ticker or ticker == 'NA': 
+                continue
+            value = f"Ticker:{ticker}|Type:{trade.get('type')}"
+            
+            # Structure Data
+            clean_trade = {
+                "representative": f"{trade.get('firstName', '')} {trade.get('lastName', '')}".strip(),
+                "transaction_date": trade.get('transactionDate'),
+                "disclosure_date": disclosure_date,
+                "ticker": ticker,
+                "type": trade.get('type'),
+                "amount": trade.get('amount'),
+                "asset_description": trade.get('assetDescription'),
+                "chamber": chamber,
+                 'AS_OF_DATE': disclosure_date.strftime('%Y-%m-%d'), 
+                 'LABEL': 'SENATE_DISCLOSURES', 
+                 'VALUE': value
+                
+            }
+            all_trades.append(clean_trade)
+            
+        page += 1
+        
+    return all_trades
+
+# --- Example Usage ---
+
+# 1. To fetch everything filed TODAY:
+# trades = fetch_daily_trades(api_key="YOUR_API_KEY", chamber='senate')
+
+# 2. To fetch everything filed since a specific date (e.g., catching up on the weekend):
+# trades = fetch_daily_trades(api_key="YOUR_API_KEY", chamber='house', target_date_str='2024-05-20')
 
 def fetch_congress_trades(api_key, chamber='senate'):
     """

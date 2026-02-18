@@ -1,5 +1,9 @@
 {
     "name": "GCP Experiments",
+    "containerEnv": {
+        "GOOGLE_APPLICATION_CREDENTIALS": "/workspaces/GCP_Experiments/gcp_key.json",
+        "GOOGLE_CLOUD_PROJECT": "datascience-projects"
+    },
     "build": {
         "dockerfile": "Dockerfile",
         "context": ".."
@@ -18,6 +22,6 @@
             ]
         }
     },
-    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -r requirements.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc",
+    "postCreateCommand": "python3 -m venv .venv && ./.venv/bin/pip install --upgrade pip && ./.venv/bin/pip install -r requirements.txt && echo 'source /workspaces/GCP_Experiments/.venv/bin/activate' >> ~/.bashrc && echo $GCP_SA_KEY > /workspaces/GCP_Experiments/gcp_key.json",
     "remoteUser": "root"
 }

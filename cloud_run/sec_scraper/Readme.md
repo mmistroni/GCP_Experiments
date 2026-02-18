@@ -1,0 +1,1 @@
+This code is being build with Bard/Gemini from local laptop
