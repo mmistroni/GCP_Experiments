@@ -203,10 +203,10 @@ if __name__ == "__main__":
     # Precedence: CLI -> ENV -> Default
     mode = args.mode or os.getenv("AGENT_MODE", "DAILY")
     
-    raw_years = os.getenv("AGENT_YEARS")
+    raw_years = os.getenv("AGENT_YEARS", 2024)
     years = args.years or ([int(y) for y in raw_years.split(",")] if raw_years else [2024])
     
-    raw_qtrs = os.getenv("AGENT_QUARTERS")
+    raw_qtrs = os.getenv("AGENT_QUARTERS", 1)
     quarters = args.quarters or ([int(q) for q in raw_qtrs.split(",")] if raw_qtrs else None)
     
     limit = args.limit if args.limit is not None else int(os.getenv("AGENT_LIMIT", 50))
