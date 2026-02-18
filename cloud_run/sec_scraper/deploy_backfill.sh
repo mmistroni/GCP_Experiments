@@ -10,6 +10,7 @@ JOB_NAME="form4-backfill-worker-job"
 echo "🏗️ Building and pushing image..."
 gcloud builds submit --tag $IMAGE_NAME .
 
+
 # 2. Deploy the Form 4 BACKFILL Worker
 # AGENT_MODE=BACKFILL triggers the historical logic
 # AGENT_LIMIT=0 means "get everything available"
@@ -24,8 +25,8 @@ gcloud run jobs deploy $JOB_NAME \
   --task-timeout=3600s \
   --cpu=2 \
   --memory=2Gi \
-  --set-env-vars AGENT_MODE=BACKFILL,AGENT_YEARS=2024,AGENT_LIMIT=0
+  --set-env-vars AGENT_MODE=BACKFILL,AGENT_YEARS=2024,AGENT_LIMIT=0,AGENT_QUARTERS=1
 
 # 3. Trigger the execution immediately
 echo "🎬 Starting the backfill execution now..."
-gcloud run jobs execute $JOB_NAME --region $REGION
+#gcloud run jobs execute $JOB_NAME --region $REGION
