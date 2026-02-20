@@ -87,6 +87,7 @@ def build_scraping_queue(client, year, qtr):
         client.load_table_from_json(queue_rows, queue_table, job_config=job_config).result()
         logger.info(f"✅ Queue built with {len(queue_rows)} filings.")
 
+
 def process_queue_batch(client, year, qtr, limit=100):
     """Processes a batch and returns True if work was done, False if empty."""
     queue_table = f"{client.project}.gcp_shareloader.scraping_queue"
@@ -109,7 +110,7 @@ def process_queue_batch(client, year, qtr, limit=100):
     
     for _, row in batch_df.iterrows():
         try:
-            time.sleep(0.12) # Stay under SEC 10req/sec limit
+            time.sleep(0.12) 
             dir_res = session.get(row['dir_url'], timeout=10)
             if dir_res.status_code != 200: continue
             
@@ -134,16 +135,17 @@ def process_queue_batch(client, year, qtr, limit=100):
                     shares_val = info.xpath(f"string({shares_xpath})")
                     pc_str = info.xpath("string(*[local-name()='putCall'])")
 
+                    # AMENDMENT: Strong casting to prevent JSON inference errors
                     final_holdings.append({
-                        "cik": str(row['cik']),
-                        "manager_name": row['company_name'],
-                        "issuer_name": issuer,
-                        "cusip": cusip,
+                        "cik": str(row['cik']).split('.')[0].strip(), # Force string, remove decimals
+                        "manager_name": str(row['company_name']),
+                        "issuer_name": str(issuer),
+                        "cusip": str(cusip),
                         "value_usd": int(float(val_str.replace(',', '') or 0)),
                         "shares": int(float(shares_val.replace(',', '') or 0)),
-                        "put_call": pc_str if pc_str else None,
+                        "put_call": str(pc_str) if pc_str else None,
                         "filing_date": PARTITION_DATE,
-                        "accession_number": row['accession_number']
+                        "accession_number": str(row['accession_number'])
                     })
                 except Exception: continue
 
@@ -153,20 +155,42 @@ def process_queue_batch(client, year, qtr, limit=100):
         except Exception as e:
             logger.error(f"💥 Error processing {row['accession_number']}: {e}")
 
-    # Bulk upload and Batch Status Update
+    # AMENDED UPLOAD BLOCK
     if final_holdings:
-        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
+        logger.info(f"📡 Attempting upload of {len(final_holdings)} rows...")
+        
+        # AMENDMENT: Explicitly define the schema here to override JSON inference
+        master_schema = [
+            bigquery.SchemaField("cik", "STRING"),
+            bigquery.SchemaField("manager_name", "STRING"),
+            bigquery.SchemaField("issuer_name", "STRING"),
+            bigquery.SchemaField("cusip", "STRING"),
+            bigquery.SchemaField("value_usd", "INTEGER"),
+            bigquery.SchemaField("shares", "INTEGER"),
+            bigquery.SchemaField("put_call", "STRING"),
+            bigquery.SchemaField("filing_date", "DATETIME"),
+            bigquery.SchemaField("accession_number", "STRING"),
+        ]
+
+        job_config = bigquery.LoadJobConfig(
+            schema=master_schema, 
+            write_disposition="WRITE_APPEND",
+            autodetect=False # Prevent BQ from guessing
+        )
+        
         try:
-            client.load_table_from_json(final_holdings, master_table, job_config=job_config).result()
+            job = client.load_table_from_json(final_holdings, master_table, job_config=job_config)
+            job.result()
             
-            # AMENDMENT: Batch update status for this batch (outside the for-loop)
             acc_list = ", ".join([f"'{a}'" for a in processed_accs])
             client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number IN ({acc_list})")
-            logger.info(f"💾 Saved {len(final_holdings)} rows to master holdings.")
+            logger.info(f"💾 SUCCESS: Batch committed.")
         except Exception as e:
-            logger.error(f"❌ Upload Failed: {e}")
+            logger.error(f"💥 UPLOAD FAILURE: {str(e)}")
+            return False
     
     return True
+
 
 def run_master_scraper(year, qtr):
     client = bigquery.Client()
