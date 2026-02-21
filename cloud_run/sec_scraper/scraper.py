@@ -6,26 +6,36 @@ import requests
 from lxml import etree
 from google.cloud import bigquery
 
-# 1. LOGGING & HEADERS
+# 1. ENHANCED LOGGING (Visible in Cloud Run Logs)
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    format='%(asctime)s [%(levelname)s] %(message)s',
     stream=sys.stdout 
 )
 logger = logging.getLogger("13f_feature_agent")
 
 HEADERS = {
-    'User-Agent': 'Institutional Research mmapplausetest@gmail.com', 
+    'User-Agent': 'Institutional Research mmapplausetest@gmail.com',
     'Accept-Encoding': 'gzip, deflate, br',
     'Host': 'www.sec.gov'
 }
 
-def ensure_tables_exist(client):
-    """Checks for Dataset and Tables; creates them if missing."""
-    dataset_id = f"{client.project}.gcp_shareloader"
+# 2. SCHEMA DEFINITION
+MASTER_SCHEMA = [
+    bigquery.SchemaField("cik", "STRING"),
+    bigquery.SchemaField("manager_name", "STRING"),
+    bigquery.SchemaField("issuer_name", "STRING"),
+    bigquery.SchemaField("cusip", "STRING"),
+    bigquery.SchemaField("value_usd", "INTEGER"),
+    bigquery.SchemaField("shares", "INTEGER"),
+    bigquery.SchemaField("put_call", "STRING"),
+    bigquery.SchemaField("filing_date", "DATETIME"),
+    bigquery.SchemaField("accession_number", "STRING"),
+]
+
+def ensure_tables_exist(client, dataset_id):
     client.create_dataset(dataset_id, exists_ok=True)
     
-    queue_table_id = f"{dataset_id}.scraping_queue"
     queue_schema = [
         bigquery.SchemaField("cik", "STRING"),
         bigquery.SchemaField("company_name", "STRING"),
@@ -36,50 +46,29 @@ def ensure_tables_exist(client):
         bigquery.SchemaField("qtr", "INTEGER"),
     ]
     
-    master_table_id = f"{dataset_id}.all_holdings_master"
-    master_schema = [
-        bigquery.SchemaField("cik", "STRING"),
-        bigquery.SchemaField("manager_name", "STRING"),
-        bigquery.SchemaField("issuer_name", "STRING"),
-        bigquery.SchemaField("cusip", "STRING"),
-        bigquery.SchemaField("value_usd", "INTEGER"),
-        bigquery.SchemaField("shares", "INTEGER"),
-        bigquery.SchemaField("put_call", "STRING"),
-        bigquery.SchemaField("filing_date", "DATETIME"),
-        bigquery.SchemaField("accession_number", "STRING"),
-    ]
+    client.create_table(bigquery.Table(f"{dataset_id}.scraping_queue", schema=queue_schema), exists_ok=True)
+    client.create_table(bigquery.Table(f"{dataset_id}.all_holdings_master", schema=MASTER_SCHEMA), exists_ok=True)
 
-    for table_id, schema in [(queue_table_id, queue_schema), (master_table_id, master_schema)]:
-        table = bigquery.Table(table_id, schema=schema)
-        client.create_table(table, exists_ok=True) 
-        logger.info(f"✅ Verified table: {table_id}")
-
-def build_scraping_queue(client, year, qtr):
-    """Fetches master.idx and saves all 13F-HR paths to BigQuery."""
-    queue_table = f"{client.project}.gcp_shareloader.scraping_queue"
+def build_scraping_queue(client, year, qtr, queue_table):
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
+    logger.info(f"🔍 Fetching SEC Index for {year} Q{qtr}...")
     
-    logger.info(f"🔍 Stage 1: Fetching Master Index for {year} Q{qtr}")
     res = requests.get(idx_url, headers=HEADERS, timeout=30)
     if res.status_code != 200:
-        logger.error(f"❌ Failed to fetch index: {res.status_code}")
+        logger.error(f"❌ SEC Error {res.status_code}")
         return
 
     queue_rows = []
     for line in res.text.splitlines():
         if '13F-HR' in line:
             parts = line.split('|')
-            path = parts[4]
-            acc = path.split('/')[-1].replace('.txt', '').replace('-', '')
-            
+            acc = parts[4].split('/')[-1].replace('.txt', '').replace('-', '')
             queue_rows.append({
                 "cik": str(parts[0]),
                 "company_name": parts[1],
                 "accession_number": acc,
                 "dir_url": f"https://www.sec.gov/Archives/edgar/data/{parts[0]}/{acc}/index.json",
-                "status": "pending",
-                "year": year,
-                "qtr": qtr
+                "status": "pending", "year": year, "qtr": qtr
             })
 
     if queue_rows:
@@ -87,30 +76,27 @@ def build_scraping_queue(client, year, qtr):
         client.load_table_from_json(queue_rows, queue_table, job_config=job_config).result()
         logger.info(f"✅ Queue built with {len(queue_rows)} filings.")
 
-
-def process_queue_batch(client, year, qtr, limit=100):
-    """Processes a batch and returns True if work was done, False if empty."""
-    queue_table = f"{client.project}.gcp_shareloader.scraping_queue"
-    master_table = f"{client.project}.gcp_shareloader.all_holdings_master"
-    
-    quarter_dates = {1: f"{year}-03-31", 2: f"{year}-06-30", 3: f"{year}-09-30", 4: f"{year}-12-31"}
-    PARTITION_DATE = quarter_dates[qtr]
-
-    query = f"SELECT * FROM `{queue_table}` WHERE status = 'pending' LIMIT {limit}"
-    batch_df = client.query(query).to_dataframe()
-    
-    if batch_df.empty:
-        logger.info("🏁 Queue exhausted.")
-        return False
+def process_queue_batch(client, year, qtr, queue_table, master_table, limit):
+    query = f"""
+        SELECT * FROM `{queue_table}` 
+        WHERE status = 'pending' AND year={year} AND qtr={qtr} 
+        LIMIT {limit}
+    """
+    df = client.query(query).to_dataframe()
+    if df.empty: return 0
 
     session = requests.Session()
     session.headers.update(HEADERS)
-    final_holdings = []
-    processed_accs = []
+    job_config = bigquery.LoadJobConfig(schema=MASTER_SCHEMA, write_disposition="WRITE_APPEND", autodetect=False)
     
-    for _, row in batch_df.iterrows():
+    q_dates = {1: f"{year}-03-31", 2: f"{year}-06-30", 3: f"{year}-09-30", 4: f"{year}-12-31"}
+    p_date = q_dates[qtr]
+
+    success_count = 0
+    for _, row in df.iterrows():
+        holdings = []
         try:
-            time.sleep(0.12) 
+            time.sleep(0.12) # Respect SEC Rate Limits
             dir_res = session.get(row['dir_url'], timeout=10)
             if dir_res.status_code != 200: continue
             
@@ -128,87 +114,74 @@ def process_queue_batch(client, year, qtr, limit=100):
 
             for info in nodes:
                 try:
-                    issuer = info.xpath("string(*[local-name()='nameOfIssuer'])")
-                    cusip = info.xpath("string(*[local-name()='cusip'])")
                     val_str = info.xpath("string(*[local-name()='value'])")
                     shares_xpath = "*[local-name()='shrsOrPrnAmt']/*[translate(local-name(), 'A', 'a')='sshprnamt']"
-                    shares_val = info.xpath(f"string({shares_xpath})")
-                    pc_str = info.xpath("string(*[local-name()='putCall'])")
-
-                    # AMENDMENT: Strong casting to prevent JSON inference errors
-                    final_holdings.append({
-                        "cik": str(row['cik']).split('.')[0].strip(), # Force string, remove decimals
+                    holdings.append({
+                        "cik": str(row['cik']).split('.')[0].strip(),
                         "manager_name": str(row['company_name']),
-                        "issuer_name": str(issuer),
-                        "cusip": str(cusip),
+                        "issuer_name": str(info.xpath("string(*[local-name()='nameOfIssuer'])")),
+                        "cusip": str(info.xpath("string(*[local-name()='cusip'])")),
                         "value_usd": int(float(val_str.replace(',', '') or 0)),
-                        "shares": int(float(shares_val.replace(',', '') or 0)),
-                        "put_call": str(pc_str) if pc_str else None,
-                        "filing_date": PARTITION_DATE,
+                        "shares": int(float(info.xpath(f"string({shares_xpath})").replace(',', '') or 0)),
+                        "put_call": str(info.xpath("string(*[local-name()='putCall'])")) or None,
+                        "filing_date": p_date,
                         "accession_number": str(row['accession_number'])
                     })
-                except Exception: continue
+                except: continue
 
-            processed_accs.append(row['accession_number'])
-            logger.info(f"✅ Parsed {row['company_name']}")
+            if holdings:
+                # PHYSICAL SAVE TO BIGQUERY
+                client.load_table_from_json(holdings, master_table, job_config=job_config).result()
+                # LOGICAL UPDATE IN QUEUE
+                client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number='{row['accession_number']}'")
+                logger.info(f"💾 SAVED: {row['company_name']} ({len(holdings)} rows)")
+                success_count += 1
+            else:
+                client.query(f"UPDATE `{queue_table}` SET status='empty' WHERE accession_number='{row['accession_number']}'")
 
         except Exception as e:
-            logger.error(f"💥 Error processing {row['accession_number']}: {e}")
-
-    # AMENDED UPLOAD BLOCK
-    if final_holdings:
-        logger.info(f"📡 Attempting upload of {len(final_holdings)} rows...")
-        
-        # AMENDMENT: Explicitly define the schema here to override JSON inference
-        master_schema = [
-            bigquery.SchemaField("cik", "STRING"),
-            bigquery.SchemaField("manager_name", "STRING"),
-            bigquery.SchemaField("issuer_name", "STRING"),
-            bigquery.SchemaField("cusip", "STRING"),
-            bigquery.SchemaField("value_usd", "INTEGER"),
-            bigquery.SchemaField("shares", "INTEGER"),
-            bigquery.SchemaField("put_call", "STRING"),
-            bigquery.SchemaField("filing_date", "DATETIME"),
-            bigquery.SchemaField("accession_number", "STRING"),
-        ]
-
-        job_config = bigquery.LoadJobConfig(
-            schema=master_schema, 
-            write_disposition="WRITE_APPEND",
-            autodetect=False # Prevent BQ from guessing
-        )
-        
-        try:
-            job = client.load_table_from_json(final_holdings, master_table, job_config=job_config)
-            job.result()
+            logger.error(f"💥 Failed {row['company_name']}: {e}")
             
-            acc_list = ", ".join([f"'{a}'" for a in processed_accs])
-            client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number IN ({acc_list})")
-            logger.info(f"💾 SUCCESS: Batch committed.")
-        except Exception as e:
-            logger.error(f"💥 UPLOAD FAILURE: {str(e)}")
-            return False
-    
-    return True
+    return success_count
 
-
-def run_master_scraper(year, qtr):
-    client = bigquery.Client()
-    ensure_tables_exist(client)
+def run_master_scraper():
+    # SETTINGS
+    PROJECT_ID = "datascience-projects"
+    YEAR = int(os.getenv("YEAR", 2020))
+    QTR = int(os.getenv("QTR", 1))
     
-    # Check if queue has pending items
-    check_query = f"SELECT count(*) as count FROM `{client.project}.gcp_shareloader.scraping_queue` WHERE status='pending'"
-    pending_count = list(client.query(check_query))[0].count
-
-    if pending_count == 0:
-        build_scraping_queue(client, year, qtr)
+    logger.info(f"🚀 STARTING JOB: {YEAR} Q{QTR} in Project: {PROJECT_ID}")
     
-    # AMENDMENT: Loop until all items are processed
-    active = True
-    while active:
-        active = process_queue_batch(client, year, qtr, limit=100)
+    client = bigquery.Client(project=PROJECT_ID)
+    dataset_id = f"{PROJECT_ID}.gcp_shareloader"
+    queue_table = f"{dataset_id}.scraping_queue"
+    master_table = f"{dataset_id}.all_holdings_master"
+
+    ensure_tables_exist(client, dataset_id)
+
+    # 1. BUILD QUEUE IF NEEDED
+    check_q = f"SELECT count(*) as count FROM `{queue_table}` WHERE year={YEAR} AND qtr={QTR}"
+    if list(client.query(check_q))[0].count == 0:
+        build_scraping_queue(client, YEAR, QTR, queue_table)
+
+    # 2. RUN BATCHES
+    total_in_this_run = 0
+    # Process up to 10 batches of 20 managers each (Total 200 managers per job execution)
+    for _ in range(10):
+        count = process_queue_batch(client, YEAR, QTR, queue_table, master_table, limit=20)
+        if count == 0: break
+        total_in_this_run += count
+        logger.info(f"📈 Total Managers saved so far: {total_in_this_run}")
+
+    # 3. CLEANUP CHECK
+    pending_check = f"SELECT count(*) as pending FROM `{queue_table}` WHERE status='pending' AND year={YEAR} AND qtr={QTR}"
+    rem = list(client.query(pending_check))[0].pending
+    
+    if rem == 0:
+        logger.info(f"🎊 FINISHED {YEAR} Q{QTR}. Clearing queue.")
+        client.query(f"DELETE FROM `{queue_table}` WHERE year={YEAR} AND qtr={QTR}")
+    else:
+        logger.info(f"⏳ {rem} managers still pending for {YEAR} Q{QTR}. Run job again.")
 
 if __name__ == "__main__":
-    y = int(os.getenv("YEAR", 2020))
-    q = int(os.getenv("QTR", 1))
-    run_master_scraper(y, q)
+    run_master_scraper()
