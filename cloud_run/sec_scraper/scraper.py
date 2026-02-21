@@ -56,21 +56,29 @@ class HoldingRow(BaseModel):
 
 # 4. CORE PROCESSING LOGIC
 def process_queue_batch(client, year, qtr, limit=20):
+    """
+    Final optimized version: Handles Pydantic validation, strict BQ schema,
+    defensive SQL casting, and SEC-specific edge cases.
+    """
     queue_table = f"{PROJECT_ID}.gcp_shareloader.scraping_queue"
     master_table = f"{PROJECT_ID}.gcp_shareloader.all_holdings_master"
     
+    # 1. Fetch pending rows with specific ordering to ensure steady progress
     query = f"""
         SELECT * FROM `{queue_table}` 
         WHERE status = 'pending' AND year={year} AND qtr={qtr} 
+        ORDER BY company_name ASC
         LIMIT {limit}
     """
     df = client.query(query).to_dataframe()
-    if df.empty: return 0
+    if df.empty: 
+        logger.info(f"🏁 No pending rows for {year} Q{qtr}.")
+        return 0
 
     session = requests.Session()
     session.headers.update(HEADERS)
     
-    # CRITICAL: Disable autodetect and provide explicit schema
+    # Configure BigQuery for strict, non-detecting append
     job_config = bigquery.LoadJobConfig(
         schema=STRICT_BQ_SCHEMA,
         write_disposition="WRITE_APPEND",
@@ -84,30 +92,41 @@ def process_queue_batch(client, year, qtr, limit=20):
     for _, row in df.iterrows():
         validated_holdings = []
         acc_num = str(row['accession_number']).strip()
+        manager_name = str(row['company_name'])
         
         try:
-            # Step A: Fetch Directory JSON
-            dir_res = session.get(row['dir_url'], timeout=30)
+            # Step A: Locate the XML via SEC Directory
+            time.sleep(0.15) # SEC Compliance
+            dir_res = session.get(row['dir_url'], timeout=(5, 20))
+            if dir_res.status_code != 200:
+                logger.warning(f"❌ SEC Directory unreachable for {manager_name}")
+                continue
+
             items = dir_res.json().get('directory', {}).get('item', [])
             xml_name = next((i['name'] for i in items if 'infotable.xml' in i['name'].lower()), None)
             
+            # Handling Missing XML (Status: no_xml)
             if not xml_name:
-                client.query(f"UPDATE `{queue_table}` SET status='no_xml' WHERE accession_number='{acc_num}'")
+                client.query(f"""
+                    UPDATE `{queue_table}` SET status='no_xml' 
+                    WHERE CAST(accession_number AS STRING) = '{acc_num}'
+                """).result()
+                logger.info(f"⏭️ No XML for {manager_name} (Updated Queue)")
                 continue
 
-            # Step B: Fetch XML & Parse
+            # Step B: Fetch and Parse the XML
             xml_url = row['dir_url'].replace('index.json', xml_name)
-            xml_res = session.get(xml_url, timeout=60)
+            xml_res = session.get(xml_url, timeout=(10, 60))
             root = etree.fromstring(xml_res.content)
             nodes = root.xpath("//*[local-name()='infoTable']")
 
+            # Step C: Pydantic Validation per Row
             for info in nodes:
                 try:
-                    # Map XML to Pydantic Model
                     shares_xpath = "*[local-name()='shrsOrPrnAmt']/*[translate(local-name(), 'A', 'a')='sshprnamt']"
                     holding = HoldingRow(
                         cik=str(row['cik']),
-                        manager_name=str(row['company_name']),
+                        manager_name=manager_name,
                         issuer_name=info.xpath("string(*[local-name()='nameOfIssuer'])"),
                         cusip=info.xpath("string(*[local-name()='cusip'])"),
                         value_usd=info.xpath("string(*[local-name()='value'])"),
@@ -120,22 +139,34 @@ def process_queue_batch(client, year, qtr, limit=20):
                 except ValidationError:
                     continue 
 
+            # Step D: Final Ingestion or Empty Handle
             if validated_holdings:
-                # Step C: Strict Upload
+                # Batch Load to BQ
                 job = client.load_table_from_json(validated_holdings, master_table, job_config=job_config)
                 job.result(timeout=120) 
                 
-                # Step D: Update Queue with Quoted String ID
-                update_q = f"UPDATE `{queue_table}` SET status='done' WHERE accession_number = '{acc_num}'"
-                client.query(update_q).result()
+                # Defensive CAST Update
+                client.query(f"""
+                    UPDATE `{queue_table}` SET status='done' 
+                    WHERE CAST(accession_number AS STRING) = '{acc_num}'
+                """).result()
                 
-                logger.info(f"💾 SAVED & VERIFIED: {row['company_name']} ({len(validated_holdings)} rows)")
+                logger.info(f"✅ SAVED: {manager_name} ({len(validated_holdings)} rows)")
                 success_count += 1
+            else:
+                # Handling Empty Filings (Status: empty)
+                client.query(f"""
+                    UPDATE `{queue_table}` SET status='empty' 
+                    WHERE CAST(accession_number AS STRING) = '{acc_num}'
+                """).result()
+                logger.warning(f"📭 {manager_name} had 0 valid holdings.")
 
         except Exception as e:
-            logger.error(f"💥 Error processing {row['company_name']}: {e}")
+            logger.error(f"💥 Failed processing {manager_name}: {type(e).__name__} - {e}")
             
     return success_count
+
+
 
 def run_master_scraper():
     client = bigquery.Client(project=PROJECT_ID)
