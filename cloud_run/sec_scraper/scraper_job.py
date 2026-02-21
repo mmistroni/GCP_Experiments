@@ -16,7 +16,7 @@ if __name__ == "__main__":
     try:
         # Just call your real scraper function
         # It will use the Table ID already defined in scraper.py
-        run_master_scraper(year=int(year_env), qtr=int(qtr_env))
+        run_master_scraper()
     except Exception as e:
         print(f"❌ SCRAPER CRASHED: {str(e)}")
         sys.exit(1)

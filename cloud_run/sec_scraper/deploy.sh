@@ -17,7 +17,7 @@ gcloud run deploy sec-13f-gateway \
 gcloud run jobs deploy sec-13f-worker-job \
   --image $IMAGE_NAME \
   --command "python" \
-  --args "scraper_job.py" \
+  --args "scraper.py" \
   --region us-central1 \
   --tasks 1 \
   --max-retries 0 \

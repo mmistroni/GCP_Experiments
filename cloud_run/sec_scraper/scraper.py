@@ -77,12 +77,21 @@ def build_scraping_queue(client, year, qtr, queue_table):
         logger.info(f"✅ Queue built with {len(queue_rows)} filings.")
 
 def process_queue_batch(client, year, qtr, queue_table, master_table, limit):
+    """
+    Processes managers with strict timeouts to prevent 'Zombies'.
+    Skips massive filings if they exceed processing time limits.
+    """
     query = f"""
         SELECT * FROM `{queue_table}` 
         WHERE status = 'pending' AND year={year} AND qtr={qtr} 
         LIMIT {limit}
     """
-    df = client.query(query).to_dataframe()
+    try:
+        df = client.query(query).to_dataframe()
+    except Exception as e:
+        logger.error(f"❌ Failed to fetch queue batch: {e}")
+        return 0
+        
     if df.empty: return 0
 
     session = requests.Session()
@@ -90,59 +99,85 @@ def process_queue_batch(client, year, qtr, queue_table, master_table, limit):
     job_config = bigquery.LoadJobConfig(schema=MASTER_SCHEMA, write_disposition="WRITE_APPEND", autodetect=False)
     
     q_dates = {1: f"{year}-03-31", 2: f"{year}-06-30", 3: f"{year}-09-30", 4: f"{year}-12-31"}
-    p_date = q_dates[qtr]
+    p_date = q_dates.get(qtr)
 
     success_count = 0
     for _, row in df.iterrows():
         holdings = []
+        acc_num = row['accession_number']
+        manager_name = row['company_name']
+        
         try:
-            time.sleep(0.12) # Respect SEC Rate Limits
-            dir_res = session.get(row['dir_url'], timeout=10)
-            if dir_res.status_code != 200: continue
+            time.sleep(0.15) # SEC Compliance
+            # 1. TIMEOUT-PROTECTED SEC REQUEST
+            # (5s to connect, 45s to stream the data)
+            dir_res = session.get(row['dir_url'], timeout=(5, 45)) 
+            if dir_res.status_code != 200: 
+                logger.warning(f"⚠️ SEC Index unavailable for {manager_name}")
+                continue
             
             items = dir_res.json().get('directory', {}).get('item', [])
             xml_name = next((i['name'] for i in items if 'infotable.xml' in i['name'].lower()), None)
             
             if not xml_name:
-                client.query(f"UPDATE `{queue_table}` SET status='no_xml' WHERE accession_number='{row['accession_number']}'")
+                client.query(f"UPDATE `{queue_table}` SET status='no_xml' WHERE accession_number='{acc_num}'")
                 continue
 
+            # 2. FETCH AND PARSE XML (Memory Sensitive)
             xml_url = row['dir_url'].replace('index.json', xml_name)
-            xml_res = session.get(xml_url, timeout=15)
+            xml_res = session.get(xml_url, timeout=(10, 60))
+            
+            # Use lxml to parse (fast, but large files still take CPU)
             root = etree.fromstring(xml_res.content)
             nodes = root.xpath("//*[local-name()='infoTable']")
 
             for info in nodes:
                 try:
                     val_str = info.xpath("string(*[local-name()='value'])")
+                    # Handle different XML cases for shares
                     shares_xpath = "*[local-name()='shrsOrPrnAmt']/*[translate(local-name(), 'A', 'a')='sshprnamt']"
+                    
                     holdings.append({
                         "cik": str(row['cik']).split('.')[0].strip(),
-                        "manager_name": str(row['company_name']),
+                        "manager_name": str(manager_name),
                         "issuer_name": str(info.xpath("string(*[local-name()='nameOfIssuer'])")),
                         "cusip": str(info.xpath("string(*[local-name()='cusip'])")),
                         "value_usd": int(float(val_str.replace(',', '') or 0)),
                         "shares": int(float(info.xpath(f"string({shares_xpath})").replace(',', '') or 0)),
                         "put_call": str(info.xpath("string(*[local-name()='putCall'])")) or None,
                         "filing_date": p_date,
-                        "accession_number": str(row['accession_number'])
+                        "accession_number": str(acc_num)
                     })
-                except: continue
+                except Exception:
+                    continue # Skip single bad rows within a filing
 
             if holdings:
-                # PHYSICAL SAVE TO BIGQUERY
-                client.load_table_from_json(holdings, master_table, job_config=job_config).result()
-                # LOGICAL UPDATE IN QUEUE
-                client.query(f"UPDATE `{queue_table}` SET status='done' WHERE accession_number='{row['accession_number']}'")
-                logger.info(f"💾 SAVED: {row['company_name']} ({len(holdings)} rows)")
+                # 3. VERIFIED BIGQUERY UPLOAD
+                # We add a timeout to the job itself to prevent hanging
+                job = client.load_table_from_json(holdings, master_table, job_config=job_config)
+                job.result(timeout=90) # Wait max 90 seconds for BQ to commit
+                
+                if job.errors:
+                    logger.error(f"❌ BigQuery Schema Error in {manager_name}: {job.errors[0]}")
+                    continue
+
+                # 4. FINAL STATUS UPDATE (Atomic)
+                update_query = f"UPDATE `{queue_table}` SET status='done' WHERE accession_number='{acc_num}'"
+                client.query(update_query).result(timeout=30)
+                
+                logger.info(f"💾 SAVED: {manager_name} ({len(holdings)} rows)")
                 success_count += 1
             else:
-                client.query(f"UPDATE `{queue_table}` SET status='empty' WHERE accession_number='{row['accession_number']}'")
+                logger.warning(f"Empty filing: {manager_name}")
+                client.query(f"UPDATE `{queue_table}` SET status='empty' WHERE accession_number='{acc_num}'")
 
         except Exception as e:
-            logger.error(f"💥 Failed {row['company_name']}: {e}")
+            # Catch timeouts and unexpected errors so the loop continues to the next manager
+            logger.error(f"💥 Failed/Timed-out on {manager_name}: {type(e).__name__} - {e}")
             
     return success_count
+
+
 
 def run_master_scraper():
     # SETTINGS
