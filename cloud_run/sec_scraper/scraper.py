@@ -142,7 +142,7 @@ def run_master_scraper():
     year = int(os.getenv("YEAR", 2020))
     qtr = int(os.getenv("QTR", 1))
     
-    logger.info(f"🚀 Job Starting for {year} Q{qtr}")
+    logger.info(f"🚀 Job Starting for {year} Q{qtr} with PYDANTIC")
     
     # Process batches until empty or limit reached
     for i in range(15): # Up to 300 managers per run
