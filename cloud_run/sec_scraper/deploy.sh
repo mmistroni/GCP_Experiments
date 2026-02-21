@@ -1,24 +1,23 @@
 #!/bin/bash
 IMAGE_NAME="gcr.io/datascience-projects/sec-scraper"
+REGION="us-central1"
 
 # 1. Build and push the image
 gcloud builds submit --tag $IMAGE_NAME .
 
 # 2. Deploy the Web App (Gateway)
-# Adding ENV vars here so the Uvicorn app knows the default target
 gcloud run deploy sec-13f-gateway \
   --image $IMAGE_NAME \
-  --region us-central1 \
+  --region $REGION \
   --allow-unauthenticated \
   --set-env-vars YEAR=2020,QTR=1
 
 # 3. Deploy the 13F Worker (Job)
-# Jobs are better for long-running scrapers than Services
 gcloud run jobs deploy sec-13f-worker-job \
   --image $IMAGE_NAME \
   --command "python" \
   --args "scraper.py" \
-  --region us-central1 \
+  --region $REGION \
   --tasks 1 \
   --max-retries 0 \
   --set-env-vars YEAR=2020,QTR=1
@@ -28,9 +27,18 @@ gcloud run jobs deploy form4-manual-worker-job \
   --image $IMAGE_NAME \
   --command "python" \
   --args "scraper_job_form4.py" \
-  --region us-central1 \
+  --region $REGION \
   --tasks 1 \
   --max-retries 0 \
   --set-env-vars YEAR=2020,QTR=1
 
-echo "✅ Deployment Complete. You can now execute the job from the console or via CLI."
+echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
+
+# 5. EXECUTE THE JOB IMMEDIATELY
+# We specify the region here to avoid the prompt.
+# We use --update-env-vars to ensure it starts exactly on the target quarter.
+gcloud run jobs execute sec-13f-worker-job \
+  --region $REGION \
+  --update-env-vars YEAR=2020,QTR=1
+
+echo "✅ Job started in $REGION. Check Google Cloud Console for live logs."
