@@ -15,7 +15,7 @@ from shareloader.modules.marketstats_utils import  ParseNonManufacturingPMI,\
                         get_shiller_indexes, AdvanceDecline, AdvanceDeclineSma, get_obb_vix, AsyncFetcher,\
                         OBBMarketMomemtun, BenzingaNews, AsyncSectorRotation, get_sector_rotation_indicator, \
                         AsyncEconomicCalendar, generate_cotc_data, get_cot_futures, SentimentCalculator,\
-                        fetch_daily_trades
+                        fetch_daily_trades, get_senate_disclosures
 
 from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_economic_calendar, run_putcall_ratio,\
@@ -706,13 +706,25 @@ class TestMarketStats(unittest.TestCase):
 
         key = os.environ['FMPREPKEY']
         print('======== senate trades========')
-        res = fetch_daily_trades('senate')
+        from pandas.tseries.offsets import BDay
+        from pprint import pprint
+
+        target_date = (date.today() - BDay(7)).date()
+        '''
+        print('========= HOuse of rep')
+        hres = fetch_daily_trades(key, 'house', target_date=target_date)
+        pprint(hres)
+        '''
+        res = fetch_daily_trades(key, 'senate', target_date=target_date)
+        pprint(res)
+
+    def test_get_senate_disclosures(self):
+
+        key = os.environ['FMPREPKEY']
+        print('======== senate trades========')
+        res = get_senate_disclosures(key)
         from pprint import pprint
         pprint(res)
-        print('========= HOuse of rep')
-        hres = fetch_daily_trades('house')
-        pprint(hres)
-
 
     def test_get_cotc_futures_obb(self):
         from datetime import datetime

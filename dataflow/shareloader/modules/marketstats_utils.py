@@ -20,6 +20,9 @@ from openbb_fmp.models.equity_historical import FMPEquityHistoricalFetcher
 from openbb_finviz.models.equity_screener import FinvizEquityScreenerFetcher
 from openbb_yfinance.models.index_historical import YFinanceIndexHistoricalFetcher
 from openbb_benzinga.models.world_news import BenzingaWorldNewsFetcher
+import requests
+from datetime import datetime
+
 
 import asyncio
 
@@ -563,10 +566,8 @@ def get_senate_disclosures(key):
             holder.append({'AS_OF_DATE': asOfDate.strftime('%Y-%m-%d'), 'LABEL': label, 'VALUE': value})
     return holder
 
-import requests
-from datetime import datetime
 
-def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
+def fetch_daily_trades(api_key, chamber='senate', target_date=None):
     """
     Fetches trades based on DISCLOSURE DATE (dateRecieved).
     This captures everything filed on or after the target date.
@@ -576,21 +577,26 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
     """
     
     # 1. Default to "Today" if no date is provided
-    if target_date_str is None:
-        target_date_str = datetime.now().strftime('%Y-%m-%d')
-        
+    if target_date is None:
+        target_date = (datetime.today() - BDay(5)).date()
     # 2. Use the "stable" URL structure you provided
-    base_url = "https://financialmodelingprep.com/stable"
-    endpoint = f"{chamber}-latest" # 'senate-latest' or 'house-latest'
-    
+    base_url = "https://financialmodelingprep.com/api/v4"
+    if chamber == 'senate':
+        endpoint = "senate-trading-rss-feed"
+        disclosureField = 'dateRecieved'
+        tickerField = 'symbol'
+    else:
+        endpoint = "senate-disclosure-rss-feed"
+        disclosureField = 'disclosureDate'
+        tickerField = 'ticker'
     page = 0
     all_trades = []
     finished = False
     
-    print(f"Fetching {chamber} trades disclosed on or after: {target_date_str}")
+    print(f"Fetching {chamber} trades disclosed on or after: {target_date}")
 
     while not finished:
-        url = f"{base_url}/{endpoint}?page={page}&limit=100&apikey={api_key}"
+        url = f"{base_url}/{endpoint}?page={page}&apikey={api_key}"
         
         try:
             response = requests.get(url)
@@ -610,20 +616,23 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
             # --- CRITICAL CHANGE ---
             # We check 'dateRecieved' (Filing Date).
             # This handles the logic: "Give me everything published today."
-            disclosure_date = trade.get('dateRecieved')
-            
+            try:
+                disclosure_date = datetime.strptime(trade.get(disclosureField), '%Y-%m-%d').date()
+            except Exception as e:
+                logging.info(f"Failed to parse date:{trade.get(disclosureField)}")
+                disclosure_date = None
             # Safety check if date is missing
             if not disclosure_date:
                 continue
             
             # STOP condition:
             # If the disclosure date is older than our target, we are done.
-            if disclosure_date < target_date_str:
+            if disclosure_date < target_date:
                 finished = True
                 break # Exit the for-loop
             
             # Clean Ticker
-            ticker = trade.get('symbol')
+            ticker = trade.get(tickerField)
             if not ticker or ticker == 'NA': 
                 continue
             value = f"Ticker:{ticker}|Type:{trade.get('type')}"
@@ -648,58 +657,6 @@ def fetch_daily_trades(api_key, chamber='senate', target_date_str=None):
         page += 1
         
     return all_trades
-
-# --- Example Usage ---
-
-# 1. To fetch everything filed TODAY:
-# trades = fetch_daily_trades(api_key="YOUR_API_KEY", chamber='senate')
-
-# 2. To fetch everything filed since a specific date (e.g., catching up on the weekend):
-# trades = fetch_daily_trades(api_key="YOUR_API_KEY", chamber='house', target_date_str='2024-05-20')
-
-def fetch_congress_trades(api_key, chamber='senate'):
-    """
-    Fetches structured trades.
-    chamber: 'senate' or 'house'
-    """
-    base_url = "https://financialmodelingprep.com/api/v4"
-    endpoint = f"{chamber}-trading-rss-feed"  # or house-disclosure-rss-feed
-
-    page = 0
-    all_trades = []
-
-    while True:
-        url = f"{base_url}/{endpoint}?page={page}&apikey={api_key}"
-        response = requests.get(url)
-        data = response.json()
-
-        if not data: break  # End of pages
-
-        for trade in data:
-            # STOP condition (e.g. check date)
-            trade_date = trade.get('transactionDate')
-            if trade_date < '2024-01-01': return all_trades  # Stop fetching old data
-
-            # Clean Ticker
-            ticker = trade.get('symbol')
-            if not ticker or ticker == 'NA': continue
-
-            # Structure for BigQuery
-            clean_trade = {
-                "representative": f"{trade.get('firstName')} {trade.get('lastName')}",
-                "transaction_date": trade_date,
-                "disclosure_date": trade.get('dateRecieved'),
-                "ticker": ticker,
-                "type": trade.get('type'),  # Purchase / Sale / Exchange
-                "amount": trade.get('amount'),
-                "asset_description": trade.get('assetDescription')
-            }
-            all_trades.append(clean_trade)
-
-        page += 1
-
-    return all_trades
-
 
 
 def get_prices2(tpl, fmprepkey):
