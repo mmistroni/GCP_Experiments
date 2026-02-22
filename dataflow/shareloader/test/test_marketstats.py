@@ -705,23 +705,42 @@ class TestMarketStats(unittest.TestCase):
     def test_fetch_daily_trades(self):
 
         key = os.environ['FMPREPKEY']
-        print('======== senate trades========')
         from pandas.tseries.offsets import BDay
         from pprint import pprint
 
         target_date = (date.today() - BDay(7)).date()
-        '''
-        print('========= HOuse of rep')
-        hres = fetch_daily_trades(key, 'house', target_date=target_date)
-        pprint(hres)
-        '''
-        res = fetch_daily_trades(key, 'senate', target_date=target_date)
-        pprint(res)
+
+        with TestPipeline() as p:
+            house = (p | 'start run_hd' >> beam.Create(['20210101'])
+             | 'run housedclos' >> beam.FlatMap(lambda d: fetch_daily_trades(key, 'house', target_date=target_date))
+             )
+            senate = (p | 'start run_sd' >> beam.Create(['20210101'])
+                    | 'run sendisclos' >> beam.FlatMap(
+                lambda d: fetch_daily_trades(key, 'senate', target_date=target_date))
+                      )
+            final = ((house, senate)
+                        | 'FlattenCombine all' >> beam.Flatten()
+                        | 'Remapping SD ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d').date(),
+                                                    TICKER=d.get('VALUE', '').split('|')[0],
+                                                    DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else
+                                                    d.get('VALUE', '').split('|')[0],
+                                                    representative=d.get('representative', '')))
+                     )
+            final | 'print sinmk' >> beam.Map(print)
+
+
+
+
+
 
     def test_get_senate_disclosures(self):
 
         key = os.environ['FMPREPKEY']
         print('======== senate trades========')
+
+
+
+
         res = get_senate_disclosures(key)
         from pprint import pprint
         pprint(res)

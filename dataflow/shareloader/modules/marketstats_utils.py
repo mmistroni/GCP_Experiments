@@ -639,7 +639,7 @@ def fetch_daily_trades(api_key, chamber='senate', target_date=None):
             
             # Structure Data
             clean_trade = {
-                "representative": f"{trade.get('firstName', '')} {trade.get('lastName', '')}".strip(),
+                "representative": f"{trade.get('firstName', '')} {trade.get('lastName', '')}".strip() if chamber == 'senate' else trade.get('representative'),
                 "transaction_date": trade.get('transactionDate'),
                 "disclosure_date": disclosure_date,
                 "ticker": ticker,
