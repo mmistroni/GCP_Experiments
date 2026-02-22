@@ -48,44 +48,50 @@ class HoldingRow(BaseModel):
 
 # --- STEP 1: SEEDING (The resurrected logic) ---
 def seed_queue_from_sec(client, year, qtr):
-    """Downloads the quarterly master index from SEC and populates the queue."""
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
-    logger.info(f"🌐 Fetching SEC Master Index: {idx_url}")
+    logger.info(f"🌐 Fetching index from: {idx_url}")
     
     res = requests.get(idx_url, headers=HEADERS)
-    if res.status_code != 200:
-        logger.error(f"❌ Failed to fetch SEC index: {res.status_code}")
-        return
-
     lines = res.text.split('\n')
     new_rows = []
-    # Skip the header lines of the SEC master.idx
+
     for line in lines[10:]:
         if "|13F-HR|" in line:
             parts = line.split('|')
             if len(parts) < 5: continue
             
-            # parts[4] is the path like 'edgar/data/123/0001-23-45.txt'
-            path_clean = parts[4].replace('.txt', '').replace('-', '')
-            acc_num = parts[4].split('/')[-1].replace('.txt', '')
-            dir_url = f"https://www.sec.gov/Archives/{path_clean}/index.json"
-            
+            # FORCE EVERYTHING TO STRING HERE
             new_rows.append({
-                "cik": parts[0],
-                "company_name": parts[1],
-                "accession_number": acc_num,
-                "dir_url": dir_url,
+                "cik": str(parts[0]).strip().zfill(10), # Force string + padding
+                "company_name": str(parts[1]).strip(),
+                "accession_number": str(parts[4].split('/')[-1].replace('.txt', '')),
+                "dir_url": f"https://www.sec.gov/Archives/{parts[4].replace('.txt', '').replace('-', '')}/index.json",
                 "status": "pending",
-                "year": year,
-                "qtr": qtr
+                "year": int(year),
+                "qtr": int(qtr)
             })
 
     if new_rows:
-        # Load into BigQuery Queue
-        job = client.load_table_from_json(new_rows, QUEUE_TABLE)
-        job.result()
-        logger.info(f"✨ Successfully seeded {len(new_rows)} managers into queue.")
+        # THIS IS THE VITAL PART: Define the strict schema for the Load Job
+        job_config = bigquery.LoadJobConfig(
+            schema=[
+                bigquery.SchemaField("cik", "STRING"),
+                bigquery.SchemaField("company_name", "STRING"),
+                bigquery.SchemaField("accession_number", "STRING"),
+                bigquery.SchemaField("dir_url", "STRING"),
+                bigquery.SchemaField("status", "STRING"),
+                bigquery.SchemaField("year", "INTEGER"),
+                bigquery.SchemaField("qtr", "INTEGER"),
+            ],
+            write_disposition="WRITE_APPEND",
+            autodetect=False  # <--- CRITICAL: Tells BQ "Don't guess, use my schema"
+        )
 
+        logger.info(f"📤 Loading {len(new_rows)} rows to {QUEUE_TABLE}...")
+        job = client.load_table_from_json(new_rows, QUEUE_TABLE, job_config=job_config)
+        job.result() # This will now work because types are locked
+        logger.info("✨ Seed complete.")
+        
 # --- STEP 2: PROCESSING (The loop logic) ---
 def process_queue_batch(client, year, qtr, limit=25):
     query = f"SELECT * FROM `{QUEUE_TABLE}` WHERE status='pending' AND year={year} AND qtr={qtr} LIMIT {limit}"
