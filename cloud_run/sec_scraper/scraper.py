@@ -10,35 +10,39 @@ PROJECT_ID = "datascience-projects"
 DATASET_ID = "gcp_shareloader"
 QUEUE_TABLE = f"{PROJECT_ID}.{DATASET_ID}.scraping_queue"
 MASTER_TABLE = f"{PROJECT_ID}.{DATASET_ID}.all_holdings_master"
-HEADERS = {'User-Agent': 'YourName/1.0 (your@email.com)'}
+# IMPORTANT: SEC requires a descriptive User-Agent
+HEADERS = {'User-Agent': 'YourCompany/1.0 (contact@yourdomain.com)'}
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
 client = bigquery.Client(project=PROJECT_ID)
 
 def seed_queue_from_sec(year, qtr):
-    """Fills the queue with strict typing and autodetect off."""
+    """Fills the queue with strict typing and autodetect OFF."""
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
+    logger.info(f"🌐 Seeding queue from: {idx_url}")
+    
     res = requests.get(idx_url, headers=HEADERS)
     lines = res.text.split('\n')
-    
     new_rows = []
+
     for line in lines[10:]:
-        if "|13F-HR|" in line:
+        if "|13F-HR" in line:  # Catches 13F-HR and 13F-HR/A
             parts = line.split('|')
             if len(parts) < 5: continue
             
-            # CIK and Accession MUST be strings
+            acc_num = parts[4].split('/')[-1].replace('.txt', '')
             new_rows.append({
-                "cik": str(parts[0]).strip().zfill(10),
+                "cik": str(parts[0]).strip().zfill(10), # String + Padded
                 "company_name": str(parts[1]).strip(),
-                "accession_number": str(parts[4].split('/')[-1].replace('.txt', '')),
+                "accession_number": str(acc_num),
                 "dir_url": f"https://www.sec.gov/Archives/{parts[4].replace('.txt', '').replace('-', '')}/index.json",
                 "status": "pending",
                 "year": int(year),
                 "qtr": int(qtr),
-                "retries": 0
+                "retries": 0,
+                "last_error": None
             })
 
     if new_rows:
@@ -52,18 +56,38 @@ def seed_queue_from_sec(year, qtr):
                 bigquery.SchemaField("year", "INTEGER"),
                 bigquery.SchemaField("qtr", "INTEGER"),
                 bigquery.SchemaField("retries", "INTEGER"),
+                bigquery.SchemaField("last_error", "STRING"),
             ],
             write_disposition="WRITE_APPEND",
             autodetect=False 
         )
         client.load_table_from_json(new_rows, QUEUE_TABLE, job_config=job_config).result()
-        logger.info(f"✅ Seeded {len(new_rows)} filings.")
+        logger.info(f"✅ Successfully seeded {len(new_rows)} items into the queue.")
+
+def update_queue_status(acc_num, status, current_retries, error_msg=None):
+    """Updates BQ with the new status and error details."""
+    retries = (current_retries or 0) + 1
+    # Move to FATAL if we've tried too many times
+    final_status = status if retries < 2 else f"FATAL_{status}"
+    
+    # Escape single quotes for SQL and truncate long errors
+    clean_error = str(error_msg).replace("'", "''")[:1000] if error_msg else ""
+    
+    sql = f"""
+        UPDATE `{QUEUE_TABLE}`
+        SET status = '{final_status}', 
+            retries = {retries},
+            last_error = '{clean_error}'
+        WHERE accession_number = '{acc_num}'
+    """
+    client.query(sql).result()
 
 def process_batch(year, qtr):
-    """Processes pending rows, avoiding those that failed > 2 times."""
+    """Processes 25 rows that are pending or have retryable errors."""
     query = f"""
         SELECT * FROM `{QUEUE_TABLE}`
-        WHERE status IN ('pending', 'error_timeout')
+        WHERE (status = 'pending' OR status LIKE 'error%')
+        AND status NOT LIKE 'FATAL%'
         AND (retries < 2 OR retries IS NULL)
         AND year = {year} AND qtr = {qtr}
         LIMIT 25
@@ -72,66 +96,51 @@ def process_batch(year, qtr):
     if df.empty:
         return False
 
-    for _, row in df.iterrows():
-        acc_num = row['accession_number']
-        try:
-            # Short timeouts to prevent the 'slow crawl'
-            # (Connect timeout, Read timeout)
-            response = requests.get(row['dir_url'], headers=HEADERS, timeout=(3.05, 10))
+    with requests.Session() as session:
+        session.headers.update(HEADERS)
+        for _, row in df.iterrows():
+            acc_num = row['accession_number']
+            curr_ret = row['retries']
             
-            # 1. Handle SEC Blocking (Stop the job)
-            if response.status_code in [403, 429]:
-                logger.critical("🚨 SEC Blocking detected. Stopping job.")
-                return False 
+            try:
+                # 1. Get the directory JSON (Short timeouts)
+                res = session.get(row['dir_url'], timeout=(3.05, 10))
+                
+                if res.status_code in [403, 429]:
+                    logger.critical("🛑 SEC RATE LIMIT HIT. Cooling down...")
+                    return False 
+                
+                res.raise_for_status()
+                # (Insert your specific XML URL extraction logic here)
+                # For example: xml_url = extract_infotable_url(res.json())
+                
+                # 2. Scrape/Parse/Load (Simulated logic)
+                # ...
+                
+                # 3. SUCCESS: Mark as done
+                client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', retries=0, last_error=NULL WHERE accession_number='{acc_num}'").result()
+                logger.info(f"✔️ Processed: {row['company_name']}")
 
-            # 2. Handle missing files (Permanent error)
-            if response.status_code == 404:
-                update_status(acc_num, 'error_404', row['retries'])
-                continue
-
-            # ... (Your logic to find XML URL inside index.json) ...
-            xml_url = "extracted_url_logic_here" 
-            
-            # 3. Process XML and Load to BigQuery
-            # (Simplified for brevity, use your existing Pydantic model here)
-            # if success:
-            update_status(acc_num, 'done', 0)
-
-        except (ReadTimeout, ConnectTimeout):
-            logger.warning(f"🕒 Timeout on {row['company_name']}. Skipping.")
-            update_status(acc_num, 'error_timeout', row['retries'])
-            
-        except Exception as e:
-            logger.error(f"💥 Error on {row['company_name']}: {e}")
-            update_status(acc_num, 'error_data', row['retries'])
-            
+            except (ReadTimeout, ConnectTimeout) as e:
+                logger.warning(f"🕒 Timeout on {row['company_name']}")
+                update_queue_status(acc_num, 'error_timeout', curr_ret, str(e))
+                
+            except Exception as e:
+                logger.error(f"❌ Error on {row['company_name']}: {str(e)}")
+                update_queue_status(acc_num, 'error_data', curr_ret, str(e))
+                
     return True
 
-def update_status(acc_num, status, current_retries):
-    """Updates status and increments retry count."""
-    retries = (current_retries or 0) + 1
-    # If we hit the limit, change status to permanent failure
-    final_status = status if retries < 2 else f"FATAL_{status}"
-    
-    query = f"""
-        UPDATE `{QUEUE_TABLE}`
-        SET status = '{final_status}', retries = {retries}
-        WHERE accession_number = '{acc_num}'
-    """
-    client.query(query).result()
-
 def run_master_scraper():
-    # Year/Qtr could be passed as Env Vars in Cloud Run
-    year, qtr = 2020, 2
+    # Configure your target here
+    target_year, target_qtr = 2020, 2
     
-    # Optional: only seed if queue is empty
-    # seed_queue_from_sec(year, qtr)
-    
+    # To run, ensure you've performed the 'Soft Reset' SQL first
     while True:
-        logger.info("🔄 Fetching next batch of 25...")
-        has_more = process_batch(year, qtr)
-        if not has_more:
-            logger.info("🏁 No more pending items. Work finished.")
+        logger.info("🚀 Starting next batch...")
+        work_remains = process_batch(target_year, target_qtr)
+        if not work_remains:
+            logger.info("🏁 Queue cleared or SEC blocked. Job exiting.")
             break
 
 if __name__ == "__main__":
