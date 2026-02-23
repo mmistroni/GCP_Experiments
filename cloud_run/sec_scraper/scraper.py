@@ -65,22 +65,31 @@ def seed_queue_from_sec(year, qtr):
         logger.info(f"✅ Successfully seeded {len(new_rows)} items into the queue.")
 
 def update_queue_status(acc_num, status, current_retries, error_msg=None):
-    """Updates BQ with the new status and error details."""
+    """Updates BQ safely using query parameters."""
     retries = (current_retries or 0) + 1
-    # Move to FATAL if we've tried too many times
     final_status = status if retries < 2 else f"FATAL_{status}"
-    
-    # Escape single quotes for SQL and truncate long errors
-    clean_error = str(error_msg).replace("'", "''")[:1000] if error_msg else ""
-    
+    clean_error = str(error_msg)[:1000] if error_msg else ""
+
+    # Use '?' or '@' parameters to let BQ handle quotes safely
     sql = f"""
         UPDATE `{QUEUE_TABLE}`
-        SET status = '{final_status}', 
-            retries = {retries},
-            last_error = '{clean_error}'
-        WHERE accession_number = '{acc_num}'
+        SET status = @status, 
+            retries = @retries,
+            last_error = @error
+        WHERE accession_number = @acc_num
     """
-    client.query(sql).result()
+    
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("status", "STRING", final_status),
+            bigquery.ScalarQueryParameter("retries", "INT64", retries),
+            bigquery.ScalarQueryParameter("error", "STRING", clean_error),
+            bigquery.ScalarQueryParameter("acc_num", "STRING", acc_num),
+        ]
+    )
+    
+    client.query(sql, job_config=job_config).result()
+
 
 def process_batch(year, qtr):
     """Processes 25 rows that are pending or have retryable errors."""
