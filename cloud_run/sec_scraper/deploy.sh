@@ -34,7 +34,7 @@ gcloud run jobs deploy form4-manual-worker-job \
 
 echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
 
-# 5. EXECUTE THE JOB IMMEDIATELY
+# 5. EXECUTE THE JOB IMMEDIATELYex
 # We specify the region here to avoid the prompt.
 # We use --update-env-vars to ensure it starts exactly on the target quarter.
 gcloud run jobs execute sec-13f-worker-job \
