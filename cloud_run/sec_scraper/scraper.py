@@ -210,8 +210,7 @@ def process_batch(year, qtr):
             ON T.accession_number = S.accession_number AND T.cusip = S.cusip
             WHEN MATCHED THEN
                 UPDATE SET 
-                    T.value_usd = CAST(S.value AS INT64), 
-                    T.sshPrnamt = CAST(S.sshPrnamt AS INT64)
+                    T.value_usd = CAST(S.value AS INT64)
             WHEN NOT MATCHED THEN
                 INSERT (accession_number, filing_date, nameOfIssuer, cusip, value_usd, sshPrnamt, sshPrnamtType, investmentDiscretion)
                 VALUES (S.accession_number, S.filing_date, S.nameOfIssuer, S.cusip, CAST(S.value AS INT64), CAST(S.sshPrnamt AS INT64), S.sshPrnamtType, S.investmentDiscretion)
