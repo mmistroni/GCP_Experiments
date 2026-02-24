@@ -202,17 +202,19 @@ def process_batch(year, qtr):
 
         # 2. Atomic Merge to Master (Deduplicates)
         # We map S.value (from Staging) to T.value_usd (in Master)
+        # 2. Atomic Merge to Master
+        # We explicitly CAST S.value to INT64 to match the Master Table's type
         merge_sql = f"""
             MERGE `{MASTER_TABLE}` T
             USING `{STAGING_TABLE}` S
             ON T.accession_number = S.accession_number AND T.cusip = S.cusip
             WHEN MATCHED THEN
                 UPDATE SET 
-                    T.value_usd = S.value, 
-                    T.sshPrnamt = S.sshPrnamt
+                    T.value_usd = CAST(S.value AS INT64), 
+                    T.sshPrnamt = CAST(S.sshPrnamt AS INT64)
             WHEN NOT MATCHED THEN
                 INSERT (accession_number, filing_date, nameOfIssuer, cusip, value_usd, sshPrnamt, sshPrnamtType, investmentDiscretion)
-                VALUES (S.accession_number, S.filing_date, S.nameOfIssuer, S.cusip, S.value, S.sshPrnamt, S.sshPrnamtType, S.investmentDiscretion)
+                VALUES (S.accession_number, S.filing_date, S.nameOfIssuer, S.cusip, CAST(S.value AS INT64), CAST(S.sshPrnamt AS INT64), S.sshPrnamtType, S.investmentDiscretion)
         """
         client.query(merge_sql).result()
         
