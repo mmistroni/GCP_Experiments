@@ -14,7 +14,7 @@ QUEUE_TABLE = f"{PROJECT_ID}.{DATASET_ID}.scraping_queue"
 MASTER_TABLE = f"{PROJECT_ID}.{DATASET_ID}.all_holdings_master"
 STAGING_TABLE = f"{PROJECT_ID}.{DATASET_ID}.temp_holdings_staging"
 
-HEADERS = {'User-Agent': 'YourCompany/1.0 (contact@yourdomain.com)'}
+HEADERS = {'User-Agent': 'YourCompany/1.0 (contact_mm@yourdomain.com)'}
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
@@ -145,13 +145,24 @@ def process_batch(year, qtr):
         for _, row in df.iterrows():
             acc_num = row['accession_number']
             try:
-                time.sleep(0.12)
+                time.sleep(0.2)
                 dir_res = session.get(row['dir_url'], timeout=10)
                 dir_res.raise_for_status()
                 
                 items = dir_res.json().get('directory', {}).get('item', [])
-                xml_name = next((i['name'] for i in items if 'infotable' in i['name'].lower() and i['name'].endswith('.xml')), None)
+                # To this (more inclusive):
                 
+                xml_files = [i['name'] for i in items if i['name'].lower().endswith('.xml')]
+
+                # 1. Look for 'infotable' or 'informationtable'
+                xml_name = next((n for n in xml_files if 'infotable' in n.lower() or 'informationtable' in n.lower()), None)
+
+                # 2. Fallback: If still not found, grab the one that isn't the primary doc (usually labeled 'doc.xml')
+                if not xml_name:
+                    xml_name = next((n for n in xml_files if 'doc' not in n.lower() and 'primary' not in n.lower()), None)
+
+
+
                 if xml_name:
                     xml_url = row['dir_url'].replace('index.json', xml_name)
                     xml_res = session.get(xml_url, timeout=15)
@@ -204,19 +215,31 @@ def process_batch(year, qtr):
         # We map S.value (from Staging) to T.value_usd (in Master)
         # 2. Atomic Merge to Master
         # We explicitly CAST S.value to INT64 to match the Master Table's type
+        # 2. Atomic Merge to Master
+        # Mapping: S.value -> T.value_usd, S.sshPrnamt -> T.shares
         merge_sql = f"""
             MERGE `{MASTER_TABLE}` T
             USING `{STAGING_TABLE}` S
             ON T.accession_number = S.accession_number AND T.cusip = S.cusip
             WHEN MATCHED THEN
                 UPDATE SET 
-                    T.value_usd = CAST(S.value AS INT64)
+                    T.value_usd = CAST(S.value AS INT64), 
+                    T.shares = CAST(S.sshPrnamt AS INT64),
+                    T.issuer_name = S.nameOfIssuer
             WHEN NOT MATCHED THEN
-                INSERT (accession_number, filing_date, nameOfIssuer, cusip, value_usd, sshPrnamt, sshPrnamtType, investmentDiscretion)
-                VALUES (S.accession_number, S.filing_date, S.nameOfIssuer, S.cusip, CAST(S.value AS INT64), CAST(S.sshPrnamt AS INT64), S.sshPrnamtType, S.investmentDiscretion)
+                INSERT (cik, manager_name, issuer_name, cusip, value_usd, shares, filing_date, accession_number)
+                VALUES (
+                    NULL, -- CIK isn't in your staging currently, update if needed
+                    NULL, -- manager_name isn't in your staging currently
+                    S.nameOfIssuer, 
+                    S.cusip, 
+                    CAST(S.value AS INT64), 
+                    CAST(S.sshPrnamt AS INT64), 
+                    CAST(S.filing_date AS DATETIME), 
+                    S.accession_number
+                )
         """
         client.query(merge_sql).result()
-        
         acc_list = ", ".join([f"'{a}'" for a in success_acc_nums])
         client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done' WHERE accession_number IN ({acc_list})").result()
         logger.info(f"✨ Successfully merged {len(success_acc_nums)} managers.")
