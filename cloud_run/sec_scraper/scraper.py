@@ -147,34 +147,62 @@ def process_batch(year, qtr):
                 client.query(f"UPDATE `{QUEUE_TABLE}` SET status='error_data' WHERE accession_number='{acc_num}'")
 
     if all_holdings:
+        # 1. Clean start for Staging
         client.delete_table(STAGING_TABLE, not_found_ok=True)
+        
+        # 2. Strict Schema: No autodetect. This forces filing_date to stay a STRING.
         job_config = bigquery.LoadJobConfig(
             schema=[
                 bigquery.SchemaField("accession_number", "STRING"),
                 bigquery.SchemaField("filing_date", "STRING"),
+                bigquery.SchemaField("nameOfIssuer", "STRING"), # Added this
                 bigquery.SchemaField("cusip", "STRING"),
                 bigquery.SchemaField("value", "FLOAT"),
                 bigquery.SchemaField("sshPrnamt", "FLOAT"),
                 bigquery.SchemaField("cik", "STRING"),
                 bigquery.SchemaField("manager_name", "STRING"),
+                bigquery.SchemaField("sshPrnamtType", "STRING"), # Added for completeness
+                bigquery.SchemaField("investmentDiscretion", "STRING"), # Added for completeness
             ],
-            write_disposition="WRITE_TRUNCATE", autodetect=True
+            write_disposition="WRITE_TRUNCATE",
+            autodetect=False  # CRITICAL: Do not let BigQuery guess types
         )
+        
+        # Load data to Staging
         client.load_table_from_json(all_holdings, STAGING_TABLE, job_config=job_config).result()
 
+        # 3. Atomic Merge with explicit Casting
         merge_sql = f"""
             MERGE `{MASTER_TABLE}` T
             USING `{STAGING_TABLE}` S
             ON T.accession_number = S.accession_number AND T.cusip = S.cusip
             WHEN MATCHED THEN
-                UPDATE SET T.value_usd = CAST(S.value AS INT64), T.shares = CAST(S.sshPrnamt AS INT64)
+                UPDATE SET 
+                    T.value_usd = CAST(S.value AS INT64), 
+                    T.shares = CAST(S.sshPrnamt AS INT64),
+                    T.issuer_name = S.nameOfIssuer
             WHEN NOT MATCHED THEN
                 INSERT (cik, manager_name, issuer_name, cusip, value_usd, shares, filing_date, accession_number)
-                VALUES (S.cik, S.manager_name, S.nameOfIssuer, S.cusip, CAST(S.value AS INT64), CAST(S.sshPrnamt AS INT64), CAST(S.filing_date AS DATETIME), S.accession_number)
+                VALUES (
+                    S.cik, 
+                    S.manager_name, 
+                    S.nameOfIssuer, 
+                    S.cusip, 
+                    CAST(S.value AS INT64), 
+                    CAST(S.sshPrnamt AS INT64), 
+                    CAST(S.filing_date AS DATETIME), 
+                    S.accession_number
+                )
         """
         client.query(merge_sql).result()
+        
+        # 4. Mark queue as done
         acc_list = ", ".join([f"'{a}'" for a in success_acc_nums])
         client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done' WHERE accession_number IN ({acc_list})").result()
+        logger.info(f"✨ Successfully merged {len(success_acc_nums)} managers.")
+
+
+
     return True
 
 if __name__ == "__main__":
