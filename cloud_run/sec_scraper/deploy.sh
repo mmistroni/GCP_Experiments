@@ -20,7 +20,7 @@ gcloud run jobs deploy sec-13f-worker-job \
   --region $REGION \
   --tasks 1 \
   --max-retries 0 \
-  --set-env-vars YEAR=2020,QTR=1,SCRAPER_LIMIT=25
+  --set-env-vars YEAR=2020,QTR=1,SCRAPER_LIMIT=0
 
 # 4. Deploy the Form 4 Backfill Worker (Job)
 gcloud run jobs deploy form4-manual-worker-job \
