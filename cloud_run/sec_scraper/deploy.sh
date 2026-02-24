@@ -12,16 +12,6 @@ gcloud run deploy sec-13f-gateway \
   --allow-unauthenticated \
   --set-env-vars YEAR=2020,QTR=1
 
-# 3. Deploy the 13F Worker (Job)
-gcloud run jobs deploy sec-13f-worker-job \
-  --image $IMAGE_NAME \
-  --command "python" \
-  --args "scraper.py" \
-  --region $REGION \
-  --tasks 1 \
-  --max-retries 0 \
-  --set-env-vars YEAR=2020,QTR=1,SCRAPER_LIMIT=0
-
 # 4. Deploy the Form 4 Backfill Worker (Job)
 gcloud run jobs deploy form4-manual-worker-job \
   --image $IMAGE_NAME \
@@ -33,12 +23,3 @@ gcloud run jobs deploy form4-manual-worker-job \
   --set-env-vars YEAR=2020,QTR=1
 
 echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
-
-# 5. EXECUTE THE JOB IMMEDIATELYex
-# We specify the region here to avoid the prompt.
-# We use --update-env-vars to ensure it starts exactly on the target quarter.
-gcloud run jobs execute sec-13f-worker-job \
-  --region $REGION \
-  --update-env-vars YEAR=2020,QTR=1
-
-echo "✅ Job started in $REGION. Check Google Cloud Console for live logs."
