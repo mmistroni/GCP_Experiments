@@ -20,6 +20,7 @@ gcloud run jobs deploy form4-manual-worker-job \
   --region $REGION \
   --tasks 1 \
   --max-retries 0 \
-  --set-env-vars YEAR=2020,QTR=1
-
+  --set-env-vars AGENT_MODE=DAILY,GOOGLE_CLOUD_PROJECT=datascience-projects \
+  --task-timeout=3h \
+  
 echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."

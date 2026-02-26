@@ -173,26 +173,22 @@ def process_batch(year, qtr):
 
         # 3. Atomic Merge with explicit Casting
         merge_sql = f"""
-            MERGE `{MASTER_TABLE}` T
-            USING `{STAGING_TABLE}` S
-            ON T.accession_number = S.accession_number AND T.cusip = S.cusip
-            WHEN MATCHED THEN
-                UPDATE SET 
-                    T.value_usd = CAST(S.value AS INT64), 
-                    T.shares = CAST(S.sshPrnamt AS INT64),
-                    T.issuer_name = S.nameOfIssuer
-            WHEN NOT MATCHED THEN
-                INSERT (cik, manager_name, issuer_name, cusip, value_usd, shares, filing_date, accession_number)
-                VALUES (
-                    S.cik, 
-                    S.manager_name, 
-                    S.nameOfIssuer, 
-                    S.cusip, 
-                    CAST(S.value AS INT64), 
-                    CAST(S.sshPrnamt AS INT64), 
-                    CAST(S.filing_date AS DATETIME), 
-                    S.accession_number
-                )
+                MERGE `{MASTER_TABLE}` T
+                USING `{STAGING_TABLE}` S
+                ON T.accession_number = CAST(S.accession_number AS STRING)  -- <--- FIX HERE
+                AND T.cusip = CAST(S.cusip AS STRING)                   -- <--- AND HERE
+                WHEN NOT MATCHED THEN
+                    INSERT (cik, manager_name, issuer_name, cusip, value_usd, shares, filing_date, accession_number)
+                    VALUES (
+                        CAST(S.cik AS STRING), 
+                        S.manager_name, 
+                        S.nameOfIssuer, 
+                        S.cusip, 
+                        CAST(S.value AS INT64), 
+                        CAST(S.sshPrnamt AS INT64), 
+                        CAST(S.filing_date AS DATETIME), 
+                        CAST(S.accession_number AS STRING)
+                    )
         """
         client.query(merge_sql).result()
         
