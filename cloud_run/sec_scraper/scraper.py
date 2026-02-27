@@ -82,28 +82,81 @@ def parse_xml_to_holdings(xml_content, acc_num, filing_date):
         return []
 
 def seed_queue_if_needed(year, qtr):
+    """
+    Seeds the queue with explicit schema handling to prevent 400 BadRequest errors.
+    Returns True if seeding was successful or not needed, False if it failed.
+    """
+    # 1. Check if we already have data to avoid duplicate seeding
     check_query = f"SELECT count(*) as cnt FROM `{QUEUE_TABLE}` WHERE year={year} AND qtr={qtr}"
-    count = list(client.query(check_query))[0].cnt
-    if count > 0:
-        return
+    try:
+        count = list(client.query(check_query))[0].cnt
+        if count > 0:
+            logger.info(f"ℹ️ Queue already has {count} items for {year} Q{qtr}. Skipping seed.")
+            return True
+    except Exception as e:
+        logger.error(f"❌ Could not check queue status: {e}")
+        return False
+
     idx_url = f"https://www.sec.gov/Archives/edgar/full-index/{year}/QTR{qtr}/master.idx"
-    res = requests.get(idx_url, headers=HEADERS)
+    logger.info(f"🌐 Fetching SEC index: {idx_url}")
+    
+    try:
+        res = requests.get(idx_url, headers=HEADERS, timeout=30)
+        res.raise_for_status()
+    except Exception as e:
+        logger.error(f"❌ Failed to fetch SEC index: {e}")
+        return False
+
     lines = res.text.split('\n')
     new_rows = []
+
     for line in lines[10:]:
         if "|13F-HR" in line:
             parts = line.split('|')
             if len(parts) < 5: continue
+            
+            # Extract and clean identifiers
+            raw_cik = str(parts[0]).strip()
             acc_num = parts[4].split('/')[-1].replace('.txt', '')
+            
             new_rows.append({
-                "cik": str(parts[0]).strip().zfill(10),
+                "cik": raw_cik.zfill(10),  # Keep as string with leading zeros
                 "company_name": str(parts[1]).strip(),
                 "accession_number": str(acc_num),
                 "dir_url": f"https://www.sec.gov/Archives/{parts[4].replace('.txt', '').replace('-', '')}/index.json",
-                "status": "pending", "year": int(year), "qtr": int(qtr), "retries": 0, "last_error": None
+                "status": "pending", 
+                "year": int(year), 
+                "qtr": int(qtr), 
+                "retries": 0, 
+                "last_error": None
             })
+
     if new_rows:
-        client.load_table_from_json(new_rows, QUEUE_TABLE).result()
+        # ⚠️ CRITICAL: Explicitly define the schema to match your existing table
+        job_config = bigquery.LoadJobConfig(
+            schema=[
+                bigquery.SchemaField("cik", "STRING"),
+                bigquery.SchemaField("company_name", "STRING"),
+                bigquery.SchemaField("accession_number", "STRING"),
+                bigquery.SchemaField("dir_url", "STRING"),
+                bigquery.SchemaField("status", "STRING"),
+                bigquery.SchemaField("year", "INTEGER"),
+                bigquery.SchemaField("qtr", "INTEGER"),
+                bigquery.SchemaField("retries", "INTEGER"),
+                bigquery.SchemaField("last_error", "STRING"),
+            ],
+            write_disposition="WRITE_APPEND",
+        )
+        
+        try:
+            logger.info(f"📤 Uploading {len(new_rows)} rows to {QUEUE_TABLE}...")
+            client.load_table_from_json(new_rows, QUEUE_TABLE, job_config=job_config).result()
+            logger.info("✅ Seeding successful.")
+            return True
+        except Exception as e:
+            logger.error(f"❌ BigQuery Load Failed: {e}")
+            return False
+    return True
 
 def process_batch(year, qtr):
     limit_clause = f"LIMIT {ENV_LIMIT}" if ENV_LIMIT > 0 else ""
@@ -203,6 +256,6 @@ def process_batch(year, qtr):
 
 if __name__ == "__main__":
     ENV_LIMIT = int(os.getenv("SCRAPER_LIMIT", "25"))
-    seed_queue_if_needed(2020, 1)
-    while process_batch(2020, 1):
+    seed_queue_if_needed(2020, 2)
+    while process_batch(2020, 2):
         logger.info("Batch complete, moving to next...")

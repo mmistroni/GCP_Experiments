@@ -166,3 +166,4 @@ zipp==3.21.0
 zstandard==0.23.0
 matplotlib
 vix_utils
+db-dtypes
