@@ -14,7 +14,7 @@ from .marketstats_utils import MarketBreadthCombineFn, \
                             get_all_prices_for_date, InnerJoinerFn, create_bigquery_ppln,\
                             ParseManufacturingPMI,get_economic_calendar, get_equity_putcall_ratio,\
                             get_cftc_spfutures, create_bigquery_ppln_cftc, get_market_momentum, \
-                            get_senate_disclosures, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
+                            fetch_daily_trades, create_bigquery_manufpmi_bq, create_bigquery_nonmanuf_pmi_bq,\
                             get_sector_rotation_indicator, get_latest_fed_fund_rates,\
                             get_latest_manufacturing_pmi_from_bq, PMIJoinerFn, ParseConsumerSentimentIndex,\
                             get_latest_non_manufacturing_pmi_from_bq, create_bigquery_pipeline,\
@@ -172,9 +172,18 @@ def run_junk_bond_demand(p, fredkey):
             )
 
 def run_senate_disclosures(p, key):
-    return (p | 'start run_sd' >> beam.Create(['20210101'])
-              | 'run sendisclos' >> beam.FlatMap(lambda d : get_senate_disclosures(key))
-            )
+    target_date = (date.today() - BDay(3)).date()
+
+    house = (p | 'start run_hd' >> beam.Create(['20210101'])
+             | 'run housedclos' >> beam.FlatMap(lambda d: fetch_daily_trades(key, 'house', target_date=target_date))
+             )
+    senate = (p | 'start run_sd' >> beam.Create(['20210101'])
+              | 'run sendisclos' >> beam.FlatMap(
+                lambda d: fetch_daily_trades(key, 'senate', target_date=target_date))
+              )
+
+    return ((house, senate)
+             | 'FlattenCombine all' >> beam.Flatten())
 
 def run_fed_fund_rates(p):
     return (p | 'start run_ffr' >> beam.Create(['20210101'])
@@ -629,7 +638,7 @@ def run(argv=None, save_main_session=True):
         (senate_disc | 'Remapping SD ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d').date(),
                                                     TICKER=d.get('VALUE', '').split('|')[0],
                                                     DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else
-                                                    d.get('VALUE', '').split('|')[0]))
-                      | 'To Senate Sink' >> senate_disclosures_sink)
-
+                                                    d.get('VALUE', '').split('|')[0],
+                                                    representative=d.get('representative', '')))
+                     )
 

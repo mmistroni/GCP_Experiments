@@ -24,7 +24,9 @@ from shareloader.modules.marketstats import run_vix, InnerJoinerFn, \
                                             run_fed_fund_rates, write_all_to_sink, run_market_momentum, \
                                             run_consumer_sentiment_index, run_newhigh_new_low,  run_junk_bond_demand, \
                                             run_cramer_pipeline, run_advance_decline, run_sp500multiples, \
-                                            run_advance_decline_sma, run_economic_calendar, run_cftc_spfutures
+                                            run_advance_decline_sma, run_economic_calendar, run_cftc_spfutures,\
+                                            run_senate_disclosures
+
 from shareloader.modules.obb_processes import AsyncCFTCTester
 
 
@@ -728,10 +730,21 @@ class TestMarketStats(unittest.TestCase):
                      )
             final | 'print sinmk' >> beam.Map(print)
 
+    def test_get_new_senate_disclosures(selfs):
+        with TestPipeline() as p:
+            key = os.environ['FMPREPKEY']
 
+            final = run_senate_disclosures(p,key)
 
+            mapped = (final| 'Remapping SD ' >> beam.Map(lambda d: dict(AS_OF_DATE=datetime.strptime(d['AS_OF_DATE'], '%Y-%m-%d').date(),
+                                                     TICKER=d.get('VALUE', '').split('|')[0],
+                                                     DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(
+                                                         d.get('VALUE', '').split('|')) > 0 else
+                                                     d.get('VALUE', '').split('|')[0],
+                                                     representative=d.get('representative', '')))
+                      )
 
-
+            mapped| 'print sinmk' >> beam.Map(print)
 
     def test_get_senate_disclosures(self):
 
