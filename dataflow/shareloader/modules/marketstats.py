@@ -183,7 +183,7 @@ def run_senate_disclosures(p, key):
               )
 
     return ((house, senate)
-             | 'FlattenCombine all' >> beam.Flatten())
+             | 'FlattenCombine all senate xxx' >> beam.Flatten())
 
 def run_fed_fund_rates(p):
     return (p | 'start run_ffr' >> beam.Create(['20210101'])

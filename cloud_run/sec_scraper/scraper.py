@@ -23,6 +23,9 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger(__name__)
 client = bigquery.Client(project=PROJECT_ID)
 
+start_time = time.time()
+last_progress_time = time.time()
+
 class Holding(BaseModel):
     accession_number: str
     filing_date: str
@@ -256,6 +259,16 @@ def process_batch(year, qtr):
 
 if __name__ == "__main__":
     ENV_LIMIT = int(os.getenv("SCRAPER_LIMIT", "25"))
-    seed_queue_if_needed(2020, 2)
-    while process_batch(2020, 2):
-        logger.info("Batch complete, moving to next...")
+    YEAR = int(os.getenv("YEAR", "2020"))
+    QUARTER = int(os.getenv("QUARTER", "3"))
+    seed_queue_if_needed(YEAR, QUARTER)
+    print(f'---- Running for Year:{YEAR}, qtr:{QUARTER}')
+    while True:
+        has_work = process_batch(2020, 2)
+        if has_work:
+            last_progress_time = time.time() # Reset watchdog
+            logger.info("Batch complete, moving to next...")
+            # The 10-minute shutoff logic
+            if time.time() - last_progress_time > 1200: 
+                logger.critical("🛑 No progress in 20 minutes. Shutting down to prevent infinite loop.")
+                break
