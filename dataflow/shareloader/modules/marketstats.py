@@ -640,5 +640,6 @@ def run(argv=None, save_main_session=True):
                                                     DISCLOSURE=d.get('VALUE', '').split('|')[1] if len(d.get('VALUE', '').split('|')) > 0 else
                                                     d.get('VALUE', '').split('|')[0],
                                                     representative=d.get('representative', '')))
+                     | 'To Senate Sink' | senate_disclosures_sink
                      )
 
