@@ -642,6 +642,6 @@ def run(argv=None, save_main_session=True):
                                                     representative=d.get('representative', '')))
         )
         logging.info('Writing to Senate Sink..')
-        prepped_senate_data  | 'To Senate Sink' | senate_disclosures_sink
+        prepped_senate_data  | 'To Senate Sink' >> senate_disclosures_sink
                      
 
