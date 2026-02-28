@@ -121,7 +121,7 @@ def process_batch(year, qtr):
     # Keep the batch size small (25) to avoid hitting BQ DML quotas
     SCRAPER_LIMIT = 25 
     query = f"SELECT * FROM `{QUEUE_TABLE}` WHERE status IN ('pending', 'error_data') AND year={year} AND qtr={qtr} LIMIT {SCRAPER_LIMIT}"
-    
+    logger.info('Querhing scraping queue///')
     try:
         df = client.query(query).to_dataframe()
     except Forbidden:
@@ -140,6 +140,8 @@ def process_batch(year, qtr):
         session.headers.update(HEADERS)
         for _, row in df.iterrows():
             acc_num = row['accession_number']
+            logger.info(f'Querying...{acc_num}')
+            
             try:
                 time.sleep(0.15) # SEC Rate limit compliance
                 dir_res = session.get(row['dir_url'], timeout=10)
