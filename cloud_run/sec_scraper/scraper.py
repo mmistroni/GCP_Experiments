@@ -143,10 +143,27 @@ def process_batch(year, qtr):
             logger.info(f'Querying...{acc_num}')
             
             try:
-                time.sleep(0.15) # SEC Rate limit compliance
-                dir_res = session.get(row['dir_url'], timeout=10)
-                items = dir_res.json().get('directory', {}).get('item', [])
-                
+                time.sleep(1.5) # SEC Rate limit compliance
+                dir_res = session.get(row['dir_url'], timeout=30)
+                # 2. Check status BEFORE calling .json()
+                if dir_res.status_code == 503:
+                    logger.warning("🚨 SEC Server Overloaded (503). Entering 10-minute cooldown...")
+                    time.sleep(600) # 10 Minutes
+                    return True # Exit current batch, try again after sleep
+                if dir_res.status_code == 403:
+                    logger.error(f"🚫 403 Forbidden for {acc_num}. We are being rate-limited. Sleeping 5 mins...")
+                    time.sleep(300) # Wait 5 mins to clear the SEC "cool-down"
+                    continue
+                if dir_res.status_code != 200:
+                    logger.error(f"❌ Error {dir_res.status_code} for {acc_num}")
+                    failed_acc.append(acc_num)
+                    continue
+                try:
+                    items = dir_res.json().get('directory', {}).get('item', [])
+                except ValueError:
+                    logger.error(f"❌ Received HTML instead of JSON for {acc_num}. Likely a soft-block.")
+                    failed_acc.append(acc_num)
+                    continue        
                 # Identify the correct XML file
                 xml_items = [i for i in items if i['name'].lower().endswith('.xml')]
                 xml_name = next((i['name'] for i in xml_items if 'infotable' in i['name'].lower()), None)
@@ -225,7 +242,9 @@ def process_batch(year, qtr):
 
 
 if __name__ == "__main__":
-    YEAR, QUARTER = 2020, 3
+    YEAR = int(os.getenv('YEAR', 2020))
+    QUARTER = int(os.getenv('QUARTER', 1))
+    logger.info(f'Kicking off scraper for {YEAR},{QUARTER}')
     seed_queue_if_needed(YEAR, QUARTER)
     last_progress = time.time()
     while True:

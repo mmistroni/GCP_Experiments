@@ -8,7 +8,7 @@ JOB_NAME="sec-13f-worker-job"
 
 # Set target quarter and limit
 TARGET_YEAR=2020
-TARGET_QTR=3
+TARGET_QTR=1
 LIMIT=25  # Set to 0 for unlimited, or higher for "Full Blow"
 
 echo "🛠️  Building and Pushing Image: $IMAGE_NAME..."
