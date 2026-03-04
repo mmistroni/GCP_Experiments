@@ -149,11 +149,11 @@ def process_batch(year, qtr):
                 if dir_res.status_code == 503:
                     logger.warning("🚨 SEC Server Overloaded (503). Entering 10-minute cooldown...")
                     time.sleep(600) # 10 Minutes
-                    return True # Exit current batch, try again after sleep
+                    break# Exit current batch, try again after sleep
                 if dir_res.status_code == 403:
                     logger.error(f"🚫 403 Forbidden for {acc_num}. We are being rate-limited. Sleeping 5 mins...")
                     time.sleep(300) # Wait 5 mins to clear the SEC "cool-down"
-                    continue
+                    break
                 if dir_res.status_code != 200:
                     logger.error(f"❌ Error {dir_res.status_code} for {acc_num}")
                     failed_acc.append(acc_num)
@@ -188,6 +188,7 @@ def process_batch(year, qtr):
                     success_acc.append(acc_num)
                     logger.info(f"✔️ {row['company_name']} parsed successfully.")
                 else:
+                    logger.info(f"Error: {row['company_name']} not parsed....")
                     failed_acc.append(acc_num)
             except Exception as e:
                 logger.error(f"❌ Filing {acc_num} failed: {e}")
