@@ -178,7 +178,19 @@ def process_batch(year, qtr):
                     xml_res = session.get(xml_url, timeout=15)
                     
                     # For Q3 2020, use the specific filing date logic
-                    holdings = parse_xml_to_holdings(xml_res.text, acc_num, "2020-09-30")
+                    # Map quarter to the last day of that quarter
+                    qtr_map = {
+                        1: "03-31",
+                        2: "06-30",
+                        3: "09-30",
+                        4: "12-31"
+                    }
+                    # Infer the date based on current loop variables
+                    inferred_date = f"{year}-{qtr_map[qtr]} 00:00:00"
+                    logger.info(f'---- Filing for {inferred_date} ')
+
+
+                    holdings = parse_xml_to_holdings(xml_res.text, acc_num, inferred_date)
                     
                     for h in holdings:
                         h['cik'] = str(row['cik']).zfill(10)
