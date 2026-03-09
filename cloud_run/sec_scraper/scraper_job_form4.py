@@ -245,7 +245,7 @@ def process_batch(year, qtr):
 
 if __name__ == "__main__":
     YEAR = int(os.getenv('YEAR', 2020))
-    QUARTER = int(os.getenv('QUARTER', 1))
+    QUARTER = int(os.getenv('QUARTER', 2))
     seed_queue_if_needed(YEAR, QUARTER)
     while process_batch(YEAR, QUARTER):
         time.sleep(10)
