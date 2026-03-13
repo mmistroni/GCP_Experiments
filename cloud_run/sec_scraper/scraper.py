@@ -42,6 +42,31 @@ class Holding(BaseModel):
 
 def seed_queue_if_needed(year, qtr):
     """Fetches the SEC index and populates the scraping_queue table if empty."""
+    logging.info('Attempting to create the table')
+    # 1. Define the "Source of Truth" Schema
+    schema = [
+        bigquery.SchemaField("cik", "STRING", mode="REQUIRED"),
+        bigquery.SchemaField("company_name", "STRING"),
+        bigquery.SchemaField("accession_number", "STRING"),
+        bigquery.SchemaField("dir_url", "STRING"),
+        bigquery.SchemaField("status", "STRING"),
+        bigquery.SchemaField("year", "INTEGER"),
+        bigquery.SchemaField("qtr", "INTEGER"),
+    ]
+    
+    # 2. Check/Create Table explicitly
+    try:
+        client.get_table(QUEUE_TABLE)
+        logger.info(f"Table {QUEUE_TABLE} exists.")
+    except Exception:
+        logger.info(f"Table {QUEUE_TABLE} missing. Creating explicitly...")
+        table_obj = bigquery.Table(QUEUE_TABLE, schema=schema)
+        client.create_table(table_obj) # This locks the schema before data arrives
+        time.sleep(5) # Give GCP a moment to propagate metadata
+
+    # ... (Rest of your seeding logic: query count, fetch index, etc.) ...
+
+    
     logger.info(f"Checking queue for {year} Q{qtr}...")
     check_query = f"SELECT count(*) as cnt FROM `{QUEUE_TABLE}` WHERE year={year} AND qtr={qtr}"
     count = list(client.query(check_query))[0].cnt
@@ -79,7 +104,9 @@ def seed_queue_if_needed(year, qtr):
 
     if queue_data:
         logger.info(f"Seeding {len(queue_data)} filings into queue...")
-        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
+        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND",
+                            schema=schema,  # <--- CRITICAL ADDITION                
+                            )
         client.load_table_from_json(queue_data, QUEUE_TABLE, job_config=job_config).result()
 
 def parse_xml_to_holdings(xml_content, acc_num, filing_date):
@@ -256,7 +283,7 @@ def process_batch(year, qtr):
 
 if __name__ == "__main__":
     YEAR = int(os.getenv('YEAR', 2020))
-    QUARTER = int(os.getenv('QUARTER', 2))
+    QUARTER = int(os.getenv('QUARTER', 3))
     logger.info(f'------------Kicking off scraper for {YEAR},{QUARTER}')
     seed_queue_if_needed(YEAR, QUARTER)
     last_progress = time.time()
