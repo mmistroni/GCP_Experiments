@@ -52,6 +52,7 @@ def seed_queue_if_needed(year, qtr):
         bigquery.SchemaField("status", "STRING"),
         bigquery.SchemaField("year", "INTEGER"),
         bigquery.SchemaField("qtr", "INTEGER"),
+        bigquery.SchemaField("retries", "INTEGER"),
     ]
     
     # 2. Check/Create Table explicitly
@@ -283,7 +284,7 @@ def process_batch(year, qtr):
 
 if __name__ == "__main__":
     YEAR = int(os.getenv('YEAR', 2020))
-    QUARTER = int(os.getenv('QUARTER', 3))
+    QUARTER = int(os.getenv('QUARTER', 4))
     logger.info(f'------------Kicking off scraper for {YEAR},{QUARTER}')
     seed_queue_if_needed(YEAR, QUARTER)
     last_progress = time.time()
