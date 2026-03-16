@@ -5,13 +5,6 @@ REGION="us-central1"
 # 1. Build and push the image
 gcloud builds submit --tag $IMAGE_NAME .
 
-# 2. Deploy the Web App (Gateway)
-gcloud run deploy sec-13f-gateway \
-  --image $IMAGE_NAME \
-  --region $REGION \
-  --allow-unauthenticated \
-  --set-env-vars YEAR=2020,QTR=1
-
 # 4. Deploy the Form 4 Backfill Worker (Job)
 gcloud run jobs deploy form4-manual-worker-job \
   --image $IMAGE_NAME \
