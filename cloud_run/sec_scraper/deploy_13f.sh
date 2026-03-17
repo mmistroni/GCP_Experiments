@@ -34,6 +34,6 @@ gcloud run jobs deploy $JOB_NAME \
 echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
 
 # 3. Execute the Job immediately
-gcloud run jobs execute $JOB_NAME --region $REGION
+#gcloud run jobs execute $JOB_NAME --region $REGION
 
 echo "✅ Job started. Monitor logs with: gcloud beta run jobs executions describe [EXECUTION_NAME] --region $REGION"
