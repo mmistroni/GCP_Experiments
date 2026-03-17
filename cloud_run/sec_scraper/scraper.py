@@ -283,13 +283,43 @@ def process_batch(year, qtr):
 
 
 if __name__ == "__main__":
+    # 1. Initialization
     YEAR = int(os.getenv('YEAR', 2020))
     QUARTER = int(os.getenv('QUARTER', 4))
-    logger.info(f'------------Kicking off scraper for {YEAR},{QUARTER}')
+    STAGNATION_TIMEOUT = 2400  # 40 minutes in seconds
+    
+    logger.info(f'🚀 Kicking off scraper for {YEAR} Q{QUARTER}')
+    
+    # 2. Seed the queue
     seed_queue_if_needed(YEAR, QUARTER)
-    last_progress = time.time()
+    
+    # 3. Watchdog Timer Setup
+    last_progress_time = time.time()
+    
     while True:
-        if time.time() - last_progress > 1200: break
-        if process_batch(YEAR, QUARTER): last_progress = time.time()
-        else: break
+        current_time = time.time()
+        elapsed_since_progress = current_time - last_progress_time
+        
+        # Check for 40-minute stagnation
+        if elapsed_since_progress > STAGNATION_TIMEOUT:
+            logger.warning(f"🛑 No progress made in {STAGNATION_TIMEOUT // 60} minutes. Shutting down to save resources.")
+            break
+
+        logger.info(f"⏳ Time since last progress: {int(elapsed_since_progress)}s. Running next batch...")
+        
+        # Run the batch and check if it actually DID something
+        made_progress = process_batch(YEAR, QUARTER)
+        
+        if made_progress:
+            # Update the timer only if work was actually done
+            last_progress_time = time.time()
+            logger.info("✅ Batch completed successfully. Resetting watchdog timer.")
+        else:
+            # If process_batch returns False, the queue is empty
+            logger.info("📭 Queue is empty. Mission accomplished.")
+            break
+            
+        # Short cooldown between batches to stay under BQ DML quotas
         time.sleep(10)
+
+    logger.info("🏁 Scraper job finished.")
