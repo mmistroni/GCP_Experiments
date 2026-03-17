@@ -1,6 +1,6 @@
 from fredapi import Fred
 import os
-
+# https://medium.com/@wl8380/how-the-money-supply-secretly-drives-markets-and-how-to-track-it-with-python-8235a0e57eed
 # Initialize with your API key
 # Tip: Use os.environ.get('FRED_API_KEY') to keep it secure
 fred = Fred(api_key=os.environ['FRED_KEY'])
