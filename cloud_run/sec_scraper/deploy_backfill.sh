@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # --- CONFIGURATION ---
 IMAGE_NAME="gcr.io/datascience-projects/sec-scraper"
 REGION="us-central1"
