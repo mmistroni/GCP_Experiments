@@ -1,173 +1,137 @@
-import os, requests, logging, time, argparse
-from datetime import datetime, date, timedelta
+import os
+import time
+import logging
+import requests
 from lxml import etree
+from datetime import datetime
 from google.cloud import bigquery
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
 
-# --- CONFIG ---
+# --- CONFIGURATION ---
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "datascience-projects")
+DATASET_ID = "gcp_shareloader"
+TABLE_MASTER = f"{PROJECT_ID}.{DATASET_ID}.form4_master"
+TABLE_QUEUE = f"{PROJECT_ID}.{DATASET_ID}.form4_queue"
+BATCH_SIZE = int(os.getenv("BATCH_SIZE", "100"))
+
+HEADERS = {"User-Agent": "Institutional Research (mmistroni@gmail.com)"}
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("form4_daily_agent")
-
-HEADERS = {'User-Agent': 'Institutional Research (mmistroni@gmail.com)', 'Host': 'www.sec.gov'}
-PROJECT_ID = "datascience-projects"
-DATASET = "gcp_shareloader"
-QUEUE_TABLE = f"{PROJECT_ID}.{DATASET}.form4_queue"
-MASTER_TABLE = f"{PROJECT_ID}.{DATASET}.form4_master"
-STAGING_TABLE = f"{PROJECT_ID}.{DATASET}.stg_form4"
-
+logger = logging.getLogger("form4_dynamic_worker")
 client = bigquery.Client(project=PROJECT_ID)
 
-def get_session():
-    s = requests.Session()
-    retries = Retry(total=5, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
-    s.mount('https://', HTTPAdapter(max_retries=retries))
-    s.headers.update(HEADERS)
-    return s
+def get_text(node, path):
+    """Safely extracts text from an XPath path."""
+    res = node.xpath(path)
+    if res and hasattr(res[0], 'text') and res[0].text:
+        return res[0].text.strip()
+    if res and isinstance(res[0], str):
+        return res[0].strip()
+    return None
 
-def parse_xml(xml_content, acc):
+def parse_form4_xml(xml_content, accession_number):
+    """Parses Table I and Table II using local-name to ignore namespaces."""
+    trades = []
     try:
         root = etree.fromstring(xml_content, parser=etree.XMLParser(recover=True))
-        trades = []
-        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])")
-        issuer = root.xpath("string(//*[local-name()='issuerName'])")
-        owner = root.xpath("string(//*[local-name()='reportingOwnerName'])")
-        
-        nodes = root.xpath("//*[local-name()='nonDerivativeTransaction' or local-name()='derivativeTransaction']")
-        for tx in nodes:
-            shares = tx.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
-            price = tx.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
-            code = tx.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])")
-            t_date = tx.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
-            
-            if ticker and shares:
+        ticker = get_text(root, "//*[local-name()='issuerTradingSymbol']")
+        issuer = get_text(root, "//*[local-name()='issuerName']")
+        owner = get_text(root, "//*[local-name()='reportingOwnerName']")
+
+        # Combined logic for Table I and Table II
+        paths = ["//*[local-name()='nonDerivativeTransaction']", "//*[local-name()='derivativeTransaction']"]
+        for path in paths:
+            for node in root.xpath(path):
                 try:
+                    s_val = get_text(node, ".//*[local-name()='transactionShares']/*[local-name()='value']")
+                    p_val = get_text(node, ".//*[local-name()='transactionPricePerShare']/*[local-name()='value']")
+                    code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
+                    date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
+
                     trades.append({
-                        "ticker": ticker.strip().upper(),
-                        "issuer": issuer.strip()[:1024] if issuer else "Unknown",
-                        "owner_name": owner.strip()[:1024] if owner else "Unknown",
-                        "shares": float(shares),
-                        "price": float(price) if (price and price.strip()) else 0.0,
+                        "accession_number": accession_number,
+                        "ticker": ticker,
+                        "issuer": issuer[:1024] if issuer else "Unknown",
+                        "owner_name": owner[:1024] if owner else "Unknown",
+                        "shares": float(s_val) if s_val else 0.0,
+                        "price": float(p_val) if p_val else 0.0,
                         "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date, 
-                        "accession_number": acc,
+                        "filing_date": date,
                         "ingested_at": datetime.utcnow().isoformat()
                     })
-                except: continue
-        return trades
-    except: return []
+                except Exception: continue
+    except Exception as e:
+        logger.error(f"Parser failed for {accession_number}: {e}")
+    return trades
 
-def seed_daily_queue():
-    """Checks last 4 days for new filings."""
-    year = date.today().year
-    qtr = (date.today().month - 1) // 3 + 1
-    new_found = 0
+def update_queue(acc, status):
+    """Updates BQ status to prevent re-processing."""
+    query = f"UPDATE `{TABLE_QUEUE}` SET status = @status, updated_at = CURRENT_TIMESTAMP() WHERE accession_number = @acc"
+    job_config = bigquery.QueryJobConfig(
+        query_parameters=[
+            bigquery.ScalarQueryParameter("status", "STRING", status),
+            bigquery.ScalarQueryParameter("acc", "STRING", acc),
+        ]
+    )
+    client.query(query, job_config=job_config).result()
 
-    with get_session() as s:
-        for i in range(4):
-            check_date = date.today() - timedelta(days=i)
-            if check_date.weekday() >= 5: continue # Skip weekends
+def main():
+    logger.info(f"🚀 Starting Dynamic URL Batch for {DATASET_ID}...")
+    query = f"SELECT cik, accession_number FROM `{TABLE_QUEUE}` WHERE status = 'pending' LIMIT {BATCH_SIZE}"
+    rows = list(client.query(query).result())
+    
+    if not rows:
+        logger.info("🏁 No work found.")
+        return
+
+    all_trades = []
+    with requests.Session() as s:
+        s.headers.update(HEADERS)
+        for i, row in enumerate(rows, 1):
+            cik, acc = row['cik'], row['accession_number']
+            clean_acc = acc.replace('-', '')
             
-            date_str = check_date.strftime("%Y%m%d")
-            # Try standard and crawler indices
-            for idx_type in ['form', 'crawler']:
-                url = f"https://www.sec.gov/Archives/edgar/daily-index/{year}/QTR{qtr}/{idx_type}.{date_str}.idx"
-                logger.info(f"🔍 Checking: {url}")
-                res = s.get(url, timeout=15)
-                if res.status_code != 200: continue
-                
-                lines = [l for l in res.text.splitlines() if '|4|' in l or '|4/A|' in l]
-                if not lines: continue
-
-                existing_query = f"SELECT accession_number FROM `{QUEUE_TABLE}` WHERE year={year} AND qtr={qtr}"
-                existing_accs = {row.accession_number for row in client.query(existing_query)}
-                
-                to_insert = []
-                for line in lines:
-                    p = line.split('|')
-                    acc = p[4].split('/')[-1].replace('.txt', '')
-                    if acc not in existing_accs:
-                        to_insert.append({
-                            "cik": p[0], "accession_number": acc, "index_path": p[4],
-                            "status": "pending", "year": year, "qtr": qtr,
-                            "updated_at": datetime.utcnow().isoformat()
-                        })
-                
-                if to_insert:
-                    client.load_table_from_json(to_insert, QUEUE_TABLE).result()
-                    new_found += len(to_insert)
-                    logger.info(f"🌱 Added {len(to_insert)} items from {date_str}")
-
-    return new_found
-
-def process_daily_batch(limit):
-    year, qtr = date.today().year, (date.today().month - 1) // 3 + 1
-    query = f"SELECT * FROM `{QUEUE_TABLE}` WHERE status='pending' AND year={year} AND qtr={qtr} LIMIT {limit}"
-    df = client.query(query).to_dataframe()
-    if df.empty: return False, 0
-
-    all_trades, success_accs = [], []
-    with get_session() as s:
-        for i, row in df.iterrows():
-            acc = row['accession_number']
-            logger.info(f"➡️ [{i+1}/{len(df)}] Processing {acc}")
+            # --- THE DYNAMIC URL FIX ---
+            # 1. Ask the folder: "What files do you have?"
+            dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
+            xml_url = None
+            
             try:
-                # 1. Get XML Path
-                dir_url = f"https://www.sec.gov/Archives/{row['index_path'].replace('.txt', '-index.json')}"
-                res = s.get(dir_url, timeout=10)
-                if res.status_code == 403: return False, -1
-                if res.status_code != 200:
-                    client.query(f"UPDATE `{QUEUE_TABLE}` SET status='failed' WHERE accession_number='{acc}'").result()
+                dir_res = s.get(dir_url, timeout=10)
+                if dir_res.status_code == 200:
+                    items = dir_res.json().get('directory', {}).get('item', [])
+                    # Find the real XML filename
+                    xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
+                    if xml_name:
+                        xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
+                
+                if not xml_url:
+                    logger.warning(f"[{i}/{len(rows)}] ❌ {acc}: No XML found in directory.")
+                    update_queue(acc, "no_xml_found")
                     continue
 
-                items = res.json().get('directory', {}).get('item', [])
-                xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
-                if not xml_name:
-                    client.query(f"UPDATE `{QUEUE_TABLE}` SET status='skipped' WHERE accession_number='{acc}'").result()
-                    continue
+                # 2. Fetch the actual discovered XML
+                res = s.get(xml_url, timeout=10)
+                if res.status_code == 200:
+                    trades = parse_form4_xml(res.content, acc)
+                    if trades:
+                        all_trades.extend(trades)
+                        update_queue(acc, "done")
+                        logger.info(f"[{i}/{len(rows)}] ✅ {acc}: Found {len(trades)} trades.")
+                    else:
+                        update_queue(acc, "no_trades_found")
+                        logger.warning(f"[{i}/{len(rows)}] ⚠️ {acc}: Empty XML.")
+                else:
+                    logger.error(f"[{i}/{len(rows)}] ❌ {acc}: HTTP {res.status_code}")
+            
+            except Exception as e:
+                logger.error(f"[{i}/{len(rows)}] 🔥 {acc}: {e}")
+            
+            time.sleep(0.12) # SEC Compliance
 
-                # 2. Extract
-                xml_url = f"https://www.sec.gov/Archives/edgar/data/{row['cik']}/{acc.replace('-', '')}/{xml_name}"
-                xml_res = s.get(xml_url, timeout=10)
-                if xml_res.status_code == 200:
-                    trades = parse_xml(xml_res.content, acc)
-                    if trades: all_trades.extend(trades)
-                    success_accs.append(acc)
-                time.sleep(0.12)
-            except: continue
-
+    # Final Batch Ingest
     if all_trades:
-        tmp = f"{STAGING_TABLE}_daily_{int(time.time())}"
-        client.load_table_from_json(all_trades, tmp).result()
-        client.query(f"""
-            MERGE `{MASTER_TABLE}` T USING `{tmp}` S ON T.accession_number=S.accession_number AND T.ticker=S.ticker AND T.shares=S.shares AND T.filing_date=S.filing_date
-            WHEN NOT MATCHED THEN INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
-            VALUES (S.filing_date, S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
-        """).result()
-        client.delete_table(tmp)
-
-    if success_accs:
-        acc_str = ",".join([f"'{a}'" for a in success_accs])
-        client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', updated_at=CURRENT_TIMESTAMP() WHERE accession_number IN ({acc_str})").result()
-
-    return True, len(success_accs)
+        client.load_table_from_json(all_trades, TABLE_MASTER).result()
+        logger.info(f"✨ Ingested {len(all_trades)} trades.")
 
 if __name__ == "__main__":
-    # 1. Force Seeding for the last 4 days
-    new_items = seed_daily_queue()
-    
-    # 2. Run Process
-    total_ingested = 0
-    while True:
-        # We only look for CURRENT quarter/year items to avoid 404s on old indices
-        work_done, count = process_daily_batch(100)
-        
-        if count == -1: break # Rate limited
-        if count == 0:
-            logger.info("🏁 Daily Queue Clean.")
-            break
-            
-        total_ingested += count
-        if total_ingested >= 500: break # Safety cap for daily run
-
-    logger.info(f"✨ Daily Run Complete. Ingested: {total_ingested}")
+    main()
