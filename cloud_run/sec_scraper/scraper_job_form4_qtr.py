@@ -100,77 +100,124 @@ def seed_queue(year, qtr):
     else:
         logger.info("✅ Queue already up to date.")
 
+
 def process_batch_sync(batch_limit, year, qtr):
-    """The synchronous processing heart with Triple-Path Fallback."""
+    """
+    The 'Deep Crawler' version of the sync processor.
+    Handles standard paths, JSON maps, and HTML index scraping for 
+    non-standard sub-folders (like AMD/CIK 0000002488).
+    """
     query = f"""
         SELECT * FROM `{QUEUE_TABLE}` 
         WHERE status='pending' AND year={year} AND qtr={qtr} 
+        ORDER BY accession_number DESC
         LIMIT {batch_limit}
     """
     df = client.query(query).to_dataframe()
     if df.empty: return False, 0
 
     all_trades, success_accs = [], []
+    
     with get_session() as s:
         for i, row in enumerate(df.to_dict('records'), 1):
             acc = row['accession_number']
             cik = row['cik']
             clean_acc = acc.replace('-', '')
-            logger.info(f"➡️ [{i}/{len(df)}] Acc: {acc}")
+            base_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}"
+            
+            logger.info(f"➡️ [{i}/{len(df)}] Processing Acc: {acc} (CIK: {cik})")
             
             xml_content = None
-            # --- STRATEGY 1: Try the JSON Index (The 'Map') ---
-            try:
-                idx_path = row['index_path'].replace('.txt', '-index.json')
-                res = s.get(f"https://www.sec.gov/Archives/{idx_path}", timeout=10)
-                if res.status_code == 200:
-                    items = res.json().get('directory', {}).get('item', [])
-                    xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
-                    if xml_name:
-                        xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
-                        xml_res = s.get(xml_url, timeout=10)
-                        if xml_res.status_code == 200:
-                            xml_content = xml_res.content
-            except Exception: pass
-
-            # --- STRATEGY 2: Direct Fallback (The 'Standard') ---
-            if not xml_content:
-                for fallback_name in ['form4.xml', 'doc1.xml', 'primary_doc.xml']:
-                    f_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{fallback_name}"
-                    f_res = s.get(f_url, timeout=10)
-                    if f_res.status_code == 200:
-                        xml_content = f_res.content
-                        break
             
-            # --- PROCESSING ---
+            # --- STRATEGY 1: The "Direct Hits" (Fastest) ---
+            # Most common names for Form 4 XML files
+            for target in ['form4.xml', 'doc1.xml', 'primary_doc.xml']:
+                try:
+                    res = s.get(f"{base_url}/{target}", timeout=8)
+                    if res.status_code == 200:
+                        xml_content = res.content
+                        logger.info(f"   ✅ Found standard: {target}")
+                        break
+                except Exception: continue
+
+            # --- STRATEGY 2: The "Deep Index Scraper" (For AMD/Non-Standard) ---
+            # If standard names fail, we look at the index.html to find the real file
+            if not xml_content:
+                try:
+                    idx_res = s.get(f"{base_url}/index.html", timeout=8)
+                    if idx_res.status_code == 200:
+                        # Parse the HTML to find any link ending in .xml
+                        tree = etree.HTML(idx_res.content)
+                        # Find all <a> tags where the text or href ends in .xml
+                        links = tree.xpath("//a[contains(@href, '.xml')]/@href")
+                        
+                        for link in links:
+                            # Filter out system/schema files we don't want
+                            if any(x in link.lower() for x in ['types.xml', 'schema.xml', 'submission.xml']):
+                                continue
+                            
+                            # Construct full URL (some links are relative, some absolute)
+                            xml_url = link if link.startswith('http') else f"{base_url}/{link.lstrip('/')}"
+                            
+                            x_res = s.get(xml_url, timeout=8)
+                            if x_res.status_code == 200:
+                                xml_content = x_res.content
+                                logger.info(f"   🔍 Found via Deep Crawl: {link}")
+                                break
+                except Exception as e:
+                    logger.error(f"   💥 Deep Crawl failed for {acc}: {e}")
+
+            # --- PARSING & STAGING ---
             if xml_content:
                 trades = parse_xml(xml_content, acc)
-                if trades: 
+                if trades:
                     all_trades.extend(trades)
-                success_accs.append(acc) # Mark as done even if 0 trades (to clear queue)
+                    logger.info(f"   ✨ Extracted {len(trades)} trades.")
+                else:
+                    logger.warning(f"   ⚠️ XML parsed but no trade data found.")
+                
+                success_accs.append(acc) # Mark as 'done' because we found the file
             else:
-                logger.warning(f"❌ {acc}: All URL strategies failed (404).")
+                logger.error(f"   ❌ All strategies failed (404) for {acc}.")
+                # Mark as not_found so we don't keep spinning on it
                 client.query(f"UPDATE `{QUEUE_TABLE}` SET status='not_found' WHERE accession_number='{acc}'").result()
 
-            time.sleep(0.12) # SEC Compliance
+            # Mandatory SEC rate-limit buffer
+            time.sleep(0.12)
 
-    # --- BATCH INGESTION (Same as before) ---
+    # --- ATOMIC BIGQUERY UPDATE ---
     if all_trades:
+        # 1. Load to a unique temporary staging table
         tmp_id = f"{STAGING_TABLE}_sync_{int(time.time())}"
         client.load_table_from_json(all_trades, tmp_id).result()
-        client.query(f"""
-            MERGE `{MASTER_TABLE}` T USING `{tmp_id}` S 
-            ON T.accession_number=S.accession_number AND T.ticker=S.ticker AND T.shares=S.shares AND T.filing_date=S.filing_date
-            WHEN NOT MATCHED THEN INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
-            VALUES (S.filing_date, S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
-        """).result()
+        
+        # 2. MERGE into Master Table to prevent duplicates
+        merge_sql = f"""
+            MERGE `{MASTER_TABLE}` T
+            USING `{tmp_id}` S
+            ON T.accession_number = S.accession_number 
+               AND T.ticker = S.ticker 
+               AND T.shares = S.shares 
+               AND T.filing_date = S.filing_date
+            WHEN NOT MATCHED THEN
+              INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
+              VALUES (S.filing_date, S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
+        """
+        client.query(merge_sql).result()
         client.delete_table(tmp_id)
 
+    # --- FINALIZE QUEUE STATUS ---
     if success_accs:
         acc_str = ",".join([f"'{a}'" for a in success_accs])
-        client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', updated_at=CURRENT_TIMESTAMP() WHERE accession_number IN ({acc_str})").result()
+        update_sql = f"""
+            UPDATE `{QUEUE_TABLE}` 
+            SET status='done', updated_at=CURRENT_TIMESTAMP() 
+            WHERE accession_number IN ({acc_str})
+        """
+        client.query(update_sql).result()
 
     return True, len(success_accs)
+
 
 
 
