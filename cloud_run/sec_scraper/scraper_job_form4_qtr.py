@@ -101,7 +101,7 @@ def seed_queue(year, qtr):
         logger.info("✅ Queue already up to date.")
 
 def process_batch_sync(batch_limit, year, qtr):
-    """The synchronous processing heart."""
+    """The synchronous processing heart with Triple-Path Fallback."""
     query = f"""
         SELECT * FROM `{QUEUE_TABLE}` 
         WHERE status='pending' AND year={year} AND qtr={qtr} 
@@ -112,51 +112,52 @@ def process_batch_sync(batch_limit, year, qtr):
 
     all_trades, success_accs = [], []
     with get_session() as s:
-        for i, row in df.iterrows():
+        for i, row in enumerate(df.to_dict('records'), 1):
             acc = row['accession_number']
-            logger.info(f"➡️ [{i+1}/{len(df)}] Acc: {acc}")
+            cik = row['cik']
+            clean_acc = acc.replace('-', '')
+            logger.info(f"➡️ [{i}/{len(df)}] Acc: {acc}")
             
+            xml_content = None
+            # --- STRATEGY 1: Try the JSON Index (The 'Map') ---
             try:
-                # 1. Fetch JSON Index to find the XML filename
-                # If path was seeded from a daily index that expired, this will 404.
                 idx_path = row['index_path'].replace('.txt', '-index.json')
-                dir_url = f"https://www.sec.gov/Archives/{idx_path}"
-                res = s.get(dir_url, timeout=12)
-                
-                if res.status_code == 403: return False, -1 # Throttled by SEC
-                if res.status_code != 200:
-                    logger.warning(f"⚠️ {acc} index missing ({res.status_code}). Skipping.")
-                    client.query(f"UPDATE `{QUEUE_TABLE}` SET status='failed' WHERE accession_number='{acc}'").result()
-                    continue
+                res = s.get(f"https://www.sec.gov/Archives/{idx_path}", timeout=10)
+                if res.status_code == 200:
+                    items = res.json().get('directory', {}).get('item', [])
+                    xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
+                    if xml_name:
+                        xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
+                        xml_res = s.get(xml_url, timeout=10)
+                        if xml_res.status_code == 200:
+                            xml_content = xml_res.content
+            except Exception: pass
 
-                items = res.json().get('directory', {}).get('item', [])
-                xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
-                
-                if not xml_name:
-                    client.query(f"UPDATE `{QUEUE_TABLE}` SET status='skipped' WHERE accession_number='{acc}'").result()
-                    continue
+            # --- STRATEGY 2: Direct Fallback (The 'Standard') ---
+            if not xml_content:
+                for fallback_name in ['form4.xml', 'doc1.xml', 'primary_doc.xml']:
+                    f_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{fallback_name}"
+                    f_res = s.get(f_url, timeout=10)
+                    if f_res.status_code == 200:
+                        xml_content = f_res.content
+                        break
+            
+            # --- PROCESSING ---
+            if xml_content:
+                trades = parse_xml(xml_content, acc)
+                if trades: 
+                    all_trades.extend(trades)
+                success_accs.append(acc) # Mark as done even if 0 trades (to clear queue)
+            else:
+                logger.warning(f"❌ {acc}: All URL strategies failed (404).")
+                client.query(f"UPDATE `{QUEUE_TABLE}` SET status='not_found' WHERE accession_number='{acc}'").result()
 
-                # 2. Fetch the actual XML
-                xml_url = f"https://www.sec.gov/Archives/edgar/data/{row['cik']}/{acc.replace('-', '')}/{xml_name}"
-                xml_res = s.get(xml_url, timeout=12)
-                
-                if xml_res.status_code == 200:
-                    trades = parse_xml(xml_res.content, acc)
-                    if trades: all_trades.extend(trades)
-                    success_accs.append(acc)
-                
-                # SEC COMPLIANCE: 0.1s sleep is mandatory
-                time.sleep(0.12)
-                
-            except Exception as e:
-                logger.error(f"💥 Fatal error on {acc}: {e}")
-                continue
+            time.sleep(0.12) # SEC Compliance
 
-    # 3. Batch Update BigQuery
+    # --- BATCH INGESTION (Same as before) ---
     if all_trades:
         tmp_id = f"{STAGING_TABLE}_sync_{int(time.time())}"
         client.load_table_from_json(all_trades, tmp_id).result()
-        # Atomic MERGE into Master
         client.query(f"""
             MERGE `{MASTER_TABLE}` T USING `{tmp_id}` S 
             ON T.accession_number=S.accession_number AND T.ticker=S.ticker AND T.shares=S.shares AND T.filing_date=S.filing_date
@@ -165,12 +166,13 @@ def process_batch_sync(batch_limit, year, qtr):
         """).result()
         client.delete_table(tmp_id)
 
-    # 4. Finalize Status
     if success_accs:
         acc_str = ",".join([f"'{a}'" for a in success_accs])
         client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', updated_at=CURRENT_TIMESTAMP() WHERE accession_number IN ({acc_str})").result()
 
     return True, len(success_accs)
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

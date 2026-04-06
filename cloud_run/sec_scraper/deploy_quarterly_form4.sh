@@ -15,7 +15,7 @@ echo "📦 Deploying Cloud Run Job: form4-quarterly-backfill..."
 gcloud run jobs deploy form4-quarterly-backfill \
   --image $IMAGE_NAME \
   --command "python" \
-  --args "scraper_job_sync_quarterly.py" \
+  --args "scraper_job_form4_qtr.py" \
   --region $REGION \
   --tasks 1 \
   --max-retries 0 \
