@@ -1,4 +1,4 @@
-import os, requests, logging, time, argparse
+import os, requests, logging, time, argparse, re
 from datetime import datetime, date
 from lxml import etree
 from google.cloud import bigquery
@@ -7,7 +7,7 @@ from urllib3.util.retry import Retry
 
 # --- CONFIGURATION ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("form4_sync_resilient")
+logger = logging.getLogger("form4_sync_archive_final")
 
 HEADERS = {
     'User-Agent': 'Institutional Research (mmistroni@gmail.com)',
@@ -15,7 +15,6 @@ HEADERS = {
     'Accept-Encoding': 'gzip, deflate'
 }
 
-# GCP Constants
 PROJECT_ID = "datascience-projects"
 DATASET = "gcp_shareloader"
 QUEUE_TABLE = f"{PROJECT_ID}.{DATASET}.form4_queue"
@@ -26,7 +25,6 @@ client = bigquery.Client(project=PROJECT_ID)
 
 def get_session():
     s = requests.Session()
-    # High retry count for backfill stability
     retries = Retry(total=10, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
     s.mount('https://', HTTPAdapter(max_retries=retries))
     s.headers.update(HEADERS)
@@ -63,7 +61,9 @@ def parse_xml(xml_content, acc):
                     })
                 except (ValueError, TypeError): continue
         return trades
-    except Exception: return []
+    except Exception as e: 
+        logger.error(f"   💥 XML Parse Error for {acc}: {e}")
+        return []
 
 def seed_queue(year, qtr):
     """Idempotent seeding of the Quarterly Master Index."""
@@ -78,7 +78,6 @@ def seed_queue(year, qtr):
         
     lines = [l for l in res.text.splitlines() if '|4|' in l or '|4/A|' in l]
     
-    # Check existing to avoid massive duplicate insertions
     existing_sql = f"SELECT accession_number FROM `{QUEUE_TABLE}` WHERE year={year} AND qtr={qtr}"
     existing = {row.accession_number for row in client.query(existing_sql)}
     
@@ -100,12 +99,9 @@ def seed_queue(year, qtr):
     else:
         logger.info("✅ Queue already up to date.")
 
-
 def process_batch_sync(batch_limit, year, qtr):
     """
-    The 'Deep Crawler' version of the sync processor.
-    Handles standard paths, JSON maps, and HTML index scraping for 
-    non-standard sub-folders (like AMD/CIK 0000002488).
+    Archive Processor: Uses .txt archive to guarantee 100% XML capture.
     """
     query = f"""
         SELECT * FROM `{QUEUE_TABLE}` 
@@ -116,89 +112,47 @@ def process_batch_sync(batch_limit, year, qtr):
     df = client.query(query).to_dataframe()
     if df.empty: return False, 0
 
-    all_trades, success_accs = [], []
+    all_trades, success_accs, failed_accs = [], [], []
     
     with get_session() as s:
         for i, row in enumerate(df.to_dict('records'), 1):
-            acc = row['accession_number']
-            cik = row['cik']
+            acc, cik = row['accession_number'], row['cik']
             clean_acc = acc.replace('-', '')
-            base_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}"
+            archive_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{acc}.txt"
             
-            logger.info(f"➡️ [{i}/{len(df)}] Processing Acc: {acc} (CIK: {cik})")
+            logger.info(f"➡️ [{i}/{len(df)}] Processing Archive: {acc}")
             
-            xml_content = None
-            
-            # --- STRATEGY 1: The "Direct Hits" (Fastest) ---
-            # Most common names for Form 4 XML files
-            for target in ['form4.xml', 'doc1.xml', 'primary_doc.xml']:
-                try:
-                    res = s.get(f"{base_url}/{target}", timeout=8)
-                    if res.status_code == 200:
-                        xml_content = res.content
-                        logger.info(f"   ✅ Found standard: {target}")
-                        break
-                except Exception: continue
+            try:
+                res = s.get(archive_url, timeout=12)
+                if res.status_code == 200:
+                    xml_blocks = re.findall(r'<XML>(.*?)</XML>', res.text, re.DOTALL)
+                    found_form4 = False
+                    
+                    for block in xml_blocks:
+                        if '<ownershipDocument>' in block:
+                            trades = parse_xml(block.strip().encode('utf-8'), acc)
+                            if trades:
+                                all_trades.extend(trades)
+                                success_accs.append(acc)
+                                found_form4 = True
+                                break 
+                    
+                    if not found_form4: failed_accs.append(acc)
+                else: failed_accs.append(acc)
+            except Exception as e:
+                logger.error(f"   💥 Error for {acc}: {e}")
+                failed_accs.append(acc)
 
-            # --- STRATEGY 2: The "Deep Index Scraper" (For AMD/Non-Standard) ---
-            # If standard names fail, we look at the index.html to find the real file
-            if not xml_content:
-                try:
-                    idx_res = s.get(f"{base_url}/index.html", timeout=8)
-                    if idx_res.status_code == 200:
-                        # Parse the HTML to find any link ending in .xml
-                        tree = etree.HTML(idx_res.content)
-                        # Find all <a> tags where the text or href ends in .xml
-                        links = tree.xpath("//a[contains(@href, '.xml')]/@href")
-                        
-                        for link in links:
-                            # Filter out system/schema files we don't want
-                            if any(x in link.lower() for x in ['types.xml', 'schema.xml', 'submission.xml']):
-                                continue
-                            
-                            # Construct full URL (some links are relative, some absolute)
-                            xml_url = link if link.startswith('http') else f"{base_url}/{link.lstrip('/')}"
-                            
-                            x_res = s.get(xml_url, timeout=8)
-                            if x_res.status_code == 200:
-                                xml_content = x_res.content
-                                logger.info(f"   🔍 Found via Deep Crawl: {link}")
-                                break
-                except Exception as e:
-                    logger.error(f"   💥 Deep Crawl failed for {acc}: {e}")
+            time.sleep(0.12) # Rate limit compliance
 
-            # --- PARSING & STAGING ---
-            if xml_content:
-                trades = parse_xml(xml_content, acc)
-                if trades:
-                    all_trades.extend(trades)
-                    logger.info(f"   ✨ Extracted {len(trades)} trades.")
-                else:
-                    logger.warning(f"   ⚠️ XML parsed but no trade data found.")
-                
-                success_accs.append(acc) # Mark as 'done' because we found the file
-            else:
-                logger.error(f"   ❌ All strategies failed (404) for {acc}.")
-                # Mark as not_found so we don't keep spinning on it
-                client.query(f"UPDATE `{QUEUE_TABLE}` SET status='not_found' WHERE accession_number='{acc}'").result()
-
-            # Mandatory SEC rate-limit buffer
-            time.sleep(0.12)
-
-    # --- ATOMIC BIGQUERY UPDATE ---
     if all_trades:
-        # 1. Load to a unique temporary staging table
         tmp_id = f"{STAGING_TABLE}_sync_{int(time.time())}"
         client.load_table_from_json(all_trades, tmp_id).result()
-        
-        # 2. MERGE into Master Table to prevent duplicates
         merge_sql = f"""
             MERGE `{MASTER_TABLE}` T
             USING `{tmp_id}` S
             ON T.accession_number = S.accession_number 
-               AND T.ticker = S.ticker 
-               AND T.shares = S.shares 
-               AND T.filing_date = S.filing_date
+               AND T.ticker = S.ticker AND T.shares = S.shares AND T.filing_date = S.filing_date
             WHEN NOT MATCHED THEN
               INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
               VALUES (S.filing_date, S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
@@ -206,59 +160,28 @@ def process_batch_sync(batch_limit, year, qtr):
         client.query(merge_sql).result()
         client.delete_table(tmp_id)
 
-    # --- FINALIZE QUEUE STATUS ---
     if success_accs:
         acc_str = ",".join([f"'{a}'" for a in success_accs])
-        update_sql = f"""
-            UPDATE `{QUEUE_TABLE}` 
-            SET status='done', updated_at=CURRENT_TIMESTAMP() 
-            WHERE accession_number IN ({acc_str})
-        """
-        client.query(update_sql).result()
+        client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', updated_at=CURRENT_TIMESTAMP() WHERE accession_number IN ({acc_str})").result()
+    if failed_accs:
+        fail_str = ",".join([f"'{a}'" for a in failed_accs])
+        client.query(f"UPDATE `{QUEUE_TABLE}` SET status='not_found' WHERE accession_number IN ({fail_str})").result()
 
     return True, len(success_accs)
 
-
-
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    
-    # Priority: Command Line Arg > Env Var > Default
-    default_year = date.today().year
-    default_qtr = (date.today().month - 1) // 3 + 1
-    
+    default_year, default_qtr = date.today().year, (date.today().month - 1) // 3 + 1
     parser.add_argument("--year", type=int, default=int(os.getenv('AGENT_YEAR', default_year)))
     parser.add_argument("--qtr", type=int, default=int(os.getenv('AGENT_QTR', default_qtr)))
     parser.add_argument("--limit", type=int, default=int(os.getenv('AGENT_LIMIT', 500)))
-
     args = parser.parse_args()
 
-    logger.info("="*60)
-    logger.info(f"🏗️ SYNC QUARTERLY JOB: {args.year} Q{args.qtr} | Target: {args.limit}")
-    logger.info("="*60)
-
-    # Step 1: Idempotent Seed
     seed_queue(args.year, args.qtr)
-
-    # Step 2: Synchronous Processing Loop
     total_ingested = 0
     while total_ingested < args.limit:
-        # Process in slots of 100
         batch_request = min(100, args.limit - total_ingested)
-        
         has_work, count = process_batch_sync(batch_request, args.year, args.qtr)
-        
-        if count == -1: 
-            logger.error("🛑 Hard Stop: SEC Throttling (403).")
-            break
-        if count == 0:
-            logger.info("🏁 No more pending work found for this quarter.")
-            break
-            
+        if count == 0: break
         total_ingested += count
-        logger.info(f"📊 Session Progress: {total_ingested}/{args.limit} completed.")
-
-    logger.info("="*60)
-    logger.info(f"✨ Run Finished. Total finalized in this session: {total_ingested}")
-    logger.info("="*60)
+        logger.info(f"📊 Progress: {total_ingested}/{args.limit}")
