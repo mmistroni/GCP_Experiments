@@ -152,10 +152,13 @@ def process_batch_sync(batch_limit, year, qtr):
             MERGE `{MASTER_TABLE}` T
             USING `{tmp_id}` S
             ON T.accession_number = S.accession_number 
-               AND T.ticker = S.ticker AND T.shares = S.shares AND T.filing_date = S.filing_date
+            AND T.ticker = S.ticker 
+            AND T.shares = S.shares 
+            -- FIX: Cast the string date from staging to a real DATE type
+            AND T.filing_date = CAST(S.filing_date AS DATE)
             WHEN NOT MATCHED THEN
-              INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
-              VALUES (S.filing_date, S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
+            INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
+            VALUES (CAST(S.filing_date AS DATE), S.ticker, S.issuer, S.owner_name, S.shares, S.price, S.transaction_side, S.accession_number, S.ingested_at)
         """
         client.query(merge_sql).result()
         client.delete_table(tmp_id)
