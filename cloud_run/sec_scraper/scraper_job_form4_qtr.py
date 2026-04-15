@@ -35,51 +35,59 @@ from datetime import datetime
 
 def parse_xml(xml_content, acc):
     """
-    Robust Form 4 Parser: Captures deep-nested names, roles, and transaction data.
+    Final Form 4 Parser: Fixed for Identity Leaks and Role Extraction.
     """
     try:
-        # Use recovery=True to handle messy SEC archive XML/HTML wrappers
+        # Recover=True handles SEC XML/HTML formatting quirks
         parser = etree.XMLParser(recover=True, remove_blank_text=True)
         root = etree.fromstring(xml_content, parser=parser)
         
         trades = []
 
-        # 1. IDENTIFY THE ISSUER (Company Info)
+        # 1. ISSUER DATA (Global to the filing)
         ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
         issuer = root.xpath("string(//*[local-name()='issuerName'])").strip()
 
-        # 2. IDENTIFY THE OWNER & ROLE (The 'Who')
-        # We look specifically inside the reportingOwner block
-        owner_block = root.xpath("//*[local-name()='reportingOwner']")
-        if not owner_block:
-            return [] # Skip if no owner info exists
+        # 2. REPORTING OWNER DATA (Identity & Relationship)
+        # We find the owner block first to isolate the context
+        owner_blocks = root.xpath("//*[local-name()='reportingOwner']")
+        if not owner_blocks:
+            return []
 
-        owner = owner_block[0]
+        # Target the first owner (primary filer)
+        owner = owner_blocks[0]
         
-        # Deep path for name: reportingOwner -> reportingOwnerId -> reportingOwnerName
+        # Identity: Look deep into reportingOwnerId
         owner_name = owner.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
-        
-        # Fallback for older formats or different nesting
         if not owner_name:
+            # Fallback for alternative nesting
             owner_name = owner.xpath("string(.//*[contains(local-name(), 'Name')])").strip()
 
-        # Extract Roles (isDirector, isOfficer, isTenPercentOwner)
-        is_director = owner.xpath("string(.//*[local-name()='isDirector'])").strip() in ('1', 'true', 'True')
-        is_officer = owner.xpath("string(.//*[local-name()='isOfficer'])").strip() in ('1', 'true', 'True')
-        officer_title = owner.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
+        # Relationship: Look deep into reportingOwnerRelationship
+        # This is where isOfficer, isDirector, and officerTitle live
+        rel_node = owner.xpath(".//*[local-name()='reportingOwnerRelationship']")
+        
+        is_director = False
+        is_officer = False
+        officer_title = "N/A"
 
-        # 3. EXTRACT TRANSACTIONS (Table I - Non-Derivative)
-        # We focus on Table I as it represents actual stock ownership
+        if rel_node:
+            node = rel_node[0]
+            # SEC values can be '1', 'true', 'True', or 'yes'
+            is_director = node.xpath("string(.//*[local-name()='isDirector'])").lower() in ('1', 'true', 'yes')
+            is_officer = node.xpath("string(.//*[local-name()='isOfficer'])").lower() in ('1', 'true', 'yes')
+            officer_title = node.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
+
+        # 3. TRANSACTION DATA (Table I)
         transaction_nodes = root.xpath("//*[local-name()='nonDerivativeTransaction']")
 
         for node in transaction_nodes:
-            # Core Transaction Data
+            # Extract values from specific sub-tags
             shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
             price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
             code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
             t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
 
-            # Final validation before appending
             if ticker and owner_name:
                 try:
                     trades.append({
@@ -92,7 +100,7 @@ def parse_xml(xml_content, acc):
                         "shares": float(shares) if shares else 0.0,
                         "price": float(price) if price else 0.0,
                         "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date, # Handled by your SQL MERGE for casting
+                        "filing_date": t_date,
                         "accession_number": acc,
                         "ingested_at": datetime.utcnow().isoformat()
                     })
@@ -102,7 +110,6 @@ def parse_xml(xml_content, acc):
         return trades
 
     except Exception as e:
-        # Logging the error with the accession number helps find 'broken' XMLs later
         print(f"Error parsing XML for {acc}: {e}")
         return []
 
