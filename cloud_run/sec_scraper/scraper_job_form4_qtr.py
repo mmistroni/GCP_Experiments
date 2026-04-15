@@ -30,69 +30,80 @@ def get_session():
     s.headers.update(HEADERS)
     return s
 
+from lxml import etree
+from datetime import datetime
+
 def parse_xml(xml_content, acc):
     """
-    Enhanced XML extraction for Form 4.
-    Captures Names, Titles (CEO/Director), and cleans Tickers.
+    Robust Form 4 Parser: Captures deep-nested names, roles, and transaction data.
     """
     try:
-        # Accept bytes or string and parse with recovery for messy SEC XML
-        root = etree.fromstring(xml_content, parser=etree.XMLParser(recover=True))
-        trades = []
+        # Use recovery=True to handle messy SEC archive XML/HTML wrappers
+        parser = etree.XMLParser(recover=True, remove_blank_text=True)
+        root = etree.fromstring(xml_content, parser=parser)
         
-        # 1. TRACING THE IDENTITY (The 'Who')
-        # Use // to bypass namespace/depth issues for the reporting owner
-        owner_node = root.xpath("//*[local-name()='reportingOwner']")
-        owner_name = "Unknown"
-        is_director = False
-        is_officer = False
-        officer_title = "N/A"
+        trades = []
 
-        if owner_node:
-            node = owner_node[0]
-            owner_name = node.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
-            # Capture the 'Power' of the insider (Useful for your Agent's weightings)
-            is_director = node.xpath("string(.//*[local-name()='isDirector'])").lower() in ('1', 'true')
-            is_officer = node.xpath("string(.//*[local-name()='isOfficer'])").lower() in ('1', 'true')
-            officer_title = node.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
-
-        # 2. THE ISSUER (The 'Where')
+        # 1. IDENTIFY THE ISSUER (Company Info)
         ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
         issuer = root.xpath("string(//*[local-name()='issuerName'])").strip()
 
-        # 3. THE TRANSACTIONS (The 'What')
-        # Combined xpath for efficiency
-        nodes = root.xpath("//*[local-name()='nonDerivativeTransaction' or local-name()='derivativeTransaction']")
+        # 2. IDENTIFY THE OWNER & ROLE (The 'Who')
+        # We look specifically inside the reportingOwner block
+        owner_block = root.xpath("//*[local-name()='reportingOwner']")
+        if not owner_block:
+            return [] # Skip if no owner info exists
+
+        owner = owner_block[0]
         
-        for tx in nodes:
-            # Extract core numbers
-            shares = tx.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
-            price = tx.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
-            code = tx.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])")
-            t_date = tx.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
-            
-            # Validation: We need Ticker, Owner, and Shares for a valid signal
-            if ticker and owner_name != "Unknown" and shares:
+        # Deep path for name: reportingOwner -> reportingOwnerId -> reportingOwnerName
+        owner_name = owner.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
+        
+        # Fallback for older formats or different nesting
+        if not owner_name:
+            owner_name = owner.xpath("string(.//*[contains(local-name(), 'Name')])").strip()
+
+        # Extract Roles (isDirector, isOfficer, isTenPercentOwner)
+        is_director = owner.xpath("string(.//*[local-name()='isDirector'])").strip() in ('1', 'true', 'True')
+        is_officer = owner.xpath("string(.//*[local-name()='isOfficer'])").strip() in ('1', 'true', 'True')
+        officer_title = owner.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
+
+        # 3. EXTRACT TRANSACTIONS (Table I - Non-Derivative)
+        # We focus on Table I as it represents actual stock ownership
+        transaction_nodes = root.xpath("//*[local-name()='nonDerivativeTransaction']")
+
+        for node in transaction_nodes:
+            # Core Transaction Data
+            shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
+            price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
+            code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
+            t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
+
+            # Final validation before appending
+            if ticker and owner_name:
                 try:
                     trades.append({
-                        "ticker": ticker[:10], # Prevent 'Ticker Integrity' bloat
-                        "issuer": issuer[:1024] if issuer else "Unknown",
-                        "owner_name": owner_name[:1024],
+                        "ticker": ticker[:10],
+                        "issuer": issuer[:255],
+                        "owner_name": owner_name[:255],
                         "is_director": is_director,
                         "is_officer": is_officer,
                         "officer_title": officer_title[:255],
-                        "shares": float(shares),
-                        "price": float(price) if (price and price.strip()) else 0.0,
+                        "shares": float(shares) if shares else 0.0,
+                        "price": float(price) if price else 0.0,
                         "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date, # MERGE logic handles the cleaning/casting
+                        "filing_date": t_date, # Handled by your SQL MERGE for casting
                         "accession_number": acc,
                         "ingested_at": datetime.utcnow().isoformat()
                     })
-                except (ValueError, TypeError): 
+                except ValueError:
                     continue
+
         return trades
-    except Exception as e: 
-        logger.error(f"   💥 Fatal Parse Error for {acc}: {e}")
+
+    except Exception as e:
+        # Logging the error with the accession number helps find 'broken' XMLs later
+        print(f"Error parsing XML for {acc}: {e}")
         return []
 
 
