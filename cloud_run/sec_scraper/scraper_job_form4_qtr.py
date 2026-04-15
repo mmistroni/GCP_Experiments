@@ -31,39 +31,72 @@ def get_session():
     return s
 
 def parse_xml(xml_content, acc):
-    """Synchronous XML extraction for Form 4."""
+    """
+    Enhanced XML extraction for Form 4.
+    Captures Names, Titles (CEO/Director), and cleans Tickers.
+    """
     try:
+        # Accept bytes or string and parse with recovery for messy SEC XML
         root = etree.fromstring(xml_content, parser=etree.XMLParser(recover=True))
         trades = []
-        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])")
-        issuer = root.xpath("string(//*[local-name()='issuerName'])")
-        owner = root.xpath("string(//*[local-name()='reportingOwnerName'])")
         
+        # 1. TRACING THE IDENTITY (The 'Who')
+        # Use // to bypass namespace/depth issues for the reporting owner
+        owner_node = root.xpath("//*[local-name()='reportingOwner']")
+        owner_name = "Unknown"
+        is_director = False
+        is_officer = False
+        officer_title = "N/A"
+
+        if owner_node:
+            node = owner_node[0]
+            owner_name = node.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
+            # Capture the 'Power' of the insider (Useful for your Agent's weightings)
+            is_director = node.xpath("string(.//*[local-name()='isDirector'])").lower() in ('1', 'true')
+            is_officer = node.xpath("string(.//*[local-name()='isOfficer'])").lower() in ('1', 'true')
+            officer_title = node.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
+
+        # 2. THE ISSUER (The 'Where')
+        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
+        issuer = root.xpath("string(//*[local-name()='issuerName'])").strip()
+
+        # 3. THE TRANSACTIONS (The 'What')
+        # Combined xpath for efficiency
         nodes = root.xpath("//*[local-name()='nonDerivativeTransaction' or local-name()='derivativeTransaction']")
+        
         for tx in nodes:
+            # Extract core numbers
             shares = tx.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
             price = tx.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
             code = tx.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])")
             t_date = tx.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
             
-            if ticker and shares:
+            # Validation: We need Ticker, Owner, and Shares for a valid signal
+            if ticker and owner_name != "Unknown" and shares:
                 try:
                     trades.append({
-                        "ticker": ticker.strip().upper(),
-                        "issuer": issuer.strip()[:1024] if issuer else "Unknown",
-                        "owner_name": owner.strip()[:1024] if owner else "Unknown",
+                        "ticker": ticker[:10], # Prevent 'Ticker Integrity' bloat
+                        "issuer": issuer[:1024] if issuer else "Unknown",
+                        "owner_name": owner_name[:1024],
+                        "is_director": is_director,
+                        "is_officer": is_officer,
+                        "officer_title": officer_title[:255],
                         "shares": float(shares),
                         "price": float(price) if (price and price.strip()) else 0.0,
                         "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date, 
+                        "filing_date": t_date, # MERGE logic handles the cleaning/casting
                         "accession_number": acc,
                         "ingested_at": datetime.utcnow().isoformat()
                     })
-                except (ValueError, TypeError): continue
+                except (ValueError, TypeError): 
+                    continue
         return trades
     except Exception as e: 
-        logger.error(f"   💥 XML Parse Error for {acc}: {e}")
+        logger.error(f"   💥 Fatal Parse Error for {acc}: {e}")
         return []
+
+
+
 
 def seed_queue(year, qtr):
     """Idempotent seeding of the Quarterly Master Index."""
