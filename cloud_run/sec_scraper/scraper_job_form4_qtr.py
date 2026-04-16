@@ -33,55 +33,100 @@ def get_session():
 from lxml import etree
 from datetime import datetime
 
+from lxml import etree
+from datetime import datetime
+
 def parse_xml(xml_content, acc):
+    """
+    Ultra-Robust Form 4 Parser: 
+    Solves the Role Gap (Titles/Booleans) and the 'NONE' Ticker issue.
+    """
     try:
-        parser = etree.XMLParser(recover=True)
+        # Use recovery to handle SEC HTML/XML wrappers
+        parser = etree.XMLParser(recover=True, remove_blank_text=True)
         root = etree.fromstring(xml_content, parser=parser)
+        
         trades = []
 
-        # 1. TICKER & ISSUER (With 'NONE' protection)
-        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper() or "UNKNOWN"
+        # 1. TICKER EXTRACTION (Global Search with Fallback)
+        # We look for the symbol anywhere in the doc to avoid 'NONE'
+        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
+        if not ticker or ticker == 'NONE':
+            # Fallback: sometimes it's in a different namespace or case
+            ticker = root.xpath("string(//*[contains(local-name(), 'TradingSymbol')])").strip().upper()
+        
+        ticker = ticker if ticker else "UNKNOWN"
         issuer = root.xpath("string(//*[local-name()='issuerName'])").strip() or "N/A"
 
-        # 2. OWNER DATA
-        owner_node = root.xpath("//*[local-name()='reportingOwner']")[0]
-        
-        # Name
-        owner_name = owner_node.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
+        # 2. ROLE & IDENTITY EXTRACTION
+        # Find the reporting owner block
+        owner_blocks = root.xpath("//*[local-name()='reportingOwner']")
+        if not owner_blocks:
+            return []
+
+        primary_owner = owner_blocks[0]
+
+        # Name Extraction
+        owner_name = primary_owner.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
         if not owner_name:
             owner_name = root.xpath("string(//*[local-name()='reportingOwnerName'])").strip()
 
-        # ROLES (The Fix: search the whole tree if the local search fails)
-        is_dir_val = root.xpath("string(//*[local-name()='isDirector'])").lower()
-        is_off_val = root.xpath("string(//*[local-name()='isOfficer'])").lower()
-        title_val = root.xpath("string(//*[local-name()='officerTitle'])").strip()
+        # Relationship/Role Extraction (Aggressive Search)
+        # We check specifically inside the relationship block first
+        rel_block = primary_owner.xpath(".//*[local-name()='reportingOwnerRelationship']")
+        
+        is_director = False
+        is_officer = False
+        officer_title = "N/A"
 
-        is_director = is_dir_val in ('1', 'true', 'yes')
-        is_officer = is_off_val in ('1', 'true', 'yes')
-        officer_title = title_val if title_val else "N/A"
+        if rel_block:
+            node = rel_block[0]
+            is_dir_val = node.xpath("string(.//*[local-name()='isDirector'])").lower()
+            is_off_val = node.xpath("string(.//*[local-name()='isOfficer'])").lower()
+            title_val = node.xpath("string(.//*[local-name()='officerTitle'])").strip()
+            
+            is_director = is_dir_val in ('1', 'true', 'yes')
+            is_officer = is_off_val in ('1', 'true', 'yes')
+            officer_title = title_val if title_val else "N/A"
+        else:
+            # Global Fallback for roles if the block is missing
+            is_director = root.xpath("string(//*[local-name()='isDirector'])").lower() in ('1', 'true', 'yes')
+            is_officer = root.xpath("string(//*[local-name()='isOfficer'])").lower() in ('1', 'true', 'yes')
+            officer_title = root.xpath("string(//*[local-name()='officerTitle'])").strip() or "N/A"
 
-        # 3. TRANSACTIONS
+        # 3. TRANSACTION EXTRACTION (Table I)
         for node in root.xpath("//*[local-name()='nonDerivativeTransaction']"):
             shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
             price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
             code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
             t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
 
-            trades.append({
-                "ticker": ticker,
-                "owner_name": owner_name,
-                "is_director": is_director,
-                "is_officer": is_officer,
-                "officer_title": officer_title,
-                "shares": float(shares) if shares else 0.0,
-                "price": float(price) if price else 0.0,
-                "transaction_side": "BUY" if code == 'A' else "SELL",
-                "filing_date": t_date,
-                "accession_number": acc
-            })
+            if ticker and owner_name:
+                try:
+                    trades.append({
+                        "ticker": ticker[:10],
+                        "issuer": issuer[:255],
+                        "owner_name": owner_name[:255],
+                        "is_director": is_director,
+                        "is_officer": is_officer,
+                        "officer_title": officer_title[:255],
+                        "shares": float(shares) if shares else 0.0,
+                        "price": float(price) if price else 0.0,
+                        "transaction_side": "BUY" if code == 'A' else "SELL",
+                        "filing_date": t_date,
+                        "accession_number": acc,
+                        "ingested_at": datetime.utcnow().isoformat()
+                    })
+                except ValueError:
+                    continue
+
         return trades
+
     except Exception as e:
+        print(f"Error parsing {acc}: {e}")
         return []
+
+
 
 def seed_queue(year, qtr):
     """Idempotent seeding of the Quarterly Master Index."""
