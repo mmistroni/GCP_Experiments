@@ -34,87 +34,54 @@ from lxml import etree
 from datetime import datetime
 
 def parse_xml(xml_content, acc):
-    """
-    Final Form 4 Parser: Fixed for Identity Leaks and Role Extraction.
-    """
     try:
-        # Recover=True handles SEC XML/HTML formatting quirks
-        parser = etree.XMLParser(recover=True, remove_blank_text=True)
+        parser = etree.XMLParser(recover=True)
         root = etree.fromstring(xml_content, parser=parser)
-        
         trades = []
 
-        # 1. ISSUER DATA (Global to the filing)
-        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
-        issuer = root.xpath("string(//*[local-name()='issuerName'])").strip()
+        # 1. TICKER & ISSUER (With 'NONE' protection)
+        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper() or "UNKNOWN"
+        issuer = root.xpath("string(//*[local-name()='issuerName'])").strip() or "N/A"
 
-        # 2. REPORTING OWNER DATA (Identity & Relationship)
-        # We find the owner block first to isolate the context
-        owner_blocks = root.xpath("//*[local-name()='reportingOwner']")
-        if not owner_blocks:
-            return []
-
-        # Target the first owner (primary filer)
-        owner = owner_blocks[0]
+        # 2. OWNER DATA
+        owner_node = root.xpath("//*[local-name()='reportingOwner']")[0]
         
-        # Identity: Look deep into reportingOwnerId
-        owner_name = owner.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
+        # Name
+        owner_name = owner_node.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
         if not owner_name:
-            # Fallback for alternative nesting
-            owner_name = owner.xpath("string(.//*[contains(local-name(), 'Name')])").strip()
+            owner_name = root.xpath("string(//*[local-name()='reportingOwnerName'])").strip()
 
-        # Relationship: Look deep into reportingOwnerRelationship
-        # This is where isOfficer, isDirector, and officerTitle live
-        rel_node = owner.xpath(".//*[local-name()='reportingOwnerRelationship']")
-        
-        is_director = False
-        is_officer = False
-        officer_title = "N/A"
+        # ROLES (The Fix: search the whole tree if the local search fails)
+        is_dir_val = root.xpath("string(//*[local-name()='isDirector'])").lower()
+        is_off_val = root.xpath("string(//*[local-name()='isOfficer'])").lower()
+        title_val = root.xpath("string(//*[local-name()='officerTitle'])").strip()
 
-        if rel_node:
-            node = rel_node[0]
-            # SEC values can be '1', 'true', 'True', or 'yes'
-            is_director = node.xpath("string(.//*[local-name()='isDirector'])").lower() in ('1', 'true', 'yes')
-            is_officer = node.xpath("string(.//*[local-name()='isOfficer'])").lower() in ('1', 'true', 'yes')
-            officer_title = node.xpath("string(.//*[local-name()='officerTitle'])").strip() or "N/A"
+        is_director = is_dir_val in ('1', 'true', 'yes')
+        is_officer = is_off_val in ('1', 'true', 'yes')
+        officer_title = title_val if title_val else "N/A"
 
-        # 3. TRANSACTION DATA (Table I)
-        transaction_nodes = root.xpath("//*[local-name()='nonDerivativeTransaction']")
-
-        for node in transaction_nodes:
-            # Extract values from specific sub-tags
+        # 3. TRANSACTIONS
+        for node in root.xpath("//*[local-name()='nonDerivativeTransaction']"):
             shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
             price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
             code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
             t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
 
-            if ticker and owner_name:
-                try:
-                    trades.append({
-                        "ticker": ticker[:10],
-                        "issuer": issuer[:255],
-                        "owner_name": owner_name[:255],
-                        "is_director": is_director,
-                        "is_officer": is_officer,
-                        "officer_title": officer_title[:255],
-                        "shares": float(shares) if shares else 0.0,
-                        "price": float(price) if price else 0.0,
-                        "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date,
-                        "accession_number": acc,
-                        "ingested_at": datetime.utcnow().isoformat()
-                    })
-                except ValueError:
-                    continue
-
+            trades.append({
+                "ticker": ticker,
+                "owner_name": owner_name,
+                "is_director": is_director,
+                "is_officer": is_officer,
+                "officer_title": officer_title,
+                "shares": float(shares) if shares else 0.0,
+                "price": float(price) if price else 0.0,
+                "transaction_side": "BUY" if code == 'A' else "SELL",
+                "filing_date": t_date,
+                "accession_number": acc
+            })
         return trades
-
     except Exception as e:
-        print(f"Error parsing XML for {acc}: {e}")
         return []
-
-
-
 
 def seed_queue(year, qtr):
     """Idempotent seeding of the Quarterly Master Index."""
