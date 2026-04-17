@@ -33,99 +33,10 @@ def get_session():
 from lxml import etree
 from datetime import datetime
 
+
+import re
 from lxml import etree
 from datetime import datetime
-
-def parse_xml(xml_content, acc):
-    """
-    Ultra-Robust Form 4 Parser: 
-    Solves the Role Gap (Titles/Booleans) and the 'NONE' Ticker issue.
-    """
-    try:
-        # Use recovery to handle SEC HTML/XML wrappers
-        parser = etree.XMLParser(recover=True, remove_blank_text=True)
-        root = etree.fromstring(xml_content, parser=parser)
-        
-        trades = []
-
-        # 1. TICKER EXTRACTION (Global Search with Fallback)
-        # We look for the symbol anywhere in the doc to avoid 'NONE'
-        ticker = root.xpath("string(//*[local-name()='issuerTradingSymbol'])").strip().upper()
-        if not ticker or ticker == 'NONE':
-            # Fallback: sometimes it's in a different namespace or case
-            ticker = root.xpath("string(//*[contains(local-name(), 'TradingSymbol')])").strip().upper()
-        
-        ticker = ticker if ticker else "UNKNOWN"
-        issuer = root.xpath("string(//*[local-name()='issuerName'])").strip() or "N/A"
-
-        # 2. ROLE & IDENTITY EXTRACTION
-        # Find the reporting owner block
-        owner_blocks = root.xpath("//*[local-name()='reportingOwner']")
-        if not owner_blocks:
-            return []
-
-        primary_owner = owner_blocks[0]
-
-        # Name Extraction
-        owner_name = primary_owner.xpath("string(.//*[local-name()='reportingOwnerName'])").strip()
-        if not owner_name:
-            owner_name = root.xpath("string(//*[local-name()='reportingOwnerName'])").strip()
-
-        # Relationship/Role Extraction (Aggressive Search)
-        # We check specifically inside the relationship block first
-        rel_block = primary_owner.xpath(".//*[local-name()='reportingOwnerRelationship']")
-        
-        is_director = False
-        is_officer = False
-        officer_title = "N/A"
-
-        if rel_block:
-            node = rel_block[0]
-            is_dir_val = node.xpath("string(.//*[local-name()='isDirector'])").lower()
-            is_off_val = node.xpath("string(.//*[local-name()='isOfficer'])").lower()
-            title_val = node.xpath("string(.//*[local-name()='officerTitle'])").strip()
-            
-            is_director = is_dir_val in ('1', 'true', 'yes')
-            is_officer = is_off_val in ('1', 'true', 'yes')
-            officer_title = title_val if title_val else "N/A"
-        else:
-            # Global Fallback for roles if the block is missing
-            is_director = root.xpath("string(//*[local-name()='isDirector'])").lower() in ('1', 'true', 'yes')
-            is_officer = root.xpath("string(//*[local-name()='isOfficer'])").lower() in ('1', 'true', 'yes')
-            officer_title = root.xpath("string(//*[local-name()='officerTitle'])").strip() or "N/A"
-
-        # 3. TRANSACTION EXTRACTION (Table I)
-        for node in root.xpath("//*[local-name()='nonDerivativeTransaction']"):
-            shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
-            price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
-            code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
-            t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
-
-            if ticker and owner_name:
-                try:
-                    trades.append({
-                        "ticker": ticker[:10],
-                        "issuer": issuer[:255],
-                        "owner_name": owner_name[:255],
-                        "is_director": is_director,
-                        "is_officer": is_officer,
-                        "officer_title": officer_title[:255],
-                        "shares": float(shares) if shares else 0.0,
-                        "price": float(price) if price else 0.0,
-                        "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": t_date,
-                        "accession_number": acc,
-                        "ingested_at": datetime.utcnow().isoformat()
-                    })
-                except ValueError:
-                    continue
-
-        return trades
-
-    except Exception as e:
-        print(f"Error parsing {acc}: {e}")
-        return []
-
 
 
 def seed_queue(year, qtr):
@@ -162,9 +73,65 @@ def seed_queue(year, qtr):
     else:
         logger.info("✅ Queue already up to date.")
 
+def parse_xml(xml_content, acc):
+    try:
+        # 1. RAW TEXT SEARCH (Fallback for Ticker, Issuer, and Owner)
+        xml_str = xml_content.decode('utf-8', errors='ignore') if isinstance(xml_content, bytes) else str(xml_content)
+        
+        # Aggressive Regex to find Ticker
+        ticker_match = re.search(r'<issuerTradingSymbol>(.*?)</issuerTradingSymbol>', xml_str, re.I)
+        ticker = ticker_match.group(1).strip().upper() if ticker_match else "UNKNOWN"
+
+        # Aggressive Regex to find Issuer Name
+        issuer_match = re.search(r'<issuerName>(.*?)</issuerName>', xml_str, re.I)
+        issuer = issuer_match.group(1).strip() if issuer_match else "N/A"
+        
+        # 2. XML PARSER (For Transactions)
+        parser = etree.XMLParser(recover=True, remove_blank_text=True)
+        root = etree.fromstring(xml_content if isinstance(xml_content, bytes) else xml_content.encode('utf-8'), parser=parser)
+        
+        # Find Owner Name with fallback
+        owner_name = root.xpath("string(//*[contains(local-name(), 'reportingOwnerName')])").strip()
+        if not owner_name:
+            owner_name = root.xpath("string(//*[contains(local-name(), 'Name')])").strip() or "UNKNOWN_OWNER"
+
+        trades = []
+        
+        # Find ANY transaction node regardless of namespace
+        transaction_nodes = root.xpath("//*[contains(local-name(), 'nonDerivativeTransaction')]")
+        
+        logger.info(f"DEBUG: {acc} | Ticker: {ticker} | Found {len(transaction_nodes)} trades")
+
+        for node in transaction_nodes:
+            shares = node.xpath("string(.//*[local-name()='transactionShares']/*[local-name()='value'])")
+            price = node.xpath("string(.//*[local-name()='transactionPricePerShare']/*[local-name()='value'])")
+            code = node.xpath("string(.//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value'])").strip().upper()
+            t_date = node.xpath("string(.//*[local-name()='transactionDate']/*[local-name()='value'])")
+
+            trades.append({
+                "ticker": ticker[:10],
+                "issuer": issuer[:255], # This key is now explicitly created
+                "owner_name": owner_name[:255],
+                "shares": float(shares) if shares else 0.0,
+                "price": float(price) if price else 0.0,
+                "transaction_side": "BUY" if code == 'A' else "SELL",
+                "filing_date": t_date,
+                "accession_number": acc,
+                "ingested_at": datetime.utcnow().isoformat(),
+                "is_officer": False,
+                "is_director": False,
+                "officer_title": "N/A"
+            })
+            
+        return trades
+    except Exception as e:
+        logger.error(f"CRITICAL ERROR parsing {acc}: {e}")
+        return []
+
 def process_batch_sync(batch_limit, year, qtr):
     """
-    Archive Processor: Uses .txt archive to guarantee 100% XML capture.
+    Archive Processor: Fetches batch, parses XML, and merges into BigQuery.
+    Uses StructQueryParameter to satisfy BigQuery's strict RECORD type requirements.
     """
     query = f"""
         SELECT * FROM `{QUEUE_TABLE}` 
@@ -176,14 +143,15 @@ def process_batch_sync(batch_limit, year, qtr):
     if df.empty: return False, 0
 
     all_trades, success_accs, failed_accs = [], [], []
+    records = df.to_dict('records')
     
     with get_session() as s:
-        for i, row in enumerate(df.to_dict('records'), 1):
+        for i, row in enumerate(records, 1):
             acc, cik = row['accession_number'], row['cik']
             clean_acc = acc.replace('-', '')
             archive_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{acc}.txt"
             
-            logger.info(f"➡️ [{i}/{len(df)}] Processing Archive: {acc}")
+            logger.info(f"➡️ [{i}/{len(records)}] Processing Archive: {acc}")
             
             try:
                 res = s.get(archive_url, timeout=12)
@@ -206,36 +174,77 @@ def process_batch_sync(batch_limit, year, qtr):
                 logger.error(f"   💥 Error for {acc}: {e}")
                 failed_accs.append(acc)
 
-            time.sleep(0.12) # Rate limit compliance
+            time.sleep(0.12) 
 
     if all_trades:
-        tmp_id = f"{STAGING_TABLE}_sync_{int(time.time())}"
-        client.load_table_from_json(all_trades, tmp_id).result()
         merge_sql = f"""
                 MERGE `{MASTER_TABLE}` T
-                USING `{tmp_id}` S
+                USING (
+                SELECT 
+                    ticker, issuer, owner_name, is_officer, is_director, officer_title,
+                    CAST(shares AS FLOAT64) as shares, 
+                    CAST(price AS FLOAT64) as price,
+                    transaction_side, 
+                    SAFE.PARSE_DATE('%Y-%m-%d', filing_date) as filing_date,  -- 🚀 CAST TO DATE
+                    accession_number, 
+                    TIMESTAMP(ingested_at) as ingested_at
+                FROM UNNEST(@trades)
+                ) S
                 ON T.accession_number = S.accession_number 
-                AND T.ticker = S.ticker 
-                AND T.shares = S.shares 
-                -- Keep T.filing_date as is. Clean ONLY the Staging side.
-                AND T.filing_date = CAST(SUBSTR(CAST(S.filing_date AS STRING), 1, 10) AS DATE)
+                AND T.owner_name = S.owner_name 
+                AND T.ticker = S.ticker
+                AND T.filing_date = S.filing_date -- Now comparing DATE to DATE
+                AND T.shares = S.shares        -- 🚀 Add this
+                AND T.price = S.price          -- 🚀 Add this
+                AND T.transaction_side = S.transaction_side
+                WHEN MATCHED THEN
+                UPDATE SET 
+                    T.issuer = S.issuer, 
+                    T.is_officer = S.is_officer, 
+                    T.is_director = S.is_director,
+                    T.officer_title = S.officer_title, 
+                    T.shares = S.shares, 
+                    T.price = S.price,
+                    T.ingested_at = S.ingested_at
                 WHEN NOT MATCHED THEN
-                INSERT (filing_date, ticker, issuer, owner_name, shares, price, transaction_side, accession_number, ingested_at)
-                VALUES (
-                    CAST(SUBSTR(CAST(S.filing_date AS STRING), 1, 10) AS DATE), 
-                    S.ticker, 
-                    S.issuer, 
-                    S.owner_name, 
-                    S.shares, 
-                    S.price, 
-                    S.transaction_side, 
-                    S.accession_number, 
-                    S.ingested_at
-                )
-            """
-        client.query(merge_sql).result()
-        client.delete_table(tmp_id)
+                INSERT (ticker, issuer, owner_name, is_officer, is_director, officer_title, shares, price, transaction_side, filing_date, accession_number, ingested_at)
+                VALUES (ticker, issuer, owner_name, is_officer, is_director, officer_title, shares, price, transaction_side, filing_date, accession_number, ingested_at)
+        """
 
+
+
+
+        # Correctly wrap each dict in a StructQueryParameter to avoid AttributeError
+        structured_trades = [
+            bigquery.StructQueryParameter(
+                "unused", # Name inside a list is ignored by BQ
+                bigquery.ScalarQueryParameter("ticker", "STRING", t["ticker"]),
+                bigquery.ScalarQueryParameter("issuer", "STRING", t.get("issuer", "N/A")),
+                bigquery.ScalarQueryParameter("owner_name", "STRING", t["owner_name"]),
+                bigquery.ScalarQueryParameter("is_officer", "BOOL", t.get("is_officer", False)),
+                bigquery.ScalarQueryParameter("is_director", "BOOL", t.get("is_director", False)),
+                bigquery.ScalarQueryParameter("officer_title", "STRING", t.get("officer_title", "N/A")),
+                bigquery.ScalarQueryParameter("shares", "FLOAT64", t["shares"]),
+                bigquery.ScalarQueryParameter("price", "FLOAT64", t["price"]),
+                bigquery.ScalarQueryParameter("transaction_side", "STRING", t["transaction_side"]),
+                bigquery.ScalarQueryParameter("filing_date", "STRING", t["filing_date"]),
+                bigquery.ScalarQueryParameter("accession_number", "STRING", t["accession_number"]),
+                bigquery.ScalarQueryParameter("ingested_at", "TIMESTAMP", t["ingested_at"]),
+            ) for t in all_trades
+        ]
+
+        try:
+            job_config = bigquery.QueryJobConfig(
+                query_parameters=[
+                    bigquery.ArrayQueryParameter("trades", "RECORD", structured_trades)
+                ]
+            )
+            client.query(merge_sql, job_config=job_config).result()
+            logger.info(f"✅ Successfully merged {len(all_trades)} trades.")
+        except Exception as e:
+            logger.error(f"❌ BigQuery Merge failed: {e}")
+
+    # Update Queue Status
     if success_accs:
         acc_str = ",".join([f"'{a}'" for a in success_accs])
         client.query(f"UPDATE `{QUEUE_TABLE}` SET status='done', updated_at=CURRENT_TIMESTAMP() WHERE accession_number IN ({acc_str})").result()
@@ -243,7 +252,16 @@ def process_batch_sync(batch_limit, year, qtr):
         fail_str = ",".join([f"'{a}'" for a in failed_accs])
         client.query(f"UPDATE `{QUEUE_TABLE}` SET status='not_found' WHERE accession_number IN ({fail_str})").result()
 
-    return True, len(success_accs)
+    # Ensure this is at the VERY END of the function
+    # so the loop in __main__ knows how many filings we finished
+    actual_count = len(success_accs)
+    logger.info(f"💾 Batch finished. Filings: {actual_count}, Trades: {len(all_trades)}")
+    return True, actual_count
+    
+
+
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
