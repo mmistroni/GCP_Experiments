@@ -74,14 +74,16 @@ def seed_queue(year, qtr):
         logger.info("✅ Queue already up to date.")
 
 def clean_numeric(value_str):
-    """Removes footnote markers [1], commas, and junk from numeric strings."""
     if not value_str: return 0.0
-    # Keep only digits, dots, and negative signs
-    cleaned = re.sub(r'[^0-9.\-]', '', str(value_str))
+    # 🚀 NEW: Split at the bracket to remove [1], [2], etc.
+    cleaned = str(value_str).split('[')[0] 
+    # Now strip formatting
+    cleaned = re.sub(r'[^0-9.\-]', '', cleaned)
     try:
         return float(cleaned) if cleaned else 0.0
     except ValueError:
         return 0.0
+
 
 def parse_xml(xml_content, acc):
     try:

@@ -2,9 +2,9 @@
 IMAGE_NAME="gcr.io/datascience-projects/sec-scraper"
 REGION="us-central1"
 # Change these three variables to target different quarters
-TARGET_YEAR="2024"
-TARGET_QTR="3"
-TARGET_LIMIT="5000"
+TARGET_YEAR="2025"
+TARGET_QTR="1"
+TARGET_LIMIT="9000"
 
 echo "🛠️ Submitting build to Google Cloud Build..."
 gcloud builds submit --tag $IMAGE_NAME .
