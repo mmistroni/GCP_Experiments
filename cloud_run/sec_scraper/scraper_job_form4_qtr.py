@@ -73,17 +73,32 @@ def seed_queue(year, qtr):
     else:
         logger.info("✅ Queue already up to date.")
 
+import re
+
 def clean_numeric(value_str):
-    if not value_str: return 0.0
-    # 🚀 NEW: Split at the bracket to remove [1], [2], etc.
-    cleaned = str(value_str).split('[')[0] 
-    # Now strip formatting
-    cleaned = re.sub(r'[^0-9.\-]', '', cleaned)
+    """
+    Cleans SEC numeric strings by removing footnotes in brackets [1] or 
+    parentheses (1) and stripping non-numeric formatting.
+    """
+    if value_str is None or str(value_str).strip() == "":
+        return 0.0
+    
+    # 1. Convert to string and handle potential existing float formatting
+    raw_str = str(value_str).strip()
+
+    # 2. 🚀 THE FIX: Split at the FIRST occurrence of a bracket OR parenthesis.
+    # This prevents '1000(4)' from becoming '10004' after regex stripping.
+    parts = re.split(r'[\[\(]', raw_str)
+    prefix = parts[0]
+
+    # 3. Strip everything except digits, decimal points, and minus signs
+    cleaned = re.sub(r'[^0-9.\-]', '', prefix)
+
+    # 4. Final conversion with safety catch
     try:
         return float(cleaned) if cleaned else 0.0
-    except ValueError:
+    except (ValueError, TypeError):
         return 0.0
-
 
 def parse_xml(xml_content, acc):
     try:
