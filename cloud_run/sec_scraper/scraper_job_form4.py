@@ -1,4 +1,5 @@
 import os
+import re
 import time
 import logging
 import requests
@@ -19,6 +20,28 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger("form4_dynamic_worker")
 client = bigquery.Client(project=PROJECT_ID)
 
+def clean_numeric(value_str):
+    """
+    Standardized cleaner: Splits at footnotes [1] or (1) and strips non-numeric symbols.
+    Prevents the 'Footnote Merger' that creates trillion-dollar errors.
+    """
+    if value_str is None or str(value_str).strip() == "":
+        return 0.0
+    
+    raw_str = str(value_str).strip()
+
+    # Split at the first occurrence of a bracket, parenthesis, or asterisk
+    parts = re.split(r'[\[\(\*]', raw_str)
+    prefix = parts[0]
+
+    # Strip everything except digits, decimal points, and minus signs
+    cleaned = re.sub(r'[^0-9.\-]', '', prefix)
+
+    try:
+        return float(cleaned) if cleaned else 0.0
+    except (ValueError, TypeError):
+        return 0.0
+
 def get_text(node, path):
     """Safely extracts text from an XPath path."""
     res = node.xpath(path)
@@ -29,16 +52,22 @@ def get_text(node, path):
     return None
 
 def parse_form4_xml(xml_content, accession_number):
-    """Parses Table I and Table II using local-name to ignore namespaces."""
+    """
+    Advanced Parser: Handles Tickers, Issuers, and Owners while 
+    using footnote-proof numeric cleaning.
+    """
     trades = []
     try:
         root = etree.fromstring(xml_content, parser=etree.XMLParser(recover=True))
+        
+        # Metadata
         ticker = get_text(root, "//*[local-name()='issuerTradingSymbol']")
         issuer = get_text(root, "//*[local-name()='issuerName']")
         owner = get_text(root, "//*[local-name()='reportingOwnerName']")
 
-        # Combined logic for Table I and Table II
+        # Path logic for Table I and Table II
         paths = ["//*[local-name()='nonDerivativeTransaction']", "//*[local-name()='derivativeTransaction']"]
+        
         for path in paths:
             for node in root.xpath(path):
                 try:
@@ -47,18 +76,27 @@ def parse_form4_xml(xml_content, accession_number):
                     code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
                     date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
 
-                    trades.append({
-                        "accession_number": accession_number,
-                        "ticker": ticker,
-                        "issuer": issuer[:1024] if issuer else "Unknown",
-                        "owner_name": owner[:1024] if owner else "Unknown",
-                        "shares": float(s_val) if s_val else 0.0,
-                        "price": float(p_val) if p_val else 0.0,
-                        "transaction_side": "BUY" if code == 'A' else "SELL",
-                        "filing_date": date,
-                        "ingested_at": datetime.utcnow().isoformat()
-                    })
-                except Exception: continue
+                    # Use the standardized cleaner
+                    shares = clean_numeric(s_val)
+                    price = clean_numeric(p_val)
+
+                    # Only append if we have meaningful data
+                    if shares > 0 or price > 0:
+                        trades.append({
+                            "accession_number": accession_number,
+                            "ticker": ticker if ticker and ticker not in ('NONE', 'UNKNOWN') else "UNKNOWN",
+                            "issuer": issuer[:1024] if issuer else "Unknown",
+                            "owner_name": owner[:1024] if owner else "Unknown",
+                            "shares": shares,
+                            "price": price,
+                            "total_value": shares * price,  # Feature Addition
+                            "transaction_side": "BUY" if code == 'A' else "SELL",
+                            "filing_date": date,
+                            "ingested_at": datetime.utcnow().isoformat()
+                        })
+                except Exception as e:
+                    logger.debug(f"Row skip in {accession_number}: {e}")
+                    continue
     except Exception as e:
         logger.error(f"Parser failed for {accession_number}: {e}")
     return trades
@@ -75,7 +113,7 @@ def update_queue(acc, status):
     client.query(query, job_config=job_config).result()
 
 def main():
-    logger.info(f"🚀 Starting Dynamic URL Batch for {DATASET_ID}...")
+    logger.info(f"🚀 Starting Unified Worker for {DATASET_ID}...")
     query = f"SELECT cik, accession_number FROM `{TABLE_QUEUE}` WHERE status = 'pending' LIMIT {BATCH_SIZE}"
     rows = list(client.query(query).result())
     
@@ -90,8 +128,7 @@ def main():
             cik, acc = row['cik'], row['accession_number']
             clean_acc = acc.replace('-', '')
             
-            # --- THE DYNAMIC URL FIX ---
-            # 1. Ask the folder: "What files do you have?"
+            # Dynamic URL discovery
             dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
             xml_url = None
             
@@ -99,39 +136,36 @@ def main():
                 dir_res = s.get(dir_url, timeout=10)
                 if dir_res.status_code == 200:
                     items = dir_res.json().get('directory', {}).get('item', [])
-                    # Find the real XML filename
                     xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
                     if xml_name:
                         xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
                 
                 if not xml_url:
-                    logger.warning(f"[{i}/{len(rows)}] ❌ {acc}: No XML found in directory.")
                     update_queue(acc, "no_xml_found")
                     continue
 
-                # 2. Fetch the actual discovered XML
                 res = s.get(xml_url, timeout=10)
                 if res.status_code == 200:
                     trades = parse_form4_xml(res.content, acc)
                     if trades:
                         all_trades.extend(trades)
                         update_queue(acc, "done")
-                        logger.info(f"[{i}/{len(rows)}] ✅ {acc}: Found {len(trades)} trades.")
+                        logger.info(f"[{i}/{len(rows)}] ✅ {acc}: {len(trades)} trades.")
                     else:
                         update_queue(acc, "no_trades_found")
-                        logger.warning(f"[{i}/{len(rows)}] ⚠️ {acc}: Empty XML.")
                 else:
                     logger.error(f"[{i}/{len(rows)}] ❌ {acc}: HTTP {res.status_code}")
             
             except Exception as e:
                 logger.error(f"[{i}/{len(rows)}] 🔥 {acc}: {e}")
             
-            time.sleep(0.12) # SEC Compliance
+            time.sleep(0.12) # SEC Rate Limit Compliance
 
-    # Final Batch Ingest
+    # Final Batch Ingest to BigQuery
     if all_trades:
-        client.load_table_from_json(all_trades, TABLE_MASTER).result()
-        logger.info(f"✨ Ingested {len(all_trades)} trades.")
+        job = client.load_table_from_json(all_trades, TABLE_MASTER)
+        job.result() # Wait for completion
+        logger.info(f"✨ Successfully Ingested {len(all_trades)} trades into Master.")
 
 if __name__ == "__main__":
     main()
