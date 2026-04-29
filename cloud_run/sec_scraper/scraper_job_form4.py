@@ -21,29 +21,19 @@ logger = logging.getLogger("form4_dynamic_worker")
 client = bigquery.Client(project=PROJECT_ID)
 
 def clean_numeric(value_str):
-    """
-    Standardized cleaner: Splits at footnotes [1] or (1) and strips non-numeric symbols.
-    Prevents the 'Footnote Merger' that creates trillion-dollar errors.
-    """
     if value_str is None or str(value_str).strip() == "":
         return 0.0
-    
     raw_str = str(value_str).strip()
-
-    # Split at the first occurrence of a bracket, parenthesis, or asterisk
+    # Split at footnotes/brackets to prevent "Footnote Merger" errors
     parts = re.split(r'[\[\(\*]', raw_str)
     prefix = parts[0]
-
-    # Strip everything except digits, decimal points, and minus signs
     cleaned = re.sub(r'[^0-9.\-]', '', prefix)
-
     try:
         return float(cleaned) if cleaned else 0.0
     except (ValueError, TypeError):
         return 0.0
 
 def get_text(node, path):
-    """Safely extracts text from an XPath path."""
     res = node.xpath(path)
     if res and hasattr(res[0], 'text') and res[0].text:
         return res[0].text.strip()
@@ -52,20 +42,13 @@ def get_text(node, path):
     return None
 
 def parse_form4_xml(xml_content, accession_number):
-    """
-    Advanced Parser: Handles Tickers, Issuers, and Owners while 
-    using footnote-proof numeric cleaning.
-    """
     trades = []
     try:
         root = etree.fromstring(xml_content, parser=etree.XMLParser(recover=True))
-        
-        # Metadata
         ticker = get_text(root, "//*[local-name()='issuerTradingSymbol']")
         issuer = get_text(root, "//*[local-name()='issuerName']")
         owner = get_text(root, "//*[local-name()='reportingOwnerName']")
 
-        # Path logic for Table I and Table II
         paths = ["//*[local-name()='nonDerivativeTransaction']", "//*[local-name()='derivativeTransaction']"]
         
         for path in paths:
@@ -76,11 +59,9 @@ def parse_form4_xml(xml_content, accession_number):
                     code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
                     date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
 
-                    # Use the standardized cleaner
                     shares = clean_numeric(s_val)
                     price = clean_numeric(p_val)
 
-                    # Only append if we have meaningful data
                     if shares > 0 or price > 0:
                         trades.append({
                             "accession_number": accession_number,
@@ -89,7 +70,7 @@ def parse_form4_xml(xml_content, accession_number):
                             "owner_name": owner[:1024] if owner else "Unknown",
                             "shares": shares,
                             "price": price,
-                            "total_value": shares * price,  # Feature Addition
+                            "total_value": shares * price,
                             "transaction_side": "BUY" if code == 'A' else "SELL",
                             "filing_date": date,
                             "ingested_at": datetime.utcnow().isoformat()
@@ -101,34 +82,40 @@ def parse_form4_xml(xml_content, accession_number):
         logger.error(f"Parser failed for {accession_number}: {e}")
     return trades
 
-def update_queue(acc, status):
-    """Updates BQ status to prevent re-processing."""
-    query = f"UPDATE `{TABLE_QUEUE}` SET status = @status, updated_at = CURRENT_TIMESTAMP() WHERE accession_number = @acc"
-    job_config = bigquery.QueryJobConfig(
-        query_parameters=[
-            bigquery.ScalarQueryParameter("status", "STRING", status),
-            bigquery.ScalarQueryParameter("acc", "STRING", acc),
-        ]
-    )
-    client.query(query, job_config=job_config).result()
+def bulk_update_queue(accession_list, status):
+    """Updates statuses in bulk after a successful Master Load."""
+    if not accession_list:
+        return
+    
+    # Using a parameterized query to update multiple rows safely
+    placeholders = ", ".join([f"'{acc}'" for acc in accession_list])
+    query = f"""
+        UPDATE `{TABLE_QUEUE}` 
+        SET status = '{status}', updated_at = CURRENT_TIMESTAMP() 
+        WHERE accession_number IN ({placeholders})
+    """
+    client.query(query).result()
 
 def main():
-    logger.info(f"🚀 Starting Unified Worker for {DATASET_ID}...")
+    logger.info(f"🚀 Starting Unified Worker (Atomic Mode) for {DATASET_ID}...")
+    
     query = f"SELECT cik, accession_number FROM `{TABLE_QUEUE}` WHERE status = 'pending' LIMIT {BATCH_SIZE}"
     rows = list(client.query(query).result())
     
     if not rows:
-        logger.info("🏁 No work found.")
+        logger.info("🏁 No pending filings found in queue.")
         return
 
     all_trades = []
+    processed_accessions = []
+    empty_accessions = []
+
     with requests.Session() as s:
         s.headers.update(HEADERS)
         for i, row in enumerate(rows, 1):
             cik, acc = row['cik'], row['accession_number']
             clean_acc = acc.replace('-', '')
             
-            # Dynamic URL discovery
             dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
             xml_url = None
             
@@ -141,7 +128,8 @@ def main():
                         xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
                 
                 if not xml_url:
-                    update_queue(acc, "no_xml_found")
+                    # Update these immediately as they require no Master upload
+                    bulk_update_queue([acc], "no_xml_found")
                     continue
 
                 res = s.get(xml_url, timeout=10)
@@ -149,23 +137,36 @@ def main():
                     trades = parse_form4_xml(res.content, acc)
                     if trades:
                         all_trades.extend(trades)
-                        update_queue(acc, "done")
-                        logger.info(f"[{i}/{len(rows)}] ✅ {acc}: {len(trades)} trades.")
+                        processed_accessions.append(acc) # Stage for 'done'
+                        logger.info(f"[{i}/{len(rows)}] 📥 {acc}: Parsed {len(trades)} trades.")
                     else:
-                        update_queue(acc, "no_trades_found")
+                        empty_accessions.append(acc) # Stage for 'no_trades_found'
                 else:
                     logger.error(f"[{i}/{len(rows)}] ❌ {acc}: HTTP {res.status_code}")
             
             except Exception as e:
-                logger.error(f"[{i}/{len(rows)}] 🔥 {acc}: {e}")
+                logger.error(f"[{i}/{len(rows)}] 🔥 Critical error on {acc}: {e}")
             
-            time.sleep(0.12) # SEC Rate Limit Compliance
+            time.sleep(0.12) # SEC Rate Limit compliance
 
-    # Final Batch Ingest to BigQuery
-    if all_trades:
-        job = client.load_table_from_json(all_trades, TABLE_MASTER)
-        job.result() # Wait for completion
-        logger.info(f"✨ Successfully Ingested {len(all_trades)} trades into Master.")
+    # --- ATOMIC INGESTION BLOCK ---
+    try:
+        if all_trades:
+            logger.info(f"📤 Uploading {len(all_trades)} trades to BigQuery...")
+            job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
+            load_job = client.load_table_from_json(all_trades, TABLE_MASTER, job_config=job_config)
+            load_job.result() # Wait for upload to finish successfully
+            
+            # ONLY update queue to 'done' if the Master Load succeeded
+            bulk_update_queue(processed_accessions, "done")
+            logger.info(f"✨ Successfully ingested and updated {len(processed_accessions)} filings.")
+        
+        if empty_accessions:
+            bulk_update_queue(empty_accessions, "no_trades_found")
+            logger.info(f"📭 Marked {len(empty_accessions)} filings as empty.")
+
+    except Exception as e:
+        logger.error(f"🛑 MASTER LOAD FAILED: Data remains in memory. Queue NOT updated. Error: {e}")
 
 if __name__ == "__main__":
     main()
