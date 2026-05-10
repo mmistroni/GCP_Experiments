@@ -8,23 +8,22 @@ from datetime import datetime
 from google.cloud import bigquery
 
 # --- CONFIGURATION ---
-PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "datascience-projects")
+PROJECT_ID = "datascience-projects"
 DATASET_ID = "gcp_shareloader"
 TABLE_MASTER = f"{PROJECT_ID}.{DATASET_ID}.form4_master"
-TABLE_QUEUE = f"{PROJECT_ID}.{DATASET_ID}.form4_queue"
-BATCH_SIZE = int(os.getenv("BATCH_SIZE", "100"))
+# We bypass TABLE_QUEUE for the daily live run
 
 HEADERS = {"User-Agent": "Institutional Research (mmistroni@gmail.com)"}
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger("form4_dynamic_worker")
+logger = logging.getLogger("form4_live_worker")
 client = bigquery.Client(project=PROJECT_ID)
 
 def clean_numeric(value_str):
     if value_str is None or str(value_str).strip() == "":
         return 0.0
     raw_str = str(value_str).strip()
-    # Split at footnotes/brackets to prevent "Footnote Merger" errors
+    # Fix: Split at footnotes/brackets to prevent "1000(4)" becoming 10004
     parts = re.split(r'[\[\(\*]', raw_str)
     prefix = parts[0]
     cleaned = re.sub(r'[^0-9.\-]', '', prefix)
@@ -49,124 +48,133 @@ def parse_form4_xml(xml_content, accession_number):
         issuer = get_text(root, "//*[local-name()='issuerName']")
         owner = get_text(root, "//*[local-name()='reportingOwnerName']")
 
-        paths = ["//*[local-name()='nonDerivativeTransaction']", "//*[local-name()='derivativeTransaction']"]
-        
-        for path in paths:
-            for node in root.xpath(path):
-                try:
-                    s_val = get_text(node, ".//*[local-name()='transactionShares']/*[local-name()='value']")
-                    p_val = get_text(node, ".//*[local-name()='transactionPricePerShare']/*[local-name()='value']")
-                    code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
-                    date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
+        # --- 1. Non-Derivative Transactions (Common Stock) ---
+        for node in root.xpath("//*[local-name()='nonDerivativeTransaction']"):
+            s_val = get_text(node, ".//*[local-name()='transactionShares']/*[local-name()='value']")
+            p_val = get_text(node, ".//*[local-name()='transactionPricePerShare']/*[local-name()='value']")
+            code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
+            t_date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
 
-                    shares = clean_numeric(s_val)
-                    price = clean_numeric(p_val)
+            shares, price = clean_numeric(s_val), clean_numeric(p_val)
+            if shares > 0:
+                trades.append({
+                    "accession_number": accession_number,
+                    "ticker": ticker[:10] if ticker else "UNKNOWN",
+                    "issuer": issuer[:255] if issuer else "Unknown",
+                    "owner_name": owner[:255] if owner else "Unknown",
+                    "shares": shares, "price": price,
+                    "total_value": float(shares * price),
+                    "transaction_side": "BUY" if code == 'A' else "SELL",
+                    "filing_date": t_date,
+                    "ingested_at": datetime.utcnow().isoformat(),
+                    "is_officer": False, "is_director": False, "officer_title": "N/A"
+                })
 
-                    if shares > 0 or price > 0:
-                        trades.append({
-                            "accession_number": accession_number,
-                            "ticker": ticker if ticker and ticker not in ('NONE', 'UNKNOWN') else "UNKNOWN",
-                            "issuer": issuer[:1024] if issuer else "Unknown",
-                            "owner_name": owner[:1024] if owner else "Unknown",
-                            "shares": shares,
-                            "price": price,
-                            "total_value": shares * price,
-                            "transaction_side": "BUY" if code == 'A' else "SELL",
-                            "filing_date": date,
-                            "ingested_at": datetime.utcnow().isoformat()
-                        })
-                except Exception as e:
-                    logger.debug(f"Row skip in {accession_number}: {e}")
-                    continue
+        # --- 2. Derivative Transactions (Options/Warrants) ---
+        # 🚀 FIX: Now uses 'underlyingSecurityShares' for proper volume
+        for node in root.xpath("//*[local-name()='derivativeTransaction']"):
+            s_val = get_text(node, ".//*[local-name()='underlyingSecurityShares']/*[local-name()='value']")
+            p_val = get_text(node, ".//*[local-name()='transactionPricePerShare']/*[local-name()='value']")
+            code = get_text(node, ".//*[local-name()='transactionAcquiredDisposedCode']/*[local-name()='value']")
+            t_date = get_text(node, ".//*[local-name()='transactionDate']/*[local-name()='value']")
+
+            shares, price = clean_numeric(s_val), clean_numeric(p_val)
+            if shares > 0:
+                trades.append({
+                    "accession_number": accession_number,
+                    "ticker": ticker[:10] if ticker else "UNKNOWN",
+                    "issuer": issuer[:255] if issuer else "Unknown",
+                    "owner_name": owner[:255] if owner else "Unknown",
+                    "shares": shares, "price": price,
+                    "total_value": float(shares * price),
+                    "transaction_side": "BUY" if code == 'A' else "SELL",
+                    "filing_date": t_date,
+                    "ingested_at": datetime.utcnow().isoformat(),
+                    "is_officer": False, "is_director": False, "officer_title": "N/A"
+                })
     except Exception as e:
         logger.error(f"Parser failed for {accession_number}: {e}")
     return trades
 
-def bulk_update_queue(accession_list, status):
-    """Updates statuses in bulk after a successful Master Load."""
-    if not accession_list:
-        return
-    
-    # Using a parameterized query to update multiple rows safely
-    placeholders = ", ".join([f"'{acc}'" for acc in accession_list])
-    query = f"""
-        UPDATE `{TABLE_QUEUE}` 
-        SET status = '{status}', updated_at = CURRENT_TIMESTAMP() 
-        WHERE accession_number IN ({placeholders})
-    """
-    client.query(query).result()
-
 def main():
-    logger.info(f"🚀 Starting Unified Worker (Atomic Mode) for {DATASET_ID}...")
+    logger.info("📡 Fetching latest Form 4s from SEC Live RSS feed...")
+    RSS_URL = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=4&count=100&output=atom"
     
-    query = f"SELECT cik, accession_number FROM `{TABLE_QUEUE}` WHERE status = 'pending' LIMIT {BATCH_SIZE}"
-    rows = list(client.query(query).result())
-    
-    if not rows:
-        logger.info("🏁 No pending filings found in queue.")
-        return
-
-    all_trades = []
-    processed_accessions = []
-    empty_accessions = []
-
     with requests.Session() as s:
         s.headers.update(HEADERS)
-        for i, row in enumerate(rows, 1):
-            cik, acc = row['cik'], row['accession_number']
-            clean_acc = acc.replace('-', '')
+        try:
+            res = s.get(RSS_URL, timeout=15)
+            if res.status_code != 200:
+                logger.error(f"SEC RSS Feed Down: {res.status_code}")
+                return
             
-            dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
-            xml_url = None
+            root = etree.fromstring(res.content)
+            entries = root.xpath("//*[local-name()='entry']")
+            logger.info(f"🔎 Found {len(entries)} recent filings in RSS.")
             
-            try:
+            all_trades = []
+            
+            for entry in entries:
+                link = entry.xpath("*[local-name()='link']/@href")[0]
+                # Extract CIK and Accession from link: /data/CIK/ACC/ACC-index.htm
+                parts = link.split('/')
+                cik, acc = parts[-3], parts[-2]
+                clean_acc = acc.replace('-', '')
+                
+                # Fetch index.json to find the XML file name
+                dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
                 dir_res = s.get(dir_url, timeout=10)
+                
                 if dir_res.status_code == 200:
                     items = dir_res.json().get('directory', {}).get('item', [])
-                    xml_name = next((it['name'] for it in items if it['name'].endswith('.xml')), None)
+                    xml_name = next((it['name'] for it in items if it['name'].endswith('.xml') and 'target' not in it['name']), None)
+                    
                     if xml_name:
                         xml_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/{xml_name}"
+                        xml_res = s.get(xml_url, timeout=10)
+                        if xml_res.status_code == 200:
+                            trades = parse_form4_xml(xml_res.content, acc)
+                            all_trades.extend(trades)
+                            logger.info(f"📥 {acc}: Parsed {len(trades)} trades.")
                 
-                if not xml_url:
-                    # Update these immediately as they require no Master upload
-                    bulk_update_queue([acc], "no_xml_found")
-                    continue
+                time.sleep(0.12) # SEC Rate Limit
 
-                res = s.get(xml_url, timeout=10)
-                if res.status_code == 200:
-                    trades = parse_form4_xml(res.content, acc)
-                    if trades:
-                        all_trades.extend(trades)
-                        processed_accessions.append(acc) # Stage for 'done'
-                        logger.info(f"[{i}/{len(rows)}] 📥 {acc}: Parsed {len(trades)} trades.")
-                    else:
-                        empty_accessions.append(acc) # Stage for 'no_trades_found'
-                else:
-                    logger.error(f"[{i}/{len(rows)}] ❌ {acc}: HTTP {res.status_code}")
-            
-            except Exception as e:
-                logger.error(f"[{i}/{len(rows)}] 🔥 Critical error on {acc}: {e}")
-            
-            time.sleep(0.12) # SEC Rate Limit compliance
+            if all_trades:
+                # 🛡️ DEDUPLICATION MERGE: Ensures we don't double-count RSS items
+                logger.info(f"📤 Merging {len(all_trades)} trades into BigQuery...")
+                
+                merge_sql = f"""
+                MERGE `{TABLE_MASTER}` T
+                USING (
+                    SELECT * FROM UNNEST(@trades)
+                ) S
+                ON T.accession_number = S.accession_number 
+                   AND T.owner_name = S.owner_name 
+                   AND T.shares = S.shares 
+                   AND T.filing_date = S.filing_date
+                WHEN NOT MATCHED THEN
+                    INSERT (ticker, issuer, owner_name, shares, price, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
+                    VALUES (ticker, issuer, owner_name, shares, price, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
+                """
+                
+                # Convert to BigQuery Structs for the MERGE
+                structured_trades = [
+                    bigquery.StructQueryParameter("unused", 
+                        *[bigquery.ScalarQueryParameter(k, "FLOAT64" if isinstance(v, float) else "STRING" if k != "is_officer" and k != "is_director" else "BOOL", v) 
+                          for k, v in t.items()]
+                    ) for t in all_trades
+                ]
+                
+                job_config = bigquery.QueryJobConfig(
+                    query_parameters=[bigquery.ArrayQueryParameter("trades", "RECORD", structured_trades)]
+                )
+                client.query(merge_sql, job_config=job_config).result()
+                logger.info("✨ Successfully synchronized live data.")
+            else:
+                logger.info("🏁 No new trades found in this window.")
 
-    # --- ATOMIC INGESTION BLOCK ---
-    try:
-        if all_trades:
-            logger.info(f"📤 Uploading {len(all_trades)} trades to BigQuery...")
-            job_config = bigquery.LoadJobConfig(write_disposition="WRITE_APPEND")
-            load_job = client.load_table_from_json(all_trades, TABLE_MASTER, job_config=job_config)
-            load_job.result() # Wait for upload to finish successfully
-            
-            # ONLY update queue to 'done' if the Master Load succeeded
-            bulk_update_queue(processed_accessions, "done")
-            logger.info(f"✨ Successfully ingested and updated {len(processed_accessions)} filings.")
-        
-        if empty_accessions:
-            bulk_update_queue(empty_accessions, "no_trades_found")
-            logger.info(f"📭 Marked {len(empty_accessions)} filings as empty.")
-
-    except Exception as e:
-        logger.error(f"🛑 MASTER LOAD FAILED: Data remains in memory. Queue NOT updated. Error: {e}")
+        except Exception as e:
+            logger.error(f"💥 Live worker failed: {e}")
 
 if __name__ == "__main__":
     main()

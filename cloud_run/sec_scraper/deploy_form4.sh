@@ -17,4 +17,3 @@ gcloud run jobs deploy form4-manual-worker-job \
   --task-timeout=3h \
   
 echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
-d
