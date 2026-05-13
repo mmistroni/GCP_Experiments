@@ -143,25 +143,49 @@ def main():
                 # 🛡️ DEDUPLICATION MERGE: Ensures we don't double-count RSS items
                 logger.info(f"📤 Merging {len(all_trades)} trades into BigQuery...")
                 
+                # We explicitly CAST and PARSE in the USING clause to match the Master schema
                 merge_sql = f"""
                 MERGE `{TABLE_MASTER}` T
                 USING (
-                    SELECT * FROM UNNEST(@trades)
+                    SELECT 
+                        ticker, issuer, owner_name, 
+                        CAST(shares AS FLOAT64) as shares, 
+                        CAST(price AS FLOAT64) as price,
+                        CAST(total_value AS FLOAT64) as total_value,
+                        transaction_side, 
+                        SAFE.PARSE_DATE('%Y-%m-%d', filing_date) as filing_date,
+                        accession_number, 
+                        TIMESTAMP(ingested_at) as ingested_at,
+                        CAST(is_officer AS BOOL) as is_officer, 
+                        CAST(is_director AS BOOL) as is_director, 
+                        officer_title
+                    FROM UNNEST(@trades)
                 ) S
                 ON T.accession_number = S.accession_number 
                    AND T.owner_name = S.owner_name 
                    AND T.shares = S.shares 
                    AND T.filing_date = S.filing_date
                 WHEN NOT MATCHED THEN
-                    INSERT (ticker, issuer, owner_name, shares, price, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
-                    VALUES (ticker, issuer, owner_name, shares, price, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
+                    INSERT (ticker, issuer, owner_name, shares, price, total_value, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
+                    VALUES (ticker, issuer, owner_name, shares, price, total_value, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
                 """
                 
-                # Convert to BigQuery Structs for the MERGE
+                # Define the parameters with explicit types to ensure BigQuery understands the UNNEST
                 structured_trades = [
                     bigquery.StructQueryParameter("unused", 
-                        *[bigquery.ScalarQueryParameter(k, "FLOAT64" if isinstance(v, float) else "STRING" if k != "is_officer" and k != "is_director" else "BOOL", v) 
-                          for k, v in t.items()]
+                        bigquery.ScalarQueryParameter("ticker", "STRING", t["ticker"]),
+                        bigquery.ScalarQueryParameter("issuer", "STRING", t["issuer"]),
+                        bigquery.ScalarQueryParameter("owner_name", "STRING", t["owner_name"]),
+                        bigquery.ScalarQueryParameter("shares", "FLOAT64", float(t["shares"])),
+                        bigquery.ScalarQueryParameter("price", "FLOAT64", float(t["price"])),
+                        bigquery.ScalarQueryParameter("total_value", "FLOAT64", float(t["total_value"])),
+                        bigquery.ScalarQueryParameter("transaction_side", "STRING", t["transaction_side"]),
+                        bigquery.ScalarQueryParameter("filing_date", "STRING", str(t["filing_date"])),
+                        bigquery.ScalarQueryParameter("accession_number", "STRING", t["accession_number"]),
+                        bigquery.ScalarQueryParameter("ingested_at", "STRING", str(t["ingested_at"])),
+                        bigquery.ScalarQueryParameter("is_officer", "BOOL", t.get("is_officer", False)),
+                        bigquery.ScalarQueryParameter("is_director", "BOOL", t.get("is_director", False)),
+                        bigquery.ScalarQueryParameter("officer_title", "STRING", t.get("officer_title", "N/A"))
                     ) for t in all_trades
                 ]
                 
