@@ -13,8 +13,8 @@ QUARTERLY_JOB_NAME="sec-13f-worker-job"
 DAILY_JOB_NAME="sec-13f-daily-job"
 
 # Parameters for the quarterly job run
-TARGET_YEAR=2020
-TARGET_QTR=1
+TARGET_YEAR=2024
+TARGET_QTR=2
 LIMIT=25
 
 echo "🛠️  Building and Pushing Shared Container Image: $IMAGE_NAME..."
