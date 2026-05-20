@@ -1,26 +1,32 @@
 #!/bin/bash
 
-# Configuration
+# Exit immediately if a command exits with a non-zero status
+set -e
+
+# --- GLOBAL CONFIGURATION ---
 PROJECT_ID="datascience-projects"
 IMAGE_NAME="gcr.io/$PROJECT_ID/sec-13f-scraper"
 REGION="us-central1"
-JOB_NAME="sec-13f-worker-job"
 
-# Set target quarter and limit
+# --- JOB CONFIGURATIONS ---
+QUARTERLY_JOB_NAME="sec-13f-worker-job"
+DAILY_JOB_NAME="sec-13f-daily-job"
+
+# Parameters for the quarterly job run
 TARGET_YEAR=2020
 TARGET_QTR=1
-LIMIT=25  # Set to 0 for unlimited, or higher for "Full Blow"
+LIMIT=25
 
-echo "🛠️  Building and Pushing Image: $IMAGE_NAME..."
-
-# 1. Build and push the image to GCR
+echo "🛠️  Building and Pushing Shared Container Image: $IMAGE_NAME..."
+# 1. Build and push the unified image to Artifact Registry / GCR
 gcloud builds submit --tag $IMAGE_NAME .
 
-echo "📦  Deploying Cloud Run Job: $JOB_NAME..."
+echo "--------------------------------------------------------"
+echo "📦  Deploying Quarterly Cloud Run Job: $QUARTERLY_JOB_NAME..."
+echo "--------------------------------------------------------"
 
-# 2. Deploy the 13F Worker (Job)
-# We use --service-account if you have a specific one, otherwise it uses default compute
-gcloud run jobs deploy $JOB_NAME \
+# 2. Deploy/Update the Quarterly 13F Worker Job
+gcloud run jobs deploy $QUARTERLY_JOB_NAME \
   --image $IMAGE_NAME \
   --command "python" \
   --args "scraper.py" \
@@ -31,9 +37,20 @@ gcloud run jobs deploy $JOB_NAME \
   --memory 2Gi \
   --set-env-vars YEAR=$TARGET_YEAR,QUARTER=$TARGET_QTR,SCRAPER_LIMIT=$LIMIT
 
-echo "🚀 Deployment Complete. Kicking off the 13F Scraper Job now..."
+echo "--------------------------------------------------------"
+echo "📦  Deploying Daily Cloud Run Job: $DAILY_JOB_NAME..."
+echo "--------------------------------------------------------"
 
-# 3. Execute the Job immediately
-#gcloud run jobs execute $JOB_NAME --region $REGION
+# 3. Deploy/Update the Daily 13F Worker Job using the alternative script argument
+gcloud run jobs deploy $DAILY_JOB_NAME \
+  --image $IMAGE_NAME \
+  --command "python" \
+  --args "scraper_13f_daily.py" \
+  --region $REGION \
+  --tasks 1 \
+  --max-retries 0 \
+  --cpu 1 \
+  --memory 2Gi
 
-echo "✅ Job started. Monitor logs with: gcloud beta run jobs executions describe [EXECUTION_NAME] --region $REGION"
+echo "🚀 Deployment Complete for Both Tasks!"
+echo "💡 To execute the daily job manually: gcloud run jobs execute $DAILY_JOB_NAME --region $REGION"
