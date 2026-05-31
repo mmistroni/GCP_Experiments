@@ -38,6 +38,12 @@ class Holding(BaseModel):
     def format_for_datetime(cls, v):
         if v:
             v = str(v).strip()
+            # FIX: If the string matches the SEC daily index format 'YYYYMMDD' (length 8, all digits)
+            if len(v) == 8 and v.isdigit():
+                # Reformat cleanly to 'YYYY-MM-DD 00:00:00'
+                return f"{v[0:4]}-{v[4:6]}-{v[6:8]} 00:00:00"
+            
+            # Fallback for standard inferred dates 'YYYY-MM-DD'
             if "T" not in v and " " not in v:
                 return f"{v} 00:00:00"
         return v
@@ -216,7 +222,6 @@ def get_t_minus_1_business_day(base_date: datetime) -> datetime:
 if __name__ == "__main__":
     today = datetime.utcnow()
     
-    # Check if a specific target override date string (YYYYMMDD) was supplied as an argument
     if len(sys.argv) > 1 and sys.argv[1] != "--yesterday":
         try:
             target_run_date = datetime.strptime(sys.argv[1], "%Y%m%d")
@@ -225,7 +230,6 @@ if __name__ == "__main__":
             logger.error("❌ Invalid date format argument. Please use YYYYMMDD.")
             sys.exit(1)
     else:
-        # Default behavior: T-1 Business Day
         target_run_date = get_t_minus_1_business_day(today)
         
     run_daily_job(target_run_date)
