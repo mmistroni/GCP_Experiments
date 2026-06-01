@@ -3,12 +3,13 @@ import re
 import os
 from bs4 import BeautifulSoup
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 def automated_trump_scraper():
     chrome_options = Options()
     
-    # Absolute minimum flags required for secure container spaces
+    # Mandatory low-overhead sandbox settings for container execution spaces
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
@@ -17,18 +18,20 @@ def automated_trump_scraper():
     # Path to the zero-dependency Codespace headless shell engine
     local_shell_path = os.path.abspath("./chrome_binary/chrome-headless-shell-linux64/chrome-headless-shell")
 
-    # --- ENHANCED ENVIRONMENT DETECTION LOGIC ---
+    # --- ENVIRONMENT DETECTION LOGIC ---
     if os.path.exists(local_shell_path):
-        print(f"[INFO] Codespace Headless Shell Active: {local_shell_path}")
+        print(f"[INFO] Codespace Active. Bypassing driver managers with shell execution path: {local_shell_path}")
         chrome_options.binary_location = local_shell_path
-        chrome_options.add_argument("--headless=old") # Required for pure headless shell binaries
+        chrome_options.add_argument("--headless=old") # Crucial flag for pure headless shell binaries
         
-        # Bypasses ChromeDriver entirely and interacts with the binary directly via CDP
-        driver = webdriver.Chrome(options=chrome_options)
+        # FIXED: Pass the local headless shell path directly as the service executable.
+        # This tricks Selenium into running the shell directly as a socket communication thread, 
+        # completely preventing Selenium from downloading or trying to trigger a real chromedriver.
+        driver = webdriver.Chrome(service=Service(executable_path=local_shell_path), options=chrome_options)
         
     else:
         print("[INFO] Fallback to Production System Infrastructure Paths.")
-        chrome_options.add_argument("--headless=new") # Modern headless engine for full browsers
+        chrome_options.add_argument("--headless=new") # Standard headless flag for compiled production browsers
         
         if os.path.exists("/usr/bin/chromium"):
             chrome_options.binary_location = "/usr/bin/chromium"
@@ -40,19 +43,20 @@ def automated_trump_scraper():
     url = "https://www.quiverquant.com/Donald-Trump-Stock-Trades/"
     
     try:
+        print(f"Opening connection target: {url}")
         driver.get(url)
         driver.implicitly_wait(10)
         html_content = driver.page_source
     except Exception as e:
-        return json.dumps({"error": f"Selenium execution failed: {str(e)}"}, indent=4)
+        return json.dumps({"error": f"Selenium execution context failed: {str(e)}"}, indent=4)
     finally:
         driver.quit()
 
-    # --- PARSING LOGIC BLOCK (BeautifulSoup processing) ---
+    # --- PARSING ENGINE LAYER (BeautifulSoup processing) ---
     soup = BeautifulSoup(html_content, "html.parser")
     table = soup.find("table", id="tradeTable")
     if not table:
-        return json.dumps({"error": "Target table framework missing"}, indent=4)
+        return json.dumps({"error": "Target data table layout missing from DOM structure"}, indent=4)
 
     headers = []
     thead = table.find("thead")
