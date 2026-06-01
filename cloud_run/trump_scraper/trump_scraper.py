@@ -3,39 +3,52 @@ import re
 import os
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 def automated_trump_scraper():
     chrome_options = Options()
-    chrome_options.add_argument("--headless=new")
+    
+    # Absolute minimum flags required for secure container spaces
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
     
+    # Path to the zero-dependency Codespace headless shell engine
+    local_shell_path = os.path.abspath("./chrome_binary/chrome-headless-shell-linux64/chrome-headless-shell")
 
-
-    
-    # 1. Environment Detection logic for absolute path safety
-    # Codespaces/Debian natively installs Chromium directly into these system paths
-    if os.path.exists("/usr/bin/chromium"):
-        chrome_options.binary_location = "/usr/bin/chromium"
-    elif os.path.exists("/usr/bin/chromium-browser"):
-        chrome_options.binary_location = "/usr/bin/chromium-browser"
-
-    # Initialize the standard web driver
-    driver = webdriver.Chrome(options=chrome_options)
+    # --- ENHANCED ENVIRONMENT DETECTION LOGIC ---
+    if os.path.exists(local_shell_path):
+        print(f"[INFO] Codespace Headless Shell Active: {local_shell_path}")
+        chrome_options.binary_location = local_shell_path
+        chrome_options.add_argument("--headless=old") # Required for pure headless shell binaries
+        
+        # Bypasses ChromeDriver entirely and interacts with the binary directly via CDP
+        driver = webdriver.Chrome(options=chrome_options)
+        
+    else:
+        print("[INFO] Fallback to Production System Infrastructure Paths.")
+        chrome_options.add_argument("--headless=new") # Modern headless engine for full browsers
+        
+        if os.path.exists("/usr/bin/chromium"):
+            chrome_options.binary_location = "/usr/bin/chromium"
+        elif os.path.exists("/usr/bin/chromium-browser"):
+            chrome_options.binary_location = "/usr/bin/chromium-browser"
+            
+        driver = webdriver.Chrome(options=chrome_options)
+        
     url = "https://www.quiverquant.com/Donald-Trump-Stock-Trades/"
     
     try:
         driver.get(url)
         driver.implicitly_wait(10)
         html_content = driver.page_source
+    except Exception as e:
+        return json.dumps({"error": f"Selenium execution failed: {str(e)}"}, indent=4)
     finally:
         driver.quit()
 
-    # 2. Parsing logic block (BeautifulSoup processing)
+    # --- PARSING LOGIC BLOCK (BeautifulSoup processing) ---
     soup = BeautifulSoup(html_content, "html.parser")
     table = soup.find("table", id="tradeTable")
     if not table:
@@ -59,7 +72,15 @@ def automated_trump_scraper():
             if not tds:
                 continue
                 
-            row_data = {"Ticker": "N/A", "Company": "N/A", "Transaction": "N/A", "Amount_Range": "N/A", "Filed": "N/A", "Traded": "N/A", "Excess Return": "N/A"}
+            row_data = {
+                "Ticker": "N/A", 
+                "Company": "N/A", 
+                "Transaction": "N/A", 
+                "Amount_Range": "N/A", 
+                "Filed": "N/A", 
+                "Traded": "N/A", 
+                "Excess Return": "N/A"
+            }
             
             for index, td in enumerate(tds):
                 if index < len(headers):
@@ -79,6 +100,7 @@ def automated_trump_scraper():
                                 row_data["Company"] = match.group(2).strip(" -")
                             else:
                                 row_data["Ticker"] = text_content
+                                
                     elif header_name == "Transaction":
                         if "Purchase" in text_content:
                             row_data["Transaction"] = "Purchase"
@@ -88,6 +110,7 @@ def automated_trump_scraper():
                             row_data["Amount_Range"] = text_content.replace("Sale", "").strip()
                         else:
                             row_data["Transaction"] = text_content
+                            
                     elif header_name == "Filed":
                         row_data["Filed"] = text_content
                     elif header_name == "Traded":
