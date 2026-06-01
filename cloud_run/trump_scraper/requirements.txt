@@ -1,12 +1,7 @@
-fastapi==0.109.0
-uvicorn[standard]==0.27.0
 pandas==2.1.4
 requests==2.31.0
 tqdm==4.66.1
 db-dtypes==1.2.0
-lxml
-chromium 
-chromium-driver
-selenium 
-beautifulsoup4 
-pydantic
+lxml==5.4.0
+selenium==4.18.1
+beautifulsoup4==4.12.3
