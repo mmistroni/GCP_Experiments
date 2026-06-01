@@ -14,6 +14,9 @@ def automated_trump_scraper():
     chrome_options.add_argument("--disable-gpu")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
     
+
+
+    
     # 1. Environment Detection logic for absolute path safety
     # Codespaces/Debian natively installs Chromium directly into these system paths
     if os.path.exists("/usr/bin/chromium"):
