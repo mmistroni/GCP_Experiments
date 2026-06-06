@@ -3,5 +3,6 @@ requests==2.31.0
 tqdm==4.66.1
 db-dtypes==1.2.0
 lxml==5.4.0
-selenium==4.18.1
-beautifulsoup4==4.12.3
+selenium
+beautifulsoup4
+google-cloud-bigquery
