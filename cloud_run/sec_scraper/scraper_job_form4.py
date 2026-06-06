@@ -11,7 +11,6 @@ from google.cloud import bigquery
 PROJECT_ID = "datascience-projects"
 DATASET_ID = "gcp_shareloader"
 TABLE_MASTER = f"{PROJECT_ID}.{DATASET_ID}.form4_master"
-# We bypass TABLE_QUEUE for the daily live run
 
 HEADERS = {"User-Agent": "Institutional Research (mmistroni@gmail.com)"}
 
@@ -62,16 +61,18 @@ def parse_form4_xml(xml_content, accession_number):
                     "ticker": ticker[:10] if ticker else "UNKNOWN",
                     "issuer": issuer[:255] if issuer else "Unknown",
                     "owner_name": owner[:255] if owner else "Unknown",
-                    "shares": shares, "price": price,
+                    "shares": float(shares), 
+                    "price": float(price),
                     "total_value": float(shares * price),
                     "transaction_side": "BUY" if code == 'A' else "SELL",
-                    "filing_date": t_date,
-                    "ingested_at": datetime.utcnow().isoformat(),
-                    "is_officer": False, "is_director": False, "officer_title": "N/A"
+                    "filing_date": t_date,  # BigQuery JSON loader infers YYYY-MM-DD cleanly as DATE
+                    "ingested_at": datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+                    "is_officer": False, 
+                    "is_director": False, 
+                    "officer_title": "N/A"
                 })
 
         # --- 2. Derivative Transactions (Options/Warrants) ---
-        # 🚀 FIX: Now uses 'underlyingSecurityShares' for proper volume
         for node in root.xpath("//*[local-name()='derivativeTransaction']"):
             s_val = get_text(node, ".//*[local-name()='underlyingSecurityShares']/*[local-name()='value']")
             p_val = get_text(node, ".//*[local-name()='transactionPricePerShare']/*[local-name()='value']")
@@ -85,16 +86,37 @@ def parse_form4_xml(xml_content, accession_number):
                     "ticker": ticker[:10] if ticker else "UNKNOWN",
                     "issuer": issuer[:255] if issuer else "Unknown",
                     "owner_name": owner[:255] if owner else "Unknown",
-                    "shares": shares, "price": price,
+                    "shares": float(shares), 
+                    "price": float(price),
                     "total_value": float(shares * price),
                     "transaction_side": "BUY" if code == 'A' else "SELL",
                     "filing_date": t_date,
-                    "ingested_at": datetime.utcnow().isoformat(),
-                    "is_officer": False, "is_director": False, "officer_title": "N/A"
+                    "ingested_at": datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+                    "is_officer": False, 
+                    "is_director": False, 
+                    "officer_title": "N/A"
                 })
     except Exception as e:
         logger.error(f"Parser failed for {accession_number}: {e}")
     return trades
+
+def get_recently_ingested_keys():
+    """
+    Looks back over the past 2 days of master table history.
+    This creates a highly optimized cache filter for fractions of a penny.
+    """
+    query = f"""
+        SELECT CONCAT(accession_number, '||', owner_name, '||', CAST(shares AS STRING), '||', CAST(filing_date AS STRING)) as record_key
+        FROM `{TABLE_MASTER}`
+        WHERE ingested_at >= TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 2 DAY)
+    """
+    try:
+        query_job = client.query(query)
+        results = query_job.result()
+        return {row.record_key for row in results}
+    except Exception as e:
+        logger.warning(f"⚠️ Could not pull recent keys cache (might be empty or initial run): {e}")
+        return set()
 
 def main():
     logger.info("📡 Fetching latest Form 4s from SEC Live RSS feed...")
@@ -112,16 +134,16 @@ def main():
             entries = root.xpath("//*[local-name()='entry']")
             logger.info(f"🔎 Found {len(entries)} recent filings in RSS.")
             
+            # Pull a fast lookback lookup map to isolate and strip out duplicates locally
+            recent_record_keys = get_recently_ingested_keys()
             all_trades = []
             
             for entry in entries:
                 link = entry.xpath("*[local-name()='link']/@href")[0]
-                # Extract CIK and Accession from link: /data/CIK/ACC/ACC-index.htm
                 parts = link.split('/')
                 cik, acc = parts[-3], parts[-2]
                 clean_acc = acc.replace('-', '')
                 
-                # Fetch index.json to find the XML file name
                 dir_url = f"https://www.sec.gov/Archives/edgar/data/{cik}/{clean_acc}/index.json"
                 dir_res = s.get(dir_url, timeout=10)
                 
@@ -134,68 +156,48 @@ def main():
                         xml_res = s.get(xml_url, timeout=10)
                         if xml_res.status_code == 200:
                             trades = parse_form4_xml(xml_res.content, acc)
-                            all_trades.extend(trades)
-                            logger.info(f"📥 {acc}: Parsed {len(trades)} trades.")
+                            
+                            # Filter out duplicate rows locally using our localized search lookup cache keys
+                            for t in trades:
+                                unique_key = f"{t['accession_number']}||{t['owner_name']}||{str(t['shares'])}||{str(t['filing_date'])}"
+                                if unique_key not in recent_record_keys:
+                                    all_trades.append(t)
+                                    # Add to memory frame to protect against duplicate records within the exact same batch 
+                                    recent_record_keys.add(unique_key)
+                                    
+                            logger.info(f"📥 {acc}: Processed parsed trades.")
                 
-                time.sleep(0.12) # SEC Rate Limit
+                time.sleep(0.12) # Respecting the SEC Rate Limit
 
+            # --- TRANSMIT DATA INTO BIGQUERY ---
             if all_trades:
-                # 🛡️ DEDUPLICATION MERGE: Ensures we don't double-count RSS items
-                logger.info(f"📤 Merging {len(all_trades)} trades into BigQuery...")
+                logger.info(f"📤 Appending {len(all_trades)} unique trades directly into BigQuery...")
                 
-                # We explicitly CAST and PARSE in the USING clause to match the Master schema
-                merge_sql = f"""
-                MERGE `{TABLE_MASTER}` T
-                USING (
-                    SELECT 
-                        ticker, issuer, owner_name, 
-                        CAST(shares AS FLOAT64) as shares, 
-                        CAST(price AS FLOAT64) as price,
-                        CAST(total_value AS FLOAT64) as total_value,
-                        transaction_side, 
-                        SAFE.PARSE_DATE('%Y-%m-%d', filing_date) as filing_date,
-                        accession_number, 
-                        TIMESTAMP(ingested_at) as ingested_at,
-                        CAST(is_officer AS BOOL) as is_officer, 
-                        CAST(is_director AS BOOL) as is_director, 
-                        officer_title
-                    FROM UNNEST(@trades)
-                ) S
-                ON T.accession_number = S.accession_number 
-                   AND T.owner_name = S.owner_name 
-                   AND T.shares = S.shares 
-                   AND T.filing_date = S.filing_date
-                WHEN NOT MATCHED THEN
-                    INSERT (ticker, issuer, owner_name, shares, price, total_value, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
-                    VALUES (ticker, issuer, owner_name, shares, price, total_value, transaction_side, filing_date, accession_number, ingested_at, is_officer, is_director, officer_title)
-                """
-                
-                # Define the parameters with explicit types to ensure BigQuery understands the UNNEST
-                structured_trades = [
-                    bigquery.StructQueryParameter("unused", 
-                        bigquery.ScalarQueryParameter("ticker", "STRING", t["ticker"]),
-                        bigquery.ScalarQueryParameter("issuer", "STRING", t["issuer"]),
-                        bigquery.ScalarQueryParameter("owner_name", "STRING", t["owner_name"]),
-                        bigquery.ScalarQueryParameter("shares", "FLOAT64", float(t["shares"])),
-                        bigquery.ScalarQueryParameter("price", "FLOAT64", float(t["price"])),
-                        bigquery.ScalarQueryParameter("total_value", "FLOAT64", float(t["total_value"])),
-                        bigquery.ScalarQueryParameter("transaction_side", "STRING", t["transaction_side"]),
-                        bigquery.ScalarQueryParameter("filing_date", "STRING", str(t["filing_date"])),
-                        bigquery.ScalarQueryParameter("accession_number", "STRING", t["accession_number"]),
-                        bigquery.ScalarQueryParameter("ingested_at", "STRING", str(t["ingested_at"])),
-                        bigquery.ScalarQueryParameter("is_officer", "BOOL", t.get("is_officer", False)),
-                        bigquery.ScalarQueryParameter("is_director", "BOOL", t.get("is_director", False)),
-                        bigquery.ScalarQueryParameter("officer_title", "STRING", t.get("officer_title", "N/A"))
-                    ) for t in all_trades
-                ]
-                
-                job_config = bigquery.QueryJobConfig(
-                    query_parameters=[bigquery.ArrayQueryParameter("trades", "RECORD", structured_trades)]
+                job_config = bigquery.LoadJobConfig(
+                    schema=[
+                        bigquery.SchemaField("ticker", "STRING"),
+                        bigquery.SchemaField("issuer", "STRING"),
+                        bigquery.SchemaField("owner_name", "STRING"),
+                        bigquery.SchemaField("shares", "FLOAT64"),
+                        bigquery.SchemaField("price", "FLOAT64"),
+                        bigquery.SchemaField("total_value", "FLOAT64"),
+                        bigquery.SchemaField("transaction_side", "STRING"),
+                        bigquery.SchemaField("filing_date", "DATE"),
+                        bigquery.SchemaField("accession_number", "STRING"),
+                        bigquery.SchemaField("ingested_at", "TIMESTAMP"),
+                        bigquery.SchemaField("is_officer", "BOOL"),
+                        bigquery.SchemaField("is_director", "BOOL"),
+                        bigquery.SchemaField("officer_title", "STRING"),
+                    ],
+                    write_disposition="WRITE_APPEND",
+                    autodetect=False 
                 )
-                client.query(merge_sql, job_config=job_config).result()
-                logger.info("✨ Successfully synchronized live data.")
+                
+                load_job = client.load_table_from_json(all_trades, TABLE_MASTER, job_config=job_config)
+                load_job.result()
+                logger.info("✨ Successfully appended live data to master history table.")
             else:
-                logger.info("🏁 No new trades found in this window.")
+                logger.info("🏁 No new unique trades discovered in this window feed.")
 
         except Exception as e:
             logger.error(f"💥 Live worker failed: {e}")
