@@ -276,9 +276,9 @@ def  run_gcloud_agent(pipeline, agent_url, sendgridkey):
                      'collection3': keyed_llm
                      }
                     | beam.CoGroupByKey())
-
+        logging.info('----- Sending EMAIL----- StockAgent End of Day WrapUp')
         send_email(combined, sendgridkey, subject='StockAgent End of Day WrapUp')
-
+        logging.info('----- EMAIL SENT')
 
         
 
