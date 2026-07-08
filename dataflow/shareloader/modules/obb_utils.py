@@ -313,7 +313,8 @@ class AsyncProcess(beam.DoFn):
         try:
             profile = requests.get(profile_url).json()
             latest = profile[0]
-            return {'sector' : latest['sector'], 'industry' : latest['industry']}
+            return {'sector' : latest['sector'], 'industry' : latest['industry'],
+                    'beta' : latest['beta']}
         except Exception as e :
             logging.info(f'Exceptioin  for {ticker}:{str(e)}')
             return {'sector': 'NA', 'industry': 'NA'}
