@@ -179,7 +179,7 @@ def map_to_bq_dict(input_dict):
     custom_dict['ewo'] = input_dict.get('ewo', 0)
     custom_dict['spx_choppyness'] = input_dict.get('spx_choppyness', 0)
     custom_dict['slope'] = input_dict.get('slope')
-
+    custom_dict['beta'] = input_dict.get('beta')
     return custom_dict
 
 def combine_tester_and_etoro(fmpKey, tester,etoro):
