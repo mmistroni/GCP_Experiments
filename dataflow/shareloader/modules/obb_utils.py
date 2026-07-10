@@ -457,7 +457,7 @@ class AsyncProcess(beam.DoFn):
                             latest.update(smas)
                             if latest.get('close') > latest.get('SMA20'):
                                 latest['highlight'] = 'True'
-
+                            logging.info(f'Storing:\n {latest}')
                             all_records.append(latest)
                         else:
                             logging.info(f"{ticker} change ({increase}) missed tolerance:{1 + self.price_change}.Latest:{latest['close']}.Last:{last_close['close']}")
