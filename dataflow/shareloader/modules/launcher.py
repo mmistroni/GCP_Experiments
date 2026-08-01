@@ -153,7 +153,7 @@ def combine_rows(rows):
 def map_to_bq_dict(input_dict):
     custom_dict = {}
     custom_dict['symbol'] = input_dict.get('symbol')
-    custom_dict['price'] = input_dict.get('close')
+    custom_dict['price'] = input_dict.get('price') or input_dict.get('close')
     custom_dict['open'] = input_dict.get('open')
     custom_dict['previousClose'] = input_dict.get('prev_close')
     custom_dict['change'] = input_dict.get('change')

@@ -441,6 +441,7 @@ class AsyncProcess(beam.DoFn):
                             logging.info(f'Adding ({ticker}):{latest}')
                             latest['ticker'] = ticker
                             latest['symbol'] = ticker
+                            latest['price'] = latest.get('close') or latest.get('price')
                             latest['date'] = 'today'
                             latest['prev_date'] = 'prevdate'
                             latest['prev_close'] = last_close['close']
@@ -543,6 +544,7 @@ class AsyncFMPProcess(AsyncProcess):
                         smas = self.calculate_smas(tick)
                         latest.update(tech_dict)
                         latest.update(smas)
+                        latest['price'] = latest.get('last_price')
                         if latest.get('last_price', 0) > latest.get('SMA20', 0):
                             latest['highlight'] = 'True'
 
