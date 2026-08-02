@@ -301,7 +301,7 @@ class MyTestCase(unittest.TestCase):
 
         with TestPipeline(options=PipelineOptions()) as p:
 
-            (p  | 'Tester' >> beam.Create([{'ticker' : 'KARO'}])
+            (p  | 'Tester' >> beam.Create([{'ticker' :  'MSFT'}])
                 | 'TEST PLUS500Maping BP ticker' >> beam.Map(lambda d: d['ticker'])
                 | 'Filtering' >> beam.Filter(lambda tick: tick is not None and '.' not in tick and '-' not in tick)
                 | 'Combine all tickers' >> beam.CombineGlobally(combine_tickers)
@@ -335,6 +335,34 @@ class MyTestCase(unittest.TestCase):
                         AsyncCFTCTester(credentials={'fmp_api_key': key})
                     )
              )
+
+    def test_yfinance(self):
+        import yfinance as yf
+        from requests import Session
+        from requests.adapters import HTTPAdapter
+        from urllib3.util import Retry
+
+        def get_yf_session():
+            session = Session()
+            # Mask the default Python user-agent
+            session.headers.update({
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            })
+
+            # Configure backoff retries for 429 (Too Many Requests)
+            retries = Retry(
+                total=5,
+                backoff_factor=2,  # Waits 2s, 4s, 8s, 16s...
+                status_forcelist=[429, 500, 502, 503, 504]
+            )
+            adapter = HTTPAdapter(max_retries=retries)
+            session.mount('https://', adapter)
+            return session
+
+        # Pass the session into your Ticker or download call
+        ticker = yf.Ticker("MSFT", session=get_yf_session())
+        df = ticker.history(period="1d")
+        print(df.to_dict('records'))
 
 
 if __name__ == '__main__':
