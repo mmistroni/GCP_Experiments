@@ -8,7 +8,7 @@ from lxml import etree
 from google.cloud import bigquery
 from google.api_core.exceptions import Forbidden
 from pydantic import BaseModel, field_validator, model_validator
-from typing import Optional
+from typing import Optional, Set
 
 # --- CONFIGURATION ---
 PROJECT_ID = "datascience-projects"
@@ -90,29 +90,33 @@ def parse_xml_to_holdings(xml_content, acc_num, filing_date):
         return []
 
 
-def is_accession_already_loaded(accession_number: str) -> bool:
+def get_existing_accessions(target_date_str: str) -> Set[str]:
     """
-    Checks if an accession number is already in the master table.
-    This replaces the 'MERGE' check logic safely and costs very little.
+    Fetches all accession numbers already loaded for this filing date in a single query.
+    This replaces the N+1 row-by-row lookup pattern to save BigQuery costs.
     """
     query = f"""
-        SELECT 1 
+        SELECT DISTINCT accession_number 
         FROM `{MASTER_TABLE}` 
-        WHERE accession_number = @acc_num 
-        LIMIT 1
+        WHERE DATE(filing_date) = @target_date
     """
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
-            bigquery.ScalarQueryParameter("acc_num", "STRING", accession_number)
+            bigquery.ScalarQueryParameter("target_date", "STRING", target_date_str)
         ]
     )
+    logger.info("🔍 Pre-fetching existing accession numbers from BigQuery (Single Query)...")
     query_job = client.query(query, job_config=job_config)
-    results = query_job.result()
-    return len(list(results)) > 0
+    
+    # Store results in a set for O(1) in-memory lookups
+    existing = {row.accession_number for row in query_job.result()}
+    logger.info(f"Loaded {len(existing)} existing accession numbers into memory.")
+    return existing
 
 
 def run_daily_job(target_date: datetime):
     date_str = target_date.strftime("%Y%m%d")
+    target_date_sql_str = target_date.strftime("%Y-%m-%d")
     year = target_date.year
     qtr = (target_date.month - 1) // 3 + 1
     
@@ -126,6 +130,9 @@ def run_daily_job(target_date: datetime):
     elif res.status_code != 200:
         logger.error(f"❌ Failed to reach SEC Index. Status code: {res.status_code}")
         return
+
+    # 🚀 OPTIMIZATION: Pull existing accessions ONCE before loop
+    existing_accessions = get_existing_accessions(target_date_sql_str)
 
     lines = res.text.split('\n')
     all_holdings = []
@@ -147,8 +154,8 @@ def run_daily_job(target_date: datetime):
                 
                 acc_num = path.split('/')[-1].split('.')[0]
                 
-                # OPTIMIZATION: Skip downloading/parsing if this specific accession report is already saved
-                if is_accession_already_loaded(acc_num):
+                # OPTIMIZATION: Instant O(1) in-memory set check (ZERO BigQuery cost!)
+                if acc_num in existing_accessions:
                     logger.info(f"⏭️ Skipping {acc_num} ({manager_name}) - already ingested previously.")
                     continue
 
@@ -201,10 +208,10 @@ def run_daily_job(target_date: datetime):
                 bigquery.SchemaField("manager_name", "STRING"),
                 bigquery.SchemaField("issuer_name", "STRING"),
                 bigquery.SchemaField("cusip", "STRING"),
-                bigquery.SchemaField("value_usd", "INTEGER"), # Kept as INTEGER to match your destination table field type
-                bigquery.SchemaField("shares", "INTEGER"),    # Kept as INTEGER to match your destination table field type
+                bigquery.SchemaField("value_usd", "INTEGER"), 
+                bigquery.SchemaField("shares", "INTEGER"),    
                 bigquery.SchemaField("put_call", "STRING"),
-                bigquery.SchemaField("filing_date", "DATETIME"), # Matched direct type assignment
+                bigquery.SchemaField("filing_date", "DATETIME"), 
                 bigquery.SchemaField("accession_number", "STRING"),
             ],
             write_disposition="WRITE_APPEND",
